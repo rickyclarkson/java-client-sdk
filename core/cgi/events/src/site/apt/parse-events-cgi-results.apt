@@ -1,0 +1,139 @@
+ -----------------------
+ Parse events.cgi result
+ -----------------------
+
+~~ Enter the name of the use case in verb-noun format e.g. Borrow Books, Withdraw Cash. For completeness, also set the title of the document above to the same name.
+Parse events.cgi result
+
+* Summary:
+
+ <Enter a few sentences or a paragraph which captures the essence of the use case. It should include the goal and principal actor and provide sufficient information to understand what the use case is about.>
+
+ SDK clients need to be able to parse a list of comma separated results from an events.cgi query into a collection of objects. To assist in this task, the SDK should provide a method for parsing a single comma separated result into a single result object. In most cases, the SDK client will be the SDK itself, but not always.
+
+* Related ticket(s):
+
+ <Enter links to Trac tickets that are related to this use case.>
+ ~~ e.g. {{{http://adwiki.ad-group.adh/ticket/1690}#1690}}
+ 
+ {{{http://adwiki.ad-group.adh/ticket/2183}#2183 Events.cgi builder and parser}}
+ 
+* Goal:
+
+ <Briefly describe what the user intends to achieve with this use case.>
+ 
+ To parse a comma separated result returned from an events.cgi query into a result object.
+
+* Actors:
+
+ <An actor is someone or something outside the system that either acts on the system (a primary actor) or is acted on by the system (a secondary actor). An actor may be a person, a device, another system or sub-system, or time.>
+ 
+ SDK client
+
+* Pre-conditions:
+
+ <Define all the conditions that must be true for it to be possible to trigger the use case.>
+ 
+ None.
+
+* Triggers:
+
+ <Define the event that causes the use case to be initiated. This event can be external, temporal or internal. If the trigger is not a simple true "event" (e.g., the user presses a button), but instead "when a set of conditions are met", there will need to be a triggering process that continually (or periodically) runs to test whether the "trigger conditions" are met: the "triggering event" is a signal from the trigger process that the conditions are now met.>
+ 
+ The user calls a static method to perform the parse.
+
+* Basic success path:
+
+ <Define the basic success path as a set of numbered steps or an activity diagram.>
+ 
+ [[1]] The user calls a method which creates a result object by parsing a <<<String>>> containing a single comma separated result from an events.cgi query.
+
+* Other succcess path(s):
+
+ <<(Optional)>><If there are other paths that lead to a successful conclusion of the use case, define them here.>
+
+ None.
+ 
+* Exception paths:
+
+ <<(Optional)>><Look at each of the success paths and what good go wrong at each stage. If there is scope for error, define how each error condition will be handled.>
+ 
+ If the user passes <<<null>>> to the parse method, then a <<<NullPointerException>>> should be thrown.
+ 
+ If the user passes an empty <<<String>>> to the parse method, then an <<<IllegalArgumentException>>> should be thrown.
+ 
+ If the user passes a <<<String>>> which cannot be parsed for some other reason, then an <<<IllegalArgumentException>>> or appropriate derivative should be thrown.
+
+* Post-conditions:
+
+ <Define what the change in state of the system will be after the use case completes. Post-conditions are guaranteed to be true when the use case ends.>
+ 
+ None.
+ 
+* Notes:
+
+ <<(Optional)>><Use this section to add any additional information that does not naturally fit into any of the above sections.>
+ 
+ Here is an example of the comma separated data returned from a NetVu Connected device:
+ 
++---
+2, 1, Camera fail, 1214995184, 3600, ,exists, 57, 1, 0, 0, 4, 8
+3, 0, System_Halt_(BAD), 1215000458, 3600, (12:07:38 02/Jul/2008),exists, 58, 10, 2, 0, 4, 8
+4, 0, System Startup, 1215002198, 3600, ,exists, 59, 10, 2, 0, 4, 8
+5, 2, Camera fail, 1215002202, 3600, ,overwitten, 60, 1, 0, 0, 4, 8
+6, 1, Camera fail, 1215002216, 3600, ,exists, 61, 1, 0, 0, 4, 8
+7, 1, Camera Restored, 1215002217, 3600, ,exists, 62, 1, 0, 0, 4, 8
+8, 0, System_Halt_(GOOD), 1215519089, 3600, (12:11:29 08/Jul/2008),exists, 63, 10, 2, 0, 4, 8
+9, 0, System Startup, 1215519146, 3600, ,exists, 64, 10, 2, 0, 4, 8
+10, 2, Camera fail, 1215519151, 3600, ,overwitten, 65, 1, 0, 0, 4, 8
+11, 1, Camera fail, 1217333690, 3600, ,exists, 66, 1, 0, 0, 4, 8
+12, 1, Camera Restored, 1217333701, 3600, ,exists, 67, 1, 0, 0, 4, 8
+13, 1, Camera fail, 1217333778, 3600, ,exists, 68, 1, 0, 0, 4, 8
+14, 1, Camera Restored, 1217333779, 3600, ,exists, 69, 1, 0, 0, 4, 8
++---
+
+ The data breaks down as follows:
+ 
+*----------+---------+----------------+---------------------+
+|<<Index>> |<<Name>> |<<Description>> |<<Permitted Values>> |
+*----------+---------+----------------+---------------------+
+|0 |Result |The number of this result. |0..2147483647 |
+*----------+---------+----------------+---------------------+
+|1 |Camera |The camera associated with this event. |0..64 |
+*----------+---------+----------------+---------------------+
+|2 |Alarm |The alarm text. |String |
+*----------+---------+----------------+---------------------+
+|3 |Julian |The time that the event occured. Specified as elapsed seconds from the unix epoch, 00:00:00 on 1st January 1970 GMT. |0..2147483647 |
+*----------+---------+----------------+---------------------+
+|4 |Offset |The UTC offset that was in effect at the time of the event. Specified in seconds. |-90000..90000 |
+*----------+---------+----------------+---------------------+
+|5 |File |Path to single image file if one was created. |String |
+*----------+---------+----------------+---------------------+
+|6 |OnDisk |Whether or not the video for this event still exists. |boolean (see Note 1 below) |
+*----------+---------+----------------+---------------------+
+|7 |Index |The index of the record within the database. |0..2147483647 |
+*----------+---------+----------------+---------------------+
+|8 |Duration |The duration of the event in seconds. |0..2147483647 |
+*----------+---------+----------------+---------------------+
+|9 |PreAlarm |The number of seconds to preview before the event  |0..2147483647 |
+*----------+---------+----------------+---------------------+
+|10 |Archive |The time that the event was archived by the system. Video may be archived to CD/DVD or to an FTP server. Specified as elapsed seconds from the unix epoch, 00:00:00 on 1st January 1970 GMT. |0..2147483647 |
+*----------+---------+----------------+---------------------+
+|11 |Status |The current status of the event. |0 = uninitialized |
+|   |       |                                 |1 = pending |
+|   |       |                                 |2 = new |
+|   |       |                                 |4 = closed |
+|   |       |                                 |8 = archived |
+*----------+---------+----------------+---------------------+
+|12 |AlarmType |The type of event. |0 = unknown |
+|   |          |                   |1 = zone |
+|   |          |                   |2 = VMD |
+|   |          |                   |4 = GPS |
+|   |          |                   |8 = system |
+|   |          |                   |16 = camera |
+|   |          |                   |32 = activity |
+|   |          |                   |64 = keyword |
+*----------+---------+----------------+---------------------+
+Comma separated field definitions
+
+ <<Note 1:>> The actual values returned in the comma separated data are "exists" or "overwritten" but these should be mapped to <<<true>>> and <<<false>>> respectively.

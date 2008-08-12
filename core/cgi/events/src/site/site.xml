@@ -3,6 +3,7 @@
     <body>
         <menu name="Use Cases">
             <item name="Build events.cgi query" href="build-events-cgi.html"/>
+            <item name="Parse events.cgi result" href="parse-events-cgi-results.html"/>
         </menu>
         <menu ref="reports"/>
     </body>

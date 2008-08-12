@@ -7,6 +7,7 @@
     </parent>
     <artifactId>events</artifactId>
     <name>NetVu Connected Java Client SDK->Core->CGI->Events</name>
+    <description>Builders and parsers for the events.cgi command.</description>
     <build>
         <finalName>core-cgi-events-${project.version}</finalName>
     </build>
