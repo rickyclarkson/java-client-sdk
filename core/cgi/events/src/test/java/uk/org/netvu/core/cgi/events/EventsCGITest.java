@@ -1,0 +1,365 @@
+package uk.org.netvu.core.cgi.events;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+
+import org.junit.Test;
+
+/**
+ * A set of tests that try to make sure EventCGI only allows valid CGI queries
+ * as per the Video Server Specification
+ */
+public class EventsCGITest
+{
+    /**
+     * Tests that the default values in EventCGI.Builder are correct according
+     * to the spec. The format is missing because it is always implicitly
+     * specified as CSV.
+     */
+    @Test
+    public void testDefaultValues()
+    {
+        final EventsCGI events = new EventsCGI.Builder().build();
+        assertTrue( events.getTime() == 0 );
+        assertTrue( events.getRange() == Integer.MAX_VALUE );
+        assertTrue( events.getMaxLength() == 100 );
+        assertTrue( events.getText().equals( "" ) );
+        assertTrue( events.getCamMask() == 0 );
+        assertTrue( events.getAlarmMask() == 0 );
+        assertTrue( events.getVmdMask() == 0 );
+        assertTrue( events.getGpsMask() == 0 );
+        assertTrue( events.getSysMask() == 0 );
+    }
+
+    /**
+     * Tests that applying one parameter more than once will throw an
+     * IllegalStateException
+     */
+    @Test(expected = IllegalStateException.class)
+    public void testThreeTimeParameters()
+    {
+        new EventsCGI.Builder().time( 100 ).time( 200 ).time( 300 );
+    }
+
+    /**
+     * Tests that negative times are disallowed.
+     */
+    @Test
+    public void testNegativeTimes()
+    {
+        try
+        {
+            new EventsCGI.Builder().time( -100 );
+            fail( "Negative times are invalid" );
+        }
+        catch ( final IllegalArgumentException e )
+        {
+            // pass
+        }
+    }
+
+    /**
+     * Tests that the text and gpsMask parameters are mutually exclusive.
+     */
+    @Test
+    public void testThatTextAndGpsMaskAreMutex()
+    {
+        try
+        {
+            new EventsCGI.Builder().text( "text" ).gpsMask( 100 );
+            fail();
+        }
+        catch ( final IllegalStateException e )
+        {
+            // pass
+        }
+    }
+
+    /**
+     * Tests that the built EventCGI has the values supplied to the builder,
+     * using random data generation.
+     */
+    private static boolean testRetention( final Random random )
+    {
+        final int randomInt = random.nextInt();
+        final long randomLong = random.nextLong();
+        final String randomString = Generators.strings( random ).iterator().next();
+        final UInt31 randomUInt31 = UInt31Test.uint31s( random ).next();
+        assertTrue( new EventsCGI.Builder().alarmMask( randomInt ).build().getAlarmMask() == randomInt );
+        assertTrue( new EventsCGI.Builder().range( randomUInt31.toInt() ).build().getRange() == randomUInt31.toInt() );
+        assertTrue( new EventsCGI.Builder().camMask( randomLong ).build().getCamMask() == randomLong );
+        assertTrue( new EventsCGI.Builder().gpsMask( randomInt ).build().getGpsMask() == randomInt );
+        assertTrue( new EventsCGI.Builder().length( randomInt ).build().getMaxLength() == randomInt );
+        assertTrue( new EventsCGI.Builder().sysMask( randomInt ).build().getSysMask() == randomInt );
+
+        return new EventsCGI.Builder().text( randomString ).build().getText().equals(
+                randomString )
+                && new EventsCGI.Builder().time( randomUInt31.toInt() ).build().getTime() == randomUInt31.toInt()
+                && new EventsCGI.Builder().vmdMask( randomLong ).build().getVmdMask() == randomLong;
+    }
+
+    /**
+     * Tests that the built EventCGI has the values supplied to the builder.
+     */
+    @Test
+    public void testRetention()
+    {
+        final Random random = new Random( 0 );
+        for ( int a = 0; a < Generators.LIMIT; a++ )
+        {
+            assertTrue( testRetention( random ) );
+        }
+    }
+
+    /**
+     * Tests that an EventCGI equals itself, and that it doesn't equal another
+     * EventCGI with different values.
+     */
+    @Test
+    public void testEquality()
+    {
+        final Random random = new Random( 0 );
+        final Iterator<EventsCGI> cgis = randomEventCGIs( random );
+
+        for ( int a = 0; a < Generators.LIMIT; a++ )
+        {
+            final EventsCGI cgi = cgis.next();
+            assertTrue( cgi.equals( cgi ) );
+
+            final EventsCGI next = cgis.next();
+            assertTrue( cgi.toString().equals( next.toString() ) == cgi.equals( next ) );
+        }
+    }
+
+    /**
+     * Tests that toString always gives something that can be made into a valid
+     * URL.
+     */
+    @Test
+    public void testToString() throws MalformedURLException
+    {
+        final Random random = new Random( 0 );
+        final Iterator<EventsCGI> cgis = randomEventCGIs( random );
+
+        for ( int a = 0; a < Generators.LIMIT; a++ )
+        {
+            new URL( "http://none" + cgis.next() );
+        }
+    }
+
+    boolean compare( final String input, final EventsCGIResult output )
+    {
+        final List<String> fields = new ArrayList<String>(
+                Arrays.asList( EventsCGIResult.split( input ) ) );
+        final List<String> others = new ArrayList<String>(
+                Arrays.asList( EventsCGIResult.split( output.toCSV( 0 ) ) ) );
+
+        fields.remove( 0 );
+        others.remove( 0 );
+
+        fields.remove( 6 );
+        others.remove( 6 );
+
+        return fields.equals( others );
+    }
+
+    /**
+     * Tests that parsing real data stored from a server results then obtaining
+     * CSV from that results in the same CSV as the original.
+     */
+    @Test
+    public void testParseRealData()
+    {
+        final String[] data = {
+            "1, 0, System Startup, 1122030592, 3600, ,overwitten, 1, 10, 2, 0, 4, 8",
+            "2, 0, RTC reset (CBUS), 1122034260, 3600, (11:10:34 22/Jul/2005),overwitten, 2, 10, 2, 0, 4, 8",
+            "3, 0, RTC reset (CBUS), 1122035099, 3600, (13:25:52 22/Jul/2005),overwitten, 3, 10, 2, 0, 4, 8",
+            "4, 1, Camera fail, 1122035906, 3600, ,overwitten, 4, 1, 0, 0, 4, 8",
+            "5, 1, Camera Restored, 1122035915, 3600, ,overwitten, 5, 1, 0, 0, 4, 8",
+            "6, 0, System Startup, 1122035962, 3600, ,overwitten, 6, 10, 2, 0, 4, 8",
+            "7, 0, System Startup, 1122037538, 3600, ,overwitten, 7, 10, 2, 0, 4, 8",
+            "8, 0, System Startup, 1122037625, 3600, ,overwitten, 8, 10, 2, 0, 4, 8",
+            "9, 0, System Startup, 1122038376, 3600, ,overwitten, 9, 10, 2, 0, 4, 8",
+            "10, 0, RTC reset (CBUS), 1122463200, 3600, (11:19:58 27/Jul/2005),overwitten, 10, 10, 2, 0, 4, 8",
+            "11, 0, System Startup, 1122907601, 3600, ,overwitten, 11, 10, 2, 0, 4, 8",
+            "12, 0, RTC reset (CBUS), 1122907620, 3600, (14:46:57 01/Aug/2005),overwitten, 12, 10, 2, 0, 4, 8" };
+
+        for ( final String line : data )
+        {
+            assertTrue( compare( line, EventsCGIResult.fromString( line ) ) );
+        }
+    }
+
+    /**
+     * An infinite series of randomly-created EventCGIs.
+     */
+    public static Iterator<EventsCGI> randomEventCGIs( final Random random )
+    {
+        return new Iterator<EventsCGI>()
+        {
+            public void remove()
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            public EventsCGI next()
+            {
+                final EventsCGI.Builder builder = new EventsCGI.Builder();
+
+                final Iterator<UInt31> uint31s = UInt31Test.uint31s( random );
+                final Iterator<String> strings = Generators.strings( random ).iterator();
+
+                final List<Runnable> methods = new ArrayList<Runnable>()
+                {
+                    {
+                        add( new Runnable()
+                        {
+                            public void run()
+                            {
+                                builder.alarmMask( random.nextInt() );
+                            }
+                        } );
+
+                        add( new Runnable()
+                        {
+                            public void run()
+                            {
+                                builder.camMask( random.nextLong() );
+                            }
+                        } );
+
+                        add( new Runnable()
+                        {
+                            public void run()
+                            {
+                                builder.gpsMask( random.nextInt() );
+                            }
+                        } );
+
+                        add( new Runnable()
+                        {
+                            public void run()
+                            {
+                                builder.length( random.nextInt() );
+                            }
+                        } );
+
+                        add( new Runnable()
+                        {
+                            public void run()
+                            {
+                                builder.range( uint31s.next().toInt() );
+                            }
+                        } );
+
+                        add( new Runnable()
+                        {
+                            public void run()
+                            {
+                                builder.sysMask( random.nextInt() );
+                            }
+                        } );
+
+                        add( new Runnable()
+                        {
+                            public void run()
+                            {
+                                builder.text( strings.next() );
+                            }
+                        } );
+
+                        add( new Runnable()
+                        {
+                            public void run()
+                            {
+                                builder.time( uint31s.next().toInt() );
+                            }
+                        } );
+
+                        add( new Runnable()
+                        {
+                            public void run()
+                            {
+                                builder.vmdMask( random.nextLong() );
+                            }
+                        } );
+                    }
+                };
+
+                final List<Runnable> butNoExceptions = new ArrayList<Runnable>();
+                for ( final Runnable runnable : methods )
+                {
+                    butNoExceptions.add( new Runnable()
+                    {
+
+                        public void run()
+                        {
+                            try
+                            {
+                                runnable.run();
+                            }
+                            catch ( final IllegalStateException e )
+                            {
+                            }
+                        }
+                    } );
+                }
+
+                final int numMethodsToCall = random.nextInt( butNoExceptions.size() );
+
+                for ( int b = 0; b < numMethodsToCall; b++ )
+                {
+                    butNoExceptions.get(
+                            random.nextInt( butNoExceptions.size() ) ).run();
+                }
+
+                return builder.build();
+
+            }
+
+            public boolean hasNext()
+            {
+                return true;
+            }
+        };
+    }
+
+    /**
+     * Makes sure that text that contains spaces doesn't result in a URL
+     * containing spaces - they should be encoded.
+     */
+    @Test
+    public void testTextWithSpacesDoesntResultInURLWithSpaces()
+    {
+        assertFalse( new EventsCGI.Builder().text( "hello world" ).build().toString().contains(
+                " " ) );
+    }
+
+    /**
+     * Tests that converting an EventsCGI to a String and back is not lossy.
+     */
+    @Test
+    public void testFromString()
+    {
+        final Random random = new Random( 0 );
+        final Iterator<EventsCGI> cgis = randomEventCGIs( random );
+
+        for ( int a = 0; a < Generators.LIMIT; a++ )
+        {
+            final EventsCGI next = cgis.next();
+            assertTrue( EventsCGI.fromString(
+                    random.nextBoolean() ? next.toString()
+                            : EventsCGI.fromLast( '?', next.toString() ) ).equals(
+                    next ) );
+        }
+    }
+}
