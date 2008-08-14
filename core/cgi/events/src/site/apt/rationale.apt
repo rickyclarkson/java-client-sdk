@@ -1,0 +1,9 @@
+ ---------
+ Rationale
+ ---------
+
+Rationale
+
+  In designing the Events Database API, we looked at some implementations of the Builder pattern, and decided that we would use Joshua Bloch's version because it was considered the most conventional, so our expected users should understand how to use it.  This causes some broken code to be compilable, but thorough validation happens at runtime.
+
+  Also, we had a working version that was capable of running a query against a server and reporting results via a listener interface, but decided to go with a version that can only build queries from caller-supplied parameters, and build results from Strings.  This was to make sure that the library was well-focused on parsing and building, and to leave the implementation of actually running the query to another module - especially as there will be multiple such modules (services).
