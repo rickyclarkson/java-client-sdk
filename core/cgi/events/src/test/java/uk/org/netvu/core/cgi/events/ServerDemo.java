@@ -21,7 +21,7 @@ class ServerDemo
      */
     public static void main( final String[] args ) throws IOException
     {
-        final EventsCGI cgi = new EventsCGI.Builder().build();
+        final EventsCGI cgi = new EventsCGI.Builder().format( Format.CSV ).build();
         final URL url = new URL( "http://remguard_mews.adnv.adh" + cgi );
 
         final InputStream in = url.openStream();

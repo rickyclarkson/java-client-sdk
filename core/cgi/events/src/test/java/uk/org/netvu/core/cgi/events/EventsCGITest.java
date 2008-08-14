@@ -14,6 +14,8 @@ import java.util.Random;
 
 import org.junit.Test;
 
+import uk.org.netvu.core.cgi.events.EventsCGI.Builder;
+
 /**
  * A set of tests that try to make sure EventCGI only allows valid CGI queries
  * as per the Video Server Specification
@@ -85,6 +87,65 @@ public class EventsCGITest
     }
 
     /**
+     * Tests that the alarm mask, vmd mask, gps mask and sys mask parameters are
+     * not allowed in the same EventsCGI.Builder.
+     */
+    @Test
+    public void testThatAlarmMaskEtcAreMutuallyExclusive()
+    {
+        final List<Action<Builder>> params = new ArrayList<Action<Builder>>();
+        params.add( new Action<Builder>()
+        {
+            public void invoke( final Builder builder )
+            {
+                builder.alarmMask( 4 );
+            }
+        } );
+        params.add( new Action<Builder>()
+        {
+            public void invoke( final Builder builder )
+            {
+                builder.vmdMask( 8 );
+            }
+        } );
+        params.add( new Action<Builder>()
+        {
+            public void invoke( final Builder builder )
+            {
+                builder.gpsMask( 32 );
+            }
+        } );
+        params.add( new Action<Builder>()
+        {
+            public void invoke( final Builder builder )
+            {
+                builder.sysMask( 23 );
+            }
+        } );
+
+        for ( int a = 0; a < params.size(); a++ )
+        {
+            for ( int b = 0; b < params.size(); b++ )
+            {
+                if ( a != b )
+                {
+                    final Builder builder = new EventsCGI.Builder();
+                    params.get( a ).invoke( builder );
+                    try
+                    {
+                        params.get( b ).invoke( builder );
+                        fail();
+                    }
+                    catch ( final IllegalStateException e )
+                    {
+                        // pass
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Tests that the built EventCGI has the values supplied to the builder,
      * using random data generation.
      */
@@ -128,7 +189,7 @@ public class EventsCGITest
     public void testEquality()
     {
         final Random random = new Random( 0 );
-        final Iterator<EventsCGI> cgis = randomEventCGIs( random );
+        final Iterator<EventsCGI> cgis = randomEventsCGIs( random );
 
         for ( int a = 0; a < Generators.LIMIT; a++ )
         {
@@ -141,6 +202,23 @@ public class EventsCGITest
     }
 
     /**
+     * Tests that an EventsCGI is not equal to objects of other types.
+     */
+    @Test
+    public void testInequality()
+    {
+        final Random random = new Random( 0 );
+        final Iterator<EventsCGI> cgis = randomEventsCGIs( random );
+
+        for ( int a = 0; a < Generators.LIMIT; a++ )
+        {
+            final EventsCGI cgi = cgis.next();
+            assertFalse( cgi.equals( new Object() ) );
+            assertFalse( cgi.equals( cgi.toString() ) );
+        }
+    }
+
+    /**
      * Tests that toString always gives something that can be made into a valid
      * URL.
      */
@@ -148,7 +226,7 @@ public class EventsCGITest
     public void testToString() throws MalformedURLException
     {
         final Random random = new Random( 0 );
-        final Iterator<EventsCGI> cgis = randomEventCGIs( random );
+        final Iterator<EventsCGI> cgis = randomEventsCGIs( random );
 
         for ( int a = 0; a < Generators.LIMIT; a++ )
         {
@@ -200,18 +278,19 @@ public class EventsCGITest
     }
 
     /**
-     * An infinite series of randomly-created EventCGIs.
+     * An infinite series of randomly-created EventCGI.Builders.
      */
-    public static Iterator<EventsCGI> randomEventCGIs( final Random random )
+    public static Iterator<EventsCGI.Builder> randomEventCGIBuilders(
+            final Random random )
     {
-        return new Iterator<EventsCGI>()
+        return new Iterator<EventsCGI.Builder>()
         {
             public void remove()
             {
                 throw new UnsupportedOperationException();
             }
 
-            public EventsCGI next()
+            public EventsCGI.Builder next()
             {
                 final EventsCGI.Builder builder = new EventsCGI.Builder();
 
@@ -237,6 +316,14 @@ public class EventsCGITest
                             }
                         } );
 
+                        add( new Runnable()
+                        {
+
+                            public void run()
+                            {
+                                builder.format( Format.oneOf( random ) );
+                            }
+                        } );
                         add( new Runnable()
                         {
                             public void run()
@@ -322,7 +409,7 @@ public class EventsCGITest
                             random.nextInt( butNoExceptions.size() ) ).run();
                 }
 
-                return builder.build();
+                return builder;
 
             }
 
@@ -331,6 +418,21 @@ public class EventsCGITest
                 return true;
             }
         };
+    }
+
+    /**
+     * An infinite series of randomly-generated EventsCGIs.
+     */
+    public Iterator<EventsCGI> randomEventsCGIs( final Random random )
+    {
+        return Iterables.map( randomEventCGIBuilders( random ),
+                new Conversion<EventsCGI.Builder, EventsCGI>()
+                {
+                    public EventsCGI convert( final Builder builder )
+                    {
+                        return builder.build();
+                    }
+                } );
     }
 
     /**
@@ -351,7 +453,7 @@ public class EventsCGITest
     public void testFromString()
     {
         final Random random = new Random( 0 );
-        final Iterator<EventsCGI> cgis = randomEventCGIs( random );
+        final Iterator<EventsCGI> cgis = randomEventsCGIs( random );
 
         for ( int a = 0; a < Generators.LIMIT; a++ )
         {

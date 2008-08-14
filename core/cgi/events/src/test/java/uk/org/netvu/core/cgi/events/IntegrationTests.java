@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Random;
 
+import uk.org.netvu.core.cgi.events.EventsCGI.Builder;
+
 /**
  * A program that runs many randomly-generated queries against servers, to see
  * whether they behave well.
@@ -25,11 +27,11 @@ public class IntegrationTests
     {
         final Random random = new Random( 0 );
 
-        final Iterator<EventsCGI> cgis = EventsCGITest.randomEventCGIs( random );
+        final Iterator<Builder> builders = EventsCGITest.randomEventCGIBuilders( random );
 
         for ( int a = 0; a < Generators.LIMIT; a++ )
         {
-            final EventsCGI cgi = cgis.next();
+            final EventsCGI cgi = builders.next().format( Format.CSV ).build();
 
             System.out.println( "Starting one - " + cgi );
 

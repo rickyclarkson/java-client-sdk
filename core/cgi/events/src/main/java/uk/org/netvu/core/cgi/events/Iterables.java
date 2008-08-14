@@ -147,4 +147,25 @@ class Iterables
         };
     }
 
+    public static <T, R> Iterator<R> map( final Iterator<T> iterator,
+            final Conversion<T, R> conversion )
+    {
+        return new Iterator<R>()
+        {
+            public boolean hasNext()
+            {
+                return iterator.hasNext();
+            }
+
+            public R next()
+            {
+                return conversion.convert( iterator.next() );
+            }
+
+            public void remove()
+            {
+                iterator.remove();
+            }
+        };
+    }
 }

@@ -2,6 +2,7 @@ package uk.org.netvu.core.cgi.events;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -64,14 +65,15 @@ public class EventsCGIResultTest
 
             public EventsCGIResult.Builder next()
             {
-                final UInt31 julianTime = UInt31Test.uint31s( random ).next();
+                final Iterator<UInt31> uint31s = UInt31Test.uint31s( random );
+                final UInt31 julianTime = uint31s.next();
 
                 return new EventsCGIResult.Builder().alarm( strings.next() ).archive(
-                        random.nextInt() ).cam( random.nextInt() ).duration(
+                        uint31s.next() ).cam( random.nextInt( 65 ) ).duration(
                         new UInt31( random.nextInt( Integer.MAX_VALUE
                                 - julianTime.toInt() ) ) ).file( strings.next() ).julianTime(
-                        julianTime ).offset( random.nextInt() ).preAlarm(
-                        random.nextInt() ).onDisk( random.nextBoolean() ).status(
+                        julianTime ).offset( random.nextInt( 180000 ) - 90000 ).preAlarm(
+                        uint31s.next() ).onDisk( random.nextBoolean() ).status(
                         Status.oneOf( random ) ).alarmType(
                         AlarmType.oneOf( random ) );
             }
@@ -175,7 +177,11 @@ public class EventsCGIResultTest
         final Iterator<EventsCGIResult> results = eventGenerator( new Random( 0 ) );
         for ( int a = 0; a < Generators.LIMIT; a++ )
         {
-            assertFalse( results.next().equals( results.next() ) );
+            final EventsCGIResult next1 = results.next();
+            final EventsCGIResult next2 = results.next();
+
+            assertTrue( next1.equals( next2 ) == next1.toCSV( 0 ).equals(
+                    next2.toCSV( 0 ) ) );
         }
     }
 
@@ -200,8 +206,9 @@ public class EventsCGIResultTest
         {
             assertTrue( new EventsCGIResult.Builder().cam( 1 ).alarm( "test" ).julianTime(
                     new UInt31( 100 ) ).offset( 5 ).file( "ignore" ).onDisk(
-                    true ).duration( new UInt31( 40 ) ).preAlarm( 1 ).archive(
-                    1 ).status( Status.NONE ).alarmType( AlarmType.CAMERA ).build().getStatus() == Status.NONE );
+                    true ).duration( new UInt31( 40 ) ).preAlarm(
+                    new UInt31( 1 ) ).archive( new UInt31( 1 ) ).status(
+                    Status.NONE ).alarmType( AlarmType.CAMERA ).build().getStatus() == Status.NONE );
         }
         catch ( final NullPointerException e )
         {
@@ -216,7 +223,7 @@ public class EventsCGIResultTest
     @Test
     public void testHashCode()
     {
-        final Builder builder = eventBuilderGenerator( new Random( 0 ) ).next();
+        final Builder builder = aBuilder();
         assertTrue( builder.build().hashCode() == builder.build().hashCode() );
     }
 
@@ -233,5 +240,87 @@ public class EventsCGIResultTest
         {
             assertTrue( gen.next().toString().length() > 0 );
         }
+    }
+
+    /**
+     * Tests that parsing a null String yields a NullPointerException. The use
+     * case "Build events.cgi query" specifies this.
+     */
+    @Test(expected = NullPointerException.class)
+    public void testNPE()
+    {
+        EventsCGIResult.fromString( null );
+    }
+
+    /**
+     * Tests that parsing an empty ("") String yields an
+     * IllegalArgumentException. The use case "Build events.cgi query" specifies
+     * this.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testEmptyString()
+    {
+        EventsCGIResult.fromString( "" );
+    }
+
+    /**
+     * Tests that parsing a malformed String yields an IllegalArgumentException.
+     * The use case "Build events.cgi query" specifies this.
+     */
+    @Test
+    public void testBadNumber()
+    {
+        final Random random = new Random( 0 );
+        final Iterator<Builder> gen = eventBuilderGenerator( random );
+
+        for ( int a = 0; a < Generators.LIMIT; a++ )
+        {
+            final EventsCGIResult next = gen.next().archive( new UInt31( 53 ) ).build();
+            try
+            {
+                EventsCGIResult.fromString( next.toString().replaceAll( "53",
+                        "abc" ) );
+                fail();
+            }
+            catch ( final IllegalArgumentException e )
+            {
+                // pass
+            }
+        }
+    }
+
+    /**
+     * Tests that parsing a String containing a camera number that is too high
+     * yields an {@link IllegalArgumentException}.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testHighCameraNumber()
+    {
+        aBuilder().cam( 65 ).build();
+    }
+
+    private Builder aBuilder()
+    {
+        return eventBuilderGenerator( new Random( 0 ) ).next();
+    }
+
+    /**
+     * Tests that an offset lower than -90000 yields an
+     * {@link IllegalArgumentException}.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testLargeNegativeOffset()
+    {
+        aBuilder().offset( -90001 ).build();
+    }
+
+    /**
+     * Tests that an offset greater than 90000 yields an
+     * {@link IllegalArgumentException}.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testLargeOffset()
+    {
+        aBuilder().offset( 90001 ).build();
     }
 }

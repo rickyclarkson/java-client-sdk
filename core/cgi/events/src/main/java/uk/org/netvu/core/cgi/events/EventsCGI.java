@@ -28,6 +28,8 @@ public final class EventsCGI
         private final MaxOnce<UInt31> range = new MaxOnce<UInt31>( new UInt31(
                 Integer.MAX_VALUE ), "range" );
 
+        private Format format = Format.JS;
+
         private final MaxOnce<Integer> maxLength = new MaxOnce<Integer>( 100,
                 "maxLength" );
 
@@ -70,7 +72,8 @@ public final class EventsCGI
         }
 
         /**
-         * The maximum number of results to obtain.
+         * The maximum number of results to obtain. Negative values reverse the
+         * direction of the search.
          * 
          * @return the builder.
          */
@@ -81,7 +84,12 @@ public final class EventsCGI
         }
 
         /**
-         * The text to search for in the text-in-image data.
+         * The text to search for in the text-in-image data. If specified,
+         * causes the embedded text-in-image data to be searched for occurences
+         * of the supplied string. The search is case sensitive. * can be used
+         * as a wildcard to replace one or more characters in the search string.
+         * ? can be used as a wildcard to replace a single character in the
+         * search string.
          * 
          * @return the builder.
          */
@@ -114,6 +122,9 @@ public final class EventsCGI
         public Builder alarmMask( final int alarmMask )
         {
             text.isUnset();
+            vmdMask.isUnset();
+            gpsMask.isUnset();
+            sysMask.isUnset();
             this.alarmMask.set( alarmMask );
             return this;
         }
@@ -126,6 +137,9 @@ public final class EventsCGI
         public Builder vmdMask( final long vmdMask )
         {
             text.isUnset();
+            alarmMask.isUnset();
+            gpsMask.isUnset();
+            sysMask.isUnset();
             this.vmdMask.set( vmdMask );
             return this;
         }
@@ -138,6 +152,9 @@ public final class EventsCGI
         public Builder gpsMask( final int gpsMask )
         {
             text.isUnset();
+            alarmMask.isUnset();
+            vmdMask.isUnset();
+            sysMask.isUnset();
             this.gpsMask.set( gpsMask );
             return this;
         }
@@ -150,6 +167,9 @@ public final class EventsCGI
         public Builder sysMask( final int sysMask )
         {
             text.isUnset();
+            alarmMask.isUnset();
+            vmdMask.isUnset();
+            gpsMask.isUnset();
             this.sysMask.set( sysMask );
             return this;
         }
@@ -161,6 +181,17 @@ public final class EventsCGI
         {
             return new EventsCGI( this );
         }
+
+        /**
+         * The format of the results.
+         * 
+         * @return the builder.
+         */
+        public Builder format( final Format format )
+        {
+            this.format = format;
+            return this;
+        }
     }
 
     /**
@@ -170,6 +201,7 @@ public final class EventsCGI
     {
         time = builder.time.get();
         range = builder.range.get();
+        format = builder.format;
         maxLength = builder.maxLength.get();
         text = builder.text.get();
         camMask = builder.camMask.get();
@@ -181,6 +213,7 @@ public final class EventsCGI
 
     private final UInt31 time;
     private final UInt31 range;
+    private final Format format;
     private final Integer maxLength;
     private final String text;
     private final long camMask;
@@ -206,7 +239,16 @@ public final class EventsCGI
     }
 
     /**
-     * The maximum number of results to obtain.
+     * The format of the results.
+     */
+    public Format getFormat()
+    {
+        return format;
+    }
+
+    /**
+     * The maximum number of results to obtain. Negative values reverse the
+     * direction of the search.
      */
     public int getMaxLength()
     {
@@ -312,10 +354,27 @@ public final class EventsCGI
                 }
             };
 
+            final Conversion<String, Format> parseFormat = new Conversion<String, Format>()
+            {
+                public Format convert( final String s )
+                {
+                    return Format.valueOf( s );
+                }
+            };
+
             final Map<String, Action<String>> strategy = new HashMap<String, Action<String>>();
-            strategy.put( "format", Action.<String> doNothing() );
+
             strategy.put( "time", join( builder.time.setter(), parseUInt31 ) );
             strategy.put( "range", join( builder.range.setter(), parseUInt31 ) );
+            strategy.put( "format", join( new Action<Format>()
+            {
+
+                public void invoke( final Format format )
+                {
+                    builder.format( format );
+                }
+            }, parseFormat ) );
+
             strategy.put( "listlength", join( builder.maxLength.setter(),
                     parseInt ) );
             strategy.put( "text", builder.text.setter() );
@@ -350,7 +409,6 @@ public final class EventsCGI
     {
         return new Action<U>()
         {
-            @Override
             public void invoke( final U u )
             {
                 action.invoke( conversion.convert( u ) );
@@ -372,13 +430,14 @@ public final class EventsCGI
     }
 
     /**
-     * Returns /events.cgi?format=csv followed by all the parameters specified
-     * in this EventsCGI.
+     * Returns /events.cgi? followed by all the parameters specified in this
+     * EventsCGI.
      */
     @Override
     public String toString()
     {
-        return "/events.cgi?format=csv" + withIntParam( getTime(), 0, "time" )
+        return "/events.cgi?format=" + getFormat()
+                + withIntParam( getTime(), 0, "time" )
                 + withIntParam( getRange(), Integer.MAX_VALUE, "range" )
                 + withIntParam( getMaxLength(), 100, "listlength" )
                 + with( getText(), "", "text" )
@@ -436,6 +495,7 @@ public final class EventsCGI
             final EventsCGI other = (EventsCGI) object;
             final EqualsBuilder builder = new EqualsBuilder().with(
                     getAlarmMask(), other.getAlarmMask(), "almmask" );
+            builder.with( getFormat(), other.getFormat(), "format" );
             builder.with( getCamMask(), other.getCamMask(), "cammask" );
             builder.with( getGpsMask(), other.getGpsMask(), "gpsmask" );
             builder.with( getMaxLength(), other.getMaxLength(), "listlength" );

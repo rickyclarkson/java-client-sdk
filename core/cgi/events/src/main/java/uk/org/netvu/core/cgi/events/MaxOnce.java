@@ -66,7 +66,6 @@ class MaxOnce<T>
     {
         return new Action<T>()
         {
-            @Override
             public void invoke( final T t )
             {
                 set( t );

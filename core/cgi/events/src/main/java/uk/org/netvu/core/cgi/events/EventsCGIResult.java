@@ -9,15 +9,15 @@ import static uk.org.netvu.core.cgi.events.Checks.notNull;
  */
 public class EventsCGIResult
 {
-    private final int cam;
+    private final BoundInt cam;
     private final String alarm;
     private final UInt31 julianTime;
-    private final int offset;
+    private final BoundInt offset;
     private final String file;
     private final boolean onDisk;
     private final UInt31 duration;
-    private final int preAlarm;
-    private final int archive;
+    private final UInt31 preAlarm;
+    private final UInt31 archive;
     private final Status status;
     private final AlarmType alarmType;
 
@@ -30,7 +30,7 @@ public class EventsCGIResult
      */
     private EventsCGIResult( final Builder builder )
     {
-        cam = builder.cam;
+        cam = notNull( builder.cam, "cam" );
         alarm = notNull( builder.alarm, "alarm" );
         julianTime = notNull( builder.julianTime, "julianTime" );
         offset = notNull( builder.offset, "offset" );
@@ -52,18 +52,15 @@ public class EventsCGIResult
      */
     static class Builder
     {
-        // This uses Integers rather than ints so that the default value of null
-        // can be used as a sentinel.
-
-        private Integer cam;
+        private BoundInt cam = new BoundInt( 0, 0, 64 );
         private String alarm;
         private UInt31 julianTime;
-        private Integer offset;
+        private BoundInt offset = new BoundInt( 0, -90000, 90000 );
         private String file;
         private Boolean onDisk;
         private UInt31 duration;
-        private Integer preAlarm;
-        private Integer archive;
+        private UInt31 preAlarm;
+        private UInt31 archive;
         private Status status = Status.NONE;
         private AlarmType alarmType = AlarmType.NONE;
 
@@ -76,7 +73,7 @@ public class EventsCGIResult
          */
         public Builder cam( final int cam )
         {
-            this.cam = cam;
+            this.cam = this.cam.newValue( cam );
             return this;
         }
 
@@ -108,7 +105,7 @@ public class EventsCGIResult
 
         public Builder offset( final int offset )
         {
-            this.offset = offset;
+            this.offset = this.offset.newValue( offset );
             return this;
         }
 
@@ -135,13 +132,13 @@ public class EventsCGIResult
             return this;
         }
 
-        public Builder preAlarm( final int preAlarm )
+        public Builder preAlarm( final UInt31 preAlarm )
         {
             this.preAlarm = preAlarm;
             return this;
         }
 
-        public Builder archive( final int archive )
+        public Builder archive( final UInt31 archive )
         {
             this.archive = archive;
             return this;
@@ -176,7 +173,7 @@ public class EventsCGIResult
      */
     public int getCam()
     {
-        return cam;
+        return cam.value;
     }
 
     /**
@@ -200,7 +197,7 @@ public class EventsCGIResult
      */
     public int getOffset()
     {
-        return offset;
+        return offset.value;
     }
 
     /**
@@ -234,7 +231,7 @@ public class EventsCGIResult
      */
     public int getPreAlarm()
     {
-        return preAlarm;
+        return preAlarm.toInt();
     }
 
     /**
@@ -243,7 +240,7 @@ public class EventsCGIResult
      */
     public int getArchive()
     {
-        return archive;
+        return archive.toInt();
     }
 
     /**
@@ -293,8 +290,8 @@ public class EventsCGIResult
         builder.offset( Integer.parseInt( values[4] ) ).file( values[5] );
         builder.onDisk( values[6].equals( "exists" ) );
         builder.duration( new UInt31( parseInt( values[8] ) ) );
-        builder.preAlarm( parseInt( values[9] ) );
-        builder.archive( parseInt( values[10] ) );
+        builder.preAlarm( new UInt31( parseInt( values[9] ) ) );
+        builder.archive( new UInt31( parseInt( values[10] ) ) );
 
         if ( values.length > 11 )
         {
@@ -338,6 +335,11 @@ public class EventsCGIResult
                         + getStatus().value ) + ", " + getAlarmType().value;
     }
 
+    /**
+     * Tests this object against another for equality.
+     * 
+     * @return true if all the fields have equal values, false otherwise.
+     */
     @Override
     public boolean equals( final Object object )
     {
@@ -363,12 +365,19 @@ public class EventsCGIResult
         return false;
     }
 
+    /**
+     * A hashcode consistent with the equals implementation.
+     */
     @Override
     public int hashCode()
     {
         return 1;
     }
 
+    /**
+     * Converts this object to a String holding comma separated values in the
+     * same format as in the events database. The index field is always 0.
+     */
     @Override
     public String toString()
     {
