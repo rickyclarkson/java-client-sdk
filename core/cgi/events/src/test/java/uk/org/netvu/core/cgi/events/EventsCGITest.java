@@ -464,4 +464,37 @@ public class EventsCGITest
                     next ) );
         }
     }
+
+    /**
+     * Tests that parsing null yields a NullPointerException. Specified in the
+     * use cases for the events interface.
+     */
+    @Test(expected = NullPointerException.class)
+    public void testParseNull()
+    {
+        EventsCGI.fromString( null );
+    }
+
+    /**
+     * Tests that parsing the empty String ("") yields an
+     * {@link IllegalArgumentException}. Specified in the use cases for the
+     * events interface.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testParseEmptyString()
+    {
+        EventsCGI.fromString( "" );
+    }
+
+    /**
+     * Tests that parsing some invalid CSV yields an
+     * {@link IllegalArgumentException}. Specified in the use cases for the
+     * events interface.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidParse()
+    {
+        EventsCGI.fromString( "?almmask=six" );
+    }
+
 }

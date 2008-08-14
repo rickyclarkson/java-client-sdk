@@ -392,6 +392,10 @@ public final class EventsCGI
             for ( final String param : split )
             {
                 final String[] parts = param.split( "=" );
+                if ( parts.length != 2 )
+                {
+                    throw new IllegalArgumentException( "Malformed URL" );
+                }
                 strategy.get( parts[0] ).invoke( parts[1] );
             }
 
