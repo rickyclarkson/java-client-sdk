@@ -10,6 +10,8 @@
             </item>
             <item name="Supported Plaforms" href="supported-platforms.html"/>
             <item name="Performance Constraints" href="performance-constraints.html"/>
+        </menu>
+        <menu name="Design">
             <item name="Rationale" href="rationale.html"/>
         </menu>
         <menu ref="reports"/>
