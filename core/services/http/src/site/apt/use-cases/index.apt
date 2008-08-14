@@ -1,0 +1,15 @@
+ -------------------
+ Use Cases
+ -------------------
+
+Use Cases
+
+ A use case is a description of a system's behaviour as it responds to a request that originates from outside of that system. The describe the interaction between a primary actor (the initiator of the interaction) and the system itself, represented as a sequence of simple steps. Actors are something or someone which exists outside of the system that take part in a dialogue with the system to achieve some goal. They may be end users, other systems, or hardware devices. Each use case is a complete series of events, described from the point of view of the actor.
+ 
+ Use cases should not be confused with the features of the system under consideration. A use case may be related to one or more features, a feature may be related to one or more use cases. Features are tracked using tickets. Use cases contain links to the ticket(s) that they relate to.
+ 
+ Use cases treat the system as a black box, and the interactions with the system, including system responses, are perceived as from outside the system. This is a deliberate policy, because it forces the author to focus on what the system must do, not how it is to be done, and avoids the trap of making assumptions about how the functionality will be accomplished.
+ 
+ <Information derived from {{{http://en.wikipedia.org/wiki/Use_case} Wikipedia.}}>
+
+
