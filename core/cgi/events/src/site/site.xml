@@ -4,7 +4,9 @@
         <menu name="Requirements">
             <item name="Use Cases" href="use-cases/index.html" collapse="true">
                 <item name="Build events.cgi query" href="use-cases/build-events-cgi.html"/>
+                <item name="Parse events.cgi query" href="use-cases/parse-events-cgi.html"/>
                 <item name="Parse events.cgi result" href="use-cases/parse-events-cgi-results.html"/>
+                <item name="Convert events.cgi result to CSV" href="use-cases/convert-result-to-csv.html"/>
             </item>
             <item name="Supported Plaforms" href="supported-platforms.html"/>
             <item name="Performance Constraints" href="performance-constraints.html"/>
