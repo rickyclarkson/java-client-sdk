@@ -67,18 +67,13 @@ EventsCGI cgi = new Events.Builder().setTime(100).setTime(200).setTime(300).done
 
   So it does have safety, albeit at runtime, and the implementing code is not repetitive.  Set is in the method names to make it very obvious that it does change the values it holds, so it is not quite as reusable as it could be (you can't store a partly-completed builder and complete it with two other options separately without having them potentially interfere with each other).  In fact the above could be made immutable, though I think the implementation would be painful.
  
- [[5]] Speaking of painful implementation, the final option is an immutable builder with as much static type-checking as possible - in the simplest cases these might not be this painful, but with optional parameters and parameters that exclude each other it starts to get a bit difficult.  One option is to have builder.time(int) return one type, that doesn't have time(int), and builder.range(int) return another type, that has time(int) but not range(int), but if you understood that you'll probably realise that it would leave you with O(n2) classes!  Instead builder could have time(int) and noTime, which would have the same type as each other.  This actually gives all the readability I can hope for without O(n2) classes, and keeps everything as type safe as possible:
+ [[5]] Speaking of painful implementation, the final option is an immutable builder with as much static type-checking as possible - in the simplest cases these might not be this painful, but with optional parameters and parameters that exclude each other it starts to get a bit difficult.  One option is to have builder.time(int) return one type, that doesn't have time(int), and builder.range(int) return another type, that has time(int) but not range(int), but if you understood that you'll probably realise that it would leave you with O(n^2) classes!  Instead builder could have time(int) and noTime, which would have the same type as each other.  This actually gives all the readability I can hope for without O(n^2) classes, and keeps everything as type safe as possible:
 
 ---
 
- public void testTS()
- {
-   assertEquals(new Events.BuilderTS().time(100).range(400).noFormat.maxLength(10)
-                                      .text("hello").noCamMask.getText(), "hello");
-   assertEquals(new Events.BuilderTS().noTime.noRange.noFormat.maxLength(200).noText
-                                      .camMask(400).alarmMask(100).noVmdMask.noGpsMask.noSysMask
-                                      .getMaxLength(), 200);
- }
+  EventsCGI cgi = new EventsCGI.Builder().time(100).range(400)
+                                         .noFormat.maxLength(10)
+                                         .text("hello").build();
 
 ---
 
