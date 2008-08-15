@@ -39,6 +39,28 @@
             <timezone>0</timezone>
         </developer>
     </developers>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <keystore>applet.keystore</keystore>
+                    <alias>applet</alias>
+                    <storepass>maplin</storepass>
+                    <signedjar>${project.build.directory}/signed/${project.build.finalName}.jar</signedjar>
+                    <verify>true</verify>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <reporting>
         <plugins>
             <plugin>

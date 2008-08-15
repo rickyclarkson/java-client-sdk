@@ -4,6 +4,108 @@
 
 Rationale
 
-  In designing the Events Database API, we looked at some implementations of the Builder pattern, and decided that we would use Joshua Bloch's version because it was considered the most conventional, so our expected users should understand how to use it.  This causes some broken code to be compilable, but thorough validation happens at runtime.
+* Builders
 
-  Also, we had a working version that was capable of running a query against a server and reporting results via a listener interface, but decided to go with a version that can only build queries from caller-supplied parameters, and build results from Strings.  This was to make sure that the library was well-focused on parsing and building, and to leave the implementation of actually running the query to another module - especially as there will be multiple such modules (services).
+  In designing the Events Database API, we needed to allow the user to supply the values of around 10 parameters.  Some of those parameters conflicted with each other, and all of them were optional.  Moreover, we expect to have to repeat the idea many times for each other CGI API, so we had a look at some implementations of the Builder design pattern.  I came up with some for discussion, aiming to get the most out of Java in terms of type safety and readability (both the implementation and the use).
+
+ [[1]] A long parameter list.
+
+---
+
+  foo(bar, baz, spam, eggs);
+
+---
+
+  More the problem than a solution, the flaws in a long parameter list are readily apparent.  Users forget the order of the parameters (though in Eclipse Ctrl-shift-Space lists them in tooltips), which the compiler catches except in the case of equally-typed parameters (see Military Typing later in this document).
+
+  Also it's unclear what the best thing to do with optional parameters is here - use nulls, have n2 overloads, have the user insert all the defaults that they're not interested in (this can be helped by static constants) or something else.
+
+  And as the text parameter decides which of the other parameters are valid, there would need to be two overloads.
+
+ [[2]] An anonymous subclass of the type we want that directly accesses variables to set them in its initialisation block.
+
+---
+
+EventsCGI cgi = new EventsCGI()
+{{
+ time = 300;
+ text = "hello";
+ sysMask = 127; //oops, not allowed text and sysMask
+ time = 400; //oops, can set the same value twice
+}};
+
+---
+
+  A couple of flaws with this are shown above in comments, though probably at least one IDE can flag up the duplicate write to 'time' as a problem.  The text and sysMask together can be checked after the constructor has run, though it's worth pointing out that you can't check this in the superclass' constructor.  Also, if an exception is thrown when the check is performed, the stack trace won't appear to come from the line "sysMask = 127;", which might be a problem.
+
+  Code formatters will often format the above code in a much less readable way because of the double braces.  Also, the style of code is quite alien to most developers, and it's quite arguable that you should avoid doing things in constructors, though in this case it's quite safe.
+
+ [[3]] An anonymous subclass of the type we want that access variables through accessors to set them in its initalisation block.
+
+---
+
+Events events = new Events()
+{{
+ time.set(300);
+ text.set("hello");
+ sysMask.set(127); //now a runtime check could disallow this.
+ time.set(400); //and this.
+}};
+
+---
+
+  Sadly, despite being a little safer, this is a little harder to read than the preceding version.
+
+ [[4]] A mutable builder.
+
+---
+
+EventsCGI cgi = new Events.Builder().setTime(100).setTime(200).setTime(300).done();
+//the above line will throw an exception on the second call to setTime.
+
+---
+
+  So it does have safety, albeit at runtime, and the implementing code is not repetitive.  Set is in the method names to make it very obvious that it does change the values it holds, so it is not quite as reusable as it could be (you can't store a partly-completed builder and complete it with two other options separately without having them potentially interfere with each other).  In fact the above could be made immutable, though I think the implementation would be painful.
+ 
+ [[5]] Speaking of painful implementation, the final option is an immutable builder with as much static type-checking as possible - in the simplest cases these might not be this painful, but with optional parameters and parameters that exclude each other it starts to get a bit difficult.  One option is to have builder.time(int) return one type, that doesn't have time(int), and builder.range(int) return another type, that has time(int) but not range(int), but if you understood that you'll probably realise that it would leave you with O(n2) classes!  Instead builder could have time(int) and noTime, which would have the same type as each other.  This actually gives all the readability I can hope for without O(n2) classes, and keeps everything as type safe as possible:
+
+---
+
+ public void testTS()
+ {
+   assertEquals(new Events.BuilderTS().time(100).range(400).noFormat.maxLength(10)
+                                      .text("hello").noCamMask.getText(), "hello");
+   assertEquals(new Events.BuilderTS().noTime.noRange.noFormat.maxLength(200).noText
+                                      .camMask(400).alarmMask(100).noVmdMask.noGpsMask.noSysMask
+                                      .getMaxLength(), 200);
+ }
+
+---
+
+  So now new Events.BuilderTS().time(100).time(200) won't compile, and new Events.BuilderTS().text("hello").sysMask(127) won't compile, as the methods just aren't available.  It works well with Eclipse's completion.  The implementation is a little odd, but it doesn't get any more complex with extra parameters, just.. long.
+
+  Craig opted to go with something similar to the 4th suggestion, but changing setTime(x) to just time(x), directly as Joshua Bloch has documented.
+
+* Military Typing
+
+  For some parameters to the builders in the Event Database API, the exact ranges of values that should be accepted are different to those provided in Java's primitive types.  For example, the 'time' parameter has a documented range of 0 to 2^31-1, which luckily is the same as the non-negative part of Java's int (a signed 32-bit two's complement integer).  I (Ricky) came up with the type UInt31 for this, so the user would write one of the following:
+
+---
+
+new EventsCGI.Builder().time(new UInt31(some value))
+new EventsCGI.Builder().time(uint31(some value)) //using a static import
+new EventsCGI.Builder().time(UInt31.valueOf(some value))
+
+---
+
+  Perhaps Unsigned31 would be a better name to expose to the user, though the name doesn't fundamentally change how the API is used.
+
+  The advantage that UInt31 has over providing an int in public API is that it documents immediately that not all int values are acceptable, and prevents the checking of that value from being repeated everywhere that the value is read in from the API user.
+
+  By providing restrictive types before the main API methods are even invoked, we don't have to worry about throwing IllegalArgumentExceptions from each API method, but only in the constructor for UInt31.
+
+  We've called this Military Typing after the (quite opinionated) blog post {{http://syntaxfree.wordpress.com/2006/12/24/static-vs-dynamic-typing-do-what-thou-wilt/}} - worth a read for some background on the matter.
+
+  In other places in the API there are more arbitrary permitted number ranges, e.g., one field (offset in EventsCGIResult) has a range of -90,000 to +90,000 inclusive - it would be hard to appropriately name that by its range - IntFromMinus90000ToPlus90000 would be awful to work with.  Another way would be to create a named type for that parameter, e.g., Offset (which might extend some BoundInt type for all its implementation).  This would rule out the class of broken code where invalid values are passed to our APIs, but would make the caller have to do more work: new EventsCGI.Builder().offset(new Offset(30)) instead of new EventsCGI.Builder().offset(30).  Also, it introduces one possible invalid value, null.
+
+  Craig decided to keep the API as small as possible, so we are now using Java's built-in types in the API, rather than providing bounded wrapper classes.  This means that we lose some of the self-documenting nature of the API, have to repeat the checks that UInt31 does (or use UInt31 internally) and have to consider what to do if the user gives us an int outside the range we want (previously this would have been handled by the UInt31 constructor), but the appearance of the user's code is better. 
