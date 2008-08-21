@@ -13,6 +13,10 @@ import java.util.Random;
 
 import org.junit.Test;
 
+import uk.org.netvu.core.cgi.common.Generator;
+import uk.org.netvu.core.cgi.common.Generators;
+import uk.org.netvu.core.cgi.common.Iterables;
+
 /**
  * Tests for the Iterables utility class.
  */

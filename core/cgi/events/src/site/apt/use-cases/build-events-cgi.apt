@@ -83,7 +83,7 @@ Build events.cgi query
 *----------+-----------------+----------------------+-------------------+
 |time      | The time from which to start searching the database. Specified as elapsed seconds from the unix epoch, 00:00:00 on 1st January 1970 GMT. | 0..2147483647 | 0 |
 *----------+-----------------+----------------------+-------------------+
-|range     | The time span to search specified in seconds. | 0..2147483647 | 0 |
+|range     | The time span to search specified in seconds. | 0..2147483647 | 2147483647 |
 *----------+-----------------+----------------------+-------------------+
 |format    | The format of the results: <js> returns a JavaScript snippet that includes the results in a JavaScript object array, <html> returns a HTML page containing the results in a JavaScript object array and calls a JavaScript function <<<parent.control.ProcessEvent()>>> when the results list is complete, <csv> returns the results in a comma separated variable list. | js, html, csv | js |
 *----------+-----------------+----------------------+-------------------+

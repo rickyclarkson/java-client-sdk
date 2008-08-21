@@ -3,7 +3,8 @@ package uk.org.netvu.core.cgi.events;
 import java.util.Iterator;
 import java.util.Random;
 
-import uk.org.netvu.core.cgi.events.UInt31;
+import uk.org.netvu.core.cgi.common.Generators;
+import uk.org.netvu.core.cgi.common.UInt31;
 
 import junit.framework.TestCase;
 

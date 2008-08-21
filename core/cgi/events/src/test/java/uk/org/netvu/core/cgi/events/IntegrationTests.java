@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Random;
 
+import uk.org.netvu.core.cgi.common.Format;
+import uk.org.netvu.core.cgi.common.Generators;
 import uk.org.netvu.core.cgi.events.EventsCGI.Builder;
 
 /**

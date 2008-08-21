@@ -14,6 +14,13 @@ import java.util.Random;
 
 import org.junit.Test;
 
+import uk.org.netvu.core.cgi.common.Action;
+import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Format;
+import uk.org.netvu.core.cgi.common.Generators;
+import uk.org.netvu.core.cgi.common.Iterables;
+import uk.org.netvu.core.cgi.common.Strings;
+import uk.org.netvu.core.cgi.common.UInt31;
 import uk.org.netvu.core.cgi.events.EventsCGI.Builder;
 
 /**
@@ -31,6 +38,7 @@ public class EventsCGITest
     public void testDefaultValues()
     {
         final EventsCGI events = new EventsCGI.Builder().build();
+        assertTrue( events.getFormat() == Format.CSV );
         assertTrue( events.getTime() == 0 );
         assertTrue( events.getRange() == Integer.MAX_VALUE );
         assertTrue( events.getMaxLength() == 100 );
@@ -237,9 +245,9 @@ public class EventsCGITest
     boolean compare( final String input, final EventsCGIResult output )
     {
         final List<String> fields = new ArrayList<String>(
-                Arrays.asList( EventsCGIResult.split( input ) ) );
+                Arrays.asList( Strings.split( input ) ) );
         final List<String> others = new ArrayList<String>(
-                Arrays.asList( EventsCGIResult.split( output.toCSV( 0 ) ) ) );
+                Arrays.asList( Strings.split( output.toCSV( 0 ) ) ) );
 
         fields.remove( 0 );
         others.remove( 0 );
@@ -428,6 +436,7 @@ public class EventsCGITest
         return Iterables.map( randomEventCGIBuilders( random ),
                 new Conversion<EventsCGI.Builder, EventsCGI>()
                 {
+                    @Override
                     public EventsCGI convert( final Builder builder )
                     {
                         return builder.build();
@@ -459,9 +468,8 @@ public class EventsCGITest
         {
             final EventsCGI next = cgis.next();
             assertTrue( EventsCGI.fromString(
-                    random.nextBoolean() ? next.toString()
-                            : EventsCGI.fromLast( '?', next.toString() ) ).equals(
-                    next ) );
+                    random.nextBoolean() ? next.toString() : Strings.fromLast(
+                            '?', next.toString() ) ).equals( next ) );
         }
     }
 
@@ -496,5 +504,4 @@ public class EventsCGITest
     {
         EventsCGI.fromString( "?almmask=six" );
     }
-
 }

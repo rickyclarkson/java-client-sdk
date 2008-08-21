@@ -1,6 +1,6 @@
 package uk.org.netvu.core.cgi.events;
 
-import uk.org.netvu.core.cgi.events.MaxOnce;
+import uk.org.netvu.core.cgi.common.MaxOnce;
 import junit.framework.TestCase;
 
 /**

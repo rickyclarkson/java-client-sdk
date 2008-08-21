@@ -11,4 +11,11 @@
     <build>
         <finalName>core-cgi-events-${project.version}</finalName>
     </build>
+    <dependencies>
+        <dependency>
+            <groupId>uk.org.netvu</groupId>
+            <artifactId>common</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

@@ -1,8 +1,11 @@
 package uk.org.netvu.core.cgi.events;
 
 import static java.lang.Integer.parseInt;
-import static uk.org.netvu.core.cgi.events.Checks.checks;
-import static uk.org.netvu.core.cgi.events.Checks.notNull;
+import static uk.org.netvu.core.cgi.common.Checks.checks;
+import static uk.org.netvu.core.cgi.common.Checks.notNull;
+import uk.org.netvu.core.cgi.common.BoundInt;
+import uk.org.netvu.core.cgi.common.Strings;
+import uk.org.netvu.core.cgi.common.UInt31;
 
 /**
  * A single result from the events database.
@@ -260,11 +263,6 @@ public class EventsCGIResult
         return status;
     }
 
-    static String[] split( final String line )
-    {
-        return line.replaceAll( ",([^ ])", ", $1" ).split( ", " );
-    }
-
     /**
      * Parses comma separated values in the format defined in the Video Server
      * Specification.
@@ -275,7 +273,7 @@ public class EventsCGIResult
      */
     public static EventsCGIResult fromString( final String line )
     {
-        final String[] values = split( line );
+        final String[] values = Strings.split( line );
 
         if ( values.length < 11 || values.length > 13 )
         {

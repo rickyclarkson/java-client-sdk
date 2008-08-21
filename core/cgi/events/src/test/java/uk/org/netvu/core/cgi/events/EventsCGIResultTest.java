@@ -9,6 +9,8 @@ import java.util.Random;
 
 import org.junit.Test;
 
+import uk.org.netvu.core.cgi.common.Generators;
+import uk.org.netvu.core.cgi.common.UInt31;
 import uk.org.netvu.core.cgi.events.EventsCGIResult.Builder;
 
 /**

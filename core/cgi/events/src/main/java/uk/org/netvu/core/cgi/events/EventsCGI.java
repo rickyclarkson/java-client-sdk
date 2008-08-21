@@ -7,6 +7,13 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.org.netvu.core.cgi.common.Action;
+import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Format;
+import uk.org.netvu.core.cgi.common.MaxOnce;
+import uk.org.netvu.core.cgi.common.Strings;
+import uk.org.netvu.core.cgi.common.UInt31;
+
 /**
  * A parameter list for an events.cgi query, checked for correctness.
  */
@@ -28,7 +35,8 @@ public final class EventsCGI
         private final MaxOnce<UInt31> range = new MaxOnce<UInt31>( new UInt31(
                 Integer.MAX_VALUE ), "range" );
 
-        private Format format = Format.JS;
+        private final MaxOnce<Format> format = new MaxOnce<Format>( Format.CSV,
+                "format" );
 
         private final MaxOnce<Integer> maxLength = new MaxOnce<Integer>( 100,
                 "maxLength" );
@@ -189,7 +197,7 @@ public final class EventsCGI
          */
         public Builder format( final Format format )
         {
-            this.format = format;
+            this.format.set( format );
             return this;
         }
     }
@@ -201,7 +209,7 @@ public final class EventsCGI
     {
         time = builder.time.get();
         range = builder.range.get();
-        format = builder.format;
+        format = builder.format.get();
         maxLength = builder.maxLength.get();
         text = builder.text.get();
         camMask = builder.camMask.get();
@@ -303,12 +311,6 @@ public final class EventsCGI
         return sysMask;
     }
 
-    static String fromLast( final char c, final String string )
-    {
-        return string.contains( String.valueOf( c ) ) ? string.substring( string.lastIndexOf( c ) + 1 )
-                : string;
-    }
-
     /**
      * Parses a URL (or the query part of a URL) to obtain an EventsCGI holding
      * the values obtained from the URL.
@@ -319,11 +321,12 @@ public final class EventsCGI
         {
             final Builder builder = new EventsCGI.Builder();
 
-            final String[] split = fromLast( '?',
+            final String[] split = Strings.fromLast( '?',
                     URLDecoder.decode( string, "UTF-8" ) ).split( "&" );
 
             final Conversion<String, Integer> parseInt = new Conversion<String, Integer>()
             {
+                @Override
                 public Integer convert( final String string )
                 {
                     return Integer.parseInt( string );
@@ -332,6 +335,7 @@ public final class EventsCGI
 
             final Conversion<String, UInt31> parseUInt31 = new Conversion<String, UInt31>()
             {
+                @Override
                 public UInt31 convert( final String s )
                 {
                     return new UInt31( Integer.parseInt( s ) );
@@ -340,6 +344,7 @@ public final class EventsCGI
 
             final Conversion<String, Long> parseHexLong = new Conversion<String, Long>()
             {
+                @Override
                 public Long convert( final String s )
                 {
                     return new BigInteger( s, 16 ).longValue();
@@ -348,6 +353,7 @@ public final class EventsCGI
 
             final Conversion<String, Integer> parseHexInt = new Conversion<String, Integer>()
             {
+                @Override
                 public Integer convert( final String s )
                 {
                     return (int) Long.parseLong( s, 16 );
@@ -356,9 +362,10 @@ public final class EventsCGI
 
             final Conversion<String, Format> parseFormat = new Conversion<String, Format>()
             {
+                @Override
                 public Format convert( final String s )
                 {
-                    return Format.valueOf( s );
+                    return Format.valueOf( s.toUpperCase() );
                 }
             };
 
