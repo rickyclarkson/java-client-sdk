@@ -10,6 +10,7 @@ import java.util.List;
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.GenericBuilder;
+import uk.org.netvu.core.cgi.common.Iterables;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.UInt31;
 
@@ -209,8 +210,11 @@ final class VPartsCGI
     @Override
     public String toString()
     {
-        return "/vparts.cgi?format=" + builder.get( formatParam ) + "&"
-                + builder.toURLParameters( params );
+        return "/vparts.cgi?format="
+                + builder.get( formatParam )
+                + "&"
+                + builder.toURLParameters( Iterables.remove( params,
+                        formatParam ) );
     }
 
     public static VPartsCGI fromString( final String url )

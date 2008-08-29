@@ -44,7 +44,7 @@ public abstract class Conversion<T, R>
         @Override
         public Long convert( final String t )
         {
-            return Long.parseLong ( t );
+            return Long.parseLong( t );
         }
     };
 
@@ -82,6 +82,18 @@ public abstract class Conversion<T, R>
             public R convert( final T t )
             {
                 throw new UnsupportedOperationException();
+            }
+        };
+    }
+
+    public static <T> Conversion<T, String> objectToString()
+    {
+        return new Conversion<T, String>()
+        {
+            @Override
+            public String convert( final T t )
+            {
+                return t.toString();
             }
         };
     }

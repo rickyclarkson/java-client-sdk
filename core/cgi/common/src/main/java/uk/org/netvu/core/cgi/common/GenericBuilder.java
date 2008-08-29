@@ -96,16 +96,9 @@ public final class GenericBuilder
         URLBuilder builder = new URLBuilder( "" );
         for ( final Parameter<?, ?> param : params )
         {
-            builder = hack( builder, param );
+            builder = param.withURLParameter( builder, this );
         }
 
         return builder.toString();
-    }
-
-    private <T> URLBuilder hack( final URLBuilder builder,
-            final Parameter<?, T> param )
-    {
-        return builder.withOptionalParam( param.name, this.get( param ),
-                param.defaultValue );
     }
 }

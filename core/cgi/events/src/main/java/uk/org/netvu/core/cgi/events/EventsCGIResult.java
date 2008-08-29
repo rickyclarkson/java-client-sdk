@@ -191,8 +191,8 @@ public class EventsCGIResult
 
                 if ( real.get( param ).isNone() )
                 {
-                    throw new IllegalStateException( "The parameter "
-                            + param.name + " has not been given a value" );
+                    throw new IllegalStateException( "The parameter " + param
+                            + " has not been given a value" );
                 }
             }
 

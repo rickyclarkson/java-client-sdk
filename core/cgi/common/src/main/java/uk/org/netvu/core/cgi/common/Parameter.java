@@ -1,9 +1,7 @@
 package uk.org.netvu.core.cgi.common;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Parameter<T, R>
 {
@@ -12,16 +10,19 @@ public class Parameter<T, R>
     public final R defaultValue;
     public final Reduction<T, R> reduction;
     public final Conversion<String, T> fromString;
+    public final Reduction<R, URLBuilder> toURLParameter;
 
     private Parameter( final String name, final String description,
             final R defaultValue, final Reduction<T, R> reduction,
-            final Conversion<String, T> fromString )
+            final Conversion<String, T> fromString,
+            final Reduction<R, URLBuilder> toURLParameter )
     {
         this.name = name;
         this.description = description;
         this.defaultValue = defaultValue;
         this.reduction = reduction;
         this.fromString = fromString;
+        this.toURLParameter = toURLParameter;
     }
 
     public static <T> Parameter<T, Option<T>> param( final String name,
@@ -40,7 +41,16 @@ public class Parameter<T, R>
                         }
                         throw new IllegalStateException();
                     }
-                }, fromString );
+                }, fromString, new Reduction<Option<T>, URLBuilder>()
+                {
+                    @Override
+                    public URLBuilder reduce( final Option<T> newValue,
+                            final URLBuilder original )
+                    {
+                        return original.withParam( name,
+                                newValue.get().toString() );
+                    }
+                } );
     }
 
     public static <T> Parameter<T, T> param( final String name,
@@ -60,14 +70,7 @@ public class Parameter<T, R>
 
                         throw new IllegalStateException();
                     }
-                }, fromString );
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Parameter(name=" + name + ", description=" + description
-                + ", defaultValue=" + defaultValue + ')';
+                }, fromString, Parameter.<T> singleToURLParameter( name ) );
     }
 
     public static <U> Parameter<Integer, U> bound( final int lowerInclusive,
@@ -87,7 +90,7 @@ public class Parameter<T, R>
 
                         throw new IllegalArgumentException();
                     }
-                }, param.fromString );
+                }, param.fromString, param.toURLParameter );
     }
 
     public static <T, U> Parameter<T, U> not( final T banned,
@@ -105,46 +108,65 @@ public class Parameter<T, R>
                         }
                         return param.reduction.reduce( newValue, original );
                     }
-                }, param.fromString );
+                }, param.fromString, param.toURLParameter );
     }
 
-    public static <T> Parameter<T, List<T>> many( final String name,
-            final String description )
-    {
-        return new Parameter<T, List<T>>( name, description,
-                new ArrayList<T>(), new Reduction<T, List<T>>()
-                {
-                    @Override
-                    public List<T> reduce( final T newValue,
-                            final List<T> original )
-                    {
-                        final List<T> result = new ArrayList<T>( original );
-                        result.add( newValue );
-                        return result;
-                    }
-                }, Conversion.<String, T> throwUnsupportedOperationException() );
-    }
-
-    public static <T> Parameter<Pair<Integer, T>, Map<Integer, T>> sparseArrayParam(
+    public static <T> Parameter<Pair<Integer, T>, TreeMap<Integer, T>> sparseArrayParam(
             final String name, final String description )
     {
-        return new Parameter<Pair<Integer, T>, Map<Integer, T>>(
+        return new Parameter<Pair<Integer, T>, TreeMap<Integer, T>>(
                 name,
                 description,
-                new HashMap<Integer, T>(),
-                new Reduction<Pair<Integer, T>, Map<Integer, T>>()
+                new TreeMap<Integer, T>(),
+                new Reduction<Pair<Integer, T>, TreeMap<Integer, T>>()
                 {
                     @Override
-                    public Map<Integer, T> reduce(
+                    public TreeMap<Integer, T> reduce(
                             final Pair<Integer, T> newValue,
-                            final Map<Integer, T> original )
+                            final TreeMap<Integer, T> original )
                     {
-                        final Map<Integer, T> copy = new HashMap<Integer, T>(
+                        final TreeMap<Integer, T> copy = new TreeMap<Integer, T>(
                                 original );
                         copy.put( newValue.first(), newValue.second() );
                         return copy;
                     }
                 },
-                Conversion.<String, Pair<Integer, T>> throwUnsupportedOperationException() );
+                Conversion.<String, Pair<Integer, T>> throwUnsupportedOperationException(),
+                new Reduction<TreeMap<Integer, T>, URLBuilder>()
+                {
+                    @Override
+                    public URLBuilder reduce( final TreeMap<Integer, T> map,
+                            URLBuilder urlBuilder )
+                    {
+                        for ( final Map.Entry<Integer, T> entry : map.entrySet() )
+                        {
+                            urlBuilder = urlBuilder.withParam( name + '['
+                                    + entry.getKey() + ']',
+                                    entry.getValue().toString() );
+                        }
+
+                        return urlBuilder;
+                    }
+                } );
+    }
+
+    private static <T> Reduction<T, URLBuilder> singleToURLParameter(
+            final String name )
+    {
+        return new Reduction<T, URLBuilder>()
+        {
+            @Override
+            public URLBuilder reduce( final T t, final URLBuilder builder )
+            {
+                return builder.withParam( name, t.toString() );
+            }
+        };
+    }
+
+    public URLBuilder withURLParameter( final URLBuilder builder,
+            final GenericBuilder genericBuilder )
+    {
+        return genericBuilder.isDefault( this ) ? builder
+                : toURLParameter.reduce( genericBuilder.get( this ), builder );
     }
 }

@@ -3,8 +3,10 @@ package uk.org.netvu.core.cgi.decoder;
 import static uk.org.netvu.core.cgi.common.Parameter.param;
 import static uk.org.netvu.core.cgi.common.Parameter.sparseArrayParam;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.GenericBuilder;
@@ -14,20 +16,30 @@ import uk.org.netvu.core.cgi.common.Parameter;
 
 public class DecoderCGI
 {
-    private static final Parameter<Pair<Integer, Connection>, Map<Integer, Connection>> connectionsParam = sparseArrayParam(
+    private static final Parameter<Pair<Integer, Connection>, TreeMap<Integer, Connection>> connectionsParam = sparseArrayParam(
             "connections",
             "The differences to make to the connections system variable" );
 
-    private static final Parameter<Pair<Integer, Layout>, Map<Integer, Layout>> layoutsParam = sparseArrayParam(
+    private static final Parameter<Pair<Integer, Layout>, TreeMap<Integer, Layout>> layoutsParam = sparseArrayParam(
             "layouts", "The differences to make to the layouts system variable" );
 
     private static final Parameter<String[], Option<String[]>> outputTitlesParam = param(
             "output_titles", "The titles to give to each output channel",
             Conversion.<String, String[]> throwUnsupportedOperationException() );
 
-    private static final Parameter<Pair<Integer, String>, Map<Integer, String>> commandsParam = sparseArrayParam(
+    private static final Parameter<Pair<Integer, String>, TreeMap<Integer, String>> commandsParam = sparseArrayParam(
             "commands",
             "The differences to make to the commands system variable" );
+
+    private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
+    {
+        {
+            add( connectionsParam );
+            add( layoutsParam );
+            add( outputTitlesParam );
+            add( commandsParam );
+        }
+    };
 
     private final GenericBuilder builder;
 
@@ -145,5 +157,10 @@ public class DecoderCGI
     public String[] getOutputTitles()
     {
         return builder.get( outputTitlesParam ).get();
+    }
+
+    public String toURLParameters()
+    {
+        return builder.toURLParameters( params );
     }
 }
