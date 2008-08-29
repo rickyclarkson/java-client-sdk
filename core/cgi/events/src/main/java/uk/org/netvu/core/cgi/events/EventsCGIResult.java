@@ -1,9 +1,13 @@
 package uk.org.netvu.core.cgi.events;
 
 import static java.lang.Integer.parseInt;
-import static uk.org.netvu.core.cgi.common.Checks.checks;
-import static uk.org.netvu.core.cgi.common.Checks.notNull;
-import uk.org.netvu.core.cgi.common.BoundInt;
+
+import java.util.ArrayList;
+
+import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.GenericBuilder;
+import uk.org.netvu.core.cgi.common.Option;
+import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.UInt31;
 
@@ -12,17 +16,55 @@ import uk.org.netvu.core.cgi.common.UInt31;
  */
 public class EventsCGIResult
 {
-    private final BoundInt cam;
-    private final String alarm;
-    private final UInt31 julianTime;
-    private final BoundInt offset;
-    private final String file;
-    private final boolean onDisk;
-    private final UInt31 duration;
-    private final UInt31 preAlarm;
-    private final UInt31 archive;
-    private final Status status;
-    private final AlarmType alarmType;
+    private static final Parameter<Integer, Option<Integer>> camParameter = Parameter.bound(
+            0, 64, Parameter.param( "cam", "The system camera number",
+                    Conversion.stringToInt ) );
+
+    private static final Parameter<String, Option<String>> alarmParameter = Parameter.param(
+            "alarm", "The alarm description.", Conversion.<String> identity() );
+
+    private static final Parameter<UInt31, Option<UInt31>> julianTimeParameter = Parameter.param(
+            "time", "The Julianised time that the event occurred at",
+            UInt31.fromString );
+
+    private static final Parameter<Integer, Option<Integer>> offsetParameter = Parameter.bound(
+            -90000, 90000, Parameter.param( "offset", "",
+                    Conversion.stringToInt ) );
+
+    private static final Parameter<String, Option<String>> fileParameter = Parameter.param(
+            "file", "", Conversion.<String> identity() );
+
+    private static final Parameter<Boolean, Option<Boolean>> onDiskParameter = Parameter.param(
+            "onDisk", "", Conversion.stringToBoolean );
+
+    private static final Parameter<UInt31, Option<UInt31>> durationParameter = Parameter.param(
+            "duration", "", UInt31.fromString );
+
+    private static final Parameter<UInt31, Option<UInt31>> preAlarmParameter = Parameter.param(
+            "preAlarm", "", UInt31.fromString );
+    private static final Parameter<UInt31, Option<UInt31>> archiveParameter = Parameter.param(
+            "archive", "", UInt31.fromString );
+    private static final Parameter<Status, Status> statusParameter = Parameter.param(
+            "status", "", Status.NONE, Status.fromString );
+    private static final Parameter<AlarmType, AlarmType> alarmTypeParameter = Parameter.param(
+            "alarmType", "", AlarmType.NONE, AlarmType.fromString );
+
+    private static final ArrayList<Parameter<?, ? extends Option<?>>> compulsoryParams = new ArrayList<Parameter<?, ? extends Option<?>>>()
+    {
+        {
+            add( camParameter );
+            add( alarmParameter );
+            add( julianTimeParameter );
+            add( offsetParameter );
+            add( fileParameter );
+            add( onDiskParameter );
+            add( durationParameter );
+            add( preAlarmParameter );
+            add( archiveParameter );
+        }
+    };
+
+    private final GenericBuilder builder;
 
     /**
      * Constructs an EventsCGIResult given a Builder that contains all the
@@ -33,20 +75,7 @@ public class EventsCGIResult
      */
     private EventsCGIResult( final Builder builder )
     {
-        cam = notNull( builder.cam, "cam" );
-        alarm = notNull( builder.alarm, "alarm" );
-        julianTime = notNull( builder.julianTime, "julianTime" );
-        offset = notNull( builder.offset, "offset" );
-        file = notNull( builder.file, "file" );
-        onDisk = builder.onDisk;
-        duration = checks( builder.duration, "duration" ).notNull().notGreaterThan(
-                new UInt31( Integer.MAX_VALUE - julianTime.toInt() ),
-                "the lowest duration that would cause a numeric overflow in end time" ).done();
-
-        preAlarm = builder.preAlarm;
-        archive = builder.archive;
-        status = notNull( builder.status, "status" );
-        alarmType = notNull( builder.alarmType, "alarmType" );
+        this.builder = builder.real;
     }
 
     /**
@@ -55,17 +84,7 @@ public class EventsCGIResult
      */
     static class Builder
     {
-        private BoundInt cam = new BoundInt( 0, 0, 64 );
-        private String alarm;
-        private UInt31 julianTime;
-        private BoundInt offset = new BoundInt( 0, -90000, 90000 );
-        private String file;
-        private Boolean onDisk;
-        private UInt31 duration;
-        private UInt31 preAlarm;
-        private UInt31 archive;
-        private Status status = Status.NONE;
-        private AlarmType alarmType = AlarmType.NONE;
+        private GenericBuilder real = new GenericBuilder();
 
         /**
          * Adds the system camera number to the builder.
@@ -76,7 +95,7 @@ public class EventsCGIResult
          */
         public Builder cam( final int cam )
         {
-            this.cam = this.cam.newValue( cam );
+            real = real.with( camParameter, cam );
             return this;
         }
 
@@ -89,7 +108,7 @@ public class EventsCGIResult
          */
         public Builder alarm( final String alarm )
         {
-            this.alarm = notNull( alarm, "alarm" );
+            real = real.with( alarmParameter, alarm );
             return this;
         }
 
@@ -102,25 +121,25 @@ public class EventsCGIResult
          */
         public Builder julianTime( final UInt31 julianTime )
         {
-            this.julianTime = notNull( julianTime, "julianTime" );
+            real = real.with( julianTimeParameter, julianTime );
             return this;
         }
 
         public Builder offset( final int offset )
         {
-            this.offset = this.offset.newValue( offset );
+            real = real.with( offsetParameter, offset );
             return this;
         }
 
         public Builder file( final String file )
         {
-            this.file = notNull( file, "file" );
+            real = real.with( fileParameter, file );
             return this;
         }
 
         public Builder onDisk( final boolean onDisk )
         {
-            this.onDisk = onDisk;
+            real = real.with( onDiskParameter, onDisk );
             return this;
         }
 
@@ -131,31 +150,31 @@ public class EventsCGIResult
          */
         public Builder duration( final UInt31 duration )
         {
-            this.duration = notNull( duration, "duration" );
+            real = real.with( durationParameter, duration );
             return this;
         }
 
         public Builder preAlarm( final UInt31 preAlarm )
         {
-            this.preAlarm = preAlarm;
+            real = real.with( preAlarmParameter, preAlarm );
             return this;
         }
 
         public Builder archive( final UInt31 archive )
         {
-            this.archive = archive;
+            real = real.with( archiveParameter, archive );
             return this;
         }
 
         public Builder status( final Status status )
         {
-            this.status = status;
+            real = real.with( statusParameter, status );
             return this;
         }
 
         public Builder alarmType( final AlarmType alarmType )
         {
-            this.alarmType = alarmType;
+            real = real.with( alarmTypeParameter, alarmType );
             return this;
         }
 
@@ -167,6 +186,16 @@ public class EventsCGIResult
          */
         public EventsCGIResult build()
         {
+            for ( final Parameter<?, ? extends Option<?>> param : compulsoryParams )
+            {
+
+                if ( real.get( param ).isNone() )
+                {
+                    throw new IllegalStateException( "The parameter "
+                            + param.name + " has not been given a value" );
+                }
+            }
+
             return new EventsCGIResult( this );
         }
     }
@@ -176,7 +205,7 @@ public class EventsCGIResult
      */
     public int getCam()
     {
-        return cam.value;
+        return builder.get( camParameter ).get();
     }
 
     /**
@@ -184,7 +213,7 @@ public class EventsCGIResult
      */
     public String getAlarm()
     {
-        return alarm;
+        return builder.get( alarmParameter ).get();
     }
 
     /**
@@ -192,7 +221,7 @@ public class EventsCGIResult
      */
     public int getJulianTime()
     {
-        return julianTime.toInt();
+        return builder.get( julianTimeParameter ).get().toInt();
     }
 
     /**
@@ -200,7 +229,7 @@ public class EventsCGIResult
      */
     public int getOffset()
     {
-        return offset.value;
+        return builder.get( offsetParameter ).get();
     }
 
     /**
@@ -208,7 +237,7 @@ public class EventsCGIResult
      */
     public String getFile()
     {
-        return file;
+        return builder.get( fileParameter ).get();
     }
 
     /**
@@ -216,7 +245,7 @@ public class EventsCGIResult
      */
     public boolean isOnDisk()
     {
-        return onDisk;
+        return builder.get( onDiskParameter ).get();
     }
 
     /**
@@ -225,7 +254,7 @@ public class EventsCGIResult
      */
     public int getDuration()
     {
-        return duration.toInt();
+        return builder.get( durationParameter ).get().toInt();
     }
 
     /**
@@ -234,7 +263,7 @@ public class EventsCGIResult
      */
     public int getPreAlarm()
     {
-        return preAlarm.toInt();
+        return builder.get( preAlarmParameter ).get().toInt();
     }
 
     /**
@@ -243,7 +272,7 @@ public class EventsCGIResult
      */
     public int getArchive()
     {
-        return archive.toInt();
+        return builder.get( archiveParameter ).get().toInt();
     }
 
     /**
@@ -251,7 +280,7 @@ public class EventsCGIResult
      */
     public AlarmType getAlarmType()
     {
-        return alarmType;
+        return builder.get( alarmTypeParameter );
     }
 
     /**
@@ -260,7 +289,7 @@ public class EventsCGIResult
      */
     public Status getStatus()
     {
-        return status;
+        return builder.get( statusParameter );
     }
 
     /**
@@ -318,7 +347,8 @@ public class EventsCGIResult
                 + ", "
                 + getFile()
                 + ", "
-                + ( onDisk ? "exists" : "overwitten" ) // overwitten is taken
+                + ( isOnDisk() ? "exists" : "overwitten" ) // overwitten is
+                // taken
                 // from server output
                 + ", "
                 + index

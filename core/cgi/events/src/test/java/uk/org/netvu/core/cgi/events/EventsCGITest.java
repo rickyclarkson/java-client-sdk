@@ -162,7 +162,7 @@ public class EventsCGITest
         final int randomInt = random.nextInt();
         final long randomLong = random.nextLong();
         final String randomString = Generators.strings( random ).iterator().next();
-        final UInt31 randomUInt31 = UInt31Test.uint31s( random ).next();
+        final UInt31 randomUInt31 = UInt31.uint31s( random ).next();
         assertTrue( new EventsCGI.Builder().alarmMask( randomInt ).build().getAlarmMask() == randomInt );
         assertTrue( new EventsCGI.Builder().range( randomUInt31.toInt() ).build().getRange() == randomUInt31.toInt() );
         assertTrue( new EventsCGI.Builder().camMask( randomLong ).build().getCamMask() == randomLong );
@@ -302,7 +302,7 @@ public class EventsCGITest
             {
                 final EventsCGI.Builder builder = new EventsCGI.Builder();
 
-                final Iterator<UInt31> uint31s = UInt31Test.uint31s( random );
+                final Iterator<UInt31> uint31s = UInt31.uint31s( random );
                 final Iterator<String> strings = Generators.strings( random ).iterator();
 
                 final List<Runnable> methods = new ArrayList<Runnable>()
@@ -402,7 +402,7 @@ public class EventsCGITest
                             {
                                 runnable.run();
                             }
-                            catch ( final IllegalStateException e )
+                            catch ( final RuntimeException e )
                             {
                             }
                         }

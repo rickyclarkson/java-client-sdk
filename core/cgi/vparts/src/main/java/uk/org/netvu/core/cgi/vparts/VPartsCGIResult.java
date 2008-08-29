@@ -9,30 +9,31 @@ import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.UInt31;
+import uk.org.netvu.core.cgi.common.Option;
 
 public class VPartsCGIResult
 {
-    private static final Parameter<Integer> indexParam = param( "index",
+    private static final Parameter<Integer, Option<Integer>> indexParam = param( "index",
             "The index of this result in the results", Conversion.stringToInt );
-    private static final Parameter<String> directoryParam = param( "directory",
+    private static final Parameter<String, Option<String>> directoryParam = param( "directory",
             "The directory where this video can be found",
             Conversion.<String> identity() );
-    private static final Parameter<String> filenameParam = param( "filename",
+    private static final Parameter<String, Option<String>> filenameParam = param( "filename",
             "The name of the file where this video can be found",
             Conversion.<String> identity() );
-    private static final Parameter<UInt31> startTimeParam = param(
+    private static final Parameter<UInt31, Option<UInt31>> startTimeParam = param(
             "start_time", "The start time", UInt31.fromString );
-    private static final Parameter<UInt31> endTimeParam = param( "end_time",
+    private static final Parameter<UInt31, Option<UInt31>> endTimeParam = param( "end_time",
             "The end time", UInt31.fromString );
-    private static final Parameter<UInt31> expiryTimeParam = param(
+    private static final Parameter<UInt31, Option<UInt31>> expiryTimeParam = param(
             "expiry_time", "The expiry time", UInt31.fromString );
-    private static final Parameter<Integer> numberOfEntriesParam = param(
+    private static final Parameter<Integer, Option<Integer>> numberOfEntriesParam = param(
             "n_entries", "The number of entries", Conversion.stringToInt );
-    private static final Parameter<Integer> camMaskParam = param( "cammask",
+    private static final Parameter<Integer, Option<Integer>> camMaskParam = param( "cammask",
             "The bitmask of cameras that this video comes from",
             Conversion.stringToInt );
 
-    private static final ArrayList<Parameter<?>> params = new ArrayList<Parameter<?>>()
+    private static final ArrayList<Parameter<?,? extends Option<?>>> params = new ArrayList<Parameter<?,? extends Option<?>>>()
     {
         {
             add( indexParam );
@@ -107,9 +108,10 @@ public class VPartsCGIResult
 
         public VPartsCGIResult build()
         {
-            for ( final Parameter<?> param : params )
+            for ( final Parameter<?, ? extends Option<?>> param : params )
             {
-                if ( !real.isSet( param ) )
+
+                if ( real.get( param ).isNone() )
                 {
                     throw new IllegalStateException( "The parameter "
                             + param.name + " has not been given a value" );
@@ -122,51 +124,51 @@ public class VPartsCGIResult
 
     public int getIndex()
     {
-        return builder.get( indexParam );
+        return builder.get( indexParam ).get();
     }
 
     public String getDirectory()
     {
-        return builder.get( directoryParam );
+        return builder.get( directoryParam ).get();
     }
 
     public String getFilename()
     {
-        return builder.get( filenameParam );
+        return builder.get( filenameParam ).get();
     }
 
     public int getStartTime()
     {
-        return builder.get( startTimeParam ).toInt();
+        return builder.get( startTimeParam ).get().toInt();
     }
 
     public int getEndTime()
     {
-        return builder.get( endTimeParam ).toInt();
+        return builder.get( endTimeParam ).get().toInt();
     }
 
     public int getExpiryTime()
     {
-        return builder.get( expiryTimeParam ).toInt();
+        return builder.get( expiryTimeParam ).get().toInt();
     }
 
     public int getNumberOfEntries()
     {
-        return builder.get( numberOfEntriesParam );
+        return builder.get( numberOfEntriesParam ).get();
     }
 
     public int getCamMask()
     {
-        return builder.get( camMaskParam );
+        return builder.get( camMaskParam ).get();
     }
 
     public String toCSV()
     {
         final StringBuilder result = new StringBuilder();
 
-        for ( final Parameter<?> param : params )
+        for ( final Parameter<?, ? extends Option<?>> param : params )
         {
-            result.append( builder.get( param ) ).append( ", " );
+            result.append( builder.get( param ).get() ).append( ", " );
         }
 
         return result.substring( 0, result.length() - 2 );
@@ -177,7 +179,7 @@ public class VPartsCGIResult
         GenericBuilder builder = new GenericBuilder();
         final String[] elements = Strings.split( csv );
         int a = 0;
-        for ( final Parameter<?> param : params )
+        for ( final Parameter<?, ?> param : params )
         {
             builder = hack( builder, param, elements[a] );
             a++;
@@ -185,8 +187,8 @@ public class VPartsCGIResult
         return new VPartsCGIResult( builder );
     }
 
-    private static <T> GenericBuilder hack( final GenericBuilder builder,
-            final Parameter<T> param, final String s )
+    private static <T, R> GenericBuilder hack( final GenericBuilder builder,
+                                            final Parameter<T, R> param, final String s )
     {
         return builder.with( param, param.fromString.convert( s ) );
     }

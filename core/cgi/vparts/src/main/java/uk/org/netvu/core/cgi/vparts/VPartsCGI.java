@@ -11,64 +11,62 @@ import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Parameter;
-import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.UInt31;
-import uk.org.netvu.core.cgi.common.URLBuilder;
 
 final class VPartsCGI
 {
-    private static final Parameter<Mode> modeParam = param( "mode",
-            "Determines the function of the cgi call", Mode.READ,
-            Mode.fromString );
-
-    private static final Parameter<UInt31> timeParam = param( "time",
-            "Julianised GMT start time for database search", new UInt31( 0 ),
-            UInt31.fromString );
-
-    private static final Parameter<UInt31> rangeParam = param( "range",
-            "Timespan to search in seconds.", new UInt31( Integer.MAX_VALUE ),
-            UInt31.fromString );
-
-    private static final Parameter<UInt31> expiryParam = param(
-            "expiry",
-            "Sets the expiry time for partitions, used in protect mode; Julianised GMT",
-            new UInt31( 0 ), UInt31.fromString );
-
-    private static final Parameter<Boolean> watermarkParam = param(
-            "watermark",
-            "Tells the CGI to generate watermark codes in read mode", false,
-            Conversion.stringToBoolean );
-
-    private static final Parameter<Integer> wmarkstepParam = bound( 1, 256,
-            param( "wmarkstepParam",
-                    "Defines the step size to be used in watermark.", 1,
-                    Conversion.stringToInt ) );
-
-    private static final Parameter<Format> formatParam = not(
+    private static final Parameter<Format, Format> formatParam = not(
             Format.HTML,
             param(
                     "format",
                     "Determines output format.  js is for JavaScript, csv for comma separated variables",
                     Format.CSV, Format.fromString ) );
 
-    private static final Parameter<Integer> listlengthParam = param(
+    private static final Parameter<Mode, Mode> modeParam = param( "mode",
+            "Determines the function of the cgi call", Mode.READ,
+            Mode.fromString );
+
+    private static final Parameter<UInt31, UInt31> timeParam = param( "time",
+            "Julianised GMT start time for database search", new UInt31( 0 ),
+            UInt31.fromString );
+
+    private static final Parameter<UInt31, UInt31> rangeParam = param( "range",
+            "Timespan to search in seconds.", new UInt31( Integer.MAX_VALUE ),
+            UInt31.fromString );
+
+    private static final Parameter<UInt31, UInt31> expiryParam = param(
+            "expiry",
+            "Sets the expiry time for partitions, used in protect mode; Julianised GMT",
+            new UInt31( 0 ), UInt31.fromString );
+
+    private static final Parameter<Boolean, Boolean> watermarkParam = param(
+            "watermark",
+            "Tells the CGI to generate watermark codes in read mode", false,
+            Conversion.stringToBoolean );
+
+    private static final Parameter<Integer, Integer> wmarkstepParam = bound( 1,
+            256, param( "wmarkstepParam",
+                    "Defines the step size to be used in watermark.", 1,
+                    Conversion.stringToInt ) );
+
+    private static final Parameter<Integer, Integer> listlengthParam = param(
             "listlength", "Maximum number of entries in the list", 100,
             Conversion.stringToInt );
 
-    private static final Parameter<DirectoryPathFormat> pathstyleParam = param(
+    private static final Parameter<DirectoryPathFormat, DirectoryPathFormat> pathstyleParam = param(
             "pathstyle", "Format of directory paths.",
             DirectoryPathFormat.SHORT, DirectoryPathFormat.fromString );
 
-    private static final List<Parameter<?>> params = new ArrayList<Parameter<?>>()
+    private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
     {
         {
+            add( formatParam );
             add( modeParam );
             add( timeParam );
             add( rangeParam );
             add( expiryParam );
             add( watermarkParam );
             add( wmarkstepParam );
-            add( formatParam );
             add( listlengthParam );
             add( pathstyleParam );
         }
@@ -211,42 +209,12 @@ final class VPartsCGI
     @Override
     public String toString()
     {
-        return new URLBuilder( "/vparts.cgi?" ).withParam( formatParam.name,
-                getFormat() ).withOptionalParam( modeParam.name, getMode(),
-                modeParam.defaultValue.get() ).withOptionalParam(
-                timeParam.name, new UInt31( getTime() ),
-                timeParam.defaultValue.get() ).withOptionalParam(
-                rangeParam.name, getRange(),
-                rangeParam.defaultValue.get().toInt() ).withOptionalParam(
-                expiryParam.name, getExpiry(),
-                expiryParam.defaultValue.get().toInt() ).withOptionalParam(
-                watermarkParam.name, getWatermark(),
-                watermarkParam.defaultValue.get() ).withOptionalParam(
-                wmarkstepParam.name, getWatermarkStep(),
-                wmarkstepParam.defaultValue.get() ).withOptionalParam(
-                listlengthParam.name, getListlength(),
-                listlengthParam.defaultValue.get() ).withOptionalParam(
-                pathstyleParam.name, getPathstyle(),
-                pathstyleParam.defaultValue.get() ).toString();
+        return "/vparts.cgi?format=" + builder.get( formatParam ) + "&"
+                + builder.toURLParameters( params );
     }
 
     public static VPartsCGI fromString( final String url )
     {
-        GenericBuilder builder = new GenericBuilder();
-
-        final String[] parts = Strings.fromLast( '?', url ).split( "&" );
-        for ( final String part : parts )
-        {
-            final String[] both = part.split( "=" );
-            for ( final Parameter<?> param : params )
-            {
-                if ( param.name.equals( both[0] ) )
-                {
-                    builder = builder.withFromString( param, both[1] );
-                }
-            }
-        }
-
-        return new VPartsCGI( builder );
+        return new VPartsCGI( GenericBuilder.fromURL( url, params ) );
     }
 }

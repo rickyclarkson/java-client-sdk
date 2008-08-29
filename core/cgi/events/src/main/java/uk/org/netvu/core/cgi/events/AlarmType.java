@@ -2,6 +2,8 @@ package uk.org.netvu.core.cgi.events;
 
 import java.util.Random;
 
+import uk.org.netvu.core.cgi.common.Conversion;
+
 // See the comment in Status.java:
 
 // Alarm type:-
@@ -102,4 +104,14 @@ public enum AlarmType
     {
         return AlarmType.values()[random.nextInt( AlarmType.values().length )];
     }
+
+    static final Conversion<String, AlarmType> fromString = new Conversion<String, AlarmType>()
+    {
+
+        @Override
+        public AlarmType convert( final String t )
+        {
+            return AlarmType.valueOf( t.toUpperCase() );
+        }
+    };
 }

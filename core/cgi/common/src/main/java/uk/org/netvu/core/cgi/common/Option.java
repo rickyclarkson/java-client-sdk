@@ -35,6 +35,11 @@ public abstract class Option<T>
             return t;
         }
 
+        @Override
+        public String toString()
+        {
+            return t.toString();
+        }
     }
 
     public static final class None<T> extends Option<T>

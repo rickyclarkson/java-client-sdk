@@ -1,5 +1,8 @@
 package uk.org.netvu.core.cgi.common;
 
+import java.util.Iterator;
+import java.util.Random;
+
 /**
  * An immutable unsigned integer with 31 bits (0..Integer.MAX_VALUE).
  */
@@ -85,5 +88,32 @@ public final class UInt31 implements Comparable<UInt31>
     public String toString()
     {
         return Integer.toString( value );
+    }
+
+    /**
+     * An infinite series of randomly-generated UInt31s.
+     * 
+     * @param random
+     *        the random number generator to use.
+     */
+    public static Iterator<UInt31> uint31s( final Random random )
+    {
+        return new Iterator<UInt31>()
+        {
+            public boolean hasNext()
+            {
+                return true;
+            }
+    
+            public UInt31 next()
+            {
+                return new UInt31( random.nextInt( Integer.MAX_VALUE ) );
+            }
+    
+            public void remove()
+            {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 }

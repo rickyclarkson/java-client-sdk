@@ -1,24 +1,94 @@
 package uk.org.netvu.core.cgi.events;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
+import static uk.org.netvu.core.cgi.common.Parameter.param;
 
-import uk.org.netvu.core.cgi.common.Action;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Format;
-import uk.org.netvu.core.cgi.common.MaxOnce;
-import uk.org.netvu.core.cgi.common.Strings;
+import uk.org.netvu.core.cgi.common.GenericBuilder;
+import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.UInt31;
+import uk.org.netvu.core.cgi.common.Validator;
 
 /**
  * A parameter list for an events.cgi query, checked for correctness.
  */
 public final class EventsCGI
 {
+    private static final Parameter<UInt31, UInt31> timeParam = param( "time",
+            "The time from which to search, in seconds since 1970.",
+            new UInt31( 0 ), UInt31.fromString );
+
+    private static final Parameter<UInt31, UInt31> rangeParam = param( "range",
+            "The timespan to search in seconds",
+            new UInt31( Integer.MAX_VALUE ), UInt31.fromString );
+
+    private static final Parameter<Format, Format> formatParam = param(
+            "format", "The format that the results should be returned in",
+            Format.CSV, Format.fromString );
+
+    private static final Parameter<Integer, Integer> lengthParam = param(
+            "listlength",
+            "The maximum number of results to obtain.  Negative values reverse the direction of the search.",
+            100, Conversion.stringToInt );
+
+    private static final Parameter<String, String> textParam = param(
+            "text",
+            "The text to search for in the text-in-image data.  If specified, causes the embedded text-in-image data to be searched for occurences of the supplied string.  The search is case sensitive. * can be used as a wildcard to replace one or more characters in the search string. ? can be used as a wildcard to replace a single character in the search string.",
+            "", Conversion.<String> identity() );
+
+    private static final Parameter<Long, Long> camMaskParam = param( "cammask",
+            "The 64-bit mask of cameras whose images we want to obtain.", 0L,
+            Conversion.hexStringToLong );
+
+    private static final Parameter<Integer, Integer> alarmMaskParam = param(
+            "almmask",
+            "The 32-bit mask of the alarms that we are interested in.", 0,
+            Conversion.hexStringToInt );
+
+    private static final Parameter<Long, Long> vmdMaskParam = param( "vmdmask",
+            "The 64-bit mask of video motion detection channels to search in.",
+            0L, Conversion.hexStringToLong );
+
+    private static final Parameter<Integer, Integer> gpsMaskParam = param(
+            "gpsmask", "The 32-bit mask of GPS event types to search for.", 0,
+            Conversion.hexStringToInt );
+
+    private static final Parameter<Integer, Integer> sysMaskParam = param(
+            "sysmask", "The 32-bit mask of system event types.", 0,
+            Conversion.hexStringToInt );
+
+    private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
+    {
+        {
+            add( timeParam );
+            add( rangeParam );
+            add( formatParam );
+            add( lengthParam );
+            add( textParam );
+            add( camMaskParam );
+            add( alarmMaskParam );
+            add( vmdMaskParam );
+            add( gpsMaskParam );
+            add( sysMaskParam );
+        }
+    };
+
+    private static final List<Parameter<?, ?>> exclusiveParams = new ArrayList<Parameter<?, ?>>()
+    {
+        {
+            add( textParam );
+            add( alarmMaskParam );
+            add( vmdMaskParam );
+            add( gpsMaskParam );
+            add( sysMaskParam );
+        }
+    };
+
     /**
      * A builder that takes in all the optional values for events.cgi as per the
      * Video Server Specification, and produces an EventsCGI when build() is
@@ -29,32 +99,19 @@ public final class EventsCGI
      */
     public static final class Builder
     {
-        private final MaxOnce<UInt31> time = new MaxOnce<UInt31>(
-                new UInt31( 0 ), "time" );
+        private GenericBuilder real = new GenericBuilder( new Validator()
+        {
+            public boolean isValid( final GenericBuilder builder )
+            {
+                int count = 0;
+                for ( final Parameter<?, ?> exclusiveParameter : exclusiveParams )
+                {
+                    count += builder.isDefault( exclusiveParameter ) ? 0 : 1;
+                }
 
-        private final MaxOnce<UInt31> range = new MaxOnce<UInt31>( new UInt31(
-                Integer.MAX_VALUE ), "range" );
-
-        private final MaxOnce<Format> format = new MaxOnce<Format>( Format.CSV,
-                "format" );
-
-        private final MaxOnce<Integer> maxLength = new MaxOnce<Integer>( 100,
-                "maxLength" );
-
-        private final MaxOnce<String> text = new MaxOnce<String>( "", "text" );
-
-        private final MaxOnce<Long> camMask = new MaxOnce<Long>( 0L, "camMask" );
-
-        private final MaxOnce<Integer> alarmMask = new MaxOnce<Integer>( 0,
-                "alarmMask" );
-
-        private final MaxOnce<Long> vmdMask = new MaxOnce<Long>( 0L, "vmdMask" );
-
-        private final MaxOnce<Integer> gpsMask = new MaxOnce<Integer>( 0,
-                "gpsMask" );
-
-        private final MaxOnce<Integer> sysMask = new MaxOnce<Integer>( 0,
-                "sysMask" );
+                return count < 2;
+            }
+        } );
 
         /**
          * The time from which to search, in seconds since 1970.
@@ -63,7 +120,7 @@ public final class EventsCGI
          */
         public Builder time( final int time )
         {
-            this.time.set( new UInt31( time ) );
+            real = real.with( timeParam, new UInt31( time ) );
             return this;
         }
 
@@ -75,7 +132,22 @@ public final class EventsCGI
          */
         public Builder range( final int range )
         {
-            this.range.set( new UInt31( range ) );
+            real = real.with( rangeParam, new UInt31( range ) );
+            return this;
+        }
+
+        /**
+         * The format that the results should come back in. Note that this API
+         * defaults to CSV, though the servers default to JS; parsing CSV is
+         * easier.
+         * 
+         * @param format
+         *        the format that results should come back in.
+         * @return the builder
+         */
+        public Builder format( final Format format )
+        {
+            real = real.with( formatParam, format );
             return this;
         }
 
@@ -87,7 +159,7 @@ public final class EventsCGI
          */
         public Builder length( final int maxLength )
         {
-            this.maxLength.set( maxLength );
+            real = real.with( lengthParam, maxLength );
             return this;
         }
 
@@ -103,11 +175,7 @@ public final class EventsCGI
          */
         public Builder text( final String text )
         {
-            alarmMask.isUnset();
-            vmdMask.isUnset();
-            gpsMask.isUnset();
-            sysMask.isUnset();
-            this.text.set( text );
+            real = real.with( textParam, text );
             return this;
         }
 
@@ -118,7 +186,7 @@ public final class EventsCGI
          */
         public Builder camMask( final long camMask )
         {
-            this.camMask.set( camMask );
+            real = real.with( camMaskParam, camMask );
             return this;
         }
 
@@ -129,11 +197,7 @@ public final class EventsCGI
          */
         public Builder alarmMask( final int alarmMask )
         {
-            text.isUnset();
-            vmdMask.isUnset();
-            gpsMask.isUnset();
-            sysMask.isUnset();
-            this.alarmMask.set( alarmMask );
+            real = real.with( alarmMaskParam, alarmMask );
             return this;
         }
 
@@ -144,11 +208,7 @@ public final class EventsCGI
          */
         public Builder vmdMask( final long vmdMask )
         {
-            text.isUnset();
-            alarmMask.isUnset();
-            gpsMask.isUnset();
-            sysMask.isUnset();
-            this.vmdMask.set( vmdMask );
+            real = real.with( vmdMaskParam, vmdMask );
             return this;
         }
 
@@ -159,11 +219,7 @@ public final class EventsCGI
          */
         public Builder gpsMask( final int gpsMask )
         {
-            text.isUnset();
-            alarmMask.isUnset();
-            vmdMask.isUnset();
-            sysMask.isUnset();
-            this.gpsMask.set( gpsMask );
+            real = real.with( gpsMaskParam, gpsMask );
             return this;
         }
 
@@ -174,11 +230,7 @@ public final class EventsCGI
          */
         public Builder sysMask( final int sysMask )
         {
-            text.isUnset();
-            alarmMask.isUnset();
-            vmdMask.isUnset();
-            gpsMask.isUnset();
-            this.sysMask.set( sysMask );
+            real = real.with( sysMaskParam, sysMask );
             return this;
         }
 
@@ -187,55 +239,23 @@ public final class EventsCGI
          */
         public EventsCGI build()
         {
-            return new EventsCGI( this );
-        }
-
-        /**
-         * The format of the results.
-         * 
-         * @return the builder.
-         */
-        public Builder format( final Format format )
-        {
-            this.format.set( format );
-            return this;
+            return new EventsCGI( real );
         }
     }
 
-    /**
-     * Copies the values from the builder to the constructed EventsCGI.
-     */
-    private EventsCGI( final Builder builder )
+    private final GenericBuilder builder;
+
+    private EventsCGI( final GenericBuilder builder )
     {
-        time = builder.time.get();
-        range = builder.range.get();
-        format = builder.format.get();
-        maxLength = builder.maxLength.get();
-        text = builder.text.get();
-        camMask = builder.camMask.get();
-        alarmMask = builder.alarmMask.get();
-        vmdMask = builder.vmdMask.get();
-        gpsMask = builder.gpsMask.get();
-        sysMask = builder.sysMask.get();
+        this.builder = builder;
     }
-
-    private final UInt31 time;
-    private final UInt31 range;
-    private final Format format;
-    private final Integer maxLength;
-    private final String text;
-    private final long camMask;
-    private final int alarmMask;
-    private final long vmdMask;
-    private final int gpsMask;
-    private final int sysMask;
 
     /**
      * The time from which to search, in seconds since 1970.
      */
     public int getTime()
     {
-        return time.toInt();
+        return builder.get( timeParam ).toInt();
     }
 
     /**
@@ -243,7 +263,7 @@ public final class EventsCGI
      */
     public int getRange()
     {
-        return range.toInt();
+        return builder.get( rangeParam ).toInt();
     }
 
     /**
@@ -251,7 +271,7 @@ public final class EventsCGI
      */
     public Format getFormat()
     {
-        return format;
+        return builder.get( formatParam );
     }
 
     /**
@@ -260,7 +280,7 @@ public final class EventsCGI
      */
     public int getMaxLength()
     {
-        return maxLength;
+        return builder.get( lengthParam );
     }
 
     /**
@@ -268,7 +288,7 @@ public final class EventsCGI
      */
     public String getText()
     {
-        return text;
+        return builder.get( textParam );
     }
 
     /**
@@ -276,7 +296,7 @@ public final class EventsCGI
      */
     public long getCamMask()
     {
-        return camMask;
+        return builder.get( camMaskParam );
     }
 
     /**
@@ -284,7 +304,7 @@ public final class EventsCGI
      */
     public int getAlarmMask()
     {
-        return alarmMask;
+        return builder.get( alarmMaskParam );
     }
 
     /**
@@ -292,7 +312,7 @@ public final class EventsCGI
      */
     public long getVmdMask()
     {
-        return vmdMask;
+        return builder.get( vmdMaskParam );
     }
 
     /**
@@ -300,7 +320,7 @@ public final class EventsCGI
      */
     public int getGpsMask()
     {
-        return gpsMask;
+        return builder.get( gpsMaskParam );
     }
 
     /**
@@ -308,7 +328,7 @@ public final class EventsCGI
      */
     public int getSysMask()
     {
-        return sysMask;
+        return builder.get( sysMaskParam );
     }
 
     /**
@@ -317,115 +337,12 @@ public final class EventsCGI
      */
     public static EventsCGI fromString( final String string )
     {
-        try
+        if ( string.equals( "" ) )
         {
-            final Builder builder = new EventsCGI.Builder();
-
-            final String[] split = Strings.fromLast( '?',
-                    URLDecoder.decode( string, "UTF-8" ) ).split( "&" );
-
-            final Conversion<String, Integer> parseInt = new Conversion<String, Integer>()
-            {
-                @Override
-                public Integer convert( final String string )
-                {
-                    return Integer.parseInt( string );
-                }
-            };
-
-            final Conversion<String, UInt31> parseUInt31 = new Conversion<String, UInt31>()
-            {
-                @Override
-                public UInt31 convert( final String s )
-                {
-                    return new UInt31( Integer.parseInt( s ) );
-                }
-            };
-
-            final Conversion<String, Long> parseHexLong = new Conversion<String, Long>()
-            {
-                @Override
-                public Long convert( final String s )
-                {
-                    return new BigInteger( s, 16 ).longValue();
-                }
-            };
-
-            final Conversion<String, Integer> parseHexInt = new Conversion<String, Integer>()
-            {
-                @Override
-                public Integer convert( final String s )
-                {
-                    return (int) Long.parseLong( s, 16 );
-                }
-            };
-
-            final Conversion<String, Format> parseFormat = new Conversion<String, Format>()
-            {
-                @Override
-                public Format convert( final String s )
-                {
-                    return Format.valueOf( s.toUpperCase() );
-                }
-            };
-
-            final Map<String, Action<String>> strategy = new HashMap<String, Action<String>>();
-
-            strategy.put( "time", join( builder.time.setter(), parseUInt31 ) );
-            strategy.put( "range", join( builder.range.setter(), parseUInt31 ) );
-            strategy.put( "format", join( new Action<Format>()
-            {
-
-                public void invoke( final Format format )
-                {
-                    builder.format( format );
-                }
-            }, parseFormat ) );
-
-            strategy.put( "listlength", join( builder.maxLength.setter(),
-                    parseInt ) );
-            strategy.put( "text", builder.text.setter() );
-            strategy.put( "cammask", join( builder.camMask.setter(),
-                    parseHexLong ) );
-            strategy.put( "almmask", join( builder.alarmMask.setter(),
-                    parseHexInt ) );
-            strategy.put( "vmdmask", join( builder.vmdMask.setter(),
-                    parseHexLong ) );
-            strategy.put( "gpsmask", join( builder.gpsMask.setter(),
-                    parseHexInt ) );
-            strategy.put( "sysmask", join( builder.sysMask.setter(),
-                    parseHexInt ) );
-
-            for ( final String param : split )
-            {
-                final String[] parts = param.split( "=" );
-                if ( parts.length != 2 )
-                {
-                    throw new IllegalArgumentException( "Malformed URL" );
-                }
-                strategy.get( parts[0] ).invoke( parts[1] );
-            }
-
-            return builder.build();
-        }
-        catch ( final UnsupportedEncodingException e )
-        {
-            throw new RuntimeException( e );
+            throw new IllegalArgumentException();
         }
 
-    }
-
-    private static <T, U> Action<U> join( final Action<T> action,
-            final Conversion<U, T> conversion )
-    {
-        return new Action<U>()
-        {
-            public void invoke( final U u )
-            {
-                action.invoke( conversion.convert( u ) );
-            }
-
-        };
+        return new EventsCGI( GenericBuilder.fromURL( string, params ) );
     }
 
     private static String urlEncode( final String unencoded )

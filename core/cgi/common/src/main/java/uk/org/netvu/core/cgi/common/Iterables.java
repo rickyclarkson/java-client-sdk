@@ -211,4 +211,11 @@ public class Iterables
         newOne.retainAll( others );
         return newOne;
     }
+
+    public static <T> List<T> remove(final List<T> original, final T toRemove)
+    {
+        final List<T> newOne = new ArrayList<T>(original);
+        newOne.remove(toRemove);
+        return newOne;
+    }
 }

@@ -29,7 +29,7 @@ public class VPartsCGIResultTest
         assertTrue( result.getStartTime() == 1 );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = IllegalStateException.class)
     public void twice()
     {
         new VPartsCGIResult.Builder().camMask( 4 ).camMask( 4 );
@@ -39,6 +39,7 @@ public class VPartsCGIResultTest
     public void fromCSV()
     {
         final String csv = "2, C:\\VIDEO, VID02495.VID, 958038878, 958038962, 0, 519, 15";
+        System.out.println( VPartsCGIResult.fromCSV( csv ).toCSV() );
         assertTrue( VPartsCGIResult.fromCSV( csv ).toCSV().equals( csv ) );
     }
 }

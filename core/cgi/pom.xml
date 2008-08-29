@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -7,10 +8,11 @@
     </parent>
     <artifactId>cgi</artifactId>
     <packaging>pom</packaging>
-    <name>NetVu Connected Java Client SDK->Core->CGI</name>
+    <name>NetVu Connected Java Client SDK-&gt;Core-&gt;CGI</name>
     <modules>
         <module>common</module>
         <module>events</module>
         <module>vparts</module>
+        <module>decoder</module>
     </modules>
 </project>

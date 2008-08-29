@@ -22,7 +22,7 @@ public class VPartsCGITest
         assertTrue( new VPartsCGI.Builder().pathstyle( DirectoryPathFormat.LONG ).build().getPathstyle() == DirectoryPathFormat.LONG );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = IllegalStateException.class)
     public void testRepeating()
     {
         new VPartsCGI.Builder().expiry( 5 ).expiry( 5 );
@@ -50,6 +50,8 @@ public class VPartsCGITest
     public void fromString()
     {
         final String url = "/vparts.cgi?format=csv&mode=protect&time=958038820&range=120&pathstyle=long";
+        System.out.println(VPartsCGI.fromString( url ));
+
         assertTrue( VPartsCGI.fromString( url ).toString().equals( url ) );
     }
 }

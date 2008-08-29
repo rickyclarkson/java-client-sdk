@@ -2,6 +2,8 @@ package uk.org.netvu.core.cgi.events;
 
 import java.util.Random;
 
+import uk.org.netvu.core.cgi.common.Conversion;
+
 /**
  * An enum consisting of various states a database record can be in.
  */
@@ -72,4 +74,14 @@ public enum Status
     {
         return Status.values()[random.nextInt( Status.values().length )];
     }
+
+    static final Conversion<String, Status> fromString = new Conversion<String, Status>()
+    {
+
+        @Override
+        public Status convert( final String t )
+        {
+            return Status.valueOf( t.toUpperCase() );
+        }
+    };
 }

@@ -2,7 +2,6 @@ package uk.org.netvu.core.cgi.events;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -67,7 +66,7 @@ public class EventsCGIResultTest
 
             public EventsCGIResult.Builder next()
             {
-                final Iterator<UInt31> uint31s = UInt31Test.uint31s( random );
+                final Iterator<UInt31> uint31s = UInt31.uint31s( random );
                 final UInt31 julianTime = uint31s.next();
 
                 return new EventsCGIResult.Builder().alarm( strings.next() ).archive(
@@ -265,31 +264,9 @@ public class EventsCGIResultTest
         EventsCGIResult.fromString( "" );
     }
 
-    /**
-     * Tests that parsing a malformed String yields an IllegalArgumentException.
-     * The use case "Build events.cgi query" specifies this.
-     */
-    @Test
-    public void testBadNumber()
-    {
-        final Random random = new Random( 0 );
-        final Iterator<Builder> gen = eventBuilderGenerator( random );
-
-        for ( int a = 0; a < Generators.LIMIT; a++ )
-        {
-            final EventsCGIResult next = gen.next().archive( new UInt31( 53 ) ).build();
-            try
-            {
-                EventsCGIResult.fromString( next.toString().replaceAll( "53",
-                        "abc" ) );
-                fail();
-            }
-            catch ( final IllegalArgumentException e )
-            {
-                // pass
-            }
-        }
-    }
+    // TODO test that parsing a malformed String yields an
+    // IllegalArgumentException.
+    // The use case "Build events.cgi query" specifies this.
 
     /**
      * Tests that parsing a String containing a camera number that is too high

@@ -1,5 +1,7 @@
 package uk.org.netvu.core.cgi.common;
 
+import java.math.BigInteger;
+
 public abstract class Conversion<T, R>
 {
     public static final Conversion<String, Boolean> stringToBoolean = new Conversion<String, Boolean>()
@@ -19,6 +21,33 @@ public abstract class Conversion<T, R>
         }
     };
 
+    public static final Conversion<String, Integer> hexStringToInt = new Conversion<String, Integer>()
+    {
+        @Override
+        public Integer convert( final String t )
+        {
+            return (int) Long.parseLong( t, 16 );
+        }
+    };
+
+    public static final Conversion<String, Long> hexStringToLong = new Conversion<String, Long>()
+    {
+        @Override
+        public Long convert( final String t )
+        {
+            return new BigInteger( t, 16 ).longValue();
+        }
+    };
+
+    public static final Conversion<String, Long> stringToLong = new Conversion<String, Long>()
+    {
+        @Override
+        public Long convert( final String t )
+        {
+            return Long.parseLong ( t );
+        }
+    };
+
     public static <T> Conversion<T, T> identity()
     {
         return new Conversion<T, T>()
@@ -32,4 +61,28 @@ public abstract class Conversion<T, R>
     }
 
     public abstract R convert( T t );
+
+    public <V> Conversion<T, V> andThen( final Conversion<R, V> conversion )
+    {
+        return new Conversion<T, V>()
+        {
+            @Override
+            public V convert( final T t )
+            {
+                return conversion.convert( Conversion.this.convert( t ) );
+            }
+        };
+    }
+
+    public static <T, R> Conversion<T, R> throwUnsupportedOperationException()
+    {
+        return new Conversion<T, R>()
+        {
+            @Override
+            public R convert( final T t )
+            {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
 }
