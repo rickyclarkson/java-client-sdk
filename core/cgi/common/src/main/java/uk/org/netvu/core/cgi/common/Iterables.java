@@ -185,25 +185,6 @@ public class Iterables
         };
     }
 
-    public static int sum( final Iterable<Integer> map )
-    {
-        int result = 0;
-
-        for ( final Integer i : map )
-        {
-            result += i;
-        }
-
-        try
-        {
-            return result;
-        }
-        finally
-        {
-            System.out.println( "Returning " + result + "from sum" );
-        }
-    }
-
     public static <T> List<T> retainAll( final List<T> original,
             final Collection<T> others )
     {
@@ -212,10 +193,24 @@ public class Iterables
         return newOne;
     }
 
-    public static <T> List<T> remove(final List<T> original, final T toRemove)
+    public static <T> List<T> remove( final List<T> original, final T toRemove )
     {
-        final List<T> newOne = new ArrayList<T>(original);
-        newOne.remove(toRemove);
+        final List<T> newOne = new ArrayList<T>( original );
+        newOne.remove( toRemove );
         return newOne;
+    }
+
+    public static <T> T reduceLeft( final Iterable<T> ts,
+            final Reduction<T, T> reduction )
+    {
+        final Iterator<T> iterator = ts.iterator();
+        T accumulator = iterator.next();
+
+        while ( iterator.hasNext() )
+        {
+            accumulator = reduction.reduce( iterator.next(), accumulator );
+        }
+
+        return accumulator;
     }
 }

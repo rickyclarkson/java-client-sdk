@@ -35,10 +35,8 @@ public class IntegrationTests
         {
             final EventsCGI cgi = builders.next().format( Format.CSV ).build();
 
-            System.out.println( "Starting one - " + cgi );
-
             final URL url = new URL( "http://192.168.106.202" + cgi );
-            System.out.println( url );
+
             final InputStream in = url.openStream();
 
             try

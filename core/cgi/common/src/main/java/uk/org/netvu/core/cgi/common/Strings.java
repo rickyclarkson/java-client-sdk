@@ -12,4 +12,27 @@ public class Strings
     {
         return line.replaceAll( ",([^ ])", ", $1" ).split( ", " );
     }
+
+    public static String intersperse( final String separator,
+            final String[] strings )
+    {
+        final StringBuilder builder = new StringBuilder();
+        boolean first = true;
+
+        for ( final String string : strings )
+        {
+            if ( !first )
+            {
+                builder.append( separator );
+            }
+            else
+            {
+                first = false;
+            }
+
+            builder.append( string );
+        }
+
+        return builder.toString();
+    }
 }

@@ -4,32 +4,78 @@ import static uk.org.netvu.core.cgi.common.Parameter.param;
 import static uk.org.netvu.core.cgi.common.Parameter.sparseArrayParam;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.GenericBuilder;
+import uk.org.netvu.core.cgi.common.Iterables;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Pair;
 import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.Reduction;
+import uk.org.netvu.core.cgi.common.URLBuilder;
 
 public class DecoderCGI
 {
+    private static final Parameter<Persistence, Persistence> persistenceParam = param(
+            "persistence",
+            "Whether to make the changes persistent (survive reboot) or temporary",
+            Persistence.TEMPORARY, Persistence.fromString );
+
     private static final Parameter<Pair<Integer, Connection>, TreeMap<Integer, Connection>> connectionsParam = sparseArrayParam(
             "connections",
-            "The differences to make to the connections system variable" );
+            "The differences to make to the connections system variable",
+            Connection.urlEncode );
 
     private static final Parameter<Pair<Integer, Layout>, TreeMap<Integer, Layout>> layoutsParam = sparseArrayParam(
-            "layouts", "The differences to make to the layouts system variable" );
+            "layouts",
+            "The differences to make to the layouts system variable",
+            Layout.urlEncode );
 
     private static final Parameter<String[], Option<String[]>> outputTitlesParam = param(
             "output_titles", "The titles to give to each output channel",
-            Conversion.<String, String[]> throwUnsupportedOperationException() );
+            Conversion.<String, String[]> throwUnsupportedOperationException(),
+            new Conversion<String[], String>()
+            {
+                @Override
+                public String convert( final String[] array )
+                {
+                    return Iterables.reduceLeft( Arrays.asList( array ),
+                            new Reduction<String, String>()
+                            {
+                                @Override
+                                public String reduce( final String value,
+                                        final String accumulator )
+                                {
+                                    return accumulator + "," + value;
+                                }
+                            } );
+                }
+            } );
 
     private static final Parameter<Pair<Integer, String>, TreeMap<Integer, String>> commandsParam = sparseArrayParam(
             "commands",
-            "The differences to make to the commands system variable" );
+            "The differences to make to the commands system variable",
+            new Conversion<String, Conversion<URLBuilder, URLBuilder>>()
+            {
+                @Override
+                public Conversion<URLBuilder, URLBuilder> convert(
+                        final String s )
+                {
+                    return new Conversion<URLBuilder, URLBuilder>()
+                    {
+                        @Override
+                        public URLBuilder convert( final URLBuilder builder )
+                        {
+                            return builder.literal( "\"" ).encoded( s ).literal(
+                                    "\"" );
+                        }
+                    };
+                }
+            } );
 
     private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
     {
@@ -53,6 +99,11 @@ public class DecoderCGI
         this.builder = builder;
     }
 
+    public DecoderCGI persistence( final Persistence persistence )
+    {
+        return new DecoderCGI( builder.with( persistenceParam, persistence ) );
+    }
+
     public DecoderCGI connection( final int index, final Connection connection )
     {
         return new DecoderCGI( builder.with( connectionsParam, Pair.pair(
@@ -74,74 +125,6 @@ public class DecoderCGI
     {
         return new DecoderCGI( builder.with( commandsParam, Pair.pair( index,
                 command ) ) );
-    }
-
-    public static final class Connections
-    {
-        public final int startIndex;
-        public final List<Connection> connections;
-
-        public Connections( final int startIndex,
-                final List<Connection> connections )
-        {
-            this.startIndex = startIndex;
-            this.connections = connections;
-        }
-    }
-
-    public static final class Connection
-    {
-        private static final Parameter<String, Option<String>> slaveIPParam = param(
-                "slaveIP", "The source video server address",
-                Conversion.<String> identity() );
-        private static final Parameter<String, Option<String>> seqParam = param(
-                "seq", "Bitmask of source cameras",
-                Conversion.<String> identity() );
-        private static final Parameter<Integer, Option<Integer>> dwellParam = param(
-                "dwell", "The time to dwell on each camera in the seq bitmask",
-                Conversion.stringToInt );
-        private static final Parameter<Integer, Option<Integer>> camParam = param(
-                "cam", "The source camera", Conversion.stringToInt );
-        private static final Parameter<Integer, Option<Integer>> audioChannelParam = param(
-                "audio", "The source audio channel", Conversion.stringToInt );
-
-        private final GenericBuilder builder;
-
-        public Connection()
-        {
-            this( new GenericBuilder() );
-        }
-
-        private Connection( final GenericBuilder builder )
-        {
-            this.builder = builder;
-        }
-
-        public Connection slaveIP( final String slaveIP )
-        {
-            return new Connection( builder.with( slaveIPParam, slaveIP ) );
-        }
-
-        public Connection seq( final String seq )
-        {
-            return new Connection( builder.with( seqParam, seq ) );
-        }
-
-        public Connection dwell( final int time )
-        {
-            return new Connection( builder.with( dwellParam, time ) );
-        }
-
-        public Connection cam( final int cam )
-        {
-            return new Connection( builder.with( camParam, cam ) );
-        }
-
-        public Connection audio( final int audioChannel )
-        {
-            return new Connection( builder.with( audioChannelParam,
-                    audioChannel ) );
-        }
     }
 
     public Map<Integer, String> getCommands()

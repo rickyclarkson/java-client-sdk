@@ -73,8 +73,6 @@ public final class GenericBuilderTest
         assertTrue( builder.get( time ).get().toInt() == 10 );
         assertTrue( builder.get( range ).get().toInt() == 40 );
 
-        System.out.println( "fromURL " + builder.toURLParameters( params ) );
-
         assertTrue( builder.toURLParameters( params ).equals(
                 "time=10&range=40" ) );
     }

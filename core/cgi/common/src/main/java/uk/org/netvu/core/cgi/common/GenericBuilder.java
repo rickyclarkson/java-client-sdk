@@ -91,7 +91,7 @@ public final class GenericBuilder
         return builder;
     }
 
-    public String toURLParameters( final List<Parameter<?, ?>> params )
+    public String toURLParameters( final List<? extends Parameter<?, ?>> params )
     {
         URLBuilder builder = new URLBuilder( "" );
         for ( final Parameter<?, ?> param : params )
@@ -99,6 +99,6 @@ public final class GenericBuilder
             builder = param.withURLParameter( builder, this );
         }
 
-        return builder.toString();
+        return builder.toString().substring( 1 );
     }
 }

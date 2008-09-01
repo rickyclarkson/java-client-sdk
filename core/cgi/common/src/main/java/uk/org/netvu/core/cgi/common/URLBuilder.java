@@ -12,13 +12,28 @@ public class URLBuilder
         this.start = start;
     }
 
-    public URLBuilder withParam( final String name, final Object value )
+    @Override
+    public String toString()
+    {
+        return start;
+    }
+
+    public URLBuilder param( final Conversion<URLBuilder, URLBuilder> name,
+            final Conversion<URLBuilder, URLBuilder> value )
+    {
+        return value.convert( name.convert( this ).literal( "=" ) );
+    }
+
+    public URLBuilder literal( final String string )
+    {
+        return new URLBuilder( start + string );
+    }
+
+    public URLBuilder encoded( final String value )
     {
         try
         {
-            return new URLBuilder( start + ( start.contains( "=" ) ? "&" : "" )
-                    + URLEncoder.encode( name, "UTF-8" ) + '='
-                    + URLEncoder.encode( value.toString(), "UTF-8" ) );
+            return new URLBuilder( start + URLEncoder.encode( value, "UTF-8" ) );
         }
         catch ( final UnsupportedEncodingException e )
         {
@@ -26,15 +41,31 @@ public class URLBuilder
         }
     }
 
-    @Override
-    public String toString()
+    public static Conversion<URLBuilder, URLBuilder> asLiteral(
+            final String value )
     {
-        return start;
+        return new Conversion<URLBuilder, URLBuilder>()
+        {
+
+            @Override
+            public URLBuilder convert( final URLBuilder t )
+            {
+                return t.literal( value );
+            }
+        };
     }
 
-    public <T, U extends T> URLBuilder withOptionalParam( final String string,
-            final T value, final U defaultValue )
+    public static Conversion<URLBuilder, URLBuilder> asEncoded(
+            final String value )
     {
-        return value.equals( defaultValue ) ? this : withParam( string, value );
+        return new Conversion<URLBuilder, URLBuilder>()
+        {
+
+            @Override
+            public URLBuilder convert( final URLBuilder t )
+            {
+                return t.encoded( value );
+            }
+        };
     }
 }
