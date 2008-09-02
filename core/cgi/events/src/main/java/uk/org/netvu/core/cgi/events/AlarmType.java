@@ -4,20 +4,6 @@ import java.util.Random;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 
-// See the comment in Status.java:
-
-// Alarm type:-
-// #define EVENT_TYPE_ZONE (1<<0) /* alarm zone (contact and/or VMD ) */
-// #define EVENT_TYPE_VMD (1<<1) /* VMD event */
-// #define EVENT_TYPE_GPS (1<<2) /* GPS event */
-// #define EVENT_TYPE_SYSTEM (1<<3) /* system event eg startup, set/unset */
-// #define EVENT_TYPE_CAMERA (1<<4) /* dummy - used for CGI parameters, never
-// appears in a database record */
-// #define EVENT_TYPE_ACTIVITY (1<<5) /* used for activity search, never appears
-// in a database record */
-// #define EVENT_TYPE_KEYWORD (1<<6) /* used for text-in-image keyword search,
-// never appears in a database record */
-
 /**
  * The type of alarm that caused an event.
  */
@@ -107,7 +93,6 @@ public enum AlarmType
 
     static final Conversion<String, AlarmType> fromString = new Conversion<String, AlarmType>()
     {
-
         @Override
         public AlarmType convert( final String t )
         {

@@ -364,45 +364,6 @@ public class EventsCGIResult
     }
 
     /**
-     * Tests this object against another for equality.
-     * 
-     * @return true if all the fields have equal values, false otherwise.
-     */
-    @Override
-    public boolean equals( final Object object )
-    {
-        if ( object instanceof EventsCGIResult )
-        {
-            final EventsCGIResult other = (EventsCGIResult) object;
-
-            final EqualsBuilder builder = new EqualsBuilder().with( getCam(),
-                    other.getCam(), "cam" );
-            builder.with( getAlarm(), other.getAlarm(), "alarm" );
-            builder.with( getJulianTime(), other.getJulianTime(), "julian time" );
-            builder.with( getOffset(), other.getOffset(), "offset" );
-            builder.with( isOnDisk(), other.isOnDisk(), "is on disk" );
-            builder.with( getDuration(), other.getDuration(), "duration" );
-            builder.with( getPreAlarm(), other.getPreAlarm(), "pre alarm" );
-            builder.with( getArchive(), other.getArchive(), "archive" );
-            builder.with( getAlarmType(), other.getAlarmType(), "alarm type" );
-            builder.with( getStatus(), other.getStatus(), "status" );
-
-            return builder.equal();
-        }
-
-        return false;
-    }
-
-    /**
-     * A hashcode consistent with the equals implementation.
-     */
-    @Override
-    public int hashCode()
-    {
-        return 1;
-    }
-
-    /**
      * Converts this object to a String holding comma separated values in the
      * same format as in the events database. The index field is always 0.
      */

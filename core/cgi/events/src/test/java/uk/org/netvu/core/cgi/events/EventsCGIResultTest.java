@@ -1,6 +1,5 @@
 package uk.org.netvu.core.cgi.events;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
@@ -97,8 +96,7 @@ public class EventsCGIResultTest
      */
     public static boolean testEvent( final EventsCGIResult event )
     {
-        return event.getJulianTime() + event.getDuration() >= 0
-                && event.equals( event );
+        return event.getJulianTime() + event.getDuration() >= 0;
     }
 
     /**
@@ -167,33 +165,6 @@ public class EventsCGIResultTest
     public void testNegativeTime()
     {
         EventsCGIResult.fromString( "1, 1, COURTYARD, -111488075, 3600, ,overwitten, 1, 10, 2, 0" );
-    }
-
-    /**
-     * Tests that equals does not return true for distinct EventsCGIResults.
-     */
-    @Test
-    public void testInequality()
-    {
-        final Iterator<EventsCGIResult> results = eventGenerator( new Random( 0 ) );
-        for ( int a = 0; a < Generators.LIMIT; a++ )
-        {
-            final EventsCGIResult next1 = results.next();
-            final EventsCGIResult next2 = results.next();
-
-            assertTrue( next1.equals( next2 ) == next1.toCSV( 0 ).equals(
-                    next2.toCSV( 0 ) ) );
-        }
-    }
-
-    /**
-     * Tests that equals returns false when comparing an EventsCGIResult to a
-     * String.
-     */
-    @Test
-    public void testUnrelatedEquality()
-    {
-        assertFalse( eventGenerator( new Random( 0 ) ).next().equals( "test" ) );
     }
 
     /**

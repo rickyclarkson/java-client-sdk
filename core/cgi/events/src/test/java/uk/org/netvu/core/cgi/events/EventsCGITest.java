@@ -190,43 +190,6 @@ public class EventsCGITest
     }
 
     /**
-     * Tests that an EventCGI equals itself, and that it doesn't equal another
-     * EventCGI with different values.
-     */
-    @Test
-    public void testEquality()
-    {
-        final Random random = new Random( 0 );
-        final Iterator<EventsCGI> cgis = randomEventsCGIs( random );
-
-        for ( int a = 0; a < Generators.LIMIT; a++ )
-        {
-            final EventsCGI cgi = cgis.next();
-            assertTrue( cgi.equals( cgi ) );
-
-            final EventsCGI next = cgis.next();
-            assertTrue( cgi.toString().equals( next.toString() ) == cgi.equals( next ) );
-        }
-    }
-
-    /**
-     * Tests that an EventsCGI is not equal to objects of other types.
-     */
-    @Test
-    public void testInequality()
-    {
-        final Random random = new Random( 0 );
-        final Iterator<EventsCGI> cgis = randomEventsCGIs( random );
-
-        for ( int a = 0; a < Generators.LIMIT; a++ )
-        {
-            final EventsCGI cgi = cgis.next();
-            assertFalse( cgi.equals( new Object() ) );
-            assertFalse( cgi.equals( cgi.toString() ) );
-        }
-    }
-
-    /**
      * Tests that toString always gives something that can be made into a valid
      * URL.
      */
@@ -469,7 +432,8 @@ public class EventsCGITest
             final EventsCGI next = cgis.next();
             assertTrue( EventsCGI.fromString(
                     random.nextBoolean() ? next.toString() : Strings.fromFirst(
-                            '?', next.toString() ) ).equals( next ) );
+                            '?', next.toString() ) ).toString().equals(
+                    next.toString() ) );
         }
     }
 

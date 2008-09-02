@@ -331,7 +331,7 @@ public final class EventsCGI
      */
     public static EventsCGI fromString( final String string )
     {
-        if ( string.equals( "" ) )
+        if ( string.length() == 0 )
         {
             throw new IllegalArgumentException();
         }
@@ -400,45 +400,5 @@ public final class EventsCGI
     {
         return value == defaultValue ? "" : urlParam( name,
                 Long.toHexString( value ) );
-    }
-
-    /**
-     * Tests the given parameter to see whether it is an equal EventsCGI to this
-     * one.
-     * 
-     * @return true if object is an equal EventsCGI to this one, false
-     *         otherwise.
-     */
-    @Override
-    public boolean equals( final Object object )
-    {
-        if ( object instanceof EventsCGI )
-        {
-            final EventsCGI other = (EventsCGI) object;
-            final EqualsBuilder builder = new EqualsBuilder().with(
-                    getAlarmMask(), other.getAlarmMask(), "almmask" );
-            builder.with( getFormat(), other.getFormat(), "format" );
-            builder.with( getCamMask(), other.getCamMask(), "cammask" );
-            builder.with( getGpsMask(), other.getGpsMask(), "gpsmask" );
-            builder.with( getMaxLength(), other.getMaxLength(), "listlength" );
-            builder.with( getRange(), other.getRange(), "range" );
-            builder.with( getSysMask(), other.getSysMask(), "sysmask" );
-            builder.with( getText(), other.getText(), "text" );
-            builder.with( getTime(), other.getTime(), "time" );
-            builder.with( getVmdMask(), other.getVmdMask(), "vmdmask" );
-
-            return builder.equal();
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns a hashcode that is consistent with the equals implementation.
-     */
-    @Override
-    public int hashCode()
-    {
-        return 1;
     }
 }

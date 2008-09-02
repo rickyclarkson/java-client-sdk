@@ -7,18 +7,6 @@ import uk.org.netvu.core.cgi.common.Conversion;
 /**
  * An enum consisting of various states a database record can be in.
  */
-
-// The information for this class comes from an email from Chris Blood - the
-// first part pasted here, the second in AlarmType:
-// "Additional fields are database record status & alarm type - try
-// 192.168.113.100 again.
-// Status:-
-// #define RECORD_UNINITIALISED (0) /* blank field,never used */
-// #define RECORD_PENDING (1<<0) /* handle allocated & time stamped */
-// #define RECORD_NEW (1<<1) /* initial data written */
-// #define RECORD_CLOSED (1<<2) /* all data written/updated */
-// #define RECORD_ARCHIVED (1<<3) /* VID/IDX for this record archived to FTP
-// server */"
 public enum Status
 {
     /**
