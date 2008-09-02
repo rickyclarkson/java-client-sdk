@@ -1,10 +1,9 @@
-/**
- * 
- */
 package uk.org.netvu.core.cgi.decoder;
 
 import static uk.org.netvu.core.cgi.common.Parameter.param;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ import uk.org.netvu.core.cgi.common.Validator;
 public final class Connection
 {
     private static final Parameter<String, Option<String>> slaveIPParam = param(
-            "slaveIP", "The source video server address",
+            "slaveip", "The source video server address",
             Conversion.<String> identity() );
     private static final Parameter<Integer, Option<Integer>> seqParam = param(
             "seq", "Bitmask of source cameras", Conversion.hexStringToInt );
@@ -47,6 +46,7 @@ public final class Connection
     {
         this( new GenericBuilder( new Validator()
         {
+            @Override
             public boolean isValid( final GenericBuilder builder )
             {
                 return builder.isDefault( camParam ) ? true
@@ -59,7 +59,6 @@ public final class Connection
     private Connection( final GenericBuilder builder )
     {
         this.builder = builder;
-
     }
 
     public Connection slaveIP( final String slaveIP )
@@ -87,24 +86,42 @@ public final class Connection
         return new Connection( builder.with( audioChannelParam, audioChannel ) );
     }
 
-    public static final Conversion<Connection, Conversion<URLBuilder, URLBuilder>> urlEncode = new Conversion<Connection, Conversion<URLBuilder, URLBuilder>>()
+    public static final Conversion<Connection, String> urlEncode = new Conversion<Connection, String>()
     {
         @Override
-        public Conversion<URLBuilder, URLBuilder> convert(
-                final Connection connection )
+        public String convert( final Connection connection )
         {
-            return new Conversion<URLBuilder, URLBuilder>()
-            {
-
-                @Override
-                public URLBuilder convert( final URLBuilder urlBuilder )
-                {
-                    return urlBuilder.literal( "\"" ).encoded(
-                            connection.builder.toURLParameters( params ).replaceAll(
-                                    "&", "," ) ).literal( "\"" );
-                }
-            };
+            return "\""
+                    + URLBuilder.encode( connection.builder.toURLParameters(
+                            params ).replaceAll( "&", "," ) ) + "\"";
         }
-
     };
+
+    public static final Conversion<String, Connection> fromURL = new Conversion<String, Connection>()
+    {
+        @Override
+        public Connection convert( final String urlParameters )
+        {
+            try
+            {
+                return new Connection( GenericBuilder.fromURL(
+                        URLDecoder.decode( urlParameters, "UTF-8" ).replaceAll(
+                                ",", "&" ), params ) );
+            }
+            catch ( final UnsupportedEncodingException e )
+            {
+                throw new RuntimeException( e );
+            }
+        }
+    };
+
+    public String getSlaveIP()
+    {
+        return builder.get( slaveIPParam ).get();
+    }
+
+    public int getCam()
+    {
+        return builder.get( camParam ).get();
+    }
 }

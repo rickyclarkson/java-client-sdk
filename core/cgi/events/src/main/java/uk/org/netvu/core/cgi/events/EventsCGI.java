@@ -38,8 +38,13 @@ public final class EventsCGI
 
     private static final Parameter<String, String> textParam = param(
             "text",
-            "The text to search for in the text-in-image data.  If specified, causes the embedded text-in-image data to be searched for occurences of the supplied string.  The search is case sensitive. * can be used as a wildcard to replace one or more characters in the search string. ? can be used as a wildcard to replace a single character in the search string.",
-            "", Conversion.<String> identity() );
+            "The text to search for in the text-in-image data.  If specified, "
+                    + "causes the embedded text-in-image data to be searched for "
+                    + "occurences of the supplied string.  The search is case sensitive. "
+                    + "* can be used as a wildcard to replace one or more characters in "
+                    + "the search string. ? can be used as a wildcard to replace a single "
+                    + "character in the search string.", "",
+            Conversion.<String> identity() );
 
     private static final Parameter<Long, Long> camMaskParam = param( "cammask",
             "The 64-bit mask of cameras whose images we want to obtain.", 0L,
@@ -99,19 +104,8 @@ public final class EventsCGI
      */
     public static final class Builder
     {
-        private GenericBuilder real = new GenericBuilder( new Validator()
-        {
-            public boolean isValid( final GenericBuilder builder )
-            {
-                int count = 0;
-                for ( final Parameter<?, ?> exclusiveParameter : exclusiveParams )
-                {
-                    count += builder.isDefault( exclusiveParameter ) ? 0 : 1;
-                }
-
-                return count < 2;
-            }
-        } );
+        private GenericBuilder real = new GenericBuilder(
+                Validator.mutuallyExclusive( exclusiveParams ) );
 
         /**
          * The time from which to search, in seconds since 1970.

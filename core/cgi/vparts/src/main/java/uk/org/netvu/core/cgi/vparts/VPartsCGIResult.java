@@ -6,34 +6,36 @@ import java.util.ArrayList;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.GenericBuilder;
+import uk.org.netvu.core.cgi.common.Option;
+import uk.org.netvu.core.cgi.common.Pair;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.UInt31;
-import uk.org.netvu.core.cgi.common.Option;
 
 public class VPartsCGIResult
 {
-    private static final Parameter<Integer, Option<Integer>> indexParam = param( "index",
-            "The index of this result in the results", Conversion.stringToInt );
-    private static final Parameter<String, Option<String>> directoryParam = param( "directory",
-            "The directory where this video can be found",
+    private static final Parameter<Integer, Option<Integer>> indexParam = param(
+            "index", "The index of this result in the results",
+            Conversion.stringToInt );
+    private static final Parameter<String, Option<String>> directoryParam = param(
+            "directory", "The directory where this video can be found",
             Conversion.<String> identity() );
-    private static final Parameter<String, Option<String>> filenameParam = param( "filename",
-            "The name of the file where this video can be found",
+    private static final Parameter<String, Option<String>> filenameParam = param(
+            "filename", "The name of the file where this video can be found",
             Conversion.<String> identity() );
     private static final Parameter<UInt31, Option<UInt31>> startTimeParam = param(
             "start_time", "The start time", UInt31.fromString );
-    private static final Parameter<UInt31, Option<UInt31>> endTimeParam = param( "end_time",
-            "The end time", UInt31.fromString );
+    private static final Parameter<UInt31, Option<UInt31>> endTimeParam = param(
+            "end_time", "The end time", UInt31.fromString );
     private static final Parameter<UInt31, Option<UInt31>> expiryTimeParam = param(
             "expiry_time", "The expiry time", UInt31.fromString );
     private static final Parameter<Integer, Option<Integer>> numberOfEntriesParam = param(
             "n_entries", "The number of entries", Conversion.stringToInt );
-    private static final Parameter<Integer, Option<Integer>> camMaskParam = param( "cammask",
-            "The bitmask of cameras that this video comes from",
+    private static final Parameter<Integer, Option<Integer>> camMaskParam = param(
+            "cammask", "The bitmask of cameras that this video comes from",
             Conversion.stringToInt );
 
-    private static final ArrayList<Parameter<?,? extends Option<?>>> params = new ArrayList<Parameter<?,? extends Option<?>>>()
+    private static final ArrayList<Parameter<?, ? extends Option<?>>> params = new ArrayList<Parameter<?, ? extends Option<?>>>()
     {
         {
             add( indexParam );
@@ -188,8 +190,9 @@ public class VPartsCGIResult
     }
 
     private static <T, R> GenericBuilder hack( final GenericBuilder builder,
-                                            final Parameter<T, R> param, final String s )
+            final Parameter<T, R> param, final String s )
     {
-        return builder.with( param, param.fromString.convert( s ) );
+        return builder.with( param, param.fromURLParameter.convert( Pair.pair(
+                param.name, s ) ) );
     }
 }

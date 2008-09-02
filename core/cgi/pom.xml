@@ -14,5 +14,6 @@
         <module>events</module>
         <module>vparts</module>
         <module>decoder</module>
+	<module>variable</module>
     </modules>
 </project>

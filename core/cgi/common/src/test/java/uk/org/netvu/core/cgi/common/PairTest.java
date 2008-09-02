@@ -38,4 +38,10 @@ public class PairTest
         assertTrue( Pair.pair( 3, 4 ).second() == 4 );
     }
 
+    @Test
+    public void equality()
+    {
+        assertTrue( Pair.pair( 3, 4 ).equals( Pair.pair( 3, 4 ) ) );
+    }
+
 }

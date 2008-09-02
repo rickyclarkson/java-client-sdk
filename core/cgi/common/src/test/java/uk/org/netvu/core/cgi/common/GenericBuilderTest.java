@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 import org.junit.Test;
 
@@ -36,6 +37,7 @@ public final class GenericBuilderTest
     {
         new GenericBuilder( new Validator()
         {
+            @Override
             public boolean isValid( final GenericBuilder builder )
             {
                 final Option<UInt31> oTime = builder.get( time );
@@ -75,5 +77,29 @@ public final class GenericBuilderTest
 
         assertTrue( builder.toURLParameters( params ).equals(
                 "time=10&range=40" ) );
+    }
+
+    @Test
+    public void sparseArray()
+    {
+        final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> sparseIdentity = Parameter.sparseArrayParam(
+                "foo", "bar", Conversion.<String> identity(), URLBuilder.encode );
+
+        assertTrue( new GenericBuilder().with( sparseIdentity,
+                new ArrayList<Pair<Integer, String>>()
+                {
+                    {
+                        add( Pair.pair( 4, "bar" ) );
+                        add( Pair.pair( 5, "foo" ) );
+                    }
+                } ).with( sparseIdentity,
+                new ArrayList<Pair<Integer, String>>()
+                {
+                    {
+                        add( Pair.pair( 2, "baz" ) );
+                        add( Pair.pair( 10, "spam" ) );
+                    }
+                } ).get( sparseIdentity ).get( 2 ).equals( "baz" ) );
+
     }
 }

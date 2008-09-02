@@ -6,7 +6,7 @@
         <version>0.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>events</artifactId>
-    <name>NetVu Connected Java Client SDK->Core->CGI->Events</name>
+    <name>NetVu Connected Java Client SDK-&gt;Core-&gt;CGI-&gt;Events</name>
     <description>Builders and parsers for the events.cgi command.</description>
     <build>
         <finalName>core-cgi-events-${project.version}</finalName>

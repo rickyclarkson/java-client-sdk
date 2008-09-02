@@ -14,6 +14,7 @@ public final class GenericBuilder
     {
         this( new Validator()
         {
+            @Override
             public boolean isValid( final GenericBuilder builder )
             {
                 return true;
@@ -65,25 +66,24 @@ public final class GenericBuilder
     }
 
     private <T, R> GenericBuilder withFromString( final Parameter<T, R> param,
-            final String string )
+            final Pair<String, String> keyAndValue )
     {
-        return with( param, param.fromString.convert( string ) );
+        return with( param, param.fromURLParameter.convert( keyAndValue ) );
     }
 
     public static GenericBuilder fromURL( final String url,
-            final List<Parameter<?, ?>> params )
+            final List<? extends Parameter<?, ?>> params )
     {
         GenericBuilder builder = new GenericBuilder();
+        final List<Pair<String, String>> parts = URLExtractor.keyValuePairs( url );
 
-        final String[] parts = Strings.fromLast( '?', url ).split( "&" );
-        for ( final String part : parts )
+        for ( final Pair<String, String> part : parts )
         {
-            final String[] both = part.split( "=" );
             for ( final Parameter<?, ?> param : params )
             {
-                if ( param.name.equals( both[0] ) )
+                if ( part.first().startsWith( param.name ) )
                 {
-                    builder = builder.withFromString( param, both[1] );
+                    builder = builder.withFromString( param, part );
                 }
             }
         }
@@ -93,12 +93,14 @@ public final class GenericBuilder
 
     public String toURLParameters( final List<? extends Parameter<?, ?>> params )
     {
-        URLBuilder builder = new URLBuilder( "" );
+        final StringBuilder builder = new StringBuilder();
         for ( final Parameter<?, ?> param : params )
         {
-            builder = param.withURLParameter( builder, this );
+            builder.append( param.withURLParameter( this ) ).append( "&" );
         }
 
-        return builder.toString().substring( 1 );
+        return builder.toString().replaceAll( "&$", "" ).replaceAll( "[&]+",
+                "&" );
+
     }
 }

@@ -5,6 +5,7 @@ import static uk.org.netvu.core.cgi.common.Parameter.sparseArrayParam;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -25,15 +26,15 @@ public class DecoderCGI
             "Whether to make the changes persistent (survive reboot) or temporary",
             Persistence.TEMPORARY, Persistence.fromString );
 
-    private static final Parameter<Pair<Integer, Connection>, TreeMap<Integer, Connection>> connectionsParam = sparseArrayParam(
+    private static final Parameter<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> connectionsParam = sparseArrayParam(
             "connections",
             "The differences to make to the connections system variable",
-            Connection.urlEncode );
+            Connection.fromURL, Connection.urlEncode );
 
-    private static final Parameter<Pair<Integer, Layout>, TreeMap<Integer, Layout>> layoutsParam = sparseArrayParam(
+    private static final Parameter<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> layoutsParam = sparseArrayParam(
             "layouts",
             "The differences to make to the layouts system variable",
-            Layout.urlEncode );
+            Layout.fromURL, Layout.urlEncode );
 
     private static final Parameter<String[], Option<String[]>> outputTitlesParam = param(
             "output_titles", "The titles to give to each output channel",
@@ -56,24 +57,15 @@ public class DecoderCGI
                 }
             } );
 
-    private static final Parameter<Pair<Integer, String>, TreeMap<Integer, String>> commandsParam = sparseArrayParam(
+    private static final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> commandsParam = sparseArrayParam(
             "commands",
             "The differences to make to the commands system variable",
-            new Conversion<String, Conversion<URLBuilder, URLBuilder>>()
+            Conversion.<String> identity(), new Conversion<String, String>()
             {
                 @Override
-                public Conversion<URLBuilder, URLBuilder> convert(
-                        final String s )
+                public String convert( final String s )
                 {
-                    return new Conversion<URLBuilder, URLBuilder>()
-                    {
-                        @Override
-                        public URLBuilder convert( final URLBuilder builder )
-                        {
-                            return builder.literal( "\"" ).encoded( s ).literal(
-                                    "\"" );
-                        }
-                    };
+                    return "\"" + URLBuilder.encode( s ) + "\"";
                 }
             } );
 
@@ -106,14 +98,14 @@ public class DecoderCGI
 
     public DecoderCGI connection( final int index, final Connection connection )
     {
-        return new DecoderCGI( builder.with( connectionsParam, Pair.pair(
-                index, connection ) ) );
+        return new DecoderCGI( builder.with( connectionsParam,
+                Collections.singletonList( Pair.pair( index, connection ) ) ) );
     }
 
     public DecoderCGI layout( final int index, final Layout layout )
     {
-        return new DecoderCGI( builder.with( layoutsParam, Pair.pair( index,
-                layout ) ) );
+        return new DecoderCGI( builder.with( layoutsParam,
+                Collections.singletonList( Pair.pair( index, layout ) ) ) );
     }
 
     public DecoderCGI outputTitles( final String... titles )
@@ -123,8 +115,8 @@ public class DecoderCGI
 
     public DecoderCGI command( final int index, final String command )
     {
-        return new DecoderCGI( builder.with( commandsParam, Pair.pair( index,
-                command ) ) );
+        return new DecoderCGI( builder.with( commandsParam,
+                Collections.singletonList( Pair.pair( index, command ) ) ) );
     }
 
     public Map<Integer, String> getCommands()
@@ -144,6 +136,23 @@ public class DecoderCGI
 
     public String toURLParameters()
     {
-        return builder.toURLParameters( params );
+        return "decoder" + getPersistence() + '?'
+                + builder.toURLParameters( params );
+    }
+
+    public Persistence getPersistence()
+    {
+        return builder.get( persistenceParam );
+    }
+
+    public static DecoderCGI fromString( final String string )
+    {
+        return new DecoderCGI( GenericBuilder.fromURL( string, params ) ).persistence( string.contains( ".frm" ) ? Persistence.PERSISTENT
+                : Persistence.TEMPORARY );
+    }
+
+    public TreeMap<Integer, Connection> getConnections()
+    {
+        return builder.get( connectionsParam );
     }
 }

@@ -1,5 +1,7 @@
 package uk.org.netvu.core.cgi.common;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -9,19 +11,19 @@ public class Parameter<T, R>
     public final String description;
     public final R defaultValue;
     public final Reduction<T, R> reduction;
-    public final Conversion<String, T> fromString;
-    public final Reduction<R, URLBuilder> toURLParameter;
+    public final Conversion<Pair<String, String>, T> fromURLParameter;
+    public final Conversion<Pair<String, R>, String> toURLParameter;
 
     private Parameter( final String name, final String description,
             final R defaultValue, final Reduction<T, R> reduction,
-            final Conversion<String, T> fromString,
-            final Reduction<R, URLBuilder> toURLParameter )
+            final Conversion<Pair<String, String>, T> fromURLParameter,
+            final Conversion<Pair<String, R>, String> toURLParameter )
     {
         this.name = name;
         this.description = description;
         this.defaultValue = defaultValue;
         this.reduction = reduction;
-        this.fromString = fromString;
+        this.fromURLParameter = fromURLParameter;
         this.toURLParameter = toURLParameter;
     }
 
@@ -43,15 +45,16 @@ public class Parameter<T, R>
 
                         throw new IllegalStateException();
                     }
-                }, fromString, new Reduction<Option<T>, URLBuilder>()
+                }, createFromURL( fromString ),
+                new Conversion<Pair<String, Option<T>>, String>()
                 {
                     @Override
-                    public URLBuilder reduce( final Option<T> newValue,
-                            final URLBuilder original )
+                    public String convert(
+                            final Pair<String, Option<T>> nameAndValue )
                     {
-                        return original.param(
-                                URLBuilder.asLiteral( name ),
-                                URLBuilder.asEncoded( toString.convert( newValue.get() ) ) );
+                        return nameAndValue.first()
+                                + '='
+                                + toString.convert( nameAndValue.second().get() );
                     }
                 } );
     }
@@ -80,7 +83,16 @@ public class Parameter<T, R>
 
                         throw new IllegalStateException();
                     }
-                }, fromString, Parameter.<T> singleToURLParameter( name ) );
+                }, createFromURL( fromString ),
+                new Conversion<Pair<String, T>, String>()
+                {
+                    @Override
+                    public String convert( final Pair<String, T> nameAndValue )
+                    {
+                        return nameAndValue.first() + '='
+                                + nameAndValue.second();
+                    }
+                } );
     }
 
     public static <U> Parameter<Integer, U> bound( final int lowerInclusive,
@@ -100,7 +112,7 @@ public class Parameter<T, R>
 
                         throw new IllegalArgumentException();
                     }
-                }, param.fromString, param.toURLParameter );
+                }, param.fromURLParameter, param.toURLParameter );
     }
 
     public static <T, U> Parameter<T, U> not( final T banned,
@@ -118,79 +130,102 @@ public class Parameter<T, R>
                         }
                         return param.reduction.reduce( newValue, original );
                     }
-                }, param.fromString, param.toURLParameter );
+                }, param.fromURLParameter, param.toURLParameter );
     }
 
-    public static <T> Parameter<Pair<Integer, T>, TreeMap<Integer, T>> sparseArrayParam(
+    public static <T> Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>> sparseArrayParam(
             final String name, final String description,
-            final Conversion<T, Conversion<URLBuilder, URLBuilder>> valueEncoder )
+            final Conversion<String, T> fromString,
+            final Conversion<T, String> valueEncoder )
     {
-        return new Parameter<Pair<Integer, T>, TreeMap<Integer, T>>(
+        return new Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>>(
                 name,
                 description,
                 new TreeMap<Integer, T>(),
-                new Reduction<Pair<Integer, T>, TreeMap<Integer, T>>()
+                new Reduction<List<Pair<Integer, T>>, TreeMap<Integer, T>>()
                 {
                     @Override
                     public TreeMap<Integer, T> reduce(
-                            final Pair<Integer, T> newValue,
+                            final List<Pair<Integer, T>> newValue,
                             final TreeMap<Integer, T> original )
                     {
                         final TreeMap<Integer, T> copy = new TreeMap<Integer, T>(
                                 original );
-                        copy.put( newValue.first(), newValue.second() );
+                        for ( final Pair<Integer, T> pair : newValue )
+                        {
+                            copy.put( pair.first(), pair.second() );
+                        }
+
                         return copy;
                     }
                 },
-                Conversion.<String, Pair<Integer, T>> throwUnsupportedOperationException(),
-                new Reduction<TreeMap<Integer, T>, URLBuilder>()
+                new Conversion<Pair<String, String>, List<Pair<Integer, T>>>()
                 {
                     @Override
-                    public URLBuilder reduce( final TreeMap<Integer, T> map,
-                            URLBuilder urlBuilder )
+                    public List<Pair<Integer, T>> convert(
+                            final Pair<String, String> keyAndValue )
                     {
-                        boolean first = true;
-                        for ( final Map.Entry<Integer, T> entry : map.entrySet() )
-                        {
-                            if ( !first )
-                            {
-                                urlBuilder = urlBuilder.literal( "&" );
-                            }
-                            else
-                            {
-                                first = false;
-                            }
+                        final List<String> values = Strings.splitIgnoringQuotedSections(
+                                keyAndValue.second(), ',' );
+                        int startIndex = Integer.parseInt( keyAndValue.first().substring(
+                                name.length() + 1,
+                                keyAndValue.first().length() - 1 ) );
 
-                            urlBuilder = urlBuilder.param(
-                                    URLBuilder.asLiteral( name + '['
-                                            + entry.getKey() + ']' ),
-                                    valueEncoder.convert( entry.getValue() ) );
+                        final List<Pair<Integer, T>> results = new ArrayList<Pair<Integer, T>>();
+
+                        for ( final String value : values )
+                        {
+                            results.add( Pair.pair( startIndex,
+                                    fromString.convert( value.substring( 1,
+                                            value.length() - 1 ) ) ) );
+
+                            startIndex++;
                         }
 
-                        return urlBuilder;
+                        return results;
+                    }
+                }, new Conversion<Pair<String, TreeMap<Integer, T>>, String>()
+                {
+                    @Override
+                    public String convert(
+                            final Pair<String, TreeMap<Integer, T>> nameAndMap )
+                    {
+                        final StringBuilder result = new StringBuilder();
+
+                        for ( final Map.Entry<Integer, T> entry : nameAndMap.second().entrySet() )
+                        {
+                            if ( result.length() != 0 )
+                            {
+                                result.append( "&" );
+                            }
+
+                            result.append( URLBuilder.param(
+                                    name + '[' + entry.getKey() + ']',
+                                    URLBuilder.encode( valueEncoder.convert( entry.getValue() ) ) ) );
+                        }
+
+                        return result.toString();
                     }
                 } );
     }
 
-    private static <T> Reduction<T, URLBuilder> singleToURLParameter(
-            final String name )
+    public String withURLParameter( final GenericBuilder genericBuilder )
     {
-        return new Reduction<T, URLBuilder>()
-        {
-            @Override
-            public URLBuilder reduce( final T t, final URLBuilder builder )
-            {
-                return builder.param( URLBuilder.asLiteral( name ),
-                        URLBuilder.asEncoded( t.toString() ) );
-            }
-        };
+        return genericBuilder.isDefault( this ) ? ""
+                : toURLParameter.convert( Pair.pair( name,
+                        genericBuilder.get( this ) ) );
     }
 
-    public URLBuilder withURLParameter( final URLBuilder builder,
-            final GenericBuilder genericBuilder )
+    private static <T> Conversion<Pair<String, String>, T> createFromURL(
+            final Conversion<String, T> conversion )
     {
-        return genericBuilder.isDefault( this ) ? builder
-                : toURLParameter.reduce( genericBuilder.get( this ),
-                        URLBuilder.asLiteral( "&" ).convert( builder ) );
+        return new Conversion<Pair<String, String>, T>()
+        {
+            @Override
+            public T convert( final Pair<String, String> pair )
+            {
+                return conversion.convert( pair.second() );
+            }
+        };
     }
 }

@@ -11,9 +11,9 @@ public class Pair<T, U>
         this.u = u;
     }
 
-    public static <T, U> Pair<T, U> pair(T t, U u)
+    public static <T, U> Pair<T, U> pair( final T t, final U u )
     {
-        return new Pair<T, U>(t, u);
+        return new Pair<T, U>( t, u );
     }
 
     public <V> V accept( final PairVisitor<T, U, V> visitor )
@@ -41,5 +41,24 @@ public class Pair<T, U>
     public U second()
     {
         return u;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        return o instanceof Pair && ( (Pair<?, ?>) o ).t.equals( t )
+                && ( (Pair<?, ?>) o ).u.equals( u );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return t.hashCode() * 4097 + u.hashCode();
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Pair(" + first() + ", " + second() + ')';
     }
 }

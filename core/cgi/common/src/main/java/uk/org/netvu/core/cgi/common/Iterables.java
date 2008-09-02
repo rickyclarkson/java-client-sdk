@@ -163,6 +163,19 @@ public class Iterables
         };
     }
 
+    public static <T, R> List<R> map( final List<T> list,
+            final Conversion<T, R> conversion )
+    {
+        final List<R> result = new ArrayList<R>();
+        final Iterable<T> iterable = list;
+        for ( final R r : map( iterable, conversion ) )
+        {
+            result.add( r );
+        }
+
+        return result;
+    }
+
     public static <T, R> Iterator<R> map( final Iterator<T> iterator,
             final Conversion<T, R> conversion )
     {

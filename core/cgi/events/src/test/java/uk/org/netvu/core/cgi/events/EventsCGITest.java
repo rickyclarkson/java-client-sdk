@@ -468,7 +468,7 @@ public class EventsCGITest
         {
             final EventsCGI next = cgis.next();
             assertTrue( EventsCGI.fromString(
-                    random.nextBoolean() ? next.toString() : Strings.fromLast(
+                    random.nextBoolean() ? next.toString() : Strings.fromFirst(
                             '?', next.toString() ) ).equals( next ) );
         }
     }
