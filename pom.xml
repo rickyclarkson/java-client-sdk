@@ -79,6 +79,13 @@
             </plugin>
         </plugins>
     </reporting>
+    <distributionManagement>
+        <site>
+            <id>webserver</id>
+            <name>Core Client Development Group Webserver</name>
+            <url>scp://192.168.106.27/var/www/java-client-sdk</url>
+        </site>
+    </distributionManagement>
     <modules>
         <module>core</module>
     </modules>
