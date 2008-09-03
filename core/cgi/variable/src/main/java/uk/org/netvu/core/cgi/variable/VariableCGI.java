@@ -15,7 +15,7 @@ public class VariableCGI
     {
         if ( builder.get( variableParam ).isNone() )
         {
-            throw new IllegalStateException( variableParam.name
+            throw new IllegalStateException( variableParam.getName()
                     + " has not been set to a value" );
         }
 

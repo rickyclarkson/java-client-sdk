@@ -110,4 +110,26 @@ public class Generators
         return Iterables.prepend( Arrays.asList( (String) null ),
                 strings( random ) ).iterator();
     }
+
+    public static Iterator<Integer> nonNegativeInts( final Random random )
+    {
+        return new Iterator<Integer>()
+        {
+
+            public void remove()
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            public Integer next()
+            {
+                return random.nextInt( Integer.MAX_VALUE );
+            }
+
+            public boolean hasNext()
+            {
+                return true;
+            }
+        };
+    }
 }

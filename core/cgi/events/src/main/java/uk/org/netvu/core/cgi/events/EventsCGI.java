@@ -1,17 +1,16 @@
 package uk.org.netvu.core.cgi.events;
 
+import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
 import static uk.org.netvu.core.cgi.common.Parameter.param;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.List;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Parameter;
-import uk.org.netvu.core.cgi.common.UInt31;
 import uk.org.netvu.core.cgi.common.Validator;
 
 /**
@@ -19,13 +18,13 @@ import uk.org.netvu.core.cgi.common.Validator;
  */
 public final class EventsCGI
 {
-    private static final Parameter<UInt31, UInt31> timeParam = param( "time",
-            "The time from which to search, in seconds since 1970.",
-            new UInt31( 0 ), UInt31.fromString );
+    private static final Parameter<Integer, Integer> timeParam = notNegative( param(
+            "time", "The time from which to search, in seconds since 1970.", 0,
+            Conversion.stringToInt ) );
 
-    private static final Parameter<UInt31, UInt31> rangeParam = param( "range",
-            "The timespan to search in seconds",
-            new UInt31( Integer.MAX_VALUE ), UInt31.fromString );
+    private static final Parameter<Integer, Integer> rangeParam = notNegative( param(
+            "range", "The timespan to search in seconds", Integer.MAX_VALUE,
+            Conversion.stringToInt ) );
 
     private static final Parameter<Format, Format> formatParam = param(
             "format", "The format that the results should be returned in",
@@ -67,7 +66,7 @@ public final class EventsCGI
             "sysmask", "The 32-bit mask of system event types.", 0,
             Conversion.hexStringToInt );
 
-    private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
+    private static final Iterable<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
     {
         {
             add( timeParam );
@@ -83,7 +82,7 @@ public final class EventsCGI
         }
     };
 
-    private static final List<Parameter<?, ?>> exclusiveParams = new ArrayList<Parameter<?, ?>>()
+    private static final Iterable<Parameter<?, ?>> exclusiveParams = new ArrayList<Parameter<?, ?>>()
     {
         {
             add( textParam );
@@ -114,7 +113,7 @@ public final class EventsCGI
          */
         public Builder time( final int time )
         {
-            real = real.with( timeParam, new UInt31( time ) );
+            real = real.with( timeParam, time );
             return this;
         }
 
@@ -126,7 +125,7 @@ public final class EventsCGI
          */
         public Builder range( final int range )
         {
-            real = real.with( rangeParam, new UInt31( range ) );
+            real = real.with( rangeParam, range );
             return this;
         }
 
@@ -249,7 +248,7 @@ public final class EventsCGI
      */
     public int getTime()
     {
-        return builder.get( timeParam ).toInt();
+        return builder.get( timeParam );
     }
 
     /**
@@ -257,7 +256,7 @@ public final class EventsCGI
      */
     public int getRange()
     {
-        return builder.get( rangeParam ).toInt();
+        return builder.get( rangeParam );
     }
 
     /**

@@ -6,7 +6,7 @@ Rationale
 
 * Builders
 
-  In designing the Events Database API, we needed to allow the user to supply the values of around 10 parameters.  Some of those parameters conflicted with each other, and all of them were optional.  Moreover, we expect to have to repeat the idea many times for each other CGI API, so we had a look at some implementations of the Builder design pattern.  I came up with some for discussion, aiming to get the most out of Java in terms of type safety and readability (both the implementation and the use).
+  In designing the EventsCGI API, we need to allow the user to supply the values of around 10 parameters.  Some of those parameters conflict with each other, and all of them are optional.  Let's look at some options for an API accepting these 10 parameters, aiming to get the best balance between safety and readability, in both the use and the implementation.
 
  [[1]] A long parameter list.
 
@@ -16,11 +16,11 @@ Rationale
 
 ---
 
-  More the problem than a solution, the flaws in a long parameter list are readily apparent.  Users forget the order of the parameters (though in Eclipse Ctrl-shift-Space lists them in tooltips), which the compiler catches except in the case of equally-typed parameters (see Military Typing later in this document).
+  More the problem than a solution, the flaws in a long parameter list are clear.  Users forget the order of the parameters (though in Eclipse Ctrl-shift-Space lists them in tooltips), which the compiler catches except in the case of equally-typed parameters (see Military Typing later in this document).
 
-  Also it's unclear what the best thing to do with optional parameters is here - use nulls, have n2 overloads, have the user insert all the defaults that they're not interested in (this can be helped by static constants) or something else.
+  Also it's unclear what to do about optional parameters - use nulls, have a large number of overloads, have the user insert all the defaults that they're not interested in (this can be helped by static constants) or something else.
 
-  And as the text parameter decides which of the other parameters are valid, there would need to be two overloads.
+  And as some of the parameters conflict with each other, there would need to be a number of overloads of the method.
 
  [[2]] An anonymous subclass of the type we want that directly accesses variables to set them in its initialisation block.
 
@@ -38,9 +38,9 @@ EventsCGI cgi = new EventsCGI()
 
   A couple of flaws with this are shown above in comments, though probably at least one IDE can flag up the duplicate write to 'time' as a problem.  The text and sysMask together can be checked after the constructor has run, though it's worth pointing out that you can't check this in the superclass' constructor.  Also, if an exception is thrown when the check is performed, the stack trace won't appear to come from the line "sysMask = 127;", which might be a problem.
 
-  Code formatters will often format the above code in a much less readable way because of the double braces.  Also, the style of code is quite alien to most developers, and it's quite arguable that you should avoid doing things in constructors, though in this case it's quite safe.
+  Code formatters will often format the above code in a much less readable way because of the double braces.  Also, the style of code is quite alien to most developers, and it's quite arguable that you should avoid doing much in constructors, though in this case it's quite safe.
 
- [[3]] An anonymous subclass of the type we want that access variables through accessors to set them in its initalisation block.
+ [[3]] An anonymous subclass of the type we want that uses accessors through accessors to set them in its initalisation block.
 
 ---
 
@@ -60,26 +60,18 @@ Events events = new Events()
 
 ---
 
-EventsCGI cgi = new Events.Builder().setTime(100).setTime(200).setTime(300).done();
+EventsCGI cgi = new Events.Builder().time( 100 ).time( 200 ).time( 300 ).build();
 //the above line will throw an exception on the second call to setTime.
 
 ---
 
-  So it does have safety, albeit at runtime, and the implementing code is not repetitive.  Set is in the method names to make it very obvious that it does change the values it holds, so it is not quite as reusable as it could be (you can't store a partly-completed builder and complete it with two other options separately without having them potentially interfere with each other).  In fact the above could be made immutable, though I think the implementation would be painful.
+  So it can have safety, because you can check any values at any point in the implementation.  It's not quite as reusable as it could be because it's mutable.  For example, you could not store a partly-completed builder and later complete it with two other options separately without having them potentially interfere with each other. 
  
- [[5]] Speaking of painful implementation, the final option is an immutable builder with as much static type-checking as possible - in the simplest cases these might not be this painful, but with optional parameters and parameters that exclude each other it starts to get a bit difficult.  One option is to have builder.time(int) return one type, that doesn't have time(int), and builder.range(int) return another type, that has time(int) but not range(int), but if you understood that you'll probably realise that it would leave you with O(n^2) classes!  Instead builder could have time(int) and noTime, which would have the same type as each other.  This actually gives all the readability I can hope for without O(n^2) classes, and keeps everything as type safe as possible:
+ [[5]] The final option is an immutable builder with as much static type-checking as possible - in the simplest cases these are not bad, but the amount of implementation code needed explodes when optional parameters and mutually exclusive parameters are involved.
 
 ---
 
-  EventsCGI cgi = new EventsCGI.Builder().time(100).range(400)
-                                         .noFormat.maxLength(10)
-                                         .text("hello").build();
-
----
-
-  So now new Events.BuilderTS().time(100).time(200) won't compile, and new Events.BuilderTS().text("hello").sysMask(127) won't compile, as the methods just aren't available.  It works well with Eclipse's completion.  The implementation is a little odd, but it doesn't get any more complex with extra parameters, just.. long.
-
-  Craig opted to go with something similar to the 4th suggestion, but changing setTime(x) to just time(x), directly as Joshua Bloch has documented.
+  We opted to go with the 4th option, which is the option Joshua Bloch documented.
 
 * Military Typing
 

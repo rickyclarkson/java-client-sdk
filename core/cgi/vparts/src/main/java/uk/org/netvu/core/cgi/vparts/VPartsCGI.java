@@ -2,6 +2,7 @@ package uk.org.netvu.core.cgi.vparts;
 
 import static uk.org.netvu.core.cgi.common.Parameter.bound;
 import static uk.org.netvu.core.cgi.common.Parameter.not;
+import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
 import static uk.org.netvu.core.cgi.common.Parameter.param;
 
 import java.util.ArrayList;
@@ -12,7 +13,6 @@ import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Iterables;
 import uk.org.netvu.core.cgi.common.Parameter;
-import uk.org.netvu.core.cgi.common.UInt31;
 
 final class VPartsCGI
 {
@@ -27,18 +27,18 @@ final class VPartsCGI
             "Determines the function of the cgi call", Mode.READ,
             Mode.fromString );
 
-    private static final Parameter<UInt31, UInt31> timeParam = param( "time",
-            "Julianised GMT start time for database search", new UInt31( 0 ),
-            UInt31.fromString );
+    private static final Parameter<Integer, Integer> timeParam = notNegative( param(
+            "time", "Julianised GMT start time for database search", 0,
+            Conversion.stringToInt ) );
 
-    private static final Parameter<UInt31, UInt31> rangeParam = param( "range",
-            "Timespan to search in seconds.", new UInt31( Integer.MAX_VALUE ),
-            UInt31.fromString );
+    private static final Parameter<Integer, Integer> rangeParam = notNegative( param(
+            "range", "Timespan to search in seconds.", Integer.MAX_VALUE,
+            Conversion.stringToInt ) );
 
-    private static final Parameter<UInt31, UInt31> expiryParam = param(
+    private static final Parameter<Integer, Integer> expiryParam = param(
             "expiry",
             "Sets the expiry time for partitions, used in protect mode; Julianised GMT",
-            new UInt31( 0 ), UInt31.fromString );
+            0, Conversion.stringToInt );
 
     private static final Parameter<Boolean, Boolean> watermarkParam = param(
             "watermark",
@@ -103,7 +103,7 @@ final class VPartsCGI
          */
         public Builder time( final int time )
         {
-            real = real.with( timeParam, new UInt31( time ) );
+            real = real.with( timeParam, time );
             return this;
         }
 
@@ -112,13 +112,13 @@ final class VPartsCGI
          */
         public Builder range( final int range )
         {
-            real = real.with( rangeParam, new UInt31( range ) );
+            real = real.with( rangeParam, range );
             return this;
         }
 
         public Builder expiry( final int expiry )
         {
-            real = real.with( expiryParam, new UInt31( expiry ) );
+            real = real.with( expiryParam, expiry );
             return this;
         }
 
@@ -166,7 +166,7 @@ final class VPartsCGI
      */
     public int getTime()
     {
-        return builder.get( timeParam ).toInt();
+        return builder.get( timeParam );
     }
 
     /**
@@ -174,12 +174,12 @@ final class VPartsCGI
      */
     public int getRange()
     {
-        return builder.get( rangeParam ).toInt();
+        return builder.get( rangeParam );
     }
 
     public int getExpiry()
     {
-        return builder.get( expiryParam ).toInt();
+        return builder.get( expiryParam );
     }
 
     public boolean getWatermark()

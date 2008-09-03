@@ -9,7 +9,6 @@ import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.Strings;
-import uk.org.netvu.core.cgi.common.UInt31;
 
 /**
  * A single result from the events database.
@@ -23,9 +22,9 @@ public class EventsCGIResult
     private static final Parameter<String, Option<String>> alarmParameter = Parameter.param(
             "alarm", "The alarm description.", Conversion.<String> identity() );
 
-    private static final Parameter<UInt31, Option<UInt31>> julianTimeParameter = Parameter.param(
+    private static final Parameter<Integer, Option<Integer>> julianTimeParameter = Parameter.notNegative( Parameter.param(
             "time", "The Julianised time that the event occurred at",
-            UInt31.fromString );
+            Conversion.stringToInt ) );
 
     private static final Parameter<Integer, Option<Integer>> offsetParameter = Parameter.bound(
             -90000, 90000, Parameter.param( "offset", "",
@@ -37,13 +36,14 @@ public class EventsCGIResult
     private static final Parameter<Boolean, Option<Boolean>> onDiskParameter = Parameter.param(
             "onDisk", "", Conversion.stringToBoolean );
 
-    private static final Parameter<UInt31, Option<UInt31>> durationParameter = Parameter.param(
-            "duration", "", UInt31.fromString );
+    private static final Parameter<Integer, Option<Integer>> durationParameter = Parameter.notNegative( Parameter.param(
+            "duration", "", Conversion.stringToInt ) );
 
-    private static final Parameter<UInt31, Option<UInt31>> preAlarmParameter = Parameter.param(
-            "preAlarm", "", UInt31.fromString );
-    private static final Parameter<UInt31, Option<UInt31>> archiveParameter = Parameter.param(
-            "archive", "", UInt31.fromString );
+    private static final Parameter<Integer, Option<Integer>> preAlarmParameter = Parameter.notNegative( Parameter.param(
+            "preAlarm", "", Conversion.stringToInt ) );
+
+    private static final Parameter<Integer, Option<Integer>> archiveParameter = Parameter.notNegative( Parameter.param(
+            "archive", "", Conversion.stringToInt ) );
     private static final Parameter<Status, Status> statusParameter = Parameter.param(
             "status", "", Status.NONE, Status.fromString );
     private static final Parameter<AlarmType, AlarmType> alarmTypeParameter = Parameter.param(
@@ -119,7 +119,7 @@ public class EventsCGIResult
          *        the time of the event.
          * @return the builder.
          */
-        public Builder julianTime( final UInt31 julianTime )
+        public Builder julianTime( final int julianTime )
         {
             real = real.with( julianTimeParameter, julianTime );
             return this;
@@ -148,19 +148,19 @@ public class EventsCGIResult
          * 
          * @return the builder.
          */
-        public Builder duration( final UInt31 duration )
+        public Builder duration( final int duration )
         {
             real = real.with( durationParameter, duration );
             return this;
         }
 
-        public Builder preAlarm( final UInt31 preAlarm )
+        public Builder preAlarm( final int preAlarm )
         {
             real = real.with( preAlarmParameter, preAlarm );
             return this;
         }
 
-        public Builder archive( final UInt31 archive )
+        public Builder archive( final int archive )
         {
             real = real.with( archiveParameter, archive );
             return this;
@@ -221,7 +221,7 @@ public class EventsCGIResult
      */
     public int getJulianTime()
     {
-        return builder.get( julianTimeParameter ).get().toInt();
+        return builder.get( julianTimeParameter ).get();
     }
 
     /**
@@ -254,7 +254,7 @@ public class EventsCGIResult
      */
     public int getDuration()
     {
-        return builder.get( durationParameter ).get().toInt();
+        return builder.get( durationParameter ).get();
     }
 
     /**
@@ -263,7 +263,7 @@ public class EventsCGIResult
      */
     public int getPreAlarm()
     {
-        return builder.get( preAlarmParameter ).get().toInt();
+        return builder.get( preAlarmParameter ).get();
     }
 
     /**
@@ -272,7 +272,7 @@ public class EventsCGIResult
      */
     public int getArchive()
     {
-        return builder.get( archiveParameter ).get().toInt();
+        return builder.get( archiveParameter ).get();
     }
 
     /**
@@ -313,12 +313,12 @@ public class EventsCGIResult
 
         final Builder builder = new EventsCGIResult.Builder().cam( Integer.parseInt( values[1] ) );
         builder.alarm( values[2] );
-        builder.julianTime( new UInt31( Integer.parseInt( values[3] ) ) );
+        builder.julianTime( Integer.parseInt( values[3] ) );
         builder.offset( Integer.parseInt( values[4] ) ).file( values[5] );
         builder.onDisk( values[6].equals( "exists" ) );
-        builder.duration( new UInt31( parseInt( values[8] ) ) );
-        builder.preAlarm( new UInt31( parseInt( values[9] ) ) );
-        builder.archive( new UInt31( parseInt( values[10] ) ) );
+        builder.duration( parseInt( values[8] ) );
+        builder.preAlarm( parseInt( values[9] ) );
+        builder.archive( parseInt( values[10] ) );
 
         if ( values.length > 11 )
         {

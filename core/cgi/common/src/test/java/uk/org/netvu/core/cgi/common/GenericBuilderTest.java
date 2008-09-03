@@ -27,10 +27,10 @@ public final class GenericBuilderTest
         new GenericBuilder().with( param, "10" ).with( param, "10" );
     }
 
-    private static final Parameter<UInt31, Option<UInt31>> time = Parameter.param(
-            "time", "time since 1970", UInt31.fromString );
-    private static final Parameter<UInt31, Option<UInt31>> range = Parameter.param(
-            "range", "range to search", UInt31.fromString );
+    private static final Parameter<Integer, Option<Integer>> time = Parameter.notNegative( Parameter.param(
+            "time", "time since 1970", Conversion.stringToInt ) );
+    private static final Parameter<Integer, Option<Integer>> range = Parameter.param(
+            "range", "range to search", Conversion.stringToInt );
 
     @Test(expected = IllegalStateException.class)
     public void validatorFail()
@@ -40,22 +40,20 @@ public final class GenericBuilderTest
             @Override
             public boolean isValid( final GenericBuilder builder )
             {
-                final Option<UInt31> oTime = builder.get( time );
-                final Option<UInt31> oRange = builder.get( range );
+                final Option<Integer> oTime = builder.get( time );
+                final Option<Integer> oRange = builder.get( range );
 
-                return oTime.isNone() || oRange.isNone() ? true
-                        : oTime.get().toInt() + oRange.get().toInt() >= 0;
+                return oTime.isNone() || oRange.isNone() ? true : oTime.get()
+                        + oRange.get() >= 0;
             }
-        } ).with( time, new UInt31( 2000000000 ) ).with( range,
-                new UInt31( 2000000000 ) );
+        } ).with( time, 2000000000 ).with( range, 2000000000 );
     }
 
     @Test
     public void testIsDefault()
     {
         assertTrue( new GenericBuilder().isDefault( time ) );
-        assertFalse( new GenericBuilder().with( time, new UInt31( 40 ) ).isDefault(
-                time ) );
+        assertFalse( new GenericBuilder().with( time, 40 ).isDefault( time ) );
     }
 
     @Test
@@ -72,8 +70,8 @@ public final class GenericBuilderTest
         final GenericBuilder builder = GenericBuilder.fromURL(
                 "time=10&range=40", params );
 
-        assertTrue( builder.get( time ).get().toInt() == 10 );
-        assertTrue( builder.get( range ).get().toInt() == 40 );
+        assertTrue( builder.get( time ).get() == 10 );
+        assertTrue( builder.get( range ).get() == 40 );
 
         assertTrue( builder.toURLParameters( params ).equals(
                 "time=10&range=40" ) );

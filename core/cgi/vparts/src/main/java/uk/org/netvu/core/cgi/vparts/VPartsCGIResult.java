@@ -1,5 +1,6 @@
 package uk.org.netvu.core.cgi.vparts;
 
+import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
 import static uk.org.netvu.core.cgi.common.Parameter.param;
 
 import java.util.ArrayList;
@@ -7,10 +8,9 @@ import java.util.ArrayList;
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Option;
-import uk.org.netvu.core.cgi.common.Pair;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.Strings;
-import uk.org.netvu.core.cgi.common.UInt31;
+import uk.org.netvu.core.cgi.common.URLParameter;
 
 public class VPartsCGIResult
 {
@@ -23,12 +23,12 @@ public class VPartsCGIResult
     private static final Parameter<String, Option<String>> filenameParam = param(
             "filename", "The name of the file where this video can be found",
             Conversion.<String> identity() );
-    private static final Parameter<UInt31, Option<UInt31>> startTimeParam = param(
-            "start_time", "The start time", UInt31.fromString );
-    private static final Parameter<UInt31, Option<UInt31>> endTimeParam = param(
-            "end_time", "The end time", UInt31.fromString );
-    private static final Parameter<UInt31, Option<UInt31>> expiryTimeParam = param(
-            "expiry_time", "The expiry time", UInt31.fromString );
+    private static final Parameter<Integer, Option<Integer>> startTimeParam = notNegative( param(
+            "start_time", "The start time", Conversion.stringToInt ) );
+    private static final Parameter<Integer, Option<Integer>> endTimeParam = notNegative( param(
+            "end_time", "The end time", Conversion.stringToInt ) );
+    private static final Parameter<Integer, Option<Integer>> expiryTimeParam = notNegative( param(
+            "expiry_time", "The expiry time", Conversion.stringToInt ) );
     private static final Parameter<Integer, Option<Integer>> numberOfEntriesParam = param(
             "n_entries", "The number of entries", Conversion.stringToInt );
     private static final Parameter<Integer, Option<Integer>> camMaskParam = param(
@@ -80,19 +80,19 @@ public class VPartsCGIResult
 
         public Builder startTime( final int startTime )
         {
-            real = real.with( startTimeParam, new UInt31( startTime ) );
+            real = real.with( startTimeParam, startTime );
             return this;
         }
 
         public Builder endTime( final int endTime )
         {
-            real = real.with( endTimeParam, new UInt31( endTime ) );
+            real = real.with( endTimeParam, endTime );
             return this;
         }
 
         public Builder expiryTime( final int expiryTime )
         {
-            real = real.with( expiryTimeParam, new UInt31( expiryTime ) );
+            real = real.with( expiryTimeParam, expiryTime );
             return this;
         }
 
@@ -116,7 +116,7 @@ public class VPartsCGIResult
                 if ( real.get( param ).isNone() )
                 {
                     throw new IllegalStateException( "The parameter "
-                            + param.name + " has not been given a value" );
+                            + param.getName() + " has not been given a value" );
                 }
             }
 
@@ -141,17 +141,17 @@ public class VPartsCGIResult
 
     public int getStartTime()
     {
-        return builder.get( startTimeParam ).get().toInt();
+        return builder.get( startTimeParam ).get();
     }
 
     public int getEndTime()
     {
-        return builder.get( endTimeParam ).get().toInt();
+        return builder.get( endTimeParam ).get();
     }
 
     public int getExpiryTime()
     {
-        return builder.get( expiryTimeParam ).get().toInt();
+        return builder.get( expiryTimeParam ).get();
     }
 
     public int getNumberOfEntries()
@@ -192,7 +192,7 @@ public class VPartsCGIResult
     private static <T, R> GenericBuilder hack( final GenericBuilder builder,
             final Parameter<T, R> param, final String s )
     {
-        return builder.with( param, param.fromURLParameter.convert( Pair.pair(
-                param.name, s ) ) );
+        return builder.with( param, param.fromURLParameter( new URLParameter(
+                param.getName(), s ) ) );
     }
 }

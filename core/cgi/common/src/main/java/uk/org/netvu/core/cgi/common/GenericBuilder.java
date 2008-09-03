@@ -40,13 +40,13 @@ public final class GenericBuilder
         final Map<Parameter<?, ?>, Object> copy = new HashMap<Parameter<?, ?>, Object>(
                 values );
 
-        copy.put( parameter,
-                parameter.reduction.reduce( value, get( parameter ) ) );
+        copy.put( parameter, parameter.reduce( value, get( parameter ) ) );
 
         final GenericBuilder built = new GenericBuilder( copy, validator );
         if ( !validator.isValid( built ) )
         {
-            throw new IllegalStateException( value + " for " + parameter.name
+            throw new IllegalStateException( value + " for "
+                    + parameter.getName()
                     + " violates the constraints on this builder" );
         }
 
@@ -62,26 +62,26 @@ public final class GenericBuilder
     public <T> T get( final Parameter<?, T> parameter )
     {
         return values.containsKey( parameter ) ? (T) values.get( parameter )
-                : parameter.defaultValue;
+                : parameter.getDefaultValue();
     }
 
     private <T, R> GenericBuilder withFromString( final Parameter<T, R> param,
-            final Pair<String, String> keyAndValue )
+            final URLParameter keyAndValue )
     {
-        return with( param, param.fromURLParameter.convert( keyAndValue ) );
+        return with( param, param.fromURLParameter( keyAndValue ) );
     }
 
     public static GenericBuilder fromURL( final String url,
-            final List<? extends Parameter<?, ?>> params )
+            final Iterable<? extends Parameter<?, ?>> params )
     {
         GenericBuilder builder = new GenericBuilder();
-        final List<Pair<String, String>> parts = URLExtractor.keyValuePairs( url );
+        final List<URLParameter> parts = URLExtractor.nameValuePairs( url );
 
-        for ( final Pair<String, String> part : parts )
+        for ( final URLParameter part : parts )
         {
             for ( final Parameter<?, ?> param : params )
             {
-                if ( part.first().startsWith( param.name ) )
+                if ( part.name.startsWith( param.getName() ) )
                 {
                     builder = builder.withFromString( param, part );
                 }

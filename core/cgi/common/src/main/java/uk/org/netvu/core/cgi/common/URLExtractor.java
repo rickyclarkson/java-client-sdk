@@ -17,9 +17,11 @@ public class URLExtractor
                 Strings.afterFirstLeniently( url, "?" ), '&' );
     }
 
-    public static List<Pair<String, String>> keyValuePairs( final String url )
+    public static List<URLParameter> nameValuePairs( final String url )
     {
-        return url.indexOf( '=' ) < 0 ? new ArrayList<Pair<String, String>>()
-                : Iterables.map( parameters( url ), Strings.partition( "=" ) );
+        return url.indexOf( '=' ) < 0 ? new ArrayList<URLParameter>()
+                : Iterables.map(
+                        parameters( url ),
+                        Strings.partition( "=" ).andThen( URLParameter.fromPair ) );
     }
 }

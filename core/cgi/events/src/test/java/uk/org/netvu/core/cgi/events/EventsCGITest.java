@@ -20,7 +20,6 @@ import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.Generators;
 import uk.org.netvu.core.cgi.common.Iterables;
 import uk.org.netvu.core.cgi.common.Strings;
-import uk.org.netvu.core.cgi.common.UInt31;
 import uk.org.netvu.core.cgi.events.EventsCGI.Builder;
 
 /**
@@ -162,9 +161,10 @@ public class EventsCGITest
         final int randomInt = random.nextInt();
         final long randomLong = random.nextLong();
         final String randomString = Generators.strings( random ).iterator().next();
-        final UInt31 randomUInt31 = UInt31.uint31s( random ).next();
+        final int randomNonNegativeInt = Generators.nonNegativeInts( random ).next();
+
         assertTrue( new EventsCGI.Builder().alarmMask( randomInt ).build().getAlarmMask() == randomInt );
-        assertTrue( new EventsCGI.Builder().range( randomUInt31.toInt() ).build().getRange() == randomUInt31.toInt() );
+        assertTrue( new EventsCGI.Builder().range( randomNonNegativeInt ).build().getRange() == randomNonNegativeInt );
         assertTrue( new EventsCGI.Builder().camMask( randomLong ).build().getCamMask() == randomLong );
         assertTrue( new EventsCGI.Builder().gpsMask( randomInt ).build().getGpsMask() == randomInt );
         assertTrue( new EventsCGI.Builder().length( randomInt ).build().getMaxLength() == randomInt );
@@ -172,7 +172,7 @@ public class EventsCGITest
 
         return new EventsCGI.Builder().text( randomString ).build().getText().equals(
                 randomString )
-                && new EventsCGI.Builder().time( randomUInt31.toInt() ).build().getTime() == randomUInt31.toInt()
+                && new EventsCGI.Builder().time( randomNonNegativeInt ).build().getTime() == randomNonNegativeInt
                 && new EventsCGI.Builder().vmdMask( randomLong ).build().getVmdMask() == randomLong;
     }
 
@@ -265,7 +265,7 @@ public class EventsCGITest
             {
                 final EventsCGI.Builder builder = new EventsCGI.Builder();
 
-                final Iterator<UInt31> uint31s = UInt31.uint31s( random );
+                final Iterator<Integer> nonNegativeInts = Generators.nonNegativeInts( random );
                 final Iterator<String> strings = Generators.strings( random ).iterator();
 
                 final List<Runnable> methods = new ArrayList<Runnable>()
@@ -315,7 +315,7 @@ public class EventsCGITest
                         {
                             public void run()
                             {
-                                builder.range( uint31s.next().toInt() );
+                                builder.range( nonNegativeInts.next() );
                             }
                         } );
 
@@ -339,7 +339,7 @@ public class EventsCGITest
                         {
                             public void run()
                             {
-                                builder.time( uint31s.next().toInt() );
+                                builder.time( nonNegativeInts.next() );
                             }
                         } );
 

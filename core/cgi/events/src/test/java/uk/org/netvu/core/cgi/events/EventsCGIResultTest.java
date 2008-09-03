@@ -8,7 +8,6 @@ import java.util.Random;
 import org.junit.Test;
 
 import uk.org.netvu.core.cgi.common.Generators;
-import uk.org.netvu.core.cgi.common.UInt31;
 import uk.org.netvu.core.cgi.events.EventsCGIResult.Builder;
 
 /**
@@ -65,15 +64,15 @@ public class EventsCGIResultTest
 
             public EventsCGIResult.Builder next()
             {
-                final Iterator<UInt31> uint31s = UInt31.uint31s( random );
-                final UInt31 julianTime = uint31s.next();
+                final Iterator<Integer> nonNegatives = Generators.nonNegativeInts( random );
+                final int julianTime = nonNegatives.next();
 
                 return new EventsCGIResult.Builder().alarm( strings.next() ).archive(
-                        uint31s.next() ).cam( random.nextInt( 65 ) ).duration(
-                        new UInt31( random.nextInt( Integer.MAX_VALUE
-                                - julianTime.toInt() ) ) ).file( strings.next() ).julianTime(
-                        julianTime ).offset( random.nextInt( 180000 ) - 90000 ).preAlarm(
-                        uint31s.next() ).onDisk( random.nextBoolean() ).status(
+                        nonNegatives.next() ).cam( random.nextInt( 65 ) ).duration(
+                        Math.max( 0, nonNegatives.next() - julianTime ) ).file(
+                        strings.next() ).julianTime( julianTime ).offset(
+                        random.nextInt( 180000 ) - 90000 ).preAlarm(
+                        nonNegatives.next() ).onDisk( random.nextBoolean() ).status(
                         Status.oneOf( random ) ).alarmType(
                         AlarmType.oneOf( random ) );
             }
@@ -177,26 +176,15 @@ public class EventsCGIResultTest
         try
         {
             assertTrue( new EventsCGIResult.Builder().cam( 1 ).alarm( "test" ).julianTime(
-                    new UInt31( 100 ) ).offset( 5 ).file( "ignore" ).onDisk(
-                    true ).duration( new UInt31( 40 ) ).preAlarm(
-                    new UInt31( 1 ) ).archive( new UInt31( 1 ) ).status(
-                    Status.NONE ).alarmType( AlarmType.CAMERA ).build().getStatus() == Status.NONE );
+                    100 ).offset( 5 ).file( "ignore" ).onDisk( true ).duration(
+                    40 ).preAlarm( 1 ).archive( 1 ).status( Status.NONE ).alarmType(
+                    AlarmType.CAMERA ).build().getStatus() == Status.NONE );
         }
         catch ( final NullPointerException e )
         {
             e.printStackTrace();
             throw e;
         }
-    }
-
-    /**
-     * Tests that equal objects have equal hashCodes.
-     */
-    @Test
-    public void testHashCode()
-    {
-        final Builder builder = aBuilder();
-        assertTrue( builder.build().hashCode() == builder.build().hashCode() );
     }
 
     /**

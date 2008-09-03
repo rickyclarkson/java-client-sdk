@@ -3,6 +3,7 @@ package uk.org.netvu.core.cgi.common;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.junit.Test;
 
@@ -34,34 +35,18 @@ public class URLExtractorTest
     @Test
     public void testKeyValuePairs()
     {
-        assertTrue( Iterables.sequenceEqual( URLExtractor.keyValuePairs( "" ),
-                new ArrayList<Pair<String, String>>() ) );
+        assertTrue( Iterables.sequenceEqual( URLExtractor.nameValuePairs( "" ),
+                new ArrayList<URLParameter>() ) );
         assertTrue( Iterables.sequenceEqual(
-                URLExtractor.keyValuePairs( "foo=bar" ),
-                new ArrayList<Pair<String, String>>()
-                {
-                    {
-                        add( Pair.pair( "foo", "bar" ) );
-                    }
-                } ) );
+                URLExtractor.nameValuePairs( "foo=bar" ),
+                Arrays.asList( new URLParameter( "foo", "bar" ) ) ) );
         assertTrue( Iterables.sequenceEqual(
-                URLExtractor.keyValuePairs( "foo=bar&baz=spam" ),
-                new ArrayList<Pair<String, String>>()
-                {
-                    {
-                        add( Pair.pair( "foo", "bar" ) );
-                        add( Pair.pair( "baz", "spam" ) );
-                    }
-                } ) );
+                URLExtractor.nameValuePairs( "foo=bar&baz=spam" ),
+                Arrays.asList( new URLParameter( "foo", "bar" ),
+                        new URLParameter( "baz", "spam" ) ) ) );
         assertTrue( Iterables.sequenceEqual(
-                URLExtractor.keyValuePairs( "foo=\"bar=baz\"&spam=\"eggs\"" ),
-                new ArrayList<Pair<String, String>>()
-                {
-                    {
-                        add( Pair.pair( "foo", "\"bar=baz\"" ) );
-                        add( Pair.pair( "spam", "\"eggs\"" ) );
-                    }
-                } ) );
+                URLExtractor.nameValuePairs( "foo=\"bar=baz\"&spam=\"eggs\"" ),
+                Arrays.asList( new URLParameter( "foo", "\"bar=baz\"" ),
+                        new URLParameter( "spam", "\"eggs\"" ) ) ) );
     }
-
 }

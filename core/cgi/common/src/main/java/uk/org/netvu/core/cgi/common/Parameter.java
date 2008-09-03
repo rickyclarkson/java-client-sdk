@@ -5,26 +5,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class Parameter<T, R>
+public abstract class Parameter<T, R>
 {
-    public final String name;
-    public final String description;
-    public final R defaultValue;
-    public final Reduction<T, R> reduction;
-    public final Conversion<Pair<String, String>, T> fromURLParameter;
-    public final Conversion<Pair<String, R>, String> toURLParameter;
+    private final String name;
+    private final String description;
+    private final R defaultValue;
 
     private Parameter( final String name, final String description,
-            final R defaultValue, final Reduction<T, R> reduction,
-            final Conversion<Pair<String, String>, T> fromURLParameter,
-            final Conversion<Pair<String, R>, String> toURLParameter )
+            final R defaultValue )
     {
         this.name = name;
         this.description = description;
         this.defaultValue = defaultValue;
-        this.reduction = reduction;
-        this.fromURLParameter = fromURLParameter;
-        this.toURLParameter = toURLParameter;
     }
 
     public static <T> Parameter<T, Option<T>> param( final String name,
@@ -32,31 +24,34 @@ public class Parameter<T, R>
             final Conversion<T, String> toString )
     {
         return new Parameter<T, Option<T>>( name, description,
-                new Option.None<T>(), new Reduction<T, Option<T>>()
+                new Option.None<T>() )
+        {
+            @Override
+            public Option<T> reduce( final T newValue, final Option<T> original )
+            {
+                if ( original.isNone() )
                 {
-                    @Override
-                    public Option<T> reduce( final T newValue,
-                            final Option<T> original )
-                    {
-                        if ( original.isNone() )
-                        {
-                            return new Option.Some<T>( newValue );
-                        }
+                    return new Option.Some<T>( newValue );
+                }
 
-                        throw new IllegalStateException();
-                    }
-                }, createFromURL( fromString ),
-                new Conversion<Pair<String, Option<T>>, String>()
-                {
-                    @Override
-                    public String convert(
-                            final Pair<String, Option<T>> nameAndValue )
-                    {
-                        return nameAndValue.first()
-                                + '='
-                                + toString.convert( nameAndValue.second().get() );
-                    }
-                } );
+                throw new IllegalStateException();
+            }
+
+            @Override
+            public T fromURLParameter( final URLParameter nameAndValue )
+            {
+                return createFromURL( fromString, nameAndValue );
+            }
+
+            @Override
+            public String toURLParameter(
+                    final Pair<String, Option<T>> nameAndValue )
+            {
+                return nameAndValue.first() + '='
+                        + toString.convert( nameAndValue.second().get() );
+            }
+        };
+
     }
 
     public static <T> Parameter<T, Option<T>> param( final String name,
@@ -70,67 +65,93 @@ public class Parameter<T, R>
             final String description, final T defaultValue,
             final Conversion<String, T> fromString )
     {
-        return new Parameter<T, T>( name, description, defaultValue,
-                new Reduction<T, T>()
+        return new Parameter<T, T>( name, description, defaultValue )
+        {
+            @Override
+            public T reduce( final T newValue, final T original )
+            {
+                if ( original.equals( defaultValue ) )
                 {
-                    @Override
-                    public T reduce( final T newValue, final T original )
-                    {
-                        if ( original.equals( defaultValue ) )
-                        {
-                            return newValue;
-                        }
+                    return newValue;
+                }
 
-                        throw new IllegalStateException();
-                    }
-                }, createFromURL( fromString ),
-                new Conversion<Pair<String, T>, String>()
-                {
-                    @Override
-                    public String convert( final Pair<String, T> nameAndValue )
-                    {
-                        return nameAndValue.first() + '='
-                                + nameAndValue.second();
-                    }
-                } );
+                throw new IllegalStateException();
+            }
+
+            @Override
+            public T fromURLParameter( final URLParameter nameAndValue )
+            {
+                return createFromURL( fromString, nameAndValue );
+            }
+
+            @Override
+            public String toURLParameter( final Pair<String, T> nameAndValue )
+            {
+                return nameAndValue.first() + '=' + nameAndValue.second();
+            }
+        };
     }
 
     public static <U> Parameter<Integer, U> bound( final int lowerInclusive,
             final int higherInclusive, final Parameter<Integer, U> param )
     {
         return new Parameter<Integer, U>( param.name, param.description,
-                param.defaultValue, new Reduction<Integer, U>()
+                param.defaultValue )
+        {
+            @Override
+            public U reduce( final Integer newValue, final U original )
+            {
+                if ( newValue >= lowerInclusive && newValue <= higherInclusive )
                 {
-                    @Override
-                    public U reduce( final Integer newValue, final U original )
-                    {
-                        if ( newValue >= lowerInclusive
-                                && newValue <= higherInclusive )
-                        {
-                            return param.reduction.reduce( newValue, original );
-                        }
+                    return param.reduce( newValue, original );
+                }
 
-                        throw new IllegalArgumentException();
-                    }
-                }, param.fromURLParameter, param.toURLParameter );
+                throw new IllegalArgumentException();
+            }
+
+            @Override
+            public Integer fromURLParameter( final URLParameter nameAndValue )
+            {
+                return param.fromURLParameter( nameAndValue );
+            }
+
+            @Override
+            public String toURLParameter( final Pair<String, U> nameAndValue )
+            {
+                return param.toURLParameter( nameAndValue );
+            }
+
+        };
     }
 
     public static <T, U> Parameter<T, U> not( final T banned,
             final Parameter<T, U> param )
     {
         return new Parameter<T, U>( param.name, param.description,
-                param.defaultValue, new Reduction<T, U>()
+                param.defaultValue )
+        {
+            @Override
+            public U reduce( final T newValue, final U original )
+            {
+                if ( newValue.equals( banned ) )
                 {
-                    @Override
-                    public U reduce( final T newValue, final U original )
-                    {
-                        if ( newValue.equals( banned ) )
-                        {
-                            throw new IllegalArgumentException();
-                        }
-                        return param.reduction.reduce( newValue, original );
-                    }
-                }, param.fromURLParameter, param.toURLParameter );
+                    throw new IllegalArgumentException();
+                }
+                return param.reduce( newValue, original );
+            }
+
+            @Override
+            public T fromURLParameter( final URLParameter nameAndValue )
+            {
+                return param.fromURLParameter( nameAndValue );
+            }
+
+            @Override
+            public String toURLParameter( final Pair<String, U> nameAndValue )
+            {
+                return param.toURLParameter( nameAndValue );
+            }
+        };
     }
 
     public static <T> Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>> sparseArrayParam(
@@ -139,93 +160,100 @@ public class Parameter<T, R>
             final Conversion<T, String> valueEncoder )
     {
         return new Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>>(
-                name,
-                description,
-                new TreeMap<Integer, T>(),
-                new Reduction<List<Pair<Integer, T>>, TreeMap<Integer, T>>()
+                name, description, new TreeMap<Integer, T>() )
+        {
+            @Override
+            public TreeMap<Integer, T> reduce(
+                    final List<Pair<Integer, T>> newValue,
+                    final TreeMap<Integer, T> original )
+            {
+                final TreeMap<Integer, T> copy = new TreeMap<Integer, T>(
+                        original );
+                for ( final Pair<Integer, T> pair : newValue )
                 {
-                    @Override
-                    public TreeMap<Integer, T> reduce(
-                            final List<Pair<Integer, T>> newValue,
-                            final TreeMap<Integer, T> original )
-                    {
-                        final TreeMap<Integer, T> copy = new TreeMap<Integer, T>(
-                                original );
-                        for ( final Pair<Integer, T> pair : newValue )
-                        {
-                            copy.put( pair.first(), pair.second() );
-                        }
+                    copy.put( pair.first(), pair.second() );
+                }
 
-                        return copy;
-                    }
-                },
-                new Conversion<Pair<String, String>, List<Pair<Integer, T>>>()
+                return copy;
+            }
+
+            @Override
+            public List<Pair<Integer, T>> fromURLParameter(
+                    final URLParameter keyAndValue )
+            {
+                final List<String> values = Strings.splitIgnoringQuotedSections(
+                        keyAndValue.value, ',' );
+                int startIndex = Integer.parseInt( keyAndValue.name.substring(
+                        name.length() + 1, keyAndValue.name.length() - 1 ) );
+
+                final List<Pair<Integer, T>> results = new ArrayList<Pair<Integer, T>>();
+
+                for ( final String value : values )
                 {
-                    @Override
-                    public List<Pair<Integer, T>> convert(
-                            final Pair<String, String> keyAndValue )
-                    {
-                        final List<String> values = Strings.splitIgnoringQuotedSections(
-                                keyAndValue.second(), ',' );
-                        int startIndex = Integer.parseInt( keyAndValue.first().substring(
-                                name.length() + 1,
-                                keyAndValue.first().length() - 1 ) );
+                    results.add( Pair.pair( startIndex,
+                            fromString.convert( value.substring( 1,
+                                    value.length() - 1 ) ) ) );
 
-                        final List<Pair<Integer, T>> results = new ArrayList<Pair<Integer, T>>();
+                    startIndex++;
+                }
 
-                        for ( final String value : values )
-                        {
-                            results.add( Pair.pair( startIndex,
-                                    fromString.convert( value.substring( 1,
-                                            value.length() - 1 ) ) ) );
+                return results;
+            }
 
-                            startIndex++;
-                        }
+            @Override
+            public String toURLParameter(
+                    final Pair<String, TreeMap<Integer, T>> nameAndMap )
+            {
+                final StringBuilder result = new StringBuilder();
 
-                        return results;
-                    }
-                }, new Conversion<Pair<String, TreeMap<Integer, T>>, String>()
+                for ( final Map.Entry<Integer, T> entry : nameAndMap.second().entrySet() )
                 {
-                    @Override
-                    public String convert(
-                            final Pair<String, TreeMap<Integer, T>> nameAndMap )
+                    if ( result.length() != 0 )
                     {
-                        final StringBuilder result = new StringBuilder();
-
-                        for ( final Map.Entry<Integer, T> entry : nameAndMap.second().entrySet() )
-                        {
-                            if ( result.length() != 0 )
-                            {
-                                result.append( "&" );
-                            }
-
-                            result.append( URLBuilder.param(
-                                    name + '[' + entry.getKey() + ']',
-                                    URLBuilder.encode( valueEncoder.convert( entry.getValue() ) ) ) );
-                        }
-
-                        return result.toString();
+                        result.append( "&" );
                     }
-                } );
+
+                    result.append( URLBuilder.param(
+                            name + '[' + entry.getKey() + ']',
+                            URLBuilder.encode( valueEncoder.convert( entry.getValue() ) ) ) );
+                }
+
+                return result.toString();
+            }
+        };
+    }
+
+    public static <R> Parameter<Integer, R> notNegative(
+            final Parameter<Integer, R> param )
+    {
+        return bound( 0, Integer.MAX_VALUE, param );
     }
 
     public String withURLParameter( final GenericBuilder genericBuilder )
     {
         return genericBuilder.isDefault( this ) ? ""
-                : toURLParameter.convert( Pair.pair( name,
-                        genericBuilder.get( this ) ) );
+                : toURLParameter( Pair.pair( name, genericBuilder.get( this ) ) );
     }
 
-    private static <T> Conversion<Pair<String, String>, T> createFromURL(
-            final Conversion<String, T> conversion )
+    private static <T> T createFromURL( final Conversion<String, T> conversion,
+            final URLParameter pair )
     {
-        return new Conversion<Pair<String, String>, T>()
-        {
-            @Override
-            public T convert( final Pair<String, String> pair )
-            {
-                return conversion.convert( pair.second() );
-            }
-        };
+        return conversion.convert( pair.value );
     }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public abstract T fromURLParameter( final URLParameter nameAndValue );
+
+    public R getDefaultValue()
+    {
+        return defaultValue;
+    }
+
+    public abstract R reduce( final T newValue, final R original );
+
+    public abstract String toURLParameter( final Pair<String, R> nameAndValue );
 }
