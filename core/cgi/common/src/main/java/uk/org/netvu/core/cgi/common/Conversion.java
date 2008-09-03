@@ -48,6 +48,24 @@ public abstract class Conversion<T, R>
         }
     };
 
+    public static final Conversion<Long, String> longToHexString = new Conversion<Long, String>()
+    {
+        @Override
+        public String convert( final Long value )
+        {
+            return Long.toHexString( value );
+        }
+    };
+
+    public static Conversion<Integer, String> intToHexString = new Conversion<Integer, String>()
+    {
+        @Override
+        public String convert( final Integer value )
+        {
+            return Integer.toHexString( value );
+        }
+    };
+
     public static <T> Conversion<T, T> identity()
     {
         return new Conversion<T, T>()

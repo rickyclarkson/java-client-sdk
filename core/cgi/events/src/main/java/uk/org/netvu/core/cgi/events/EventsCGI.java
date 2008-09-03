@@ -3,13 +3,13 @@ package uk.org.netvu.core.cgi.events;
 import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
 import static uk.org.netvu.core.cgi.common.Parameter.param;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.GenericBuilder;
+import uk.org.netvu.core.cgi.common.Iterables;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.Validator;
 
@@ -47,26 +47,26 @@ public final class EventsCGI
 
     private static final Parameter<Long, Long> camMaskParam = param( "cammask",
             "The 64-bit mask of cameras whose images we want to obtain.", 0L,
-            Conversion.hexStringToLong );
+            Conversion.hexStringToLong, Conversion.longToHexString );
 
     private static final Parameter<Integer, Integer> alarmMaskParam = param(
             "almmask",
             "The 32-bit mask of the alarms that we are interested in.", 0,
-            Conversion.hexStringToInt );
+            Conversion.hexStringToInt, Conversion.intToHexString );
 
     private static final Parameter<Long, Long> vmdMaskParam = param( "vmdmask",
             "The 64-bit mask of video motion detection channels to search in.",
-            0L, Conversion.hexStringToLong );
+            0L, Conversion.hexStringToLong, Conversion.longToHexString );
 
     private static final Parameter<Integer, Integer> gpsMaskParam = param(
             "gpsmask", "The 32-bit mask of GPS event types to search for.", 0,
-            Conversion.hexStringToInt );
+            Conversion.hexStringToInt, Conversion.intToHexString );
 
     private static final Parameter<Integer, Integer> sysMaskParam = param(
             "sysmask", "The 32-bit mask of system event types.", 0,
-            Conversion.hexStringToInt );
+            Conversion.hexStringToInt, Conversion.intToHexString );
 
-    private static final Iterable<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
+    private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
     {
         {
             add( timeParam );
@@ -338,18 +338,6 @@ public final class EventsCGI
         return new EventsCGI( GenericBuilder.fromURL( string, params ) );
     }
 
-    private static String urlEncode( final String unencoded )
-    {
-        try
-        {
-            return URLEncoder.encode( unencoded, "UTF-8" );
-        }
-        catch ( final UnsupportedEncodingException e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
     /**
      * Returns /events.cgi? followed by all the parameters specified in this
      * EventsCGI.
@@ -357,47 +345,10 @@ public final class EventsCGI
     @Override
     public String toString()
     {
+        final String theRest = builder.toURLParameters( Iterables.remove(
+                params, formatParam ) );
+
         return "/events.cgi?format=" + getFormat()
-                + withIntParam( getTime(), 0, "time" )
-                + withIntParam( getRange(), Integer.MAX_VALUE, "range" )
-                + withIntParam( getMaxLength(), 100, "listlength" )
-                + with( getText(), "", "text" )
-                + withLongHex( getCamMask(), 0, "cammask" )
-                + withIntHex( getAlarmMask(), 0, "almmask" )
-                + withLongHex( getVmdMask(), 0, "vmdmask" )
-                + withIntHex( getGpsMask(), 0, "gpsmask" )
-                + withIntHex( getSysMask(), 0, "sysmask" );
-    }
-
-    private String urlParam( final String name, final String value )
-    {
-        return '&' + urlEncode( name ) + '=' + urlEncode( value );
-    }
-
-    private String withIntParam( final int value, final int defaultValue,
-            final String name )
-    {
-        return value == defaultValue ? "" : urlParam( name,
-                String.valueOf( value ) );
-    }
-
-    private String with( final String value, final String defaultValue,
-            final String name )
-    {
-        return value.equals( defaultValue ) ? "" : urlParam( name, value );
-    }
-
-    private String withIntHex( final int value, final int defaultValue,
-            final String name )
-    {
-        return value == defaultValue ? "" : urlParam( name,
-                Integer.toHexString( value ) );
-    }
-
-    private String withLongHex( final long value, final long defaultValue,
-            final String name )
-    {
-        return value == defaultValue ? "" : urlParam( name,
-                Long.toHexString( value ) );
+                + ( theRest.length() == 0 ? "" : "&" ) + theRest;
     }
 }

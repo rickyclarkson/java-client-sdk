@@ -87,7 +87,42 @@ public abstract class Parameter<T, R>
             @Override
             public String toURLParameter( final Pair<String, T> nameAndValue )
             {
-                return nameAndValue.first() + '=' + nameAndValue.second();
+                return nameAndValue.first() + '='
+                        + URLBuilder.encode( nameAndValue.second().toString() );
+            }
+        };
+    }
+
+    public static <T> Parameter<T, T> param( final String name,
+            final String description, final T defaultValue,
+            final Conversion<String, T> fromString,
+            final Conversion<T, String> toString )
+    {
+        return new Parameter<T, T>( name, description, defaultValue )
+        {
+            @Override
+            public T reduce( final T newValue, final T original )
+            {
+                if ( original.equals( defaultValue ) )
+                {
+                    return newValue;
+                }
+
+                throw new IllegalStateException();
+            }
+
+            @Override
+            public T fromURLParameter( final URLParameter nameAndValue )
+            {
+                return createFromURL( fromString, nameAndValue );
+            }
+
+            @Override
+            public String toURLParameter( final Pair<String, T> nameAndValue )
+            {
+                return nameAndValue.first()
+                        + '='
+                        + URLBuilder.encode( toString.convert( nameAndValue.second() ) );
             }
         };
     }
