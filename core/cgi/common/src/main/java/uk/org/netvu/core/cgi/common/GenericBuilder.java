@@ -99,8 +99,23 @@ public final class GenericBuilder
             builder.append( param.withURLParameter( this ) ).append( "&" );
         }
 
-        return builder.toString().replaceAll( "[&]+$", "" ).replaceAll(
-                "[&]+", "&" ).replaceAll( "^&", "" );
+        return builder.toString().replaceAll( "[&]+$", "" ).replaceAll( "[&]+",
+                "&" ).replaceAll( "^&", "" );
+    }
 
+    public static GenericBuilder fromStrings(
+            final Iterable<Parameter<?, ?>> params,
+            final Iterable<String> strings )
+    {
+        GenericBuilder builder = new GenericBuilder();
+
+        for ( final Pair<Parameter<?, ?>, String> pair : Iterables.zip( params,
+                strings ) )
+        {
+            builder = builder.withFromString( pair.first(), new URLParameter(
+                    pair.first().getName(), pair.second() ) );
+        }
+
+        return builder;
     }
 }

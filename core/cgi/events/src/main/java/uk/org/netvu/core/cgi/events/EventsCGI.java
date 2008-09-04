@@ -14,7 +14,8 @@ import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.Validator;
 
 /**
- * A parameter list for an events.cgi query, checked for correctness.
+ * A parameter list for an events.cgi query. Use {@link EventsCGI.Builder} to
+ * construct an EventsCGI, or {@link EventsCGI#fromString(String)}.
  */
 public final class EventsCGI
 {
@@ -96,10 +97,9 @@ public final class EventsCGI
     /**
      * A builder that takes in all the optional values for events.cgi as per the
      * Video Server Specification, and produces an EventsCGI when build() is
-     * called. Each parameter must be supplied no more than once, and if a text
-     * parameter is supplied, the alarm mask, VMD mask, GPS mask and sysmask
-     * parameters cannot be supplied, as the text parameter overrides these in
-     * the video servers.
+     * called. Each parameter must be supplied no more than once, and the text,
+     * alarm mask, VMD mask, GPS mask and sysmask parameters are mutually
+     * exclusive.
      */
     public static final class Builder
     {
@@ -109,6 +109,8 @@ public final class EventsCGI
         /**
          * The time from which to search, in seconds since 1970.
          * 
+         * @param time
+         *        the time from which to search.
          * @return the builder.
          */
         public Builder time( final int time )
@@ -148,6 +150,8 @@ public final class EventsCGI
          * The maximum number of results to obtain. Negative values reverse the
          * direction of the search.
          * 
+         * @param maxLength
+         *        the maximum number of results to obtain.
          * @return the builder.
          */
         public Builder length( final int maxLength )
@@ -164,6 +168,8 @@ public final class EventsCGI
          * ? can be used as a wildcard to replace a single character in the
          * search string.
          * 
+         * @param text
+         *        the text to search for.
          * @return the builder.
          */
         public Builder text( final String text )
@@ -175,6 +181,8 @@ public final class EventsCGI
         /**
          * The 64-bit mask of cameras whose images we want to obtain.
          * 
+         * @param camMask
+         *        the mask of cameras whose images we want to obtain.
          * @return the builder.
          */
         public Builder camMask( final long camMask )
@@ -186,6 +194,8 @@ public final class EventsCGI
         /**
          * The 32-bit mask of the alarms that we are interested in.
          * 
+         * @param alarmMask
+         *        the mask of the alarms that we are interested in.
          * @return the builder.
          */
         public Builder alarmMask( final int alarmMask )
@@ -197,6 +207,8 @@ public final class EventsCGI
         /**
          * The 64-bit mask of video motion detection channels to search in.
          * 
+         * @param vmdMask
+         *        the mask of video motion detection channels to search in.
          * @return the builder.
          */
         public Builder vmdMask( final long vmdMask )
@@ -208,6 +220,8 @@ public final class EventsCGI
         /**
          * The 32-bit mask of GPS event types to search for.
          * 
+         * @param gpsMask
+         *        the mask of GPS event types to search for.
          * @return the builder.
          */
         public Builder gpsMask( final int gpsMask )
@@ -217,8 +231,10 @@ public final class EventsCGI
         }
 
         /**
-         * The 32-bit mask of system event types.
+         * The 32-bit mask of system event types to search for.
          * 
+         * @param sysMask
+         *        the mask of system event types to search for.
          * @return the builder.
          */
         public Builder sysMask( final int sysMask )
@@ -229,6 +245,8 @@ public final class EventsCGI
 
         /**
          * Constructs an EventsCGI with the values from this builder.
+         * 
+         * @return an EventsCGI with the values from this builder.
          */
         public EventsCGI build()
         {
@@ -245,6 +263,8 @@ public final class EventsCGI
 
     /**
      * The time from which to search, in seconds since 1970.
+     * 
+     * @return the time from which to search, in seconds since 1970.
      */
     public int getTime()
     {
@@ -253,6 +273,8 @@ public final class EventsCGI
 
     /**
      * The timespan to search, in seconds.
+     * 
+     * @return the timespan to search, in seconds.
      */
     public int getRange()
     {
@@ -261,6 +283,8 @@ public final class EventsCGI
 
     /**
      * The format of the results.
+     * 
+     * @return the format of the results.
      */
     public Format getFormat()
     {
@@ -270,6 +294,8 @@ public final class EventsCGI
     /**
      * The maximum number of results to obtain. Negative values reverse the
      * direction of the search.
+     * 
+     * @return the maximum number of results to obtain.
      */
     public int getMaxLength()
     {
@@ -278,6 +304,8 @@ public final class EventsCGI
 
     /**
      * The text to search for, in the text-in-image data.
+     * 
+     * @return the text to search for, in the text-in-image data.
      */
     public String getText()
     {
@@ -285,7 +313,9 @@ public final class EventsCGI
     }
 
     /**
-     * The 64-bit mask of cameras whose images we want to obtain.
+     * The 64-bit mask of cameras to search for.
+     * 
+     * @return the mask of cameras to search for.
      */
     public long getCamMask()
     {
@@ -293,7 +323,9 @@ public final class EventsCGI
     }
 
     /**
-     * The 32-bit mask of the alarms that we are interested in.
+     * The 32-bit mask of the alarms to search for.
+     * 
+     * @return the mask of the alarms to search for.
      */
     public int getAlarmMask()
     {
@@ -302,6 +334,8 @@ public final class EventsCGI
 
     /**
      * The 64-bit mask of video motion detection channels to search in.
+     * 
+     * @return the mask of video motion detection channels to search in.
      */
     public long getVmdMask()
     {
@@ -310,6 +344,8 @@ public final class EventsCGI
 
     /**
      * The 32-bit mask of GPS event types to search for.
+     * 
+     * @return the mask of GPS event types to search for.
      */
     public int getGpsMask()
     {
@@ -317,7 +353,9 @@ public final class EventsCGI
     }
 
     /**
-     * The 32-bit mask of system event types.
+     * The 32-bit mask of system event types to search for.
+     * 
+     * @return the mask of system event types to search for.
      */
     public int getSysMask()
     {
@@ -327,6 +365,10 @@ public final class EventsCGI
     /**
      * Parses a URL (or the query part of a URL) to obtain an EventsCGI holding
      * the values obtained from the URL.
+     * 
+     * @param string
+     *        the URL (or the query part of a URL) to parse.
+     * @return an EventsCGI holding the values obtained from the URL.
      */
     public static EventsCGI fromString( final String string )
     {

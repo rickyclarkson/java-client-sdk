@@ -96,7 +96,7 @@ public enum AlarmType
         @Override
         public AlarmType convert( final String t )
         {
-            return AlarmType.valueOf( t.toUpperCase() );
+            return find( Integer.parseInt( t ) );
         }
     };
 }

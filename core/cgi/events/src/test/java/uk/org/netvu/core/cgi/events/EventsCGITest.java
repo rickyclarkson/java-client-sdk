@@ -192,6 +192,9 @@ public class EventsCGITest
     /**
      * Tests that toString always gives something that can be made into a valid
      * URL.
+     * 
+     * @throws MalformedURLException
+     *         if the URL is invalid.
      */
     @Test
     public void testToString() throws MalformedURLException
@@ -205,7 +208,7 @@ public class EventsCGITest
         }
     }
 
-    boolean compare( final String input, final EventsCGIResult output )
+    private boolean compare( final String input, final EventsCGIResult output )
     {
         final List<String> fields = new ArrayList<String>(
                 Arrays.asList( Strings.split( input ) ) );
@@ -250,6 +253,8 @@ public class EventsCGITest
 
     /**
      * An infinite series of randomly-created EventCGI.Builders.
+     * 
+     * @return an infinite series of randomly-created EventCGI.Builders.
      */
     public static Iterator<EventsCGI.Builder> randomEventCGIBuilders(
             final Random random )

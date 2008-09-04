@@ -1,6 +1,7 @@
 package uk.org.netvu.core.cgi.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -225,5 +226,57 @@ public class Iterables
         }
 
         return accumulator;
+    }
+
+    public static <T, R> List<R> map( final Conversion<T, R> conversion,
+            final T... ts )
+    {
+        return map( Arrays.asList( ts ), conversion );
+    }
+
+    public static <T, U> Iterable<Pair<T, U>> zip( final Iterable<T> ts,
+            final Iterable<U> us )
+    {
+        return new Iterable<Pair<T, U>>()
+        {
+            public Iterator<Pair<T, U>> iterator()
+            {
+                final Iterator<T> tIterator = ts.iterator();
+                final Iterator<U> uIterator = us.iterator();
+
+                return new Iterator<Pair<T, U>>()
+                {
+                    public boolean hasNext()
+                    {
+                        return tIterator.hasNext() && uIterator.hasNext();
+                    }
+
+                    public Pair<T, U> next()
+                    {
+                        return Pair.pair( tIterator.next(), uIterator.next() );
+                    }
+
+                    public void remove()
+                    {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+        };
+    }
+
+    public static <T> List<T> removeIndices( final List<T> values,
+            final int... indices )
+    {
+        final List<T> results = new ArrayList<T>( values );
+
+        int offset = 0;
+
+        for ( final int index : indices )
+        {
+            results.remove( index - offset++ );
+        }
+
+        return results;
     }
 }

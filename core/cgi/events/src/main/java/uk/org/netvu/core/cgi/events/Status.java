@@ -65,11 +65,10 @@ public enum Status
 
     static final Conversion<String, Status> fromString = new Conversion<String, Status>()
     {
-
         @Override
-        public Status convert( final String t )
+        public Status convert( final String s )
         {
-            return Status.valueOf( t.toUpperCase() );
+            return find( Integer.parseInt( s ) );
         }
     };
 }

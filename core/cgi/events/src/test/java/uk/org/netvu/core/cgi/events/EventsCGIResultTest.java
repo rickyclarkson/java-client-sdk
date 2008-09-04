@@ -261,4 +261,10 @@ public class EventsCGIResultTest
     {
         aBuilder().offset( 90001 ).build();
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void testIncompleteObject()
+    {
+        new EventsCGIResult.Builder().build();
+    }
 }

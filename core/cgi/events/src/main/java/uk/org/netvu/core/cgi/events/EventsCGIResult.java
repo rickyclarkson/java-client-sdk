@@ -1,11 +1,18 @@
 package uk.org.netvu.core.cgi.events;
 
-import static java.lang.Integer.parseInt;
+import static uk.org.netvu.core.cgi.common.Iterables.map;
+import static uk.org.netvu.core.cgi.common.Parameter.bound;
+import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
+import static uk.org.netvu.core.cgi.common.Parameter.param;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.GenericBuilder;
+import uk.org.netvu.core.cgi.common.Iterables;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.Strings;
@@ -13,40 +20,39 @@ import uk.org.netvu.core.cgi.common.Strings;
 /**
  * A single result from the events database.
  */
-public class EventsCGIResult
+public final class EventsCGIResult
 {
-    private static final Parameter<Integer, Option<Integer>> camParameter = Parameter.bound(
+    private static final Parameter<Integer, Option<Integer>> camParameter = bound(
             0, 64, Parameter.param( "cam", "The system camera number",
                     Conversion.stringToInt ) );
 
-    private static final Parameter<String, Option<String>> alarmParameter = Parameter.param(
+    private static final Parameter<String, Option<String>> alarmParameter = param(
             "alarm", "The alarm description.", Conversion.<String> identity() );
 
-    private static final Parameter<Integer, Option<Integer>> julianTimeParameter = Parameter.notNegative( Parameter.param(
+    private static final Parameter<Integer, Option<Integer>> julianTimeParameter = notNegative( param(
             "time", "The Julianised time that the event occurred at",
             Conversion.stringToInt ) );
 
     private static final Parameter<Integer, Option<Integer>> offsetParameter = Parameter.bound(
-            -90000, 90000, Parameter.param( "offset", "",
-                    Conversion.stringToInt ) );
+            -90000, 90000, param( "offset", "", Conversion.stringToInt ) );
 
-    private static final Parameter<String, Option<String>> fileParameter = Parameter.param(
+    private static final Parameter<String, Option<String>> fileParameter = param(
             "file", "", Conversion.<String> identity() );
 
-    private static final Parameter<Boolean, Option<Boolean>> onDiskParameter = Parameter.param(
+    private static final Parameter<Boolean, Option<Boolean>> onDiskParameter = param(
             "onDisk", "", Conversion.stringToBoolean );
 
-    private static final Parameter<Integer, Option<Integer>> durationParameter = Parameter.notNegative( Parameter.param(
+    private static final Parameter<Integer, Option<Integer>> durationParameter = notNegative( param(
             "duration", "", Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Option<Integer>> preAlarmParameter = Parameter.notNegative( Parameter.param(
+    private static final Parameter<Integer, Option<Integer>> preAlarmParameter = notNegative( param(
             "preAlarm", "", Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Option<Integer>> archiveParameter = Parameter.notNegative( Parameter.param(
+    private static final Parameter<Integer, Option<Integer>> archiveParameter = notNegative( param(
             "archive", "", Conversion.stringToInt ) );
-    private static final Parameter<Status, Status> statusParameter = Parameter.param(
+    private static final Parameter<Status, Status> statusParameter = param(
             "status", "", Status.NONE, Status.fromString );
-    private static final Parameter<AlarmType, AlarmType> alarmTypeParameter = Parameter.param(
+    private static final Parameter<AlarmType, AlarmType> alarmTypeParameter = param(
             "alarmType", "", AlarmType.NONE, AlarmType.fromString );
 
     private static final ArrayList<Parameter<?, ? extends Option<?>>> compulsoryParams = new ArrayList<Parameter<?, ? extends Option<?>>>()
@@ -73,16 +79,26 @@ public class EventsCGIResult
      * @param builder
      *        the Builder to base this EventsCGIResult on.
      */
-    private EventsCGIResult( final Builder builder )
+    private EventsCGIResult( final GenericBuilder builder )
     {
-        this.builder = builder.real;
+        for ( final Parameter<?, ? extends Option<?>> param : compulsoryParams )
+        {
+
+            if ( builder.get( param ).isNone() )
+            {
+                throw new IllegalStateException( "The parameter " + param
+                        + " has not been given a value" );
+            }
+        }
+
+        this.builder = builder;
     }
 
     /**
      * A builder that takes in all the information needed to construct an
      * EventsCGIResult and constructs it.
      */
-    static class Builder
+    public static final class Builder
     {
         private GenericBuilder real = new GenericBuilder();
 
@@ -125,18 +141,41 @@ public class EventsCGIResult
             return this;
         }
 
+        /**
+         * Adds the offset from UTC of the event to the builder.
+         * 
+         * @param offset
+         *        the offset from UTC.
+         * @return the builder.
+         */
         public Builder offset( final int offset )
         {
             real = real.with( offsetParameter, offset );
             return this;
         }
 
+        /**
+         * Adds the name of the video file that the result was found in to the
+         * builder.
+         * 
+         * @param file
+         *        the name of the video file.
+         * @return the builder.
+         */
         public Builder file( final String file )
         {
             real = real.with( fileParameter, file );
             return this;
         }
 
+        /**
+         * Adds information about whether the video file is still available, to
+         * the builder.
+         * 
+         * @param onDisk
+         *        true if the video file is still available, false otherwise.
+         * @return the builder.
+         */
         public Builder onDisk( final boolean onDisk )
         {
             real = real.with( onDiskParameter, onDisk );
@@ -146,6 +185,8 @@ public class EventsCGIResult
         /**
          * Adds the duration of the event to the builder.
          * 
+         * @param duration
+         *        the duration of the event.
          * @return the builder.
          */
         public Builder duration( final int duration )
@@ -154,24 +195,56 @@ public class EventsCGIResult
             return this;
         }
 
+        /**
+         * Specifies the number of seconds before the alarm time that are
+         * relevant.
+         * 
+         * @param preAlarm
+         *        the number of seconds before the alarm time that are relevant.
+         * @return the builder.
+         */
         public Builder preAlarm( final int preAlarm )
         {
             real = real.with( preAlarmParameter, preAlarm );
             return this;
         }
 
+        /**
+         * Specifies the number of seconds since 1970 after which the video for
+         * this event may be overwritten.
+         * 
+         * @param archive
+         *        the number of seconds since 1970 after which the video for
+         *        this event may be overwritten.
+         * @return the builder.
+         */
         public Builder archive( final int archive )
         {
             real = real.with( archiveParameter, archive );
             return this;
         }
 
+        /**
+         * Specifies the status of the database record - i.e., how complete it
+         * is on disk.
+         * 
+         * @param status
+         *        the status of the database record.
+         * @return the builder.
+         */
         public Builder status( final Status status )
         {
             real = real.with( statusParameter, status );
             return this;
         }
 
+        /**
+         * Specifies the type of alarm that this event represents.
+         * 
+         * @param alarmType
+         *        the type of alarm that this event represents.
+         * @return the builder.
+         */
         public Builder alarmType( final AlarmType alarmType )
         {
             real = real.with( alarmTypeParameter, alarmType );
@@ -186,22 +259,14 @@ public class EventsCGIResult
          */
         public EventsCGIResult build()
         {
-            for ( final Parameter<?, ? extends Option<?>> param : compulsoryParams )
-            {
-
-                if ( real.get( param ).isNone() )
-                {
-                    throw new IllegalStateException( "The parameter " + param
-                            + " has not been given a value" );
-                }
-            }
-
-            return new EventsCGIResult( this );
+            return new EventsCGIResult( real );
         }
     }
 
     /**
      * The system camera number.
+     * 
+     * @return the system camera number.
      */
     public int getCam()
     {
@@ -210,6 +275,8 @@ public class EventsCGIResult
 
     /**
      * The alarm description.
+     * 
+     * @return the alarm description.
      */
     public String getAlarm()
     {
@@ -217,7 +284,9 @@ public class EventsCGIResult
     }
 
     /**
-     * The time in seconds since Jan 1st, 1970 00:00 that the event occurred at.
+     * The time in seconds since 1970 that the event occurred at.
+     * 
+     * @return the time in seconds.
      */
     public int getJulianTime()
     {
@@ -226,6 +295,8 @@ public class EventsCGIResult
 
     /**
      * The timezone offset from UTC, in seconds. E.g., BST is 3600.
+     * 
+     * @return the timezone offset from UTC.
      */
     public int getOffset()
     {
@@ -233,7 +304,9 @@ public class EventsCGIResult
     }
 
     /**
-     * Gets the video file that the result was found in.
+     * Gets the name of the video file that the result was found in.
+     * 
+     * @return the name of the video file that the result was found in.
      */
     public String getFile()
     {
@@ -242,6 +315,8 @@ public class EventsCGIResult
 
     /**
      * Reports whether the video for the event is available on disk.
+     * 
+     * @return whether the video for the event is available on disk.
      */
     public boolean isOnDisk()
     {
@@ -251,6 +326,8 @@ public class EventsCGIResult
     /**
      * The duration of the event in seconds. The duration plus the julian time
      * will never be larger than Integer.MAX_VALUE (or negative).
+     * 
+     * @return the duration of the event in seconds.
      */
     public int getDuration()
     {
@@ -260,6 +337,9 @@ public class EventsCGIResult
     /**
      * The number of seconds before the alarm time that are related to the
      * event.
+     * 
+     * @return the number of seconds before the alarm time that are related to
+     *         the event.
      */
     public int getPreAlarm()
     {
@@ -269,6 +349,9 @@ public class EventsCGIResult
     /**
      * The number of seconds since 1970 after which the video for this event may
      * be overwritten.
+     * 
+     * @return the number of seconds since 1970 after which the video for this
+     *         event may be overwritten.
      */
     public int getArchive()
     {
@@ -277,6 +360,8 @@ public class EventsCGIResult
 
     /**
      * Gives the type of alarm that this event is.
+     * 
+     * @return the type of alarm that this event is.
      */
     public AlarmType getAlarmType()
     {
@@ -286,6 +371,8 @@ public class EventsCGIResult
     /**
      * Gives the status of the database record - i.e., how complete it is on
      * disk.
+     * 
+     * @return the status of the database record.
      */
     public Status getStatus()
     {
@@ -311,56 +398,39 @@ public class EventsCGIResult
                     + values.length );
         }
 
-        final Builder builder = new EventsCGIResult.Builder().cam( Integer.parseInt( values[1] ) );
-        builder.alarm( values[2] );
-        builder.julianTime( Integer.parseInt( values[3] ) );
-        builder.offset( Integer.parseInt( values[4] ) ).file( values[5] );
-        builder.onDisk( values[6].equals( "exists" ) );
-        builder.duration( parseInt( values[8] ) );
-        builder.preAlarm( parseInt( values[9] ) );
-        builder.archive( parseInt( values[10] ) );
-
+        final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>(
+                compulsoryParams );
         if ( values.length > 11 )
         {
-            builder.status( Status.find( parseInt( values[11] ) ) );
+            params.add( statusParameter );
         }
-
         if ( values.length > 12 )
         {
-            builder.alarmType( AlarmType.find( parseInt( values[12] ) ) );
+            params.add( alarmTypeParameter );
         }
 
-        return builder.build();
+        return new EventsCGIResult( GenericBuilder.fromStrings( params,
+                Iterables.removeIndices( Arrays.asList( values ), 0, 7 ) ) );
     }
 
     String toCSV( final int index )
     {
-        return index
-                + ", "
-                + getCam()
-                + ", "
-                + getAlarm()
-                + ", "
-                + getJulianTime()
-                + ", "
-                + getOffset()
-                + ", "
-                + getFile()
-                + ", "
-                + ( isOnDisk() ? "exists" : "overwitten" ) // overwitten is
-                // taken
-                // from server output
-                + ", "
-                + index
-                + ", "
-                + getDuration()
-                + ", "
-                + getPreAlarm()
-                + ", "
-                + getArchive()
-                + ( getAlarmType() == AlarmType.NONE
-                        && getStatus() == Status.NONE ? "" : ", "
-                        + getStatus().value ) + ", " + getAlarmType().value;
+        // "overwitten" is taken from server output
+
+        final List<Object> all = new ArrayList<Object>( Arrays.<Object> asList(
+                index, getCam(), getAlarm(), getJulianTime(), getOffset(),
+                getFile(), isOnDisk() ? "exists" : "overwitten", index,
+                getDuration(), getPreAlarm(), getArchive() ) );
+
+        final List<Object> alarmAndStatus = getAlarmType() == AlarmType.NONE
+                && getStatus() == Status.NONE ? Collections.emptyList()
+                : Arrays.<Object> asList( getStatus().value,
+                        getAlarmType().value );
+
+        all.addAll( alarmAndStatus );
+
+        return Strings.intersperse( ", ",
+                map( all, Conversion.objectToString() ) );
     }
 
     /**

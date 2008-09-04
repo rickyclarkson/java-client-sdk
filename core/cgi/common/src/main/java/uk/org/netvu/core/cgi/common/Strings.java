@@ -17,7 +17,7 @@ public class Strings
     }
 
     public static String intersperse( final String separator,
-            final String[] strings )
+            final Iterable<String> strings )
     {
         final StringBuilder builder = new StringBuilder();
         boolean first = true;

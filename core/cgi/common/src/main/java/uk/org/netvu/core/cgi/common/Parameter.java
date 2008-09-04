@@ -291,4 +291,9 @@ public abstract class Parameter<T, R>
     public abstract R reduce( final T newValue, final R original );
 
     public abstract String toURLParameter( final Pair<String, R> nameAndValue );
+
+    public T fromString( final String value )
+    {
+        return fromURLParameter( new URLParameter( name, value ) );
+    }
 }
