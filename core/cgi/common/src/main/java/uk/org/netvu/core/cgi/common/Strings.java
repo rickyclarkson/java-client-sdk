@@ -119,4 +119,11 @@ public class Strings
             }
         };
     }
+
+    public static String removeSurroundingQuotesLeniently( final String value )
+    {
+        return value.startsWith( "\"" ) && value.endsWith( "\"" ) ? value.substring(
+                1, value.length() - 1 )
+                : value;
+    }
 }

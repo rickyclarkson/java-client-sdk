@@ -161,7 +161,8 @@ public class EventsCGITest
         final int randomInt = random.nextInt();
         final long randomLong = random.nextLong();
         final String randomString = Generators.strings( random ).iterator().next();
-        final int randomNonNegativeInt = Generators.nonNegativeInts( random ).next();
+        final int randomNonNegativeInt = Generators.nonNegativeInts(
+                random.nextLong() ).iterator().next();
 
         assertTrue( new EventsCGI.Builder().alarmMask( randomInt ).build().getAlarmMask() == randomInt );
         assertTrue( new EventsCGI.Builder().range( randomNonNegativeInt ).build().getRange() == randomNonNegativeInt );
@@ -254,6 +255,8 @@ public class EventsCGITest
     /**
      * An infinite series of randomly-created EventCGI.Builders.
      * 
+     * @param random
+     *        the random number generator to use.
      * @return an infinite series of randomly-created EventCGI.Builders.
      */
     public static Iterator<EventsCGI.Builder> randomEventCGIBuilders(
@@ -270,7 +273,8 @@ public class EventsCGITest
             {
                 final EventsCGI.Builder builder = new EventsCGI.Builder();
 
-                final Iterator<Integer> nonNegativeInts = Generators.nonNegativeInts( random );
+                final Iterator<Integer> nonNegativeInts = Generators.nonNegativeInts(
+                        random.nextLong() ).iterator();
                 final Iterator<String> strings = Generators.strings( random ).iterator();
 
                 final List<Runnable> methods = new ArrayList<Runnable>()
@@ -398,6 +402,10 @@ public class EventsCGITest
 
     /**
      * An infinite series of randomly-generated EventsCGIs.
+     * 
+     * @param random
+     *        the random number generator to use.
+     * @return an infinite series of randomly-generated EventsCGIs.
      */
     public Iterator<EventsCGI> randomEventsCGIs( final Random random )
     {

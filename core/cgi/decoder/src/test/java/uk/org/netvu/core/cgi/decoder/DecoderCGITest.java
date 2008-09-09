@@ -22,13 +22,13 @@ public class DecoderCGITest
     }
 
     @Test
-    public void fromURL()
+    public void fromExampleURL1()
     {
         final String string = "decoder.frm?connections[16]=\"slaveip=192.168.1.10%2Ccam=1\","
                 + "\"slaveip=192.168.1.10%2Ccam=2\","
                 + "\"slaveip=192.168.1.10%2Ccam=3\","
                 + "\"slaveip=192.168.1.10%2Ccam=4\""
-                + "&layouts[1]=\"Four%20Way\""
+                + "&layouts[1]=1"
                 + "&commands[1]=\"display_pic.cgi?\"";
 
         final DecoderCGI cgi = DecoderCGI.fromString( string );
@@ -45,4 +45,106 @@ public class DecoderCGITest
         assertTrue( cgi.getCommands().size() == 1 );
         assertTrue( cgi.getCommands().get( 1 ).equals( "display_pic.cgi?" ) );
     }
+
+    @Test
+    public void fromExampleURL2()
+    {
+        final String string = "decoder.frm?connections[18]=\"slaveip=192.168.1.10%2Ccam=7\"";
+
+        final DecoderCGI cgi = DecoderCGI.fromString( string );
+        assertTrue( cgi.getConnections().size() == 1 );
+        assertTrue( cgi.getConnections().get( 18 ).getSlaveIP().equals(
+                "192.168.1.10" ) );
+        assertTrue( cgi.getConnections().get( 18 ).getCam() == 7 );
+    }
+
+    @Test
+    public void fromExampleURL3()
+    {
+        final String string = "decoder.var?commands[1]=\"replay_pic.cgi?id=123456&time=12:34:00:28:11:03&control=PLAY\"";
+
+        final DecoderCGI cgi = DecoderCGI.fromString( string );
+        assertTrue( cgi.getCommands().size() == 1 );
+        assertTrue( cgi.getCommands().get( 1 ).equals(
+                "replay_pic.cgi?id=123456&time=12:34:00:28:11:03&control=PLAY" ) );
+    }
+
+    @Test
+    public void fromExampleURL4()
+    {
+        final String string = "decoder.var?connections[64]=\"slaveip=192.168.1.10%2Cseq=F%2Cdwell=10\""
+                + "&commands[4]=\"display_pic.cgi?\"&layouts[4]=0";
+
+        final DecoderCGI cgi = DecoderCGI.fromString( string );
+        assertTrue( cgi.getConnections().size() == 1 );
+        assertTrue( cgi.getConnections().get( 64 ).getSlaveIP().equals(
+                "192.168.1.10" ) );
+        assertTrue( cgi.getConnections().get( 64 ).getSeq() == 15 );
+        assertTrue( cgi.getConnections().get( 64 ).getDwell() == 10 );
+
+        assertTrue( cgi.getCommands().size() == 1 );
+        assertTrue( cgi.getCommands().get( 4 ).equals( "display_pic.cgi?" ) );
+
+        assertTrue( cgi.getLayouts().size() == 1 );
+        assertTrue( cgi.getLayouts().get( 4 ) == Layout.SINGLE );
+    }
+    /*
+     * public static void main( final String[] args ) { final JFrame frame = new
+     * JFrame(); final JTextArea variables = new JTextArea( 50, 50 ); frame.add(
+     * new JScrollPane( variables ), BorderLayout.EAST ); frame.add( new
+     * JPanel() { int getInt( final String name ) { return Integer.parseInt(
+     * getString( name ) ); } String getString( final String name ) { return
+     * JOptionPane.showInputDialog( frame, name ); } void run( final String
+     * query ) { System.out.println( query ); try { new URL(
+     * "http://192.168.106.127/" + query ).openStream().close(); } catch ( final
+     * FileNotFoundException e ) { } catch ( final IOException e ) { throw new
+     * RuntimeException( e ); } final List<String> unquoted = Iterables.map(
+     * Strings.splitIgnoringQuotedSections( readOneLine(
+     * "http://192.168.106.127/" + new VariableCGI.Builder().variable(
+     * Variable.CONNECTIONS ).build().toString() ), ',' ), new
+     * Conversion<String, String>() {
+     * @Override public String convert( final String quoted ) { return
+     * quoted.substring( 1, quoted.length() - 1 ); } } ); variables.setText(
+     * "Connections: \n" + Strings.intersperse( "\n", Iterables.map(
+     * Iterables.filter( Iterables.zip( Iterables.from( 0 ), unquoted ), new
+     * Conversion<Pair<Integer, String>, Boolean>() {
+     * @Override public Boolean convert( final Pair<Integer, String>
+     * indexAndValue ) { return indexAndValue.second().length() != 0; } } ), new
+     * Conversion<Pair<Integer, String>, String>() {
+     * @Override public String convert( final Pair<Integer, String> pair ) {
+     * return pair.first() + " -> " + pair.second(); } } ) ) + "'\nLayouts:\n" +
+     * readOneLine( "http://192.168.106.127/" + new
+     * VariableCGI.Builder().variable( Variable.LAYOUTS ).build().toString() ) +
+     * "\nOutput titles: \n" + readOneLine( "http://192.168.106.127/" + new
+     * VariableCGI.Builder().variable( Variable.OUTPUT_TITLES
+     * ).build().toString() ) + "\nCommands: \n" + readOneLine(
+     * "http://192.168.106.127/" + new VariableCGI.Builder().variable(
+     * Variable.COMMANDS ).build().toString() ) ); variables.setCaretPosition( 0
+     * ); } private String readOneLine( final String url ) { InputStream stream;
+     * try { stream = new URL( url ).openStream(); } catch ( final IOException e
+     * ) { throw new RuntimeException( e ); } try { return new BufferedReader(
+     * new InputStreamReader( stream, "UTF-8" ) ).readLine(); } catch ( final
+     * IOException e ) { throw new RuntimeException( e ); } finally { try {
+     * stream.close(); } catch ( final IOException e ) { e.printStackTrace(); }
+     * } } { add( new JButton( "connections" ) { { addActionListener( new
+     * ActionListener() { public void actionPerformed( final ActionEvent e ) {
+     * run( new DecoderCGI().connection( getInt( "index" ), new
+     * Connection().cam( getInt( "camera number" ) ).slaveIP( getString(
+     * "slave IP" ) ) ).toURLParameters() ); } } ); } } ); add( new JButton(
+     * "layouts" ) { { addActionListener( new ActionListener() { public void
+     * actionPerformed( final ActionEvent e ) { run( new DecoderCGI().layout(
+     * getInt( "index" ), Layout.valueOf( getString( "layout" ).replaceAll( " ",
+     * "_" ).toUpperCase() ) ).toURLParameters() ); } } ); } } ); add( new
+     * JButton( "output titles" ) { { addActionListener( new ActionListener() {
+     * public void actionPerformed( final ActionEvent e ) { run( new
+     * DecoderCGI().outputTitles( getString( "First title" ), getString(
+     * "second" ), getString( "last one" ) ).toURLParameters() ); } } ); } } );
+     * add( new JButton( "commands" ) { { addActionListener( new
+     * ActionListener() { public void actionPerformed( final ActionEvent e ) {
+     * run( new DecoderCGI().command( getInt( "index" ), getString( "command" )
+     * ).toURLParameters() ); } } ); } } ); } } ); frame.pack();
+     * frame.setExtendedState( Frame.MAXIMIZED_BOTH ); frame.setVisible( true );
+     * }
+     */
+
 }

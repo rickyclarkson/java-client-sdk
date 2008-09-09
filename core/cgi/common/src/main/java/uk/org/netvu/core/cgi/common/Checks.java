@@ -2,12 +2,17 @@ package uk.org.netvu.core.cgi.common;
 
 /**
  * A fluent interface for checks on comparables.
+ * 
+ * @param <T>
+ *        the type of the value to run checks against.
  */
 public class Checks<T extends Comparable<T>>
 {
     /**
      * Creates a Checks object to run checks against a supplied value.
      * 
+     * @param <T>
+     *        the type of the supplied value.
      * @param x
      *        the value to be checked
      * @param name
@@ -85,6 +90,8 @@ public class Checks<T extends Comparable<T>>
 
     /**
      * Returns the stored value.
+     * 
+     * @return the stored value.
      */
     public T done()
     {

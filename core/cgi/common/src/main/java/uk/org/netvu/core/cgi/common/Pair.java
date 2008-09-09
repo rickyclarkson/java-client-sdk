@@ -1,6 +1,6 @@
 package uk.org.netvu.core.cgi.common;
 
-public class Pair<T, U>
+public final class Pair<T, U>
 {
     private final T t;
     private final U u;
@@ -43,22 +43,15 @@ public class Pair<T, U>
         return u;
     }
 
-    @Override
-    public boolean equals( final Object o )
+    public static <T, U> Conversion<Pair<T, U>, U> getSecond()
     {
-        return o instanceof Pair && ( (Pair<?, ?>) o ).t.equals( t )
-                && ( (Pair<?, ?>) o ).u.equals( u );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return t.hashCode() * 4097 + u.hashCode();
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Pair(" + first() + ", " + second() + ')';
+        return new Conversion<Pair<T, U>, U>()
+        {
+            @Override
+            public U convert( final Pair<T, U> t )
+            {
+                return t.second();
+            }
+        };
     }
 }

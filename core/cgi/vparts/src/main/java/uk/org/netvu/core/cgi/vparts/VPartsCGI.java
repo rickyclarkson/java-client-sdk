@@ -14,7 +14,7 @@ import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Iterables;
 import uk.org.netvu.core.cgi.common.Parameter;
 
-final class VPartsCGI
+public final class VPartsCGI
 {
     private static final Parameter<Format, Format> formatParam = not(
             Format.HTML,
@@ -91,6 +91,10 @@ final class VPartsCGI
 
         /**
          * Sets the function of the cgi call.
+         * 
+         * @param mode
+         *        the {@link Mode} to use.
+         * @return the Builder.
          */
         public Builder mode( final Mode mode )
         {
@@ -100,6 +104,10 @@ final class VPartsCGI
 
         /**
          * Sets the Julianised GMT start time for database search.
+         * 
+         * @param time
+         *        the start time for database search.
+         * @return the Builder.
          */
         public Builder time( final int time )
         {
@@ -109,6 +117,10 @@ final class VPartsCGI
 
         /**
          * Time span to search in seconds.
+         * 
+         * @param range
+         *        the time span to search in seconds.
+         * @return the Builder.
          */
         public Builder range( final int range )
         {
@@ -155,6 +167,8 @@ final class VPartsCGI
 
     /**
      * The function of the cgi call.
+     * 
+     * @return the {@link Mode} that the CGI call is in.
      */
     public Mode getMode()
     {
@@ -163,6 +177,8 @@ final class VPartsCGI
 
     /**
      * Julianised GMT time to start the search from.
+     * 
+     * @return the Julianised GMT time to start the search from.
      */
     public int getTime()
     {
@@ -171,6 +187,8 @@ final class VPartsCGI
 
     /**
      * The timespan to search in seconds.
+     * 
+     * @return the timespan to search in seconds.
      */
     public int getRange()
     {

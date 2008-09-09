@@ -44,6 +44,10 @@ public enum Status
 
     /**
      * Finds the Status whose numeric value is the same as the value parameter.
+     * 
+     * @param value
+     *        the numeric value to search for.
+     * @return the Status whose numeric value is the same as the value parameter.
      */
     public static Status find( final int value )
     {

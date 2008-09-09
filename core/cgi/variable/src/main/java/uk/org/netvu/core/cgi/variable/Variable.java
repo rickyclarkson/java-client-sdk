@@ -1,20 +1,27 @@
 package uk.org.netvu.core.cgi.variable;
 
+import static uk.org.netvu.core.cgi.variable.ArrayOrScalar.ARRAY;
+import static uk.org.netvu.core.cgi.variable.ArrayOrScalar.SCALAR;
+
 import java.util.regex.Pattern;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 
 public enum Variable
 {
-    C_TITLE( ArrayOrScalar.ARRAY ),
-    UTC_OFFSET( ArrayOrScalar.SCALAR ),
-    LIVE_CAM( ArrayOrScalar.ARRAY ),
-    COAX_TELM_ENABLE_MASK( ArrayOrScalar.ARRAY ),
-    RS485_TELM_ENABLE_MASK( ArrayOrScalar.ARRAY ),
-    HAS_RTC( ArrayOrScalar.SCALAR ),
-    CURRENT_JULIAN( ArrayOrScalar.SCALAR ),
-    VA_HORIZONTAL_RESOLUTION( ArrayOrScalar.ARRAY ),
-    VA_VERTICAL_RESOLUTION( ArrayOrScalar.ARRAY );
+    C_TITLE( ARRAY ),
+    UTC_OFFSET( SCALAR ),
+    LIVE_CAM( ARRAY ),
+    COAX_TELM_ENABLE_MASK( ARRAY ),
+    RS485_TELM_ENABLE_MASK( ARRAY ),
+    HAS_RTC( SCALAR ),
+    CURRENT_JULIAN( SCALAR ),
+    VA_HORIZONTAL_RESOLUTION( ARRAY ),
+    VA_VERTICAL_RESOLUTION( ARRAY ),
+    COMMANDS( ARRAY ),
+    CONNECTIONS( ARRAY ),
+    LAYOUTS( ARRAY ),
+    OUTPUT_TITLES( ARRAY );
 
     private final ArrayOrScalar arrayOrScalar;
 

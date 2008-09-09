@@ -1,8 +1,6 @@
 package uk.org.netvu.core.cgi.common;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -19,6 +17,8 @@ public class Iterables
     /**
      * Prepends one iterable to the next in constant time and memory.
      * 
+     * @param <T>
+     *        The type of the iterables to prepend to each other.
      * @param one
      *        the first iterable.
      * @param two
@@ -78,6 +78,10 @@ public class Iterables
     /**
      * Counts the number of elements in an Iterable in linear time and constant
      * memory.
+     * 
+     * @param iterable
+     *        the Iterable to count the elements of.
+     * @return the number of elements in the iterable.
      */
     public static int size( final Iterable<?> iterable )
     {
@@ -117,38 +121,6 @@ public class Iterables
         }
 
         return !twoIt.hasNext();
-    }
-
-    public static <T> Iterable<T> oneShotIterableFromSideEffectingFunction(
-            final Generator<T> generator )
-    {
-        return new Iterable<T>()
-        {
-            public Iterator<T> iterator()
-            {
-                return new Iterator<T>()
-                {
-                    T current = generator.invoke();
-
-                    public boolean hasNext()
-                    {
-                        return current != null;
-                    }
-
-                    public T next()
-                    {
-                        final T toReturn = current;
-                        current = generator.invoke();
-                        return toReturn;
-                    }
-
-                    public void remove()
-                    {
-                        throw new UnsupportedOperationException();
-                    }
-                };
-            }
-        };
     }
 
     public static <T, R> Iterable<R> map( final Iterable<T> iterable,
@@ -199,14 +171,6 @@ public class Iterables
         };
     }
 
-    public static <T> List<T> retainAll( final List<T> original,
-            final Collection<T> others )
-    {
-        final List<T> newOne = new ArrayList<T>( original );
-        newOne.retainAll( others );
-        return newOne;
-    }
-
     public static <T> List<T> remove( final List<T> original, final T toRemove )
     {
         final List<T> newOne = new ArrayList<T>( original );
@@ -226,12 +190,6 @@ public class Iterables
         }
 
         return accumulator;
-    }
-
-    public static <T, R> List<R> map( final Conversion<T, R> conversion,
-            final T... ts )
-    {
-        return map( Arrays.asList( ts ), conversion );
     }
 
     public static <T, U> Iterable<Pair<T, U>> zip( final Iterable<T> ts,
@@ -278,5 +236,55 @@ public class Iterables
         }
 
         return results;
+    }
+
+    public static Iterable<Integer> from( final int start )
+    {
+        return new Iterable<Integer>()
+        {
+
+            public Iterator<Integer> iterator()
+            {
+                return new Iterator<Integer>()
+                {
+                    int x = start;
+
+                    public void remove()
+                    {
+                        throw new UnsupportedOperationException();
+                    }
+
+                    public Integer next()
+                    {
+                        return x++;
+                    }
+
+                    public boolean hasNext()
+                    {
+                        return true;
+                    }
+                };
+            }
+        };
+    }
+
+    public static <T> List<T> filter( final Iterable<T> iterable,
+            final Conversion<T, Boolean> predicate )
+    {
+        final List<T> results = new ArrayList<T>();
+        for ( final T t : iterable )
+        {
+            if ( predicate.convert( t ) )
+            {
+                results.add( t );
+            }
+        }
+
+        return results;
+    }
+
+    public static <T, U> Iterable<U> second( final Iterable<Pair<T, U>> iterable )
+    {
+        return map( iterable, Pair.<T, U> getSecond() );
     }
 }

@@ -49,6 +49,10 @@ public class EventsCGIResultTest
 
     /**
      * Creates an infinite series of completed random EventCGIResult.Builders.
+     * 
+     * @param random
+     *        the random number generator to use.
+     * @return an infinite series of completed random EventCGIResult.Builders.
      */
     public static final Iterator<EventsCGIResult.Builder> eventBuilderGenerator(
             final Random random )
@@ -64,7 +68,8 @@ public class EventsCGIResultTest
 
             public EventsCGIResult.Builder next()
             {
-                final Iterator<Integer> nonNegatives = Generators.nonNegativeInts( random );
+                final Iterator<Integer> nonNegatives = Generators.nonNegativeInts(
+                        random.nextLong() ).iterator();
                 final int julianTime = nonNegatives.next();
 
                 return new EventsCGIResult.Builder().alarm( strings.next() ).archive(

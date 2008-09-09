@@ -19,7 +19,7 @@ import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.Reduction;
 import uk.org.netvu.core.cgi.common.URLBuilder;
 
-public class DecoderCGI
+public final class DecoderCGI
 {
     private static final Parameter<Persistence, Persistence> persistenceParam = param(
             "persistence",
@@ -44,16 +44,24 @@ public class DecoderCGI
                 @Override
                 public String convert( final String[] array )
                 {
-                    return Iterables.reduceLeft( Arrays.asList( array ),
-                            new Reduction<String, String>()
+                    return Iterables.reduceLeft( Iterables.map(
+                            Arrays.asList( array ),
+                            new Conversion<String, String>()
                             {
                                 @Override
-                                public String reduce( final String value,
-                                        final String accumulator )
+                                public String convert( final String t )
                                 {
-                                    return accumulator + "," + value;
+                                    return '"' + t + '"';
                                 }
-                            } );
+                            } ), new Reduction<String, String>()
+                    {
+                        @Override
+                        public String reduce( final String value,
+                                final String accumulator )
+                        {
+                            return accumulator + ',' + value;
+                        }
+                    } );
                 }
             } );
 

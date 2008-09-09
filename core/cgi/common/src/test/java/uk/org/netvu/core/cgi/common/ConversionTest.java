@@ -63,4 +63,16 @@ public class ConversionTest
     {
         assertTrue( Conversion.hexStringToLong.convert( "ff" ) == 255 );
     }
+
+    @Test
+    public void longToHexString()
+    {
+        assertTrue( Conversion.longToHexString.convert( 255L ).equals( "ff" ) );
+    }
+
+    @Test
+    public void intToHexString()
+    {
+        assertTrue( Conversion.intToHexString.convert( 255 ).equals( "ff" ) );
+    }
 }

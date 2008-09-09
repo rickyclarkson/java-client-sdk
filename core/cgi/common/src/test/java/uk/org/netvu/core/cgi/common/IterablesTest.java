@@ -13,10 +13,6 @@ import java.util.Random;
 
 import org.junit.Test;
 
-import uk.org.netvu.core.cgi.common.Generator;
-import uk.org.netvu.core.cgi.common.Generators;
-import uk.org.netvu.core.cgi.common.Iterables;
-
 /**
  * Tests for the Iterables utility class.
  */
@@ -42,48 +38,6 @@ public class IterablesTest
     }
 
     /**
-     * Tests that a one-shot iterable calls its function once when you create
-     * the iterator.
-     */
-    @Test
-    public void testOneShotWithNoCalls()
-    {
-        final int[] count = { 0 };
-        Iterables.oneShotIterableFromSideEffectingFunction(
-                new Generator<String>()
-                {
-                    public String invoke()
-                    {
-                        count[0]++;
-                        return "test";
-                    }
-                } ).iterator();
-        assertTrue( count[0] == 1 );
-    }
-
-    /**
-     * Tests that a one-shot iterable calls its function twice when you request
-     * the first element.
-     */
-    @Test
-    public void testOneShotWithOneCall()
-    {
-        final int[] count = { 0 };
-        Iterables.oneShotIterableFromSideEffectingFunction(
-                new Generator<String>()
-                {
-
-                    public String invoke()
-                    {
-                        count[0]++;
-                        return "test";
-                    }
-                } ).iterator().next();
-
-        assertTrue( count[0] == 2 );
-    }
-
-    /**
      * Tests that sequenceEqual follows its contract.
      */
     @Test
@@ -101,24 +55,6 @@ public class IterablesTest
                 Arrays.asList( 1, 2, 3, 4 ) ) );
         assertFalse( Iterables.sequenceEqual( Arrays.asList( 1, 2, 3, 4 ),
                 Arrays.asList( 1, 2, 3 ) ) );
-    }
-
-    /**
-     * Tests that a one-shot iterable doesn't support removal.
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public void testOneShotIteratorRemove()
-    {
-        Iterables.oneShotIterableFromSideEffectingFunction(
-                new Generator<Integer>()
-                {
-
-                    public Integer invoke()
-                    {
-                        return 5;
-                    }
-
-                } ).iterator().remove();
     }
 
     /**
@@ -145,8 +81,29 @@ public class IterablesTest
         }
     }
 
+    @Test
+    public void mapContract()
+    {
+        assertTrue( testContract( Iterables.map( Arrays.asList( 1, 2, 3 ),
+                new Conversion<Integer, Integer>()
+                {
+                    @Override
+                    public Integer convert( final Integer i )
+                    {
+                        return i * 2;
+                    }
+                } ) ) );
+    }
+
     /**
      * Tests that the Iterable parameter follows the contract of Iterable.
+     * 
+     * @param <T>
+     *        The type parameter of the Iterable.
+     * @param iterable
+     *        the Iterable.
+     * @return true if the Iterable follows the contracts of Iterable, false
+     *         otherwise.
      */
     public static <T> boolean testContract( final Iterable<T> iterable )
     {
@@ -184,5 +141,62 @@ public class IterablesTest
         }
 
         return true;
+    }
+
+    @Test
+    public void remove()
+    {
+        assertTrue( Iterables.remove( Arrays.asList( 1, 2, 3 ), 3 ).equals(
+                Arrays.asList( 1, 2 ) ) );
+    }
+
+    @Test
+    public void reduceLeft()
+    {
+        assertTrue( Iterables.reduceLeft( Arrays.asList( 1, 2, 3 ),
+                new Reduction<Integer, Integer>()
+                {
+                    @Override
+                    public Integer reduce( final Integer newValue,
+                            final Integer original )
+                    {
+                        return original + newValue;
+                    }
+                } ) == 6 );
+    }
+
+    @Test
+    public void zip()
+    {
+        final Iterable<Pair<Integer, Integer>> zipped = Iterables.zip(
+                Arrays.asList( 1, 2, 3 ), Arrays.asList( 4, 5, 6 ) );
+
+        assertTrue( Iterables.reduceLeft( Iterables.map( zipped,
+                new Conversion<Pair<Integer, Integer>, Integer>()
+                {
+                    @Override
+                    public Integer convert( final Pair<Integer, Integer> t )
+                    {
+                        return t.first() * t.second();
+                    }
+                } ), new Reduction<Integer, Integer>()
+        {
+            @Override
+            public Integer reduce( final Integer newValue,
+                    final Integer original )
+            {
+                return original + newValue;
+            }
+        } ) == 1 * 4 + 2 * 5 + 3 * 6 );
+
+        assertTrue( testContract( zipped ) );
+
+    }
+
+    @Test
+    public void removeIndices()
+    {
+        assertTrue( Iterables.removeIndices( Arrays.asList( 0, 1, 2, 3, 4 ), 1,
+                3 ).equals( Arrays.asList( 0, 2, 4 ) ) );
     }
 }

@@ -68,6 +68,10 @@ public enum AlarmType
      * Finds the AlarmType whose numeric value is the same as the value
      * parameter.
      * 
+     * @param value
+     *        the numeric value to search for.
+     * @return the AlarmType whose numeric value is the same as the value
+     *         parameter.
      * @throws IllegalArgumentException
      *         if the value parameter does not match any AlarmType.
      */

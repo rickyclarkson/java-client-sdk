@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -98,6 +99,28 @@ public final class GenericBuilderTest
                         add( Pair.pair( 10, "spam" ) );
                     }
                 } ).get( sparseIdentity ).get( 2 ).equals( "baz" ) );
+
+    }
+
+    @Test
+    public void fromStrings()
+    {
+        final Parameter<String, String> name = Parameter.param( "name", "foo",
+                "Bob", Conversion.<String> identity() );
+        final Parameter<String, String> surname = Parameter.param( "surname",
+                "foo", "Hope", Conversion.<String> identity() );
+
+        final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
+        {
+            {
+                add( name );
+                add( surname );
+            }
+        };
+
+        assertTrue( GenericBuilder.fromStrings( params,
+                Arrays.asList( "John", "Major" ) ).get( surname ).equals(
+                "Major" ) );
 
     }
 }

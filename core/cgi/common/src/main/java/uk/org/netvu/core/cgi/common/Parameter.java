@@ -225,9 +225,9 @@ public abstract class Parameter<T, R>
 
                 for ( final String value : values )
                 {
-                    results.add( Pair.pair( startIndex,
-                            fromString.convert( value.substring( 1,
-                                    value.length() - 1 ) ) ) );
+                    results.add( Pair.pair(
+                            startIndex,
+                            fromString.convert( Strings.removeSurroundingQuotesLeniently( value ) ) ) );
 
                     startIndex++;
                 }

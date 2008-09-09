@@ -14,6 +14,10 @@ import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.URLBuilder;
 import uk.org.netvu.core.cgi.common.Validator;
 
+/**
+ * A Connection tells the decoder which camera to use, and what parameter values
+ * to send to it.
+ */
 public final class Connection
 {
     private static final Parameter<String, Option<String>> slaveIPParam = param(
@@ -42,6 +46,9 @@ public final class Connection
 
     private final GenericBuilder builder;
 
+    /**
+     * Constructs a Connection.
+     */
     public Connection()
     {
         this( new GenericBuilder( new Validator()
@@ -61,32 +68,72 @@ public final class Connection
         this.builder = builder;
     }
 
+    /**
+     * Constructs a new Connection containing the same values as this
+     * Connection, but with the slaveIP set to the parameter passed in.
+     * 
+     * @param slaveIP
+     *        the IP address of the slave camera.
+     * @return the new Connection.
+     */
     public Connection slaveIP( final String slaveIP )
     {
         return new Connection( builder.with( slaveIPParam, slaveIP ) );
     }
 
+    /**
+     * Constructs a new Connection containing the same values as this
+     * Connection, but with seq set to the parameter passed in.
+     * 
+     * @param seq
+     *        a bitmask of source cameras.
+     * @return the new Connection.
+     */
     public Connection seq( final int seq )
     {
         return new Connection( builder.with( seqParam, seq ) );
     }
 
-    public Connection dwell( final int time )
+    /**
+     * Constructs a new Connection containing the same values as this
+     * Connection, but with dwell set to the parameter passed in.
+     * 
+     * @param dwell
+     *        the time to dwell on each camera in the seq bitmask.
+     * @return the new Connection.
+     */
+    public Connection dwell( final int dwell )
     {
-        return new Connection( builder.with( dwellParam, time ) );
+        return new Connection( builder.with( dwellParam, dwell ) );
     }
 
+    /**
+     * Constructs a new Connection containing the same values as this
+     * Connection, but with cam set to the parameter passed in.
+     * 
+     * @param cam
+     *        the source camera.
+     * @return the new Connection.
+     */
     public Connection cam( final int cam )
     {
         return new Connection( builder.with( camParam, cam ) );
     }
 
+    /**
+     * Constructs a new Connection containing the same values as this
+     * Connection, but with audio set to the parameter passed in.
+     * 
+     * @param audioChannel
+     *        the source audio channel.
+     * @return the new Connection.
+     */
     public Connection audio( final int audioChannel )
     {
         return new Connection( builder.with( audioChannelParam, audioChannel ) );
     }
 
-    public static final Conversion<Connection, String> urlEncode = new Conversion<Connection, String>()
+    static final Conversion<Connection, String> urlEncode = new Conversion<Connection, String>()
     {
         @Override
         public String convert( final Connection connection )
@@ -97,7 +144,7 @@ public final class Connection
         }
     };
 
-    public static final Conversion<String, Connection> fromURL = new Conversion<String, Connection>()
+    static final Conversion<String, Connection> fromURL = new Conversion<String, Connection>()
     {
         @Override
         public Connection convert( final String urlParameters )
@@ -115,13 +162,47 @@ public final class Connection
         }
     };
 
+    /**
+     * Returns the source video server address, or throws an
+     * IllegalStateException if none exists.
+     * 
+     * @return the source video server address.
+     */
     public String getSlaveIP()
     {
         return builder.get( slaveIPParam ).get();
     }
 
+    /**
+     * Returns the source camera, or throws an IllegalStateException if none
+     * exists.
+     * 
+     * @return the source camera.
+     */
     public int getCam()
     {
         return builder.get( camParam ).get();
+    }
+
+    /**
+     * Returns the source camera mask, or throws an IllegalStateException if
+     * none exists.
+     * 
+     * @return the source camera mask.
+     */
+    public int getSeq()
+    {
+        return builder.get( seqParam ).get();
+    }
+
+    /**
+     * Returns the time to dwell on each camera in the seq bitmask, or throws an
+     * IllegalStateException if this has not been set.
+     * 
+     * @return the time to dwell on each camera in the seq bitmask.
+     */
+    public int getDwell()
+    {
+        return builder.get( dwellParam ).get();
     }
 }

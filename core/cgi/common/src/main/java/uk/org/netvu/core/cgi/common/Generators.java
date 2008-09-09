@@ -28,6 +28,7 @@ public class Generators
      * 
      * @param random
      *        the random number generator to use.
+     * @return an infinite series of random Strings.
      */
     public static Iterable<String> strings( final Random random )
     {
@@ -68,6 +69,7 @@ public class Generators
      * 
      * @param random
      *        the random number generator to use.
+     * @return an infinite series of List&lt;Integer&gt;s.
      */
     public static Iterator<List<Integer>> intLists( final Random random )
     {
@@ -104,6 +106,7 @@ public class Generators
      * 
      * @param random
      *        the random number generator to use.
+     * @return an infinite series of Strings with null at the beginning.
      */
     public static Iterator<String> stringsAndNull( final Random random )
     {
@@ -111,24 +114,31 @@ public class Generators
                 strings( random ) ).iterator();
     }
 
-    public static Iterator<Integer> nonNegativeInts( final Random random )
+    public static Iterable<Integer> nonNegativeInts( final long seed )
     {
-        return new Iterator<Integer>()
+        return new Iterable<Integer>()
         {
-
-            public void remove()
+            public Iterator<Integer> iterator()
             {
-                throw new UnsupportedOperationException();
-            }
+                return new Iterator<Integer>()
+                {
+                    Random random = new Random( seed );
 
-            public Integer next()
-            {
-                return random.nextInt( Integer.MAX_VALUE );
-            }
+                    public void remove()
+                    {
+                        throw new UnsupportedOperationException();
+                    }
 
-            public boolean hasNext()
-            {
-                return true;
+                    public Integer next()
+                    {
+                        return random.nextInt( Integer.MAX_VALUE );
+                    }
+
+                    public boolean hasNext()
+                    {
+                        return true;
+                    }
+                };
             }
         };
     }

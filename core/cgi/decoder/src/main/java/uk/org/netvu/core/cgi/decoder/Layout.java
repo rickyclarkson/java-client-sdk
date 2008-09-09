@@ -1,20 +1,24 @@
 package uk.org.netvu.core.cgi.decoder;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-
 import uk.org.netvu.core.cgi.common.Conversion;
 
 public enum Layout
 {
-    SINGLE, FOUR_WAY, NINE_WAY, SIXTEEN_WAY;
+    SINGLE( 0 ), FOUR_WAY( 1 ), NINE_WAY( 2 ), SIXTEEN_WAY( 3 );
+
+    private final int value;
+
+    Layout( final int value )
+    {
+        this.value = value;
+    }
 
     public static final Conversion<Layout, String> urlEncode = new Conversion<Layout, String>()
     {
         @Override
         public String convert( final Layout layout )
         {
-            return layout.toString().toLowerCase().replaceAll( "_", " " );
+            return String.valueOf( layout.value );
         }
     };
 
@@ -23,15 +27,21 @@ public enum Layout
         @Override
         public Layout convert( final String url )
         {
-            try
-            {
-                return Layout.valueOf( URLDecoder.decode( url.toUpperCase(),
-                        "UTF-8" ).replaceAll( " ", "_" ) );
-            }
-            catch ( final UnsupportedEncodingException e )
-            {
-                throw new RuntimeException( e );
-            }
+            return find( Integer.parseInt( url ) );
         }
     };
+
+    private static Layout find( final int value )
+    {
+        for ( final Layout layout : Layout.values() )
+        {
+            if ( layout.value == value )
+            {
+                return layout;
+            }
+        }
+
+        throw new IllegalArgumentException();
+    }
+
 }
