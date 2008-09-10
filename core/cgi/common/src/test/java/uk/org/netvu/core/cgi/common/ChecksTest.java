@@ -3,7 +3,6 @@ package uk.org.netvu.core.cgi.common;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Iterator;
 import java.util.Random;
 
 import org.junit.Test;
@@ -21,7 +20,7 @@ public class ChecksTest
     public void testNotLessThan()
     {
         final Random random = new Random( 0 );
-        final Iterator<String> stringsAndNull = Generators.stringsAndNull( random );
+        final Generator<String> stringsAndNull = Generators.stringsAndNull( random );
 
         for ( int a = 0; a < Generators.LIMIT; a++ )
         {
@@ -56,7 +55,7 @@ public class ChecksTest
     public void testNotGreaterThan()
     {
         final Random random = new Random( 0 );
-        final Iterator<String> stringsAndNull = Generators.stringsAndNull( random );
+        final Generator<String> stringsAndNull = Generators.stringsAndNull( random );
 
         for ( int a = 0; a < Generators.LIMIT; a++ )
         {

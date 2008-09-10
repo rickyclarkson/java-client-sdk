@@ -186,4 +186,32 @@ public class Strings
      */
     public static final Conversion<String, String> surroundWithQuotes = prepend(
             "\"" ).andThen( append( "\"" ) );
+
+    /**
+     * Constructs a ReversibleReplace capable of replacing the String toReplace
+     * with the String 'with', and the reverse, in any Strings passed to it.
+     * 
+     * @param toReplace
+     *        the String to replace.
+     * @param with
+     *        the String to replace with.
+     * @return a ReversibleReplace capable of replacing the String toReplace
+     *         with the String 'with' and the reverse.
+     */
+    public static ReversibleReplace reversibleReplace( final String toReplace,
+            final String with )
+    {
+        return new ReversibleReplace()
+        {
+            public String replace( final String s )
+            {
+                return s.replaceAll( toReplace, with );
+            }
+
+            public String undo( final String s )
+            {
+                return s.replaceAll( with, toReplace );
+            }
+        };
+    }
 }

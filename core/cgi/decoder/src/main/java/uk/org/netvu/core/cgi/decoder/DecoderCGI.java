@@ -50,7 +50,7 @@ public final class DecoderCGI
                 @Override
                 public String convert( final String[] array )
                 {
-                    return Iterables.reduceLeft(
+                    return Iterables.reduce(
                             Iterables.map( Arrays.asList( array ),
                                     Strings.surroundWithQuotes ),
                             new Reduction<String, String>()
@@ -73,7 +73,7 @@ public final class DecoderCGI
                 @Override
                 public String convert( final String s )
                 {
-                    return "\"" + URLBuilder.encode( s ) + "\"";
+                    return Strings.surroundWithQuotes.convert( URLBuilder.encode( s ) );
                 }
             } );
 

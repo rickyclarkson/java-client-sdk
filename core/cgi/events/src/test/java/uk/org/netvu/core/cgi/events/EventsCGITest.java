@@ -8,17 +8,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 import org.junit.Test;
 
 import uk.org.netvu.core.cgi.common.Action;
-import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Format;
+import uk.org.netvu.core.cgi.common.Generator;
 import uk.org.netvu.core.cgi.common.Generators;
-import uk.org.netvu.core.cgi.common.Iterables;
 import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.events.EventsCGI.Builder;
 
@@ -160,9 +158,8 @@ public class EventsCGITest
     {
         final int randomInt = random.nextInt();
         final long randomLong = random.nextLong();
-        final String randomString = Generators.strings( random ).iterator().next();
-        final int randomNonNegativeInt = Generators.nonNegativeInts(
-                random.nextLong() ).iterator().next();
+        final String randomString = Generators.strings( random ).next();
+        final int randomNonNegativeInt = Generators.nonNegativeInts( random ).next();
 
         assertTrue( new EventsCGI.Builder().alarmMask( randomInt ).build().getAlarmMask() == randomInt );
         assertTrue( new EventsCGI.Builder().range( randomNonNegativeInt ).build().getRange() == randomNonNegativeInt );
@@ -201,7 +198,7 @@ public class EventsCGITest
     public void testToString() throws MalformedURLException
     {
         final Random random = new Random( 0 );
-        final Iterator<EventsCGI> cgis = randomEventsCGIs( random );
+        final Generator<EventsCGI> cgis = randomEventsCGIs( random );
 
         for ( int a = 0; a < Generators.LIMIT; a++ )
         {
@@ -259,23 +256,17 @@ public class EventsCGITest
      *        the random number generator to use.
      * @return an infinite series of randomly-created EventCGI.Builders.
      */
-    public static Iterator<EventsCGI.Builder> randomEventCGIBuilders(
+    public static Generator<EventsCGI.Builder> randomEventCGIBuilders(
             final Random random )
     {
-        return new Iterator<EventsCGI.Builder>()
+        return new Generator<EventsCGI.Builder>()
         {
-            public void remove()
-            {
-                throw new UnsupportedOperationException();
-            }
-
             public EventsCGI.Builder next()
             {
                 final EventsCGI.Builder builder = new EventsCGI.Builder();
 
-                final Iterator<Integer> nonNegativeInts = Generators.nonNegativeInts(
-                        random.nextLong() ).iterator();
-                final Iterator<String> strings = Generators.strings( random ).iterator();
+                final Generator<Integer> nonNegativeInts = Generators.nonNegativeInts( random );
+                final Generator<String> strings = Generators.strings( random );
 
                 final List<Runnable> methods = new ArrayList<Runnable>()
                 {
@@ -392,11 +383,6 @@ public class EventsCGITest
                 return builder;
 
             }
-
-            public boolean hasNext()
-            {
-                return true;
-            }
         };
     }
 
@@ -407,17 +393,16 @@ public class EventsCGITest
      *        the random number generator to use.
      * @return an infinite series of randomly-generated EventsCGIs.
      */
-    public Iterator<EventsCGI> randomEventsCGIs( final Random random )
+    public Generator<EventsCGI> randomEventsCGIs( final Random random )
     {
-        return Iterables.map( randomEventCGIBuilders( random ),
-                new Conversion<EventsCGI.Builder, EventsCGI>()
-                {
-                    @Override
-                    public EventsCGI convert( final Builder builder )
-                    {
-                        return builder.build();
-                    }
-                } );
+        final Generator<EventsCGI.Builder> builders = randomEventCGIBuilders( random );
+        return new Generator<EventsCGI>()
+        {
+            public EventsCGI next()
+            {
+                return builders.next().build();
+            }
+        };
     }
 
     /**
@@ -438,7 +423,7 @@ public class EventsCGITest
     public void testFromString()
     {
         final Random random = new Random( 0 );
-        final Iterator<EventsCGI> cgis = randomEventsCGIs( random );
+        final Generator<EventsCGI> cgis = randomEventsCGIs( random );
 
         for ( int a = 0; a < Generators.LIMIT; a++ )
         {

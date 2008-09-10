@@ -11,6 +11,8 @@ import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ReversibleReplace;
+import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.URLBuilder;
 import uk.org.netvu.core.cgi.common.Validator;
 
@@ -133,16 +135,17 @@ public final class Connection
         return new Connection( builder.with( audioChannelParam, audioChannel ) );
     }
 
+    private static final ReversibleReplace replacer = Strings.reversibleReplace(
+            "&", "," );
+
     static final Conversion<Connection, String> urlEncode = new Conversion<Connection, String>()
     {
         @Override
         public String convert( final Connection connection )
         {
-            return "\""
-                    + URLBuilder.encode( connection.builder.toURLParameters(
-                            params ).replaceAll( "&", "," ) ) + "\"";
+            return URLBuilder.encode( replacer.replace( connection.builder.toURLParameters( params ) ) );
         }
-    };
+    }.andThen( Strings.surroundWithQuotes );
 
     static final Conversion<String, Connection> fromURL = new Conversion<String, Connection>()
     {
@@ -152,8 +155,8 @@ public final class Connection
             try
             {
                 return new Connection( GenericBuilder.fromURL(
-                        URLDecoder.decode( urlParameters, "UTF-8" ).replaceAll(
-                                ",", "&" ), params ) );
+                        replacer.undo( URLDecoder.decode( urlParameters,
+                                "UTF-8" ) ), params ) );
             }
             catch ( final UnsupportedEncodingException e )
             {

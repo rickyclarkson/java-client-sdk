@@ -2,14 +2,11 @@ package uk.org.netvu.core.cgi.common;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Random;
 
 import org.junit.Test;
 
@@ -18,25 +15,6 @@ import org.junit.Test;
  */
 public class IterablesTest
 {
-    /**
-     * Tests that prepending one Iterable to another yields an Iterable of equal
-     * size to the sum of the sizes of the input Iterables.
-     */
-    @Test
-    public void testPrepend()
-    {
-        final Random random = new Random();
-
-        for ( int a = 0; a < Generators.LIMIT; a++ )
-        {
-            final List<Integer> one = Generators.intLists( random ).next();
-            final List<Integer> two = Generators.intLists( random ).next();
-
-            assertTrue( one.size() + two.size() == Iterables.size( Iterables.prepend(
-                    one, two ) ) );
-        }
-    }
-
     /**
      * Tests that sequenceEqual follows its contract.
      */
@@ -55,30 +33,6 @@ public class IterablesTest
                 Arrays.asList( 1, 2, 3, 4 ) ) );
         assertFalse( Iterables.sequenceEqual( Arrays.asList( 1, 2, 3, 4 ),
                 Arrays.asList( 1, 2, 3 ) ) );
-    }
-
-    /**
-     * Tests that the Iterable returned by prepend follows the contract of
-     * Iterable.
-     */
-    @Test
-    public void testContractOfPrepend()
-    {
-        final Iterator<List<Integer>> gen = Generators.intLists( new Random() );
-
-        for ( int a = 0; a < Generators.LIMIT; a++ )
-        {
-            assertTrue( testContract( Iterables.prepend( gen.next(), gen.next() ) ) );
-            try
-            {
-                Iterables.prepend( gen.next(), gen.next() ).iterator().remove();
-                fail();
-            }
-            catch ( final UnsupportedOperationException e )
-            {
-
-            }
-        }
     }
 
     /**
@@ -163,7 +117,7 @@ public class IterablesTest
     @Test
     public void reduceLeft()
     {
-        assertTrue( Iterables.reduceLeft( Arrays.asList( 1, 2, 3 ),
+        assertTrue( Iterables.reduce( Arrays.asList( 1, 2, 3 ),
                 new Reduction<Integer, Integer>()
                 {
                     @Override
@@ -184,7 +138,7 @@ public class IterablesTest
         final Iterable<Pair<Integer, Integer>> zipped = Iterables.zip(
                 Arrays.asList( 1, 2, 3 ), Arrays.asList( 4, 5, 6 ) );
 
-        assertTrue( Iterables.reduceLeft( Iterables.map( zipped,
+        assertTrue( Iterables.reduce( Iterables.map( zipped,
                 new Conversion<Pair<Integer, Integer>, Integer>()
                 {
                     @Override

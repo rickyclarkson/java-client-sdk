@@ -7,6 +7,7 @@ import java.util.Random;
 
 import org.junit.Test;
 
+import uk.org.netvu.core.cgi.common.Generator;
 import uk.org.netvu.core.cgi.common.Generators;
 import uk.org.netvu.core.cgi.events.EventsCGIResult.Builder;
 
@@ -57,7 +58,7 @@ public class EventsCGIResultTest
     public static final Iterator<EventsCGIResult.Builder> eventBuilderGenerator(
             final Random random )
     {
-        final Iterator<String> strings = Generators.strings( random ).iterator();
+        final Generator<String> strings = Generators.strings( random );
 
         return new Iterator<EventsCGIResult.Builder>()
         {
@@ -68,8 +69,7 @@ public class EventsCGIResultTest
 
             public EventsCGIResult.Builder next()
             {
-                final Iterator<Integer> nonNegatives = Generators.nonNegativeInts(
-                        random.nextLong() ).iterator();
+                final Generator<Integer> nonNegatives = Generators.nonNegativeInts( random );
                 final int julianTime = nonNegatives.next();
 
                 return new EventsCGIResult.Builder().alarm( strings.next() ).archive(

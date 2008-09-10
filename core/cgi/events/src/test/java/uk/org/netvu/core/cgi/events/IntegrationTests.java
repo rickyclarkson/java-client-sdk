@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.Random;
 
 import uk.org.netvu.core.cgi.common.Format;
+import uk.org.netvu.core.cgi.common.Generator;
 import uk.org.netvu.core.cgi.common.Generators;
 import uk.org.netvu.core.cgi.events.EventsCGI.Builder;
 
@@ -29,7 +29,7 @@ public class IntegrationTests
     {
         final Random random = new Random( 0 );
 
-        final Iterator<Builder> builders = EventsCGITest.randomEventCGIBuilders( random );
+        final Generator<Builder> builders = EventsCGITest.randomEventCGIBuilders( random );
 
         for ( int a = 0; a < Generators.LIMIT; a++ )
         {

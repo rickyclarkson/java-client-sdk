@@ -1,15 +1,13 @@
 package uk.org.netvu.core.cgi.common;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 /**
  * Random data generators for use in automated tests.
  */
-public class Generators
+public final class Generators
 {
     /**
      * A limit on iterations - control this to control how long tests that use
@@ -30,35 +28,18 @@ public class Generators
      *        the random number generator to use.
      * @return an infinite series of random Strings.
      */
-    public static Iterable<String> strings( final Random random )
+    public static Generator<String> strings( final Random random )
     {
-        return new Iterable<String>()
+        return new Generator<String>()
         {
-            public Iterator<String> iterator()
+            public String next()
             {
-                return new Iterator<String>()
+                final char[] chars = new char[random.nextInt( SIZE_LIMIT )];
+                for ( int a = 0; a < chars.length; a++ )
                 {
-                    public boolean hasNext()
-                    {
-                        return true;
-                    }
-
-                    public String next()
-                    {
-                        final char[] chars = new char[random.nextInt( SIZE_LIMIT )];
-                        for ( int a = 0; a < chars.length; a++ )
-                        {
-                            chars[a] = (char) ( random.nextInt( 'z' - 'a' ) + 'a' );
-                        }
-                        return new String( chars );
-                    }
-
-                    public void remove()
-                    {
-                        throw new UnsupportedOperationException();
-                    }
-
-                };
+                    chars[a] = (char) ( random.nextInt( 'z' - 'a' ) + 'a' );
+                }
+                return new String( chars );
             }
         };
     }
@@ -71,15 +52,10 @@ public class Generators
      *        the random number generator to use.
      * @return an infinite series of List&lt;Integer&gt;s.
      */
-    public static Iterator<List<Integer>> intLists( final Random random )
+    public static Generator<List<Integer>> intLists( final Random random )
     {
-        return new Iterator<List<Integer>>()
+        return new Generator<List<Integer>>()
         {
-            public boolean hasNext()
-            {
-                return true;
-            }
-
             public List<Integer> next()
             {
                 final int size = random.nextInt( Generators.SIZE_LIMIT );
@@ -92,11 +68,6 @@ public class Generators
 
                 return list;
             }
-
-            public void remove()
-            {
-                throw new UnsupportedOperationException();
-            }
         };
     }
 
@@ -108,44 +79,41 @@ public class Generators
      *        the random number generator to use.
      * @return an infinite series of Strings with null at the beginning.
      */
-    public static Iterator<String> stringsAndNull( final Random random )
+    public static Generator<String> stringsAndNull( final Random random )
     {
-        return Iterables.prepend( Arrays.asList( (String) null ),
-                strings( random ) ).iterator();
+        return new Generator<String>()
+        {
+            boolean giveNull = true;
+            Generator<String> strings = strings( random );
+
+            public String next()
+            {
+                try
+                {
+                    return giveNull ? null : strings.next();
+                }
+                finally
+                {
+                    giveNull = false;
+                }
+            }
+        };
     }
 
     /**
      * An infinite series of non-negative ints.
      * 
-     * @param seed
-     *        the random seed to use.
+     * @param random
+     *        the random number generator to use.
      * @return an infinite series of non-negative ints.
      */
-    public static Iterable<Integer> nonNegativeInts( final long seed )
+    public static Generator<Integer> nonNegativeInts( final Random random )
     {
-        return new Iterable<Integer>()
+        return new Generator<Integer>()
         {
-            public Iterator<Integer> iterator()
+            public Integer next()
             {
-                return new Iterator<Integer>()
-                {
-                    Random random = new Random( seed );
-
-                    public void remove()
-                    {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    public Integer next()
-                    {
-                        return random.nextInt( Integer.MAX_VALUE );
-                    }
-
-                    public boolean hasNext()
-                    {
-                        return true;
-                    }
-                };
+                return random.nextInt( Integer.MAX_VALUE );
             }
         };
     }

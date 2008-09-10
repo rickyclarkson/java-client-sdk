@@ -56,25 +56,4 @@ public final class Pair<T, U>
     {
         return u;
     }
-
-    /**
-     * A Conversion from a Pair to the second element of the Pair.
-     * 
-     * @param <T>
-     *        the type of the first element of the Pair.
-     * @param <U>
-     *        the type of the second element of the Pair.
-     * @return a Conversion from a Pair to the second element of the Pair.
-     */
-    public static <T, U> Conversion<Pair<T, U>, U> getSecond()
-    {
-        return new Conversion<Pair<T, U>, U>()
-        {
-            @Override
-            public U convert( final Pair<T, U> t )
-            {
-                return t.second();
-            }
-        };
-    }
 }

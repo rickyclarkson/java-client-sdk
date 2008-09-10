@@ -88,7 +88,7 @@ public abstract class Conversion<T, R>
     /**
      * A conversion from ints to Strings containing hexadecimal.
      */
-    public static Conversion<Integer, String> intToHexString = new Conversion<Integer, String>()
+    public static final Conversion<Integer, String> intToHexString = new Conversion<Integer, String>()
     {
         @Override
         public String convert( final Integer value )
@@ -139,7 +139,7 @@ public abstract class Conversion<T, R>
      *        the second conversion to run.
      * @return a composed conversion.
      */
-    public <V> Conversion<T, V> andThen( final Conversion<R, V> conversion )
+    public final <V> Conversion<T, V> andThen( final Conversion<R, V> conversion )
     {
         return new Conversion<T, V>()
         {

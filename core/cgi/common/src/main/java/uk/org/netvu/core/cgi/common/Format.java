@@ -49,6 +49,9 @@ public enum Format
         }
     };
 
+    /**
+     * Gives the name of the Format in lowercase.
+     */
     @Override
     public String toString()
     {

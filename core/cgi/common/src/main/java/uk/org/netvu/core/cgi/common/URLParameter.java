@@ -3,7 +3,7 @@ package uk.org.netvu.core.cgi.common;
 /**
  * A representation of a URL Parameter (foo=bar).
  */
-public class URLParameter
+public final class URLParameter
 {
     /**
      * The name of this parameter.
