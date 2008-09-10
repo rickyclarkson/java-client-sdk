@@ -267,6 +267,9 @@ public class EventsCGIResultTest
         aBuilder().offset( 90001 ).build();
     }
 
+    /**
+     * Tests that an incomplete EventsCGIResult cannot be built.
+     */
     @Test(expected = IllegalStateException.class)
     public void testIncompleteObject()
     {

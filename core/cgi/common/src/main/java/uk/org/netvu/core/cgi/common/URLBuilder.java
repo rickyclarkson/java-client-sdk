@@ -3,9 +3,12 @@ package uk.org.netvu.core.cgi.common;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+/**
+ * Utility methods for encoding URLs. For internal use only.
+ */
 public class URLBuilder
 {
-    public static final Conversion<String, String> encode = new Conversion<String, String>()
+    static final Conversion<String, String> encode = new Conversion<String, String>()
     {
         @Override
         public String convert( final String unencoded )
@@ -14,11 +17,13 @@ public class URLBuilder
         }
     };
 
-    public static String param( final String name, final String encodedValue )
-    {
-        return name + "=" + encodedValue;
-    }
-
+    /**
+     * Encodes the specified value for safe use in URLs.
+     * 
+     * @param value
+     *        the value to encode.
+     * @return the encoded value.
+     */
     public static String encode( final String value )
     {
         try

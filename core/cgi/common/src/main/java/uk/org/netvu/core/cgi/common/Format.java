@@ -23,12 +23,23 @@ public enum Format
      */
     CSV;
 
+    /**
+     * Gives a random Format. For internal use only.
+     * 
+     * @param random
+     *        the random number generator to use.
+     * @return a random Format.
+     */
     public static Format oneOf( final Random random )
     {
         return random.nextInt( 3 ) == 0 ? JS : random.nextInt( 2 ) == 0 ? HTML
                 : CSV;
     }
 
+    /**
+     * A conversion that converts Strings to Formats according to the String
+     * representation of Formats.
+     */
     public static final Conversion<String, Format> fromString = new Conversion<String, Format>()
     {
         @Override

@@ -10,11 +10,18 @@ import java.util.TreeMap;
 
 import org.junit.Test;
 
+/**
+ * Unit tests for GenericBuilder.
+ */
 public final class GenericBuilderTest
 {
     Parameter<String, Option<String>> param = Parameter.param( "blah", "blah",
             Conversion.<String> identity() );
 
+    /**
+     * Tests that a value stored in a GenericBuilder gets converted as per the
+     * Parameter's rules.
+     */
     @Test
     public void conversion()
     {
@@ -22,6 +29,10 @@ public final class GenericBuilderTest
                 param ).get() ) == 10 );
     }
 
+    /**
+     * Tests that setting the same once-only Parameter twice results in an
+     * IllegalStateException.
+     */
     @Test(expected = IllegalStateException.class)
     public void repeating()
     {
@@ -33,6 +44,10 @@ public final class GenericBuilderTest
     private static final Parameter<Integer, Option<Integer>> range = Parameter.param(
             "range", "range to search", Conversion.stringToInt );
 
+    /**
+     * Tests that an IllegalStateException is thrown when invalid parameter
+     * values are given.
+     */
     @Test(expected = IllegalStateException.class)
     public void validatorFail()
     {
@@ -50,6 +65,9 @@ public final class GenericBuilderTest
         } ).with( time, 2000000000 ).with( range, 2000000000 );
     }
 
+    /**
+     * Tests that GenericBuilder.isDefault works as specified.
+     */
     @Test
     public void testIsDefault()
     {
@@ -57,6 +75,10 @@ public final class GenericBuilderTest
         assertFalse( new GenericBuilder().with( time, 40 ).isDefault( time ) );
     }
 
+    /**
+     * Tests that parsing a URL results in a GenericBuilder holding the correct
+     * values.
+     */
     @Test
     public void fromURL()
     {
@@ -78,6 +100,10 @@ public final class GenericBuilderTest
                 "time=10&range=40" ) );
     }
 
+    /**
+     * Tests that populating a sparse array Parameter and then reading back its
+     * values yields the correct values.
+     */
     @Test
     public void sparseArray()
     {
@@ -102,6 +128,9 @@ public final class GenericBuilderTest
 
     }
 
+    /**
+     * Tests that GenericBuilder.fromStrings works as specified.
+     */
     @Test
     public void fromStrings()
     {

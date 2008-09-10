@@ -6,8 +6,14 @@ import java.util.Random;
 
 import org.junit.Test;
 
+/**
+ * Unit tests for Format.
+ */
 public class FormatTest
 {
+    /**
+     * Tests that Format.oneOf yields a Format.
+     */
     @Test
     public void testOneOf()
     {

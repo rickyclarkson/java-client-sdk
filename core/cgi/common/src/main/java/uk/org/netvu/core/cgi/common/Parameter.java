@@ -5,6 +5,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * An object that can convert zero or more values of type T into a value or type
+ * R, for use with GenericBuilder. For internal use only.
+ * 
+ * @param <T>
+ *        the input type of the Parameter.
+ * @param <R>
+ *        the output type of the Parameter.
+ */
 public abstract class Parameter<T, R>
 {
     private final String name;
@@ -19,6 +28,25 @@ public abstract class Parameter<T, R>
         this.defaultValue = defaultValue;
     }
 
+    /**
+     * Constructs a Parameter that can take 0 or 1 values of type T, yielding
+     * them as an Option<T>.
+     * 
+     * @param <T>
+     *        the type that the Parameter can take.
+     * @param name
+     *        the name of the Parameter.
+     * @param description
+     *        a textual description of the Parameter.
+     * @param fromString
+     *        a Conversion from Strings to values of type T, which is used in
+     *        parsing URLs, etc.
+     * @param toString
+     *        a Conversion from values of type T to Strings, which is used in
+     *        generating URLs, etc.
+     * @return a Parameter that can take 0 or 1 values of type T, yielding them
+     *         as an Option<T>.
+     */
     public static <T> Parameter<T, Option<T>> param( final String name,
             final String description, final Conversion<String, T> fromString,
             final Conversion<T, String> toString )
@@ -54,6 +82,22 @@ public abstract class Parameter<T, R>
 
     }
 
+    /**
+     * Constructs a Parameter that can take 0 or 1 values of type T, yielding
+     * them as an Option<T>.
+     * 
+     * @param <T>
+     *        the type that the Parameter can take.
+     * @param name
+     *        the name of the Parameter.
+     * @param description
+     *        a textual description of the Parameter.
+     * @param fromString
+     *        a Conversion from Strings to values of type T, which is used in
+     *        parsing URLs, etc.
+     * @return a Parameter that can take 0 or 1 values of type T, yielding them
+     *         as an Option<T>.
+     */
     public static <T> Parameter<T, Option<T>> param( final String name,
             final String description, final Conversion<String, T> fromString )
     {
@@ -61,6 +105,24 @@ public abstract class Parameter<T, R>
                 Conversion.<T> objectToString() );
     }
 
+    /**
+     * Constructs a Parameter that can take 0 or 1 values of type T, yielding
+     * that value or a default value.
+     * 
+     * @param <T>
+     *        the type that the Parameter can take.
+     * @param name
+     *        the name of the Parameter.
+     * @param description
+     *        a textual description of the Parameter.
+     * @param defaultValue
+     *        the default value for the Parameter.
+     * @param fromString
+     *        a Conversion from Strings to values of type T, which is used in
+     *        parsing URLs, etc.
+     * @return a Parameter that can take 0 or 1 values of type T, yielding that
+     *         value or a default value.
+     */
     public static <T> Parameter<T, T> param( final String name,
             final String description, final T defaultValue,
             final Conversion<String, T> fromString )
@@ -93,6 +155,27 @@ public abstract class Parameter<T, R>
         };
     }
 
+    /**
+     * Constructs a Parameter that can take 0 or 1 values of type T, yielding
+     * that value or a default value.
+     * 
+     * @param <T>
+     *        the type that the Parameter can take.
+     * @param name
+     *        the name of the Parameter.
+     * @param description
+     *        a textual description of the Parameter.
+     * @param defaultValue
+     *        the default value for the Parameter.
+     * @param fromString
+     *        a Conversion from Strings to values of type T, which is used in
+     *        parsing URLs, etc.
+     * @param toString
+     *        a Conversion from values of type T to Strings, which is used in
+     *        generating URLs, etc.
+     * @return a Parameter that can take 0 or 1 values of type T, yield that
+     *         value or a default value.
+     */
     public static <T> Parameter<T, T> param( final String name,
             final String description, final T defaultValue,
             final Conversion<String, T> fromString,
@@ -127,6 +210,23 @@ public abstract class Parameter<T, R>
         };
     }
 
+    /**
+     * Constructs a Parameter that can take Integers between two inclusive
+     * bounds, and yields a U, via a specified Parameter.
+     * 
+     * @param <U>
+     *        the output type of the Parameter.
+     * @param lowerInclusive
+     *        the lower bound of the values that the Parameter can take,
+     *        inclusive.
+     * @param higherInclusive
+     *        the higher bound of the values that the Parameter can take,
+     *        inclusive.
+     * @param param
+     *        the parameter to pass values on to.
+     * @return a Parameter that can take Integers between two inclusive bounds,
+     *         and yields a U, via a specified Parameter.
+     */
     public static <U> Parameter<Integer, U> bound( final int lowerInclusive,
             final int higherInclusive, final Parameter<Integer, U> param )
     {
@@ -159,6 +259,20 @@ public abstract class Parameter<T, R>
         };
     }
 
+    /**
+     * Constructs a Parameter with one disallowed value, passing all allowed
+     * values on to the specified Parameter.
+     * 
+     * @param <T>
+     *        the input type of the Parameter.
+     * @param <U>
+     *        the output type of the Parameter.
+     * @param banned
+     *        the value that is disallowed.
+     * @param param
+     *        the Parameter to pass values on to.
+     * @return a Parameter with one disallowed value.
+     */
     public static <T, U> Parameter<T, U> not( final T banned,
             final Parameter<T, U> param )
     {
@@ -189,10 +303,31 @@ public abstract class Parameter<T, R>
         };
     }
 
+    /**
+     * Constructs a Parameter that accepts Pairs of Integers and values of type
+     * T, and yields a TreeMap of Integers to values of type T accordingly,
+     * representing a sparse array.
+     * 
+     * @param <T>
+     *        the input type of the sparse array.
+     * @param name
+     *        the name of the Parameter.
+     * @param description
+     *        a textual description of the Parameter.
+     * @param fromString
+     *        a Conversion from Strings to values of type T, used in parsing
+     *        URLs.
+     * @param toString
+     *        a Conversion from values of type T to Strings, used in generating
+     *        URLs.
+     * @return a Parameter that accepts Pairs of Integers and values of type T,
+     *         and yields a TreeMap of Integers to values of type T accordingly,
+     *         representing a sparse array.
+     */
     public static <T> Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>> sparseArrayParam(
             final String name, final String description,
             final Conversion<String, T> fromString,
-            final Conversion<T, String> valueEncoder )
+            final Conversion<T, String> toString )
     {
         return new Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>>(
                 name, description, new TreeMap<Integer, T>() )
@@ -248,9 +383,7 @@ public abstract class Parameter<T, R>
                         result.append( "&" );
                     }
 
-                    result.append( URLBuilder.param(
-                            name + '[' + entry.getKey() + ']',
-                            URLBuilder.encode( valueEncoder.convert( entry.getValue() ) ) ) );
+                    result.append( ( name + '[' + entry.getKey() + ']' + "=" + URLBuilder.encode( toString.convert( entry.getValue() ) ) ) );
                 }
 
                 return result.toString();
@@ -258,13 +391,34 @@ public abstract class Parameter<T, R>
         };
     }
 
+    /**
+     * Constructs a Parameter that accepts non-negative Integers and yields
+     * values of type R by passing them on to the specified Parameter.
+     * 
+     * @param <R>
+     *        the output type of this Parameter.
+     * @param param
+     *        the Parameter to pass values to.
+     * @return a Parameter that accepts non-negative Integers and yields values
+     *         of type R by passing them on to the specified Parameter.
+     */
     public static <R> Parameter<Integer, R> notNegative(
             final Parameter<Integer, R> param )
     {
         return bound( 0, Integer.MAX_VALUE, param );
     }
 
-    public String withURLParameter( final GenericBuilder genericBuilder )
+    /**
+     * Converts this Parameter plus the value stored for it in the specified
+     * GenericBuilder into a URLParameter, if the value is not the default
+     * value.
+     * 
+     * @param genericBuilder
+     *        the GenericBuilder to get the value from.
+     * @return this Parameter as a URL parameter, or an empty String if the
+     *         value of the parameter is the Parameter's default value.
+     */
+    public String toURLParameter( final GenericBuilder genericBuilder )
     {
         return genericBuilder.isDefault( this ) ? ""
                 : toURLParameter( Pair.pair( name, genericBuilder.get( this ) ) );
@@ -276,24 +430,31 @@ public abstract class Parameter<T, R>
         return conversion.convert( pair.value );
     }
 
+    /**
+     * Gets the name of the Parameter.
+     * 
+     * @return the name of the Parameter.
+     */
     public String getName()
     {
         return name;
     }
 
+    /**
+     * Parses the specified URLParameter into a value of type T.
+     * 
+     * @param nameAndValue
+     *        the URLParameter to parse.
+     * @return a value of type T, after parsing.
+     */
     public abstract T fromURLParameter( final URLParameter nameAndValue );
 
-    public R getDefaultValue()
+    R getDefaultValue()
     {
         return defaultValue;
     }
 
-    public abstract R reduce( final T newValue, final R original );
+    abstract R reduce( final T newValue, final R original );
 
-    public abstract String toURLParameter( final Pair<String, R> nameAndValue );
-
-    public T fromString( final String value )
-    {
-        return fromURLParameter( new URLParameter( name, value ) );
-    }
+    abstract String toURLParameter( final Pair<String, R> nameAndValue );
 }

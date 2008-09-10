@@ -4,14 +4,24 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+/**
+ * Unit tests for VPartsCGIResult.
+ */
 public class VPartsCGIResultTest
 {
+    /**
+     * Tests that constructing an incomplete VPartsCGIResult causes an
+     * IllegalStateException.
+     */
     @Test(expected = IllegalStateException.class)
     public void incomplete()
     {
         new VPartsCGIResult.Builder().build();
     }
 
+    /**
+     * Tests that a built VPartsCGIResult contains the values given to it.
+     */
     @Test
     public void success()
     {
@@ -29,12 +39,19 @@ public class VPartsCGIResultTest
         assertTrue( result.getStartTime() == 1 );
     }
 
+    /**
+     * Tests that setting the same value twice causes an IllegalStateException.
+     */
     @Test(expected = IllegalStateException.class)
     public void twice()
     {
         new VPartsCGIResult.Builder().camMask( 4 ).camMask( 4 );
     }
 
+    /**
+     * Tests that parsing valid CSV then generating CSV from the resulting
+     * object results in the same CSV.
+     */
     @Test
     public void fromCSV()
     {

@@ -1,10 +1,28 @@
 package uk.org.netvu.core.cgi.common;
 
+/**
+ * A representation of a URL Parameter (foo=bar).
+ */
 public class URLParameter
 {
+    /**
+     * The name of this parameter.
+     */
     public final String name;
+
+    /**
+     * The value of this parameter.
+     */
     public final String value;
 
+    /**
+     * Constructs a URLParameter with the specified name and value.
+     * 
+     * @param name
+     *        the name of this parameter.
+     * @param value
+     *        the value of this parameter.
+     */
     public URLParameter( final String name, final String value )
     {
         this.name = name;

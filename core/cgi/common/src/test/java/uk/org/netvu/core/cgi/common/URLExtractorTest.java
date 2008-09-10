@@ -7,8 +7,14 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+/**
+ * Unit tests for URLExtractor.
+ */
 public class URLExtractorTest
 {
+    /**
+     * Tests that URLExtractor.queryName works as specified.
+     */
     @Test
     public void testQueryName()
     {
@@ -21,6 +27,9 @@ public class URLExtractorTest
         assertTrue( URLExtractor.queryName( "foo?bar?" ).equals( "foo" ) );
     }
 
+    /**
+     * Tests that URLExtract.parameters works as specified.
+     */
     @Test
     public void testParameters()
     {
@@ -32,8 +41,11 @@ public class URLExtractorTest
         assertTrue( URLExtractor.parameters( "foo=\"bar=baz\"&spam=\"eggs\"" ).size() == 2 );
     }
 
+    /**
+     * Test that URLExtractor.nameValuePairs works as specified.
+     */
     @Test
-    public void testKeyValuePairs()
+    public void testNameValuePairs()
     {
         assertTrue( Iterables.sequenceEqual( URLExtractor.nameValuePairs( "" ),
                 new ArrayList<URLParameter>() ) );

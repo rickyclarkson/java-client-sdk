@@ -114,6 +114,13 @@ public class Generators
                 strings( random ) ).iterator();
     }
 
+    /**
+     * An infinite series of non-negative ints.
+     * 
+     * @param seed
+     *        the random seed to use.
+     * @return an infinite series of non-negative ints.
+     */
     public static Iterable<Integer> nonNegativeInts( final long seed )
     {
         return new Iterable<Integer>()

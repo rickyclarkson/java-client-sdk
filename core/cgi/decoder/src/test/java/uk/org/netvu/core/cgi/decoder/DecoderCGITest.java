@@ -4,8 +4,14 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+/**
+ * Tests for DecoderCGI.
+ */
 public class DecoderCGITest
 {
+    /**
+     * Tests that a built DecoderCGI has all the values given to it.
+     */
     @Test
     public void retention()
     {
@@ -21,6 +27,11 @@ public class DecoderCGITest
         assertTrue( cgi.getLayouts().get( 2 ) == Layout.NINE_WAY );
     }
 
+    /**
+     * Tests that example 1 from the Decoder Control Specification parses
+     * correctly. Note that the layout was changed from "Four Way" to 1, as the
+     * spec appears to be out of date with the server implementations.
+     */
     @Test
     public void fromExampleURL1()
     {
@@ -46,6 +57,10 @@ public class DecoderCGITest
         assertTrue( cgi.getCommands().get( 1 ).equals( "display_pic.cgi?" ) );
     }
 
+    /**
+     * Tests that example 2 from the Decoder Control Specification parses
+     * correctly.
+     */
     @Test
     public void fromExampleURL2()
     {
@@ -58,6 +73,10 @@ public class DecoderCGITest
         assertTrue( cgi.getConnections().get( 18 ).getCam() == 7 );
     }
 
+    /**
+     * Tests that example 3 from the Decoder Control Specification parses
+     * correctly.
+     */
     @Test
     public void fromExampleURL3()
     {
@@ -69,6 +88,11 @@ public class DecoderCGITest
                 "replay_pic.cgi?id=123456&time=12:34:00:28:11:03&control=PLAY" ) );
     }
 
+    /**
+     * Tests that example 1 from the Decoder Control Specification parses
+     * correctly. Note that the layout was changed from "Single" to 0, as the
+     * spec appears to be out of date with the server implementations.
+     */
     @Test
     public void fromExampleURL4()
     {
@@ -88,6 +112,19 @@ public class DecoderCGITest
         assertTrue( cgi.getLayouts().size() == 1 );
         assertTrue( cgi.getLayouts().get( 4 ) == Layout.SINGLE );
     }
+
+    /**
+     * Tests that a DecoderCGI with output titles is properly converted to URL
+     * parameters.
+     */
+    @Test
+    public void fromCGI()
+    {
+        assertTrue( new DecoderCGI().outputTitles( "foo", "bar", "baz" ).command(
+                2, "blah" ).layout( 1, Layout.FOUR_WAY ).toURLParameters().equals(
+                "decoder.var?layouts[1]=1&output_titles=\"foo\",\"bar\",\"baz\"&commands[2]=%22blah%22" ) );
+    }
+
     /*
      * public static void main( final String[] args ) { final JFrame frame = new
      * JFrame(); final JTextArea variables = new JTextArea( 50, 50 ); frame.add(

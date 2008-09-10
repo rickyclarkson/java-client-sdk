@@ -7,11 +7,14 @@ import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 
-public class VariableCGI
+/**
+ * Builds and parses variable.cgi URLs.
+ */
+public final class VariableCGI
 {
     private final GenericBuilder builder;
 
-    public VariableCGI( final GenericBuilder builder )
+    VariableCGI( final GenericBuilder builder )
     {
         if ( builder.get( variableParam ).isNone() )
         {
@@ -37,33 +40,65 @@ public class VariableCGI
         }
     };
 
+    /**
+     * A Builder to create VariableCGIs.
+     */
     public static final class Builder
     {
         GenericBuilder real = new GenericBuilder();
 
+        /**
+         * Sets the variable parameter to the specified Variable.
+         * 
+         * @param variable
+         *        the Variable to store.
+         * @return the Builder.
+         */
         public Builder variable( final Variable variable )
         {
             real = real.with( variableParam, variable );
             return this;
         }
 
+        /**
+         * Sets the type parameter to the specified VariableType.
+         * 
+         * @param type
+         *        the VariableType to store.
+         * @return the Builder.
+         */
         public Builder type( final VariableType type )
         {
             real = real.with( typeParam, type );
             return this;
         }
 
+        /**
+         * Builds a VariableCGI with the stored values.
+         * 
+         * @return a VariableCGI containing the stored values.
+         */
         public VariableCGI build()
         {
             return new VariableCGI( real );
         }
     }
 
+    /**
+     * Gets the stored Variable.
+     * 
+     * @return the stored Variable.
+     */
     public Variable getVariable()
     {
         return builder.get( variableParam ).get();
     }
 
+    /**
+     * Gets the stored VariableType.
+     * 
+     * @return the stored VariableType.
+     */
     public VariableType getType()
     {
         return builder.get( typeParam );
@@ -75,6 +110,14 @@ public class VariableCGI
         return "/variable.cgi?" + builder.toURLParameters( params );
     }
 
+    /**
+     * Parses a variable.cgi request, returning a VariableCGI holding the
+     * request's values.
+     * 
+     * @param url
+     *        the request to parse.
+     * @return a VariableCGI holding the request's values.
+     */
     public static VariableCGI fromString( final String url )
     {
         return new VariableCGI( GenericBuilder.fromURL( url, params ) );

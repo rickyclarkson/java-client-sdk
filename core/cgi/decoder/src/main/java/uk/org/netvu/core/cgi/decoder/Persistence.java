@@ -1,10 +1,21 @@
 package uk.org.netvu.core.cgi.decoder;
 
-import uk.org.netvu.core.cgi.common.Conversion;
 
+/**
+ * Specifies whether a DecoderCGI's query sets variables temporarily or
+ * persistently.
+ */
 public enum Persistence
 {
-    PERSISTENT( ".frm" ), TEMPORARY( ".var" );
+    /**
+     * Sets variables persistently (on-disk).
+     */
+    PERSISTENT( ".frm" ),
+
+    /**
+     * Sets variables temporarily (in-memory).
+     */
+    TEMPORARY( ".var" );
 
     private final String extension;
 
@@ -13,18 +24,12 @@ public enum Persistence
         this.extension = extension;
     }
 
+    /**
+     * Gives ".frm" for PERSISTENT and ".var" for TEMPORARY.
+     */
     @Override
     public String toString()
     {
         return extension;
     }
-
-    static final Conversion<String, Persistence> fromString = new Conversion<String, Persistence>()
-    {
-        @Override
-        public Persistence convert( final String s )
-        {
-            return s.equals( PERSISTENT.extension ) ? PERSISTENT : TEMPORARY;
-        }
-    };
 }

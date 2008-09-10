@@ -6,8 +6,14 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+/**
+ * Unit tests for Strings.
+ */
 public class StringsTest
 {
+    /**
+     * Tests that Strings.split works as specified.
+     */
     @Test
     public void split()
     {
@@ -15,6 +21,9 @@ public class StringsTest
                 Arrays.asList( "oh", "my", "word" ) ) );
     }
 
+    /**
+     * Tests that Strings.splitIgnoringQuotedSections works as specified.
+     */
     @Test
     public void splitIgnoringQuotedSections()
     {
@@ -23,6 +32,9 @@ public class StringsTest
                 "one,two \" and a third, a fourth and perhaps, \",five", ',' ).size() == 3 );
     }
 
+    /**
+     * Tests that Strings.afterFirstLeniently works as specified.
+     */
     @Test
     public void afterFirstLeniently()
     {

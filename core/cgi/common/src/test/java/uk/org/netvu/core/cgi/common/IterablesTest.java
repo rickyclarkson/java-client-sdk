@@ -81,6 +81,10 @@ public class IterablesTest
         }
     }
 
+    /**
+     * Tests that the Iterable returned by Iterables.map follows the Iterable
+     * contract.
+     */
     @Test
     public void mapContract()
     {
@@ -143,6 +147,9 @@ public class IterablesTest
         return true;
     }
 
+    /**
+     * Tests that Iterables.remove works as specified.
+     */
     @Test
     public void remove()
     {
@@ -150,6 +157,9 @@ public class IterablesTest
                 Arrays.asList( 1, 2 ) ) );
     }
 
+    /**
+     * Tests that Iterables.reduceLeft works as expected.
+     */
     @Test
     public void reduceLeft()
     {
@@ -165,6 +175,9 @@ public class IterablesTest
                 } ) == 6 );
     }
 
+    /**
+     * Tests that Iterables.zip works as specified.
+     */
     @Test
     public void zip()
     {
@@ -193,6 +206,9 @@ public class IterablesTest
 
     }
 
+    /**
+     * Tests that Iterables.removeIndices works as expected.
+     */
     @Test
     public void removeIndices()
     {

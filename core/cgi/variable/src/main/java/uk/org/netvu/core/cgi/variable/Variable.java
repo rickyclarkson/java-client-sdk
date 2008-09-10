@@ -7,20 +7,76 @@ import java.util.regex.Pattern;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 
+/**
+ * An enumeration of supported system variables.
+ */
 public enum Variable
 {
+    /**
+     * System camera titles.
+     */
     C_TITLE( ARRAY ),
+
+    /**
+     * Offset to UTC time.
+     */
     UTC_OFFSET( SCALAR ),
+
+    /**
+     * Bitmask of cameras connected.
+     */
     LIVE_CAM( ARRAY ),
+
+    /**
+     * Bitmask of cameras with coaxial telemetry enabled.
+     */
     COAX_TELM_ENABLE_MASK( ARRAY ),
+
+    /**
+     * A bitmask of cameras with RS485 serial enabled.
+     */
     RS485_TELM_ENABLE_MASK( ARRAY ),
+
+    /**
+     * Identifies whether the device has a real time clock.
+     */
     HAS_RTC( SCALAR ),
+
+    /**
+     * Current Julian time.
+     */
     CURRENT_JULIAN( SCALAR ),
+
+    /**
+     * The horizontal resolution that Video Analytics is using (one element per
+     * camera).
+     */
     VA_HORIZONTAL_RESOLUTION( ARRAY ),
+
+    /**
+     * The vertical resolution that Video Analytics is using (one element per
+     * camera).
+     */
     VA_VERTICAL_RESOLUTION( ARRAY ),
+
+    /**
+     * The cameras to display input from for each segment.
+     */
     COMMANDS( ARRAY ),
+
+    /**
+     * The cameras to use (decoder-specific).
+     */
     CONNECTIONS( ARRAY ),
+
+    /**
+     * The layouts to use on each channel (decoder-specific).
+     */
     LAYOUTS( ARRAY ),
+
+    /**
+     * The titles to display on each channel (decoder-specific).
+     */
     OUTPUT_TITLES( ARRAY );
 
     private final ArrayOrScalar arrayOrScalar;
@@ -30,7 +86,7 @@ public enum Variable
         this.arrayOrScalar = arrayOrScalar;
     }
 
-    public static final Conversion<String, Variable> fromString = new Conversion<String, Variable>()
+    static final Conversion<String, Variable> fromString = new Conversion<String, Variable>()
     {
         @Override
         public Variable convert( final String s )

@@ -5,8 +5,14 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+/**
+ * Unit tests for Option.
+ */
 public class OptionTest
 {
+    /**
+     * Tests that Option.getOrElse works as specified.
+     */
     @Test
     public void getOrElse()
     {
@@ -14,6 +20,9 @@ public class OptionTest
         assertTrue( new Option.None<Integer>().getOrElse( 0 ) == 0 );
     }
 
+    /**
+     * Tests that Option.isNone works as specified.
+     */
     @Test
     public void isNone()
     {
@@ -21,12 +30,18 @@ public class OptionTest
         assertTrue( new Option.None<Integer>().isNone() );
     }
 
+    /**
+     * Tests that Option.get works for an Option.Some.
+     */
     @Test
     public void get()
     {
         assertTrue( new Option.Some<Integer>( 5 ).get() == 5 );
     }
 
+    /**
+     * Tests that Option.get throws an IllegalStateException for an Option.None.
+     */
     @Test(expected = IllegalStateException.class)
     public void noGet()
     {

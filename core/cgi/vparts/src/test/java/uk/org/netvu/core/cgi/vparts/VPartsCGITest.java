@@ -6,8 +6,14 @@ import org.junit.Test;
 
 import uk.org.netvu.core.cgi.common.Format;
 
+/**
+ * Unit tests for VPartsCGI.
+ */
 public class VPartsCGITest
 {
+    /**
+     * Tests that a built VPartsCGI contains the values given to it.
+     */
     @Test
     public void testRetention()
     {
@@ -22,30 +28,48 @@ public class VPartsCGITest
         assertTrue( new VPartsCGI.Builder().pathstyle( DirectoryPathFormat.LONG ).build().getPathstyle() == DirectoryPathFormat.LONG );
     }
 
+    /**
+     * Tests that setting the same value twice causes an IllegalStateException.
+     */
     @Test(expected = IllegalStateException.class)
     public void testRepeating()
     {
         new VPartsCGI.Builder().expiry( 5 ).expiry( 5 );
     }
 
+    /**
+     * Tests that setting the watermark step to an invalid value causes an
+     * IllegalArgumentException.
+     */
     @Test(expected = IllegalArgumentException.class)
     public void testOutOfBounds()
     {
         new VPartsCGI.Builder().watermarkStep( 1000 );
     }
 
+    /**
+     * Tests that setting the time to a negative value causes an
+     * IllegalArgumentException.
+     */
     @Test(expected = IllegalArgumentException.class)
     public void testNegativeTime()
     {
         new VPartsCGI.Builder().time( -10 );
     }
 
+    /**
+     * Tests that setting the format to HTML causes an IllegalArgumentException.
+     */
     @Test(expected = IllegalArgumentException.class)
     public void testFormatHTML()
     {
         new VPartsCGI.Builder().format( Format.HTML ).build();
     }
 
+    /**
+     * Tests that parsing a URL then generating a URL from the resulting object
+     * results in the same URL.
+     */
     @Test
     public void fromString()
     {
