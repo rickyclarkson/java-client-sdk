@@ -189,8 +189,7 @@ public final class GenericBuilder
      * @return a GenericBuilder holding the parsed values.
      */
     public static GenericBuilder fromStrings(
-            final Iterable<Parameter<?, ?>> params,
-            final Iterable<String> strings )
+            final List<Parameter<?, ?>> params, final List<String> strings )
     {
         GenericBuilder builder = new GenericBuilder();
 

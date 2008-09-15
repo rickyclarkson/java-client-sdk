@@ -1,11 +1,10 @@
 package uk.org.netvu.core.cgi.common;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.junit.Test;
@@ -15,44 +14,6 @@ import org.junit.Test;
  */
 public class IterablesTest
 {
-    /**
-     * Tests that sequenceEqual follows its contract.
-     */
-    @Test
-    public void testSequenceEqual()
-    {
-        assertTrue( Iterables.sequenceEqual( Collections.emptyList(),
-                Collections.emptyList() ) );
-        assertTrue( Iterables.sequenceEqual( Collections.singleton( "test" ),
-                Collections.singleton( "test" ) ) );
-        assertTrue( Iterables.sequenceEqual( Arrays.asList( 1, 2, 3, 4 ),
-                Arrays.asList( 1, 2, 3, 4 ) ) );
-        assertFalse( Iterables.sequenceEqual( Arrays.asList( 1, 2, 3, 4 ),
-                Arrays.asList( 1, 2, 3, 5 ) ) );
-        assertFalse( Iterables.sequenceEqual( Arrays.asList( 1, 2, 3 ),
-                Arrays.asList( 1, 2, 3, 4 ) ) );
-        assertFalse( Iterables.sequenceEqual( Arrays.asList( 1, 2, 3, 4 ),
-                Arrays.asList( 1, 2, 3 ) ) );
-    }
-
-    /**
-     * Tests that the Iterable returned by Iterables.map follows the Iterable
-     * contract.
-     */
-    @Test
-    public void mapContract()
-    {
-        assertTrue( testContract( Iterables.map( Arrays.asList( 1, 2, 3 ),
-                new Conversion<Integer, Integer>()
-                {
-                    @Override
-                    public Integer convert( final Integer i )
-                    {
-                        return i * 2;
-                    }
-                } ) ) );
-    }
-
     /**
      * Tests that the Iterable parameter follows the contract of Iterable.
      * 
@@ -135,7 +96,7 @@ public class IterablesTest
     @Test
     public void zip()
     {
-        final Iterable<Pair<Integer, Integer>> zipped = Iterables.zip(
+        final List<Pair<Integer, Integer>> zipped = Iterables.zip(
                 Arrays.asList( 1, 2, 3 ), Arrays.asList( 4, 5, 6 ) );
 
         assertTrue( Iterables.reduce( Iterables.map( zipped,
@@ -155,9 +116,6 @@ public class IterablesTest
                 return original + newValue;
             }
         } ) == 1 * 4 + 2 * 5 + 3 * 6 );
-
-        assertTrue( testContract( zipped ) );
-
     }
 
     /**

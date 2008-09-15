@@ -2,7 +2,6 @@ package uk.org.netvu.core.cgi.common;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Test;
@@ -47,17 +46,14 @@ public class URLExtractorTest
     @Test
     public void testNameValuePairs()
     {
-        assertTrue( Iterables.sequenceEqual( URLExtractor.nameValuePairs( "" ),
-                new ArrayList<URLParameter>() ) );
-        assertTrue( Iterables.sequenceEqual(
-                URLExtractor.nameValuePairs( "foo=bar" ),
+        assertTrue( URLExtractor.nameValuePairs( "" ).isEmpty() );
+        assertTrue( URLExtractor.nameValuePairs( "foo=bar" ).equals(
                 Arrays.asList( new URLParameter( "foo", "bar" ) ) ) );
-        assertTrue( Iterables.sequenceEqual(
-                URLExtractor.nameValuePairs( "foo=bar&baz=spam" ),
+        assertTrue( URLExtractor.nameValuePairs( "foo=bar&baz=spam" ).equals(
                 Arrays.asList( new URLParameter( "foo", "bar" ),
                         new URLParameter( "baz", "spam" ) ) ) );
-        assertTrue( Iterables.sequenceEqual(
-                URLExtractor.nameValuePairs( "foo=\"bar=baz\"&spam=\"eggs\"" ),
+        assertTrue( URLExtractor.nameValuePairs(
+                "foo=\"bar=baz\"&spam=\"eggs\"" ).equals(
                 Arrays.asList( new URLParameter( "foo", "\"bar=baz\"" ),
                         new URLParameter( "spam", "\"eggs\"" ) ) ) );
     }

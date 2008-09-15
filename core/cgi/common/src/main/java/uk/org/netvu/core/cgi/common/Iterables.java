@@ -8,50 +8,8 @@ import java.util.List;
  * A set of utility methods for operating on Iterable objects. For internal use
  * only.
  */
-public class Iterables
+public final class Iterables
 {
-    private Iterables()
-    {
-    }
-
-    static <T> boolean sequenceEqual( final Iterable<T> one,
-            final Iterable<T> two )
-    {
-        final Iterator<T> oneIt = one.iterator();
-        final Iterator<T> twoIt = two.iterator();
-
-        while ( oneIt.hasNext() )
-        {
-            if ( !twoIt.hasNext() )
-            {
-                return false;
-            }
-
-            final T oneNext = oneIt.next();
-            final T twoNext = twoIt.next();
-
-            if ( !oneNext.equals( twoNext ) )
-            {
-                return false;
-            }
-        }
-
-        return !twoIt.hasNext();
-    }
-
-    static <T, R> Iterable<R> map( final Iterable<T> iterable,
-            final Conversion<T, R> conversion )
-    {
-        return new Iterable<R>()
-        {
-
-            public Iterator<R> iterator()
-            {
-                return map( iterable.iterator(), conversion );
-            }
-        };
-    }
-
     /**
      * Creates a List by passing all items from the specified List through the
      * specified Conversion.
@@ -70,35 +28,13 @@ public class Iterables
             final Conversion<T, R> conversion )
     {
         final List<R> result = new ArrayList<R>();
-        final Iterable<T> iterable = list;
-        for ( final R r : map( iterable, conversion ) )
+
+        for ( final T t : list )
         {
-            result.add( r );
+            result.add( conversion.convert( t ) );
         }
 
         return result;
-    }
-
-    private static <T, R> Iterator<R> map( final Iterator<T> iterator,
-            final Conversion<T, R> conversion )
-    {
-        return new Iterator<R>()
-        {
-            public boolean hasNext()
-            {
-                return iterator.hasNext();
-            }
-
-            public R next()
-            {
-                return conversion.convert( iterator.next() );
-            }
-
-            public void remove()
-            {
-                iterator.remove();
-            }
-        };
     }
 
     /**
@@ -136,7 +72,7 @@ public class Iterables
      * @return the value produced by reducing the Iterable with the specified
      *         Reduction.
      */
-    public static <T> T reduce( final Iterable<T> ts,
+    public static <T> T reduce( final List<T> ts,
             final Reduction<T, T> reduction )
     {
         final Iterator<T> iterator = ts.iterator();
@@ -150,50 +86,34 @@ public class Iterables
         return accumulator;
     }
 
-    /**
-     * Given an Iterable of Ts, and an Iterable of Us, constructs an Iterable of
-     * Pairs of T and U.
-     * 
-     * @param <T>
-     *        the first datatype.
-     * @param <U>
-     *        the second datatype.
-     * @param ts
-     *        the first Iterable to zip.
-     * @param us
-     *        the second Iterable to zip.
-     * @return an Iterable of Pairs of T and U, whose length is the minimum of
-     *         the lengths of ts and us.
-     */
-    public static <T, U> Iterable<Pair<T, U>> zip( final Iterable<T> ts,
-            final Iterable<U> us )
+    public static <T, U> List<Pair<T, U>> zip( final List<T> ts,
+            final List<U> us )
     {
-        return new Iterable<Pair<T, U>>()
+        final Iterator<T> tIterator = ts.iterator();
+        final Iterator<U> uIterator = us.iterator();
+
+        final List<Pair<T, U>> results = new ArrayList<Pair<T, U>>();
+
+        while ( tIterator.hasNext() && uIterator.hasNext() )
         {
-            public Iterator<Pair<T, U>> iterator()
-            {
-                final Iterator<T> tIterator = ts.iterator();
-                final Iterator<U> uIterator = us.iterator();
+            results.add( Pair.pair( tIterator.next(), uIterator.next() ) );
+        }
 
-                return new Iterator<Pair<T, U>>()
-                {
-                    public boolean hasNext()
-                    {
-                        return tIterator.hasNext() && uIterator.hasNext();
-                    }
+        return results;
+    }
 
-                    public Pair<T, U> next()
-                    {
-                        return Pair.pair( tIterator.next(), uIterator.next() );
-                    }
+    public static <T> List<Pair<T, Integer>> zipWithIndex( final List<T> ts )
+    {
+        final List<Pair<T, Integer>> results = new ArrayList<Pair<T, Integer>>();
 
-                    public void remove()
-                    {
-                        throw new UnsupportedOperationException();
-                    }
-                };
-            }
-        };
+        int a = 0;
+
+        for ( final T t : ts )
+        {
+            results.add( Pair.pair( t, a++ ) );
+        }
+
+        return results;
     }
 
     /**
@@ -225,60 +145,11 @@ public class Iterables
         return results;
     }
 
-    /**
-     * An infinite series of ints, beginning at the specified point and
-     * incrementing.
-     * 
-     * @param start
-     *        the int to begin with.
-     * @return an infinite series of ints.
-     */
-    public static Iterable<Integer> from( final int start )
-    {
-        return new Iterable<Integer>()
-        {
-            public Iterator<Integer> iterator()
-            {
-                return new Iterator<Integer>()
-                {
-                    int x = start;
-
-                    public void remove()
-                    {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    public Integer next()
-                    {
-                        return x++;
-                    }
-
-                    public boolean hasNext()
-                    {
-                        return true;
-                    }
-                };
-            }
-        };
-    }
-
-    /**
-     * Processes an Iterable to give a List of all the elements that pass a
-     * given predicate.
-     * 
-     * @param <T>
-     *        the type of the elements of the Iterable.
-     * @param iterable
-     *        the Iterable to filter.
-     * @param conversion
-     *        the predicate to pass all elements through.
-     * @return a List of all the elements that pass the given predicate.
-     */
-    public static <T> List<T> filter( final Iterable<T> iterable,
+    public static <T> List<T> filter( final List<T> list,
             final Conversion<T, Boolean> conversion )
     {
         final List<T> results = new ArrayList<T>();
-        for ( final T t : iterable )
+        for ( final T t : list )
         {
             if ( conversion.convert( t ) )
             {
