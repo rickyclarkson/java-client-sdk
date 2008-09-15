@@ -1,5 +1,9 @@
 package uk.org.netvu.core.cgi.common;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.Random;
+
 import org.junit.Test;
 
 /**
@@ -7,9 +11,12 @@ import org.junit.Test;
  */
 public class GeneratorsTest
 {
+    /**
+     * Tests that nonNegativeInts does actually produce non-negative ints.
+     */
     @Test
-    public void hack()
+    public void nonNegativeInts()
     {
-
+        assertTrue( Generators.nonNegativeInts( new Random( 0 ) ).next() >= 0 );
     }
 }

@@ -3,7 +3,7 @@ package uk.org.netvu.core.cgi.common;
 import java.util.ArrayList;
 import java.util.List;
 
-class URLExtractor
+final class URLExtractor
 {
     static String queryName( final String url )
     {

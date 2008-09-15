@@ -18,14 +18,42 @@ public enum Layout
     FOUR_WAY( 1 ),
 
     /**
+     * Displays six outputs, one large segment in the top left, with 5 smaller
+     * segments at the right and bottom.
+     */
+    SIX_WAY( 2 ),
+
+    /**
+     * Displays seven outputs, 3 large segments, with a quad in the bottom right
+     * quarter.
+     */
+    SEVEN_WAY( 3 ),
+
+    /**
      * Displays nine outputs in a 3x3 grid.
      */
-    NINE_WAY( 2 ),
+    NINE_WAY( 4 ),
+
+    /**
+     * Displays ten outputs, 2 quads at the top, and 2 quarters.
+     */
+    TEN_WAY( 5 ),
+
+    /**
+     * Displays thirteen outputs, 1 quarter at the top left, and 3 quads.
+     */
+    THIRTEEN_WAY( 6 ),
 
     /**
      * Displays sixteen outputs in a 4x4 grid.
      */
-    SIXTEEN_WAY( 3 );
+    SIXTEEN_WAY( 7 ),
+
+    /**
+     * Displays a near-fullscreen picture with a smaller picture embedded in the
+     * top-left.
+     */
+    PICTURE_IN_PICTURE( 8 );
 
     final int value;
 
@@ -52,7 +80,14 @@ public enum Layout
         }
     };
 
-    private static Layout find( final int value )
+    /**
+     * @param value
+     *        the number associated with the Layout to find.
+     * @return the Layout corresponding with the specified value.
+     * @throws IllegalArgumentException
+     *         if the number does not correspond to a value.
+     */
+    public static Layout find( final int value )
     {
         for ( final Layout layout : Layout.values() )
         {

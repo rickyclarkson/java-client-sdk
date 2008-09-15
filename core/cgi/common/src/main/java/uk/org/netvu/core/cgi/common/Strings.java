@@ -102,8 +102,19 @@ public class Strings
         return list.get( list.size() > 1 ? 1 : 0 );
     }
 
-    static List<String> splitIgnoringQuotedSections( final String string,
-            final char separator )
+    /**
+     * Splits a String on a specified character, treating quoted sections
+     * containing the character as one item.
+     * 
+     * @param string
+     *        the String to split.
+     * @param separator
+     *        the character to look for to separate on.
+     * @return a List of Strings that, in the original String, were before and
+     *         after the separator.
+     */
+    public static List<String> splitIgnoringQuotedSections(
+            final String string, final char separator )
     {
         final List<String> results = new ArrayList<String>()
         {

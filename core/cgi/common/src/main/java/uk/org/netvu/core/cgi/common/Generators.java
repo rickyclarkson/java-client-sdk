@@ -1,7 +1,5 @@
 package uk.org.netvu.core.cgi.common;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -40,33 +38,6 @@ public final class Generators
                     chars[a] = (char) ( random.nextInt( 'z' - 'a' ) + 'a' );
                 }
                 return new String( chars );
-            }
-        };
-    }
-
-    /**
-     * An infinite series of List&lt;Integer&gt;s, each of maximum size
-     * SIZE_LIMIT.
-     * 
-     * @param random
-     *        the random number generator to use.
-     * @return an infinite series of List&lt;Integer&gt;s.
-     */
-    public static Generator<List<Integer>> intLists( final Random random )
-    {
-        return new Generator<List<Integer>>()
-        {
-            public List<Integer> next()
-            {
-                final int size = random.nextInt( Generators.SIZE_LIMIT );
-                final List<Integer> list = new ArrayList<Integer>( size );
-
-                for ( int a = 0; a < size; a++ )
-                {
-                    list.add( random.nextInt() );
-                }
-
-                return list;
             }
         };
     }

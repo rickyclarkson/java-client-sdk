@@ -8,15 +8,6 @@ import java.net.URLEncoder;
  */
 public class URLBuilder
 {
-    static final Conversion<String, String> encode = new Conversion<String, String>()
-    {
-        @Override
-        public String convert( final String unencoded )
-        {
-            return encode( unencoded );
-        }
-    };
-
     /**
      * Encodes the specified value for safe use in URLs.
      * 

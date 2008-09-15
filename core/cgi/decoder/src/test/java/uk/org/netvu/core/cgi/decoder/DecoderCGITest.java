@@ -2,6 +2,9 @@ package uk.org.netvu.core.cgi.decoder;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import org.junit.Test;
 
 /**
@@ -125,63 +128,19 @@ public class DecoderCGITest
                 "decoder.var?layouts[1]=1&output_titles=\"foo\",\"bar\",\"baz\"&commands[2]=%22blah%22" ) );
     }
 
-    /*
-     * public static void main( final String[] args ) { final JFrame frame = new
-     * JFrame(); final JTextArea variables = new JTextArea( 50, 50 ); frame.add(
-     * new JScrollPane( variables ), BorderLayout.EAST ); frame.add( new
-     * JPanel() { int getInt( final String name ) { return Integer.parseInt(
-     * getString( name ) ); } String getString( final String name ) { return
-     * JOptionPane.showInputDialog( frame, name ); } void run( final String
-     * query ) { System.out.println( query ); try { new URL(
-     * "http://192.168.106.127/" + query ).openStream().close(); } catch ( final
-     * FileNotFoundException e ) { } catch ( final IOException e ) { throw new
-     * RuntimeException( e ); } final List<String> unquoted = Iterables.map(
-     * Strings.splitIgnoringQuotedSections( readOneLine(
-     * "http://192.168.106.127/" + new VariableCGI.Builder().variable(
-     * Variable.CONNECTIONS ).build().toString() ), ',' ), new
-     * Conversion<String, String>() {
-     * @Override public String convert( final String quoted ) { return
-     * quoted.substring( 1, quoted.length() - 1 ); } } ); variables.setText(
-     * "Connections: \n" + Strings.intersperse( "\n", Iterables.map(
-     * Iterables.filter( Iterables.zip( Iterables.from( 0 ), unquoted ), new
-     * Conversion<Pair<Integer, String>, Boolean>() {
-     * @Override public Boolean convert( final Pair<Integer, String>
-     * indexAndValue ) { return indexAndValue.second().length() != 0; } } ), new
-     * Conversion<Pair<Integer, String>, String>() {
-     * @Override public String convert( final Pair<Integer, String> pair ) {
-     * return pair.first() + " -> " + pair.second(); } } ) ) + "'\nLayouts:\n" +
-     * readOneLine( "http://192.168.106.127/" + new
-     * VariableCGI.Builder().variable( Variable.LAYOUTS ).build().toString() ) +
-     * "\nOutput titles: \n" + readOneLine( "http://192.168.106.127/" + new
-     * VariableCGI.Builder().variable( Variable.OUTPUT_TITLES
-     * ).build().toString() ) + "\nCommands: \n" + readOneLine(
-     * "http://192.168.106.127/" + new VariableCGI.Builder().variable(
-     * Variable.COMMANDS ).build().toString() ) ); variables.setCaretPosition( 0
-     * ); } private String readOneLine( final String url ) { InputStream stream;
-     * try { stream = new URL( url ).openStream(); } catch ( final IOException e
-     * ) { throw new RuntimeException( e ); } try { return new BufferedReader(
-     * new InputStreamReader( stream, "UTF-8" ) ).readLine(); } catch ( final
-     * IOException e ) { throw new RuntimeException( e ); } finally { try {
-     * stream.close(); } catch ( final IOException e ) { e.printStackTrace(); }
-     * } } { add( new JButton( "connections" ) { { addActionListener( new
-     * ActionListener() { public void actionPerformed( final ActionEvent e ) {
-     * run( new DecoderCGI().connection( getInt( "index" ), new
-     * Connection().cam( getInt( "camera number" ) ).slaveIP( getString(
-     * "slave IP" ) ) ).toURLParameters() ); } } ); } } ); add( new JButton(
-     * "layouts" ) { { addActionListener( new ActionListener() { public void
-     * actionPerformed( final ActionEvent e ) { run( new DecoderCGI().layout(
-     * getInt( "index" ), Layout.valueOf( getString( "layout" ).replaceAll( " ",
-     * "_" ).toUpperCase() ) ).toURLParameters() ); } } ); } } ); add( new
-     * JButton( "output titles" ) { { addActionListener( new ActionListener() {
-     * public void actionPerformed( final ActionEvent e ) { run( new
-     * DecoderCGI().outputTitles( getString( "First title" ), getString(
-     * "second" ), getString( "last one" ) ).toURLParameters() ); } } ); } } );
-     * add( new JButton( "commands" ) { { addActionListener( new
-     * ActionListener() { public void actionPerformed( final ActionEvent e ) {
-     * run( new DecoderCGI().command( getInt( "index" ), getString( "command" )
-     * ).toURLParameters() ); } } ); } } ); } } ); frame.pack();
-     * frame.setExtendedState( Frame.MAXIMIZED_BOTH ); frame.setVisible( true );
-     * }
+    /**
+     * Tests against an example format found in Graham Martin's code.
+     * 
+     * @throws UnsupportedEncodingException
      */
-
+    @Test
+    public void fromUnquotedSlavePart() throws UnsupportedEncodingException
+    {
+        assertTrue( URLDecoder.decode(
+                Connection.urlEncode.convert( DecoderCGI.fromString(
+                        "decoder.var?connections[64]=slaveip=192.168.1.10%2Cseq=F%2Cdwell=10"
+                                + "&commands[4]=\"display_pic.cgi?\"&layouts[4]=0" ).getConnections().get(
+                        64 ) ), "UTF-8" ).equals(
+                "\"slaveip=192.168.1.10,seq=15,dwell=10\"" ) );
+    }
 }

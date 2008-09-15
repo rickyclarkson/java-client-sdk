@@ -108,7 +108,10 @@ public final class GenericBuilderTest
     public void sparseArray()
     {
         final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> sparseIdentity = Parameter.sparseArrayParam(
-                "foo", "bar", Conversion.<String> identity(), URLBuilder.encode );
+                "foo",
+                "bar",
+                Conversion.<String> identity(),
+                Conversion.<String, String> throwUnsupportedOperationException() );
 
         assertTrue( new GenericBuilder().with( sparseIdentity,
                 new ArrayList<Pair<Integer, String>>()

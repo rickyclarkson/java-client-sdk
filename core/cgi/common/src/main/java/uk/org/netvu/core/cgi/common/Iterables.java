@@ -150,7 +150,22 @@ public class Iterables
         return accumulator;
     }
 
-    static <T, U> Iterable<Pair<T, U>> zip( final Iterable<T> ts,
+    /**
+     * Given an Iterable of Ts, and an Iterable of Us, constructs an Iterable of
+     * Pairs of T and U.
+     * 
+     * @param <T>
+     *        the first datatype.
+     * @param <U>
+     *        the second datatype.
+     * @param ts
+     *        the first Iterable to zip.
+     * @param us
+     *        the second Iterable to zip.
+     * @return an Iterable of Pairs of T and U, whose length is the minimum of
+     *         the lengths of ts and us.
+     */
+    public static <T, U> Iterable<Pair<T, U>> zip( final Iterable<T> ts,
             final Iterable<U> us )
     {
         return new Iterable<Pair<T, U>>()
@@ -207,6 +222,69 @@ public class Iterables
             results.remove( index - offset++ );
         }
 
+        return results;
+    }
+
+    /**
+     * An infinite series of ints, beginning at the specified point and
+     * incrementing.
+     * 
+     * @param start
+     *        the int to begin with.
+     * @return an infinite series of ints.
+     */
+    public static Iterable<Integer> from( final int start )
+    {
+        return new Iterable<Integer>()
+        {
+            public Iterator<Integer> iterator()
+            {
+                return new Iterator<Integer>()
+                {
+                    int x = start;
+
+                    public void remove()
+                    {
+                        throw new UnsupportedOperationException();
+                    }
+
+                    public Integer next()
+                    {
+                        return x++;
+                    }
+
+                    public boolean hasNext()
+                    {
+                        return true;
+                    }
+                };
+            }
+        };
+    }
+
+    /**
+     * Processes an Iterable to give a List of all the elements that pass a
+     * given predicate.
+     * 
+     * @param <T>
+     *        the type of the elements of the Iterable.
+     * @param iterable
+     *        the Iterable to filter.
+     * @param conversion
+     *        the predicate to pass all elements through.
+     * @return a List of all the elements that pass the given predicate.
+     */
+    public static <T> List<T> filter( final Iterable<T> iterable,
+            final Conversion<T, Boolean> conversion )
+    {
+        final List<T> results = new ArrayList<T>();
+        for ( final T t : iterable )
+        {
+            if ( conversion.convert( t ) )
+            {
+                results.add( t );
+            }
+        }
         return results;
     }
 }
