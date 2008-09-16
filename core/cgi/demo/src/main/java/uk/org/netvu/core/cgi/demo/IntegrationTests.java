@@ -1,4 +1,4 @@
-package uk.org.netvu.core.cgi.events;
+package uk.org.netvu.core.cgi.demo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,6 +10,9 @@ import java.util.Random;
 import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.Generator;
 import uk.org.netvu.core.cgi.common.Generators;
+import uk.org.netvu.core.cgi.events.EventsCGI;
+import uk.org.netvu.core.cgi.events.EventsCGIResult;
+import uk.org.netvu.core.cgi.events.EventsCGITest;
 import uk.org.netvu.core.cgi.events.EventsCGI.Builder;
 
 /**
