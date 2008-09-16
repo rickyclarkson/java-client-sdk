@@ -17,7 +17,7 @@ public class ChecksTest
      * returns x
      */
     @Test
-    public void testNotLessThan()
+    public void notLessThan()
     {
         final Random random = new Random( 0 );
         final Generator<String> stringsAndNull = Generators.stringsAndNull( random );
@@ -52,7 +52,7 @@ public class ChecksTest
      * else returns x
      */
     @Test
-    public void testNotGreaterThan()
+    public void notGreaterThan()
     {
         final Random random = new Random( 0 );
         final Generator<String> stringsAndNull = Generators.stringsAndNull( random );

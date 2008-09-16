@@ -15,7 +15,7 @@ public class VPartsCGITest
      * Tests that a built VPartsCGI contains the values given to it.
      */
     @Test
-    public void testRetention()
+    public void retention()
     {
         assertTrue( new VPartsCGI.Builder().expiry( 5 ).build().getExpiry() == 5 );
         assertTrue( new VPartsCGI.Builder().mode( Mode.PROTECT ).build().getMode() == Mode.PROTECT );
@@ -32,7 +32,7 @@ public class VPartsCGITest
      * Tests that setting the same value twice causes an IllegalStateException.
      */
     @Test(expected = IllegalStateException.class)
-    public void testRepeating()
+    public void repeating()
     {
         new VPartsCGI.Builder().expiry( 5 ).expiry( 5 );
     }
@@ -42,7 +42,7 @@ public class VPartsCGITest
      * IllegalArgumentException.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testOutOfBounds()
+    public void outOfBounds()
     {
         new VPartsCGI.Builder().watermarkStep( 1000 );
     }
@@ -52,7 +52,7 @@ public class VPartsCGITest
      * IllegalArgumentException.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testNegativeTime()
+    public void negativeTime()
     {
         new VPartsCGI.Builder().time( -10 );
     }
@@ -61,7 +61,7 @@ public class VPartsCGITest
      * Tests that setting the format to HTML causes an IllegalArgumentException.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testFormatHTML()
+    public void formatHTML()
     {
         new VPartsCGI.Builder().format( Format.HTML ).build();
     }

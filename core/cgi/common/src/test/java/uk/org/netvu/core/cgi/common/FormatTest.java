@@ -15,7 +15,7 @@ public class FormatTest
      * Tests that Format.oneOf yields a Format.
      */
     @Test
-    public void testOneOf()
+    public void oneOf()
     {
         final Random random = new Random( 0 );
 

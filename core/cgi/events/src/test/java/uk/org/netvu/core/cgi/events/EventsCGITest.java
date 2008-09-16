@@ -32,7 +32,7 @@ public class EventsCGITest
      * specified as CSV.
      */
     @Test
-    public void testDefaultValues()
+    public void defaultValues()
     {
         final EventsCGI events = new EventsCGI.Builder().build();
         assertTrue( events.getFormat() == Format.CSV );
@@ -52,16 +52,16 @@ public class EventsCGITest
      * IllegalStateException
      */
     @Test(expected = IllegalStateException.class)
-    public void testThreeTimeParameters()
+    public void twoTimeParameters()
     {
-        new EventsCGI.Builder().time( 100 ).time( 200 ).time( 300 );
+        new EventsCGI.Builder().time( 100 ).time( 200 );
     }
 
     /**
      * Tests that negative times are disallowed.
      */
     @Test
-    public void testNegativeTimes()
+    public void negativeTimes()
     {
         try
         {
@@ -78,7 +78,7 @@ public class EventsCGITest
      * Tests that the text and gpsMask parameters are mutually exclusive.
      */
     @Test
-    public void testThatTextAndGpsMaskAreMutex()
+    public void textAndGpsMaskAreMutex()
     {
         try
         {
@@ -96,7 +96,7 @@ public class EventsCGITest
      * not allowed in the same EventsCGI.Builder.
      */
     @Test
-    public void testThatAlarmMaskEtcAreMutuallyExclusive()
+    public void alarmMaskEtcAreMutuallyExclusive()
     {
         final List<Action<Builder>> params = new ArrayList<Action<Builder>>();
         params.add( new Action<Builder>()
@@ -178,7 +178,7 @@ public class EventsCGITest
      * Tests that the built EventsCGI has the values supplied to the builder.
      */
     @Test
-    public void testRetention()
+    public void retention()
     {
         final Random random = new Random( 0 );
         for ( int a = 0; a < Generators.LIMIT; a++ )
@@ -227,7 +227,7 @@ public class EventsCGITest
      * CSV from that results in the same CSV as the original.
      */
     @Test
-    public void testParseRealData()
+    public void parseRealData()
     {
         final String[] data = {
             "1, 0, System Startup, 1122030592, 3600, ,overwitten, 1, 10, 2, 0, 4, 8",
@@ -410,7 +410,7 @@ public class EventsCGITest
      * containing spaces - they should be encoded.
      */
     @Test
-    public void testTextWithSpacesDoesntResultInURLWithSpaces()
+    public void textWithSpacesDoesntResultInURLWithSpaces()
     {
         assertFalse( new EventsCGI.Builder().text( "hello world" ).build().toString().contains(
                 " " ) );
@@ -420,7 +420,7 @@ public class EventsCGITest
      * Tests that converting an EventsCGI to a String and back is not lossy.
      */
     @Test
-    public void testFromString()
+    public void fromString()
     {
         final Random random = new Random( 0 );
         final Generator<EventsCGI> cgis = randomEventsCGIs( random );
@@ -440,7 +440,7 @@ public class EventsCGITest
      * use cases for the events interface.
      */
     @Test(expected = NullPointerException.class)
-    public void testParseNull()
+    public void parseNull()
     {
         EventsCGI.fromString( null );
     }
@@ -451,7 +451,7 @@ public class EventsCGITest
      * events interface.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testParseEmptyString()
+    public void parseEmptyString()
     {
         EventsCGI.fromString( "" );
     }
@@ -462,7 +462,7 @@ public class EventsCGITest
      * events interface.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testInvalidParse()
+    public void invalidParse()
     {
         EventsCGI.fromString( "?almmask=six" );
     }

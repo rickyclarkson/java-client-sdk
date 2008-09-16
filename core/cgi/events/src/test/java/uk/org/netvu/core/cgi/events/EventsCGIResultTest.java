@@ -108,7 +108,7 @@ public class EventsCGIResultTest
      * for EventsCGIResult.
      */
     @Test
-    public void testGeneratedEvents()
+    public void generatedEvents()
     {
         final Iterator<EventsCGIResult> events = EventsCGIResultTest.eventGenerator( new Random(
                 0 ) );
@@ -123,7 +123,7 @@ public class EventsCGIResultTest
      * Tests that parsing a valid line of CSV succeeds.
      */
     @Test
-    public void testValidParse()
+    public void validParse()
     {
         EventsCGIResult.fromString( "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0" );
         EventsCGIResult.fromString( "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0, 4, 8" );
@@ -134,7 +134,7 @@ public class EventsCGIResultTest
      * IllegalArgumentException.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testNotEnoughColumns()
+    public void notEnoughColumns()
     {
         EventsCGIResult.fromString( "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2" );
 
@@ -145,7 +145,7 @@ public class EventsCGIResultTest
      * IllegalArgumentException.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testTooManyColumns()
+    public void tooManyColumns()
     {
         EventsCGIResult.fromString( "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14" );
     }
@@ -155,7 +155,7 @@ public class EventsCGIResultTest
      * IllegalArgumentException.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testNumericError()
+    public void numericError()
     {
         EventsCGIResult.fromString( "1, b, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0" );
 
@@ -166,7 +166,7 @@ public class EventsCGIResultTest
      * IllegalArgumentException.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testNegativeTime()
+    public void negativeTime()
     {
         EventsCGIResult.fromString( "1, 1, COURTYARD, -111488075, 3600, ,overwitten, 1, 10, 2, 0" );
     }
@@ -176,7 +176,7 @@ public class EventsCGIResultTest
      * the built EventsCGIResult.
      */
     @Test
-    public void testStatusRetention()
+    public void statusRetention()
     {
         assertTrue( new EventsCGIResult.Builder().cam( 1 ).alarm( "test" ).julianTime(
                 100 ).offset( 5 ).file( "ignore" ).onDisk( true ).duration( 40 ).preAlarm(
@@ -204,7 +204,7 @@ public class EventsCGIResultTest
      * case "Build events.cgi query" specifies this.
      */
     @Test(expected = NullPointerException.class)
-    public void testNPE()
+    public void nullPointerException()
     {
         EventsCGIResult.fromString( null );
     }
@@ -215,21 +215,27 @@ public class EventsCGIResultTest
      * this.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testEmptyString()
+    public void emptyString()
     {
         EventsCGIResult.fromString( "" );
     }
 
-    // TODO test that parsing a malformed String yields an
-    // IllegalArgumentException.
-    // The use case "Build events.cgi query" specifies this.
+    /**
+     * Tests that parsing a malformed String yields an IllegalArgumentException.
+     * The use case "Build events.cgi query" specifies this.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void parsingMalformedString()
+    {
+        EventsCGIResult.fromString( "3, 4, 5" );
+    }
 
     /**
      * Tests that parsing a String containing a camera number that is too high
      * yields an {@link IllegalArgumentException}.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testHighCameraNumber()
+    public void highCameraNumber()
     {
         aBuilder().cam( 65 ).build();
     }
@@ -244,7 +250,7 @@ public class EventsCGIResultTest
      * {@link IllegalArgumentException}.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testLargeNegativeOffset()
+    public void largeNegativeOffset()
     {
         aBuilder().offset( -90001 ).build();
     }
@@ -254,7 +260,7 @@ public class EventsCGIResultTest
      * {@link IllegalArgumentException}.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testLargeOffset()
+    public void largeOffset()
     {
         aBuilder().offset( 90001 ).build();
     }
@@ -263,7 +269,7 @@ public class EventsCGIResultTest
      * Tests that an incomplete EventsCGIResult cannot be built.
      */
     @Test(expected = IllegalStateException.class)
-    public void testIncompleteObject()
+    public void incompleteObject()
     {
         new EventsCGIResult.Builder().build();
     }

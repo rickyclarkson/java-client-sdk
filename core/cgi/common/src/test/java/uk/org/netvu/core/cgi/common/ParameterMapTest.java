@@ -69,7 +69,7 @@ public final class ParameterMapTest
      * Tests that ParameterMap.isDefault works as specified.
      */
     @Test
-    public void testIsDefault()
+    public void isDefault()
     {
         assertTrue( new ParameterMap().isDefault( TIME ) );
         assertFalse( new ParameterMap().with( TIME, 40 ).isDefault( TIME ) );

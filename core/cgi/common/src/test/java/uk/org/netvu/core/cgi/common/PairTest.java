@@ -14,7 +14,7 @@ public class PairTest
      * value supplied when constructing the Pair.
      */
     @Test
-    public void testFirst()
+    public void first()
     {
         assertTrue( Pair.pair( 3, 4 ).first() == 3 );
     }
@@ -24,7 +24,7 @@ public class PairTest
      * second value supplied when constructing the Pair.
      */
     @Test
-    public void testSecond()
+    public void second()
     {
         assertTrue( Pair.pair( 3, 4 ).second() == 4 );
     }

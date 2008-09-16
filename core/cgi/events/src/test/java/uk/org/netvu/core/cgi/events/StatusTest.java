@@ -13,7 +13,7 @@ public class StatusTest
      * Tests that a valid input to AlarmType.find completes successfully.
      */
     @Test
-    public void testValidFind()
+    public void validFind()
     {
         assertTrue( EventsCGIResult.Status.find( 4 ).value == 4 );
     }
@@ -23,7 +23,7 @@ public class StatusTest
      * IllegalArgumentException.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testMixedFind()
+    public void mixedFind()
     {
         EventsCGIResult.Status.find( 3 );
     }
@@ -33,7 +33,7 @@ public class StatusTest
      * IllegalArgumentException.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testNegativeFind()
+    public void negativeFind()
     {
         EventsCGIResult.Status.find( -1 );
     }
@@ -43,7 +43,7 @@ public class StatusTest
      * IllegalArgumentException.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testLargeFind()
+    public void largeFind()
     {
         EventsCGIResult.Status.find( 256 );
     }

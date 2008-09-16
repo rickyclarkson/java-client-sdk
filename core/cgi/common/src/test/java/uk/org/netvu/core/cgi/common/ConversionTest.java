@@ -14,7 +14,7 @@ public class ConversionTest
      * Tests that Conversion.identity returns a value given to it.
      */
     @Test
-    public void testIdentity()
+    public void identity()
     {
         assertTrue( Conversion.<Boolean> identity().convert( true ) == true );
     }
@@ -24,7 +24,7 @@ public class ConversionTest
      * result.
      */
     @Test
-    public void testAndThen()
+    public void andThen()
     {
         assertTrue( Conversion.hexStringToInt.andThen(
                 new Conversion<Integer, Integer>()
@@ -42,7 +42,7 @@ public class ConversionTest
      * throws an UnsupportedOperationException when it receives data.
      */
     @Test(expected = UnsupportedOperationException.class)
-    public void testThrowUnsupportedOperationException()
+    public void throwUnsupportedOperationException()
     {
         Conversion.throwUnsupportedOperationException().convert( new Object() );
     }

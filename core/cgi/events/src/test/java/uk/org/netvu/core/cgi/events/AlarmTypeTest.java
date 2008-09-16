@@ -13,7 +13,7 @@ public class AlarmTypeTest
      * Tests that a valid input to AlarmType.find completes successfully.
      */
     @Test
-    public void testValidFind()
+    public void validFind()
     {
         assertTrue( EventsCGIResult.AlarmType.find( 4 ).value == 4 );
     }
@@ -23,7 +23,7 @@ public class AlarmTypeTest
      * IllegalArgumentException.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testMixedFind()
+    public void mixedFind()
     {
         EventsCGIResult.AlarmType.find( 3 );
     }
@@ -33,7 +33,7 @@ public class AlarmTypeTest
      * IllegalArgumentException.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testNegativeFind()
+    public void negativeFind()
     {
         EventsCGIResult.AlarmType.find( -1 );
     }
@@ -43,7 +43,7 @@ public class AlarmTypeTest
      * IllegalArgumentException.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testLargeFind()
+    public void largeFind()
     {
         EventsCGIResult.AlarmType.find( 256 );
     }

@@ -15,7 +15,7 @@ public class URLExtractorTest
      * Tests that URLExtractor.queryName works as specified.
      */
     @Test
-    public void testQueryName()
+    public void queryName()
     {
         assertTrue( URLExtractor.queryName( "" ).equals( "" ) );
         assertTrue( URLExtractor.queryName( "foo" ).equals( "foo" ) );
@@ -30,7 +30,7 @@ public class URLExtractorTest
      * Tests that URLExtract.parameters works as specified.
      */
     @Test
-    public void testParameters()
+    public void parameters()
     {
         assertTrue( URLExtractor.parameters( "" ).size() == 1 );
         assertTrue( URLExtractor.parameters( "foo=bar" ).size() == 1 );
@@ -44,7 +44,7 @@ public class URLExtractorTest
      * Test that URLExtractor.nameValuePairs works as specified.
      */
     @Test
-    public void testNameValuePairs()
+    public void nameValuePairs()
     {
         assertTrue( URLExtractor.nameValuePairs( "" ).isEmpty() );
         assertTrue( URLExtractor.nameValuePairs( "foo=bar" ).equals(

@@ -560,20 +560,17 @@ public final class EventsCGIResult
          * A dummy alarm type used for CGI parameters - never appears in a
          * database record.
          */
-        // TODO decide whether to make this NONE
         CAMERA( 16 ),
 
         /**
          * Used for activity search, never appears in a database record.
          */
-        // TODO decide whether to make this NONE
         ACTIVITY( 32 ),
 
         /**
          * Used for text-in-image keyword search, never appears in a database
          * record.
          */
-        // TODO decide whether to make this NONE.
         KEYWORD( 64 );
 
         /**
