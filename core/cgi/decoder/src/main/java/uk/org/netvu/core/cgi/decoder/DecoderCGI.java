@@ -12,7 +12,7 @@ import java.util.TreeMap;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.GenericBuilder;
-import uk.org.netvu.core.cgi.common.Iterables;
+import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Pair;
 import uk.org.netvu.core.cgi.common.Parameter;
@@ -50,9 +50,8 @@ public final class DecoderCGI
                 @Override
                 public String convert( final String[] array )
                 {
-                    return Iterables.reduce(
-                            Iterables.map( Arrays.asList( array ),
-                                    Strings.surroundWithQuotes ),
+                    return Lists.reduce( Lists.map( Arrays.asList( array ),
+                            Strings.surroundWithQuotes ),
                             new Reduction<String, String>()
                             {
                                 @Override

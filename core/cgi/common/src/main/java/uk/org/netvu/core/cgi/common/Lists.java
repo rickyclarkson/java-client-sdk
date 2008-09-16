@@ -5,10 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * A set of utility methods for operating on Iterable objects. For internal use
- * only.
+ * A set of utility methods for operating on Lists. For internal use only.
  */
-public final class Iterables
+public final class Lists
 {
     /**
      * Creates a List by passing all items from the specified List through the
@@ -59,17 +58,17 @@ public final class Iterables
     }
 
     /**
-     * Applies a Reduction across an Iterable, returning a single value. Given
-     * an Iterable containing ints, and a Reduction that adds its two arguments
-     * together, the result is a sum of those ints.
+     * Applies a Reduction across a List, returning a single value. Given a List
+     * containing ints, and a Reduction that adds its two arguments together,
+     * the result is a sum of those ints.
      * 
      * @param <T>
-     *        the type of the iterable.
+     *        the type of the elements of theList.
      * @param ts
-     *        the Iterable to reduce over.
+     *        the List to reduce.
      * @param reduction
      *        the operation to carry out between each pair of elements.
-     * @return the value produced by reducing the Iterable with the specified
+     * @return the value produced by reducing the List with the specified
      *         Reduction.
      */
     public static <T> T reduce( final List<T> ts,

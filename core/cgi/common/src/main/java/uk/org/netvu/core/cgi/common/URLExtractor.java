@@ -20,7 +20,7 @@ final class URLExtractor
     static List<URLParameter> nameValuePairs( final String url )
     {
         return url.indexOf( '=' ) < 0 ? new ArrayList<URLParameter>()
-                : Iterables.map(
+                : Lists.map(
                         parameters( url ),
                         Strings.partition( "=" ).andThen( URLParameter.fromPair ) );
     }

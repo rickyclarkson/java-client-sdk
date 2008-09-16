@@ -1,5 +1,7 @@
 package uk.org.netvu.core.cgi.common;
 
+import java.util.List;
+
 /**
  * An object that can identify whether a GenericBuilder is valid.
  */
@@ -22,7 +24,7 @@ public abstract class Validator
      *         exclusive Parameters has been set to a value.
      */
     public static Validator mutuallyExclusive(
-            final Iterable<Parameter<?, ?>> exclusiveParameters )
+            final List<Parameter<?, ?>> exclusiveParameters )
     {
         return new Validator()
         {

@@ -137,7 +137,7 @@ public final class GenericBuilder
      * @return a GenericBuilder holding the values parsed from the URL.
      */
     public static GenericBuilder fromURL( final String url,
-            final Iterable<? extends Parameter<?, ?>> params )
+            final List<? extends Parameter<?, ?>> params )
     {
         GenericBuilder builder = new GenericBuilder();
         final List<URLParameter> parts = URLExtractor.nameValuePairs( url );
@@ -193,7 +193,7 @@ public final class GenericBuilder
     {
         GenericBuilder builder = new GenericBuilder();
 
-        for ( final Pair<Parameter<?, ?>, String> pair : Iterables.zip( params,
+        for ( final Pair<Parameter<?, ?>, String> pair : Lists.zip( params,
                 strings ) )
         {
             builder = builder.withFromString( pair.first(), new URLParameter(

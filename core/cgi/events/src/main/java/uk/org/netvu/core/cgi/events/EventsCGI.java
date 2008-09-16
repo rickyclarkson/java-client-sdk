@@ -9,7 +9,7 @@ import java.util.List;
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.GenericBuilder;
-import uk.org.netvu.core.cgi.common.Iterables;
+import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.Validator;
 
@@ -83,7 +83,7 @@ public final class EventsCGI
         }
     };
 
-    private static final Iterable<Parameter<?, ?>> exclusiveParams = new ArrayList<Parameter<?, ?>>()
+    private static final List<Parameter<?, ?>> exclusiveParams = new ArrayList<Parameter<?, ?>>()
     {
         {
             add( textParam );
@@ -387,8 +387,8 @@ public final class EventsCGI
     @Override
     public String toString()
     {
-        final String theRest = builder.toURLParameters( Iterables.remove(
-                params, formatParam ) );
+        final String theRest = builder.toURLParameters( Lists.remove( params,
+                formatParam ) );
 
         return "/events.cgi?format=" + getFormat()
                 + ( theRest.length() == 0 ? "" : "&" ) + theRest;

@@ -1,6 +1,7 @@
 package uk.org.netvu.core.cgi.common;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ public class ValidatorTest
     private static final Parameter<String, Option<String>> address = Parameter.param(
             "address", "foo", Conversion.<String> identity() );
 
-    private static final Iterable<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
+    private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
     {
         {
             add( name );

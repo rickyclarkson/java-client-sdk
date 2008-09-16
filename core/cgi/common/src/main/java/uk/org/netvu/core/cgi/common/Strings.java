@@ -37,16 +37,16 @@ public class Strings
     }
 
     /**
-     * Intersperses an Iterable containing Strings with a separator.
+     * Intersperses a List of Strings with a separator.
      * 
      * @param separator
      *        the separator to insert.
      * @param strings
-     *        the Iterable to intersperse.
+     *        the List to intersperse.
      * @return the interspersed String.
      */
     public static String intersperse( final String separator,
-            final Iterable<String> strings )
+            final List<String> strings )
     {
         final StringBuilder builder = new StringBuilder();
         boolean first = true;

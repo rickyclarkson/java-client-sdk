@@ -1,6 +1,5 @@
 package uk.org.netvu.core.cgi.events;
 
-import static uk.org.netvu.core.cgi.common.Iterables.map;
 import static uk.org.netvu.core.cgi.common.Parameter.bound;
 import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
 import static uk.org.netvu.core.cgi.common.Parameter.param;
@@ -12,7 +11,7 @@ import java.util.List;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.GenericBuilder;
-import uk.org.netvu.core.cgi.common.Iterables;
+import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.Strings;
@@ -410,7 +409,7 @@ public final class EventsCGIResult
         }
 
         return new EventsCGIResult( GenericBuilder.fromStrings( params,
-                Iterables.removeIndices( Arrays.asList( values ), 0, 7 ) ) );
+                Lists.removeIndices( Arrays.asList( values ), 0, 7 ) ) );
     }
 
     String toCSV( final int index )
@@ -429,8 +428,8 @@ public final class EventsCGIResult
 
         all.addAll( alarmAndStatus );
 
-        return Strings.intersperse( ", ",
-                map( all, Conversion.objectToString() ) );
+        return Strings.intersperse( ", ", Lists.map( all,
+                Conversion.objectToString() ) );
     }
 
     /**
