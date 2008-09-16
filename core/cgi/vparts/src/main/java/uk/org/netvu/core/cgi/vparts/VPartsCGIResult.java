@@ -17,38 +17,38 @@ import uk.org.netvu.core.cgi.common.URLParameter;
  */
 public class VPartsCGIResult
 {
-    private static final Parameter<Integer, Option<Integer>> indexParam = param(
+    private static final Parameter<Integer, Option<Integer>> INDEX = param(
             "index", "The index of this result in the results",
             Conversion.stringToInt );
-    private static final Parameter<String, Option<String>> directoryParam = param(
+    private static final Parameter<String, Option<String>> DIRECTORY = param(
             "directory", "The directory where this video can be found",
             Conversion.<String> identity() );
-    private static final Parameter<String, Option<String>> filenameParam = param(
+    private static final Parameter<String, Option<String>> FILENAME = param(
             "filename", "The name of the file where this video can be found",
             Conversion.<String> identity() );
-    private static final Parameter<Integer, Option<Integer>> startTimeParam = notNegative( param(
+    private static final Parameter<Integer, Option<Integer>> START_TIME = notNegative( param(
             "start_time", "The start time", Conversion.stringToInt ) );
-    private static final Parameter<Integer, Option<Integer>> endTimeParam = notNegative( param(
+    private static final Parameter<Integer, Option<Integer>> END_TIME = notNegative( param(
             "end_time", "The end time", Conversion.stringToInt ) );
-    private static final Parameter<Integer, Option<Integer>> expiryTimeParam = notNegative( param(
+    private static final Parameter<Integer, Option<Integer>> EXPIRY_TIME = notNegative( param(
             "expiry_time", "The expiry time", Conversion.stringToInt ) );
-    private static final Parameter<Integer, Option<Integer>> numberOfEntriesParam = param(
+    private static final Parameter<Integer, Option<Integer>> NUMBER_OF_ENTRIES = param(
             "n_entries", "The number of entries", Conversion.stringToInt );
-    private static final Parameter<Integer, Option<Integer>> camMaskParam = param(
+    private static final Parameter<Integer, Option<Integer>> CAM_MASK = param(
             "cammask", "The bitmask of cameras that this video comes from",
             Conversion.stringToInt );
 
     private static final ArrayList<Parameter<?, ? extends Option<?>>> params = new ArrayList<Parameter<?, ? extends Option<?>>>()
     {
         {
-            add( indexParam );
-            add( directoryParam );
-            add( filenameParam );
-            add( startTimeParam );
-            add( endTimeParam );
-            add( expiryTimeParam );
-            add( numberOfEntriesParam );
-            add( camMaskParam );
+            add( INDEX );
+            add( DIRECTORY );
+            add( FILENAME );
+            add( START_TIME );
+            add( END_TIME );
+            add( EXPIRY_TIME );
+            add( NUMBER_OF_ENTRIES );
+            add( CAM_MASK );
         }
     };
 
@@ -75,7 +75,7 @@ public class VPartsCGIResult
          */
         public Builder index( final int index )
         {
-            real = real.with( indexParam, index );
+            real = real.with( INDEX, index );
             return this;
         }
 
@@ -88,7 +88,7 @@ public class VPartsCGIResult
          */
         public Builder directory( final String directory )
         {
-            real = real.with( directoryParam, directory );
+            real = real.with( DIRECTORY, directory );
             return this;
         }
 
@@ -101,7 +101,7 @@ public class VPartsCGIResult
          */
         public Builder filename( final String filename )
         {
-            real = real.with( filenameParam, filename );
+            real = real.with( FILENAME, filename );
             return this;
         }
 
@@ -114,7 +114,7 @@ public class VPartsCGIResult
          */
         public Builder startTime( final int startTime )
         {
-            real = real.with( startTimeParam, startTime );
+            real = real.with( START_TIME, startTime );
             return this;
         }
 
@@ -127,7 +127,7 @@ public class VPartsCGIResult
          */
         public Builder endTime( final int endTime )
         {
-            real = real.with( endTimeParam, endTime );
+            real = real.with( END_TIME, endTime );
             return this;
         }
 
@@ -142,7 +142,7 @@ public class VPartsCGIResult
          */
         public Builder expiryTime( final int expiryTime )
         {
-            real = real.with( expiryTimeParam, expiryTime );
+            real = real.with( EXPIRY_TIME, expiryTime );
             return this;
         }
 
@@ -155,7 +155,7 @@ public class VPartsCGIResult
          */
         public Builder numberOfEntries( final int numberOfEntries )
         {
-            real = real.with( numberOfEntriesParam, numberOfEntries );
+            real = real.with( NUMBER_OF_ENTRIES, numberOfEntries );
             return this;
         }
 
@@ -169,7 +169,7 @@ public class VPartsCGIResult
          */
         public Builder camMask( final int camMask )
         {
-            real = real.with( camMaskParam, camMask );
+            real = real.with( CAM_MASK, camMask );
             return this;
         }
 
@@ -201,7 +201,7 @@ public class VPartsCGIResult
      */
     public int getIndex()
     {
-        return parameterMap.get( indexParam ).get();
+        return parameterMap.get( INDEX ).get();
     }
 
     /**
@@ -211,7 +211,7 @@ public class VPartsCGIResult
      */
     public String getDirectory()
     {
-        return parameterMap.get( directoryParam ).get();
+        return parameterMap.get( DIRECTORY ).get();
     }
 
     /**
@@ -221,7 +221,7 @@ public class VPartsCGIResult
      */
     public String getFilename()
     {
-        return parameterMap.get( filenameParam ).get();
+        return parameterMap.get( FILENAME ).get();
     }
 
     /**
@@ -231,7 +231,7 @@ public class VPartsCGIResult
      */
     public int getStartTime()
     {
-        return parameterMap.get( startTimeParam ).get();
+        return parameterMap.get( START_TIME ).get();
     }
 
     /**
@@ -241,7 +241,7 @@ public class VPartsCGIResult
      */
     public int getEndTime()
     {
-        return parameterMap.get( endTimeParam ).get();
+        return parameterMap.get( END_TIME ).get();
     }
 
     /**
@@ -252,7 +252,7 @@ public class VPartsCGIResult
      */
     public int getExpiryTime()
     {
-        return parameterMap.get( expiryTimeParam ).get();
+        return parameterMap.get( EXPIRY_TIME ).get();
     }
 
     /**
@@ -262,7 +262,7 @@ public class VPartsCGIResult
      */
     public int getNumberOfEntries()
     {
-        return parameterMap.get( numberOfEntriesParam ).get();
+        return parameterMap.get( NUMBER_OF_ENTRIES ).get();
     }
 
     /**
@@ -272,7 +272,7 @@ public class VPartsCGIResult
      */
     public int getCamMask()
     {
-        return parameterMap.get( camMaskParam ).get();
+        return parameterMap.get( CAM_MASK ).get();
     }
 
     /**
@@ -319,7 +319,7 @@ public class VPartsCGIResult
     private static <T, R> ParameterMap hack( final ParameterMap parameterMap,
             final Parameter<T, R> param, final String s )
     {
-        return parameterMap.with( param, param.fromURLParameter( new URLParameter(
-                param.getName(), s ) ) );
+        return parameterMap.with( param,
+                param.fromURLParameter( new URLParameter( param.getName(), s ) ) );
     }
 }

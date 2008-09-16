@@ -196,10 +196,23 @@ public final class ParameterMap
         for ( final Pair<Parameter<?, ?>, String> pair : Lists.zip( params,
                 strings ) )
         {
-            parameterMap = parameterMap.withFromString( pair.first(), new URLParameter(
-                    pair.first().getName(), pair.second() ) );
+            parameterMap = parameterMap.withFromString( pair.first(),
+                    new URLParameter( pair.first().getName(), pair.second() ) );
         }
 
         return parameterMap;
+    }
+
+    public static <T> Conversion<ParameterMap, ParameterMap> withRef(
+            final Parameter<T, ?> parameter, final T value )
+    {
+        return new Conversion<ParameterMap, ParameterMap>()
+        {
+            @Override
+            public ParameterMap convert( final ParameterMap map )
+            {
+                return map.with( parameter, value );
+            }
+        };
     }
 }

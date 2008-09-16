@@ -16,27 +16,27 @@ public final class VariableCGI
 
     VariableCGI( final ParameterMap parameterMap )
     {
-        if ( parameterMap.get( variableParam ).isNone() )
+        if ( parameterMap.get( VARIABLE ).isNone() )
         {
-            throw new IllegalStateException( variableParam.getName()
+            throw new IllegalStateException( VARIABLE.getName()
                     + " has not been set to a value" );
         }
 
         this.parameterMap = parameterMap;
     }
 
-    private static final Parameter<Variable, Option<Variable>> variableParam = Parameter.param(
+    private static final Parameter<Variable, Option<Variable>> VARIABLE = Parameter.param(
             "variable", "Name of the variable", Variable.fromString );
 
-    private static final Parameter<VariableType, VariableType> typeParam = Parameter.param(
+    private static final Parameter<VariableType, VariableType> TYPE = Parameter.param(
             "type", "Specifies return type of variable", VariableType.HTTP,
             VariableType.fromString );
 
     private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
     {
         {
-            add( variableParam );
-            add( typeParam );
+            add( VARIABLE );
+            add( TYPE );
         }
     };
 
@@ -45,7 +45,8 @@ public final class VariableCGI
      */
     public static final class Builder
     {
-        ParameterMap real = new ParameterMap();
+        Option<ParameterMap> real = new Option.Some<ParameterMap>(
+                new ParameterMap() );
 
         /**
          * Sets the variable parameter to the specified Variable.
@@ -56,7 +57,7 @@ public final class VariableCGI
          */
         public Builder variable( final Variable variable )
         {
-            real = real.with( variableParam, variable );
+            real = real.map( ParameterMap.withRef( VARIABLE, variable ) );
             return this;
         }
 
@@ -69,7 +70,7 @@ public final class VariableCGI
          */
         public Builder type( final VariableType type )
         {
-            real = real.with( typeParam, type );
+            real = real.map( ParameterMap.withRef( TYPE, type ) );
             return this;
         }
 
@@ -80,7 +81,14 @@ public final class VariableCGI
          */
         public VariableCGI build()
         {
-            return new VariableCGI( real );
+            try
+            {
+                return new VariableCGI( real.get() );
+            }
+            finally
+            {
+                real = new Option.None<ParameterMap>();
+            }
         }
     }
 
@@ -91,7 +99,7 @@ public final class VariableCGI
      */
     public Variable getVariable()
     {
-        return parameterMap.get( variableParam ).get();
+        return parameterMap.get( VARIABLE ).get();
     }
 
     /**
@@ -101,7 +109,7 @@ public final class VariableCGI
      */
     public VariableType getType()
     {
-        return parameterMap.get( typeParam );
+        return parameterMap.get( TYPE );
     }
 
     @Override

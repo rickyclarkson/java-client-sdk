@@ -21,13 +21,13 @@ import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.events.EventsCGI.Builder;
 
 /**
- * A set of tests that try to make sure EventCGI only allows valid CGI queries
+ * A set of tests that try to make sure EventsCGI only allows valid CGI queries
  * as per the Video Server Specification
  */
 public class EventsCGITest
 {
     /**
-     * Tests that the default values in EventCGI.Builder are correct according
+     * Tests that the default values in EventsCGI.Builder are correct according
      * to the spec. The format is missing because it is always implicitly
      * specified as CSV.
      */
@@ -151,7 +151,7 @@ public class EventsCGITest
     }
 
     /**
-     * Tests that the built EventCGI has the values supplied to the builder,
+     * Tests that the built EventsCGI has the values supplied to the builder,
      * using random data generation.
      */
     private static boolean testRetention( final Random random )
@@ -175,7 +175,7 @@ public class EventsCGITest
     }
 
     /**
-     * Tests that the built EventCGI has the values supplied to the builder.
+     * Tests that the built EventsCGI has the values supplied to the builder.
      */
     @Test
     public void testRetention()
@@ -250,13 +250,13 @@ public class EventsCGITest
     }
 
     /**
-     * An infinite series of randomly-created EventCGI.Builders.
+     * An infinite series of randomly-created EventsCGI.Builders.
      * 
      * @param random
      *        the random number generator to use.
-     * @return an infinite series of randomly-created EventCGI.Builders.
+     * @return an infinite series of randomly-created EventsCGI.Builders.
      */
-    public static Generator<EventsCGI.Builder> randomEventCGIBuilders(
+    public static Generator<EventsCGI.Builder> randomEventsCGIBuilders(
             final Random random )
     {
         return new Generator<EventsCGI.Builder>()
@@ -395,7 +395,7 @@ public class EventsCGITest
      */
     public Generator<EventsCGI> randomEventsCGIs( final Random random )
     {
-        final Generator<EventsCGI.Builder> builders = randomEventCGIBuilders( random );
+        final Generator<EventsCGI.Builder> builders = randomEventsCGIBuilders( random );
         return new Generator<EventsCGI>()
         {
             public EventsCGI next()

@@ -13,10 +13,10 @@ import org.junit.Test;
 /**
  * Unit tests for ParameterMap.
  */
-public final class GenericBuilderTest
+public final class ParameterMapTest
 {
-    Parameter<String, Option<String>> param = Parameter.param( "blah", "blah",
-            Conversion.<String> identity() );
+    private final static Parameter<String, Option<String>> PARAM = Parameter.param(
+            "blah", "blah", Conversion.<String> identity() );
 
     /**
      * Tests that a value stored in a ParameterMap gets converted as per the
@@ -25,8 +25,8 @@ public final class GenericBuilderTest
     @Test
     public void conversion()
     {
-        assertTrue( Integer.parseInt( new ParameterMap().with( param, "10" ).get(
-                param ).get() ) == 10 );
+        assertTrue( Integer.parseInt( new ParameterMap().with( PARAM, "10" ).get(
+                PARAM ).get() ) == 10 );
     }
 
     /**
@@ -36,12 +36,12 @@ public final class GenericBuilderTest
     @Test(expected = IllegalStateException.class)
     public void repeating()
     {
-        new ParameterMap().with( param, "10" ).with( param, "10" );
+        new ParameterMap().with( PARAM, "10" ).with( PARAM, "10" );
     }
 
-    private static final Parameter<Integer, Option<Integer>> time = Parameter.notNegative( Parameter.param(
+    private static final Parameter<Integer, Option<Integer>> TIME = Parameter.notNegative( Parameter.param(
             "time", "time since 1970", Conversion.stringToInt ) );
-    private static final Parameter<Integer, Option<Integer>> range = Parameter.param(
+    private static final Parameter<Integer, Option<Integer>> RANGE = Parameter.param(
             "range", "range to search", Conversion.stringToInt );
 
     /**
@@ -56,13 +56,13 @@ public final class GenericBuilderTest
             @Override
             public boolean isValid( final ParameterMap parameterMap )
             {
-                final Option<Integer> oTime = parameterMap.get( time );
-                final Option<Integer> oRange = parameterMap.get( range );
+                final Option<Integer> oTime = parameterMap.get( TIME );
+                final Option<Integer> oRange = parameterMap.get( RANGE );
 
                 return oTime.isNone() || oRange.isNone() ? true : oTime.get()
                         + oRange.get() >= 0;
             }
-        } ).with( time, 2000000000 ).with( range, 2000000000 );
+        } ).with( TIME, 2000000000 ).with( RANGE, 2000000000 );
     }
 
     /**
@@ -71,8 +71,8 @@ public final class GenericBuilderTest
     @Test
     public void testIsDefault()
     {
-        assertTrue( new ParameterMap().isDefault( time ) );
-        assertFalse( new ParameterMap().with( time, 40 ).isDefault( time ) );
+        assertTrue( new ParameterMap().isDefault( TIME ) );
+        assertFalse( new ParameterMap().with( TIME, 40 ).isDefault( TIME ) );
     }
 
     /**
@@ -85,16 +85,16 @@ public final class GenericBuilderTest
         final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
         {
             {
-                add( time );
-                add( range );
+                add( TIME );
+                add( RANGE );
             }
         };
 
         final ParameterMap parameterMap = ParameterMap.fromURL(
                 "time=10&range=40", params );
 
-        assertTrue( parameterMap.get( time ).get() == 10 );
-        assertTrue( parameterMap.get( range ).get() == 40 );
+        assertTrue( parameterMap.get( TIME ).get() == 10 );
+        assertTrue( parameterMap.get( RANGE ).get() == 40 );
 
         assertTrue( parameterMap.toURLParameters( params ).equals(
                 "time=10&range=40" ) );

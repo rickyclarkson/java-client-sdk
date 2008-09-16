@@ -11,6 +11,7 @@ import java.util.List;
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.Lists;
+import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 
@@ -19,60 +20,60 @@ import uk.org.netvu.core.cgi.common.ParameterMap;
  */
 public final class VPartsCGI
 {
-    private static final Parameter<Format, Format> formatParam = not(
+    private static final Parameter<Format, Format> FORMAT = not(
             Format.HTML,
             param(
                     "format",
                     "Determines output format.  js is for JavaScript, csv for comma separated variables",
                     Format.CSV, Format.fromString ) );
 
-    private static final Parameter<Mode, Mode> modeParam = param( "mode",
+    private static final Parameter<Mode, Mode> MODE = param( "mode",
             "Determines the function of the cgi call", Mode.READ,
             Mode.fromString );
 
-    private static final Parameter<Integer, Integer> timeParam = notNegative( param(
+    private static final Parameter<Integer, Integer> TIME = notNegative( param(
             "time", "Julianised GMT start time for database search", 0,
             Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Integer> rangeParam = notNegative( param(
+    private static final Parameter<Integer, Integer> RANGE = notNegative( param(
             "range", "Timespan to search in seconds.", Integer.MAX_VALUE,
             Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Integer> expiryParam = param(
+    private static final Parameter<Integer, Integer> EXPIRY = param(
             "expiry",
             "Sets the expiry time for partitions, used in protect mode; Julianised GMT",
             0, Conversion.stringToInt );
 
-    private static final Parameter<Boolean, Boolean> watermarkParam = param(
+    private static final Parameter<Boolean, Boolean> WATERMARK = param(
             "watermark",
             "Tells the CGI to generate watermark codes in read mode", false,
             Conversion.stringToBoolean );
 
-    private static final Parameter<Integer, Integer> wmarkstepParam = bound( 1,
-            256, param( "wmarkstepParam",
+    private static final Parameter<Integer, Integer> WMARKSTEP = bound( 1, 256,
+            param( "wmarkstepParam",
                     "Defines the step size to be used in watermark.", 1,
                     Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Integer> listlengthParam = param(
+    private static final Parameter<Integer, Integer> LIST_LENGTH = param(
             "listlength", "Maximum number of entries in the list", 100,
             Conversion.stringToInt );
 
-    private static final Parameter<DirectoryPathFormat, DirectoryPathFormat> pathstyleParam = param(
+    private static final Parameter<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = param(
             "pathstyle", "Format of directory paths.",
             DirectoryPathFormat.SHORT, DirectoryPathFormat.fromString );
 
     private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
     {
         {
-            add( formatParam );
-            add( modeParam );
-            add( timeParam );
-            add( rangeParam );
-            add( expiryParam );
-            add( watermarkParam );
-            add( wmarkstepParam );
-            add( listlengthParam );
-            add( pathstyleParam );
+            add( FORMAT );
+            add( MODE );
+            add( TIME );
+            add( RANGE );
+            add( EXPIRY );
+            add( WATERMARK );
+            add( WMARKSTEP );
+            add( LIST_LENGTH );
+            add( PATH_STYLE );
         }
     };
 
@@ -88,7 +89,8 @@ public final class VPartsCGI
      */
     public static final class Builder
     {
-        ParameterMap real = new ParameterMap();
+        Option<ParameterMap> real = new Option.Some<ParameterMap>(
+                new ParameterMap() );
 
         /**
          * Constructs a VPartsCGI containing the stored parameters.
@@ -97,7 +99,14 @@ public final class VPartsCGI
          */
         public VPartsCGI build()
         {
-            return new VPartsCGI( real );
+            try
+            {
+                return new VPartsCGI( real.get() );
+            }
+            finally
+            {
+                real = new Option.None<ParameterMap>();
+            }
         }
 
         /**
@@ -109,7 +118,7 @@ public final class VPartsCGI
          */
         public Builder mode( final Mode mode )
         {
-            real = real.with( modeParam, mode );
+            real = real.map( ParameterMap.withRef( MODE, mode ) );
             return this;
         }
 
@@ -122,7 +131,7 @@ public final class VPartsCGI
          */
         public Builder time( final int time )
         {
-            real = real.with( timeParam, time );
+            real = real.map( ParameterMap.withRef( TIME, time ) );
             return this;
         }
 
@@ -135,7 +144,7 @@ public final class VPartsCGI
          */
         public Builder range( final int range )
         {
-            real = real.with( rangeParam, range );
+            real = real.map( ParameterMap.withRef( RANGE, range ) );
             return this;
         }
 
@@ -152,7 +161,7 @@ public final class VPartsCGI
          */
         public Builder expiry( final int expiry )
         {
-            real = real.with( expiryParam, expiry );
+            real = real.map( ParameterMap.withRef( EXPIRY, expiry ) );
             return this;
         }
 
@@ -167,7 +176,7 @@ public final class VPartsCGI
          */
         public Builder watermark( final boolean watermark )
         {
-            real = real.with( watermarkParam, watermark );
+            real = real.map( ParameterMap.withRef( WATERMARK, watermark ) );
             return this;
         }
 
@@ -182,7 +191,7 @@ public final class VPartsCGI
          */
         public Builder watermarkStep( final int step )
         {
-            real = real.with( wmarkstepParam, step );
+            real = real.map( ParameterMap.withRef( WMARKSTEP, step ) );
             return this;
         }
 
@@ -196,7 +205,7 @@ public final class VPartsCGI
          */
         public Builder format( final Format format )
         {
-            real = real.with( formatParam, format );
+            real = real.map( ParameterMap.withRef( FORMAT, format ) );
             return this;
         }
 
@@ -209,7 +218,7 @@ public final class VPartsCGI
          */
         public Builder listlength( final int listlength )
         {
-            real = real.with( listlengthParam, listlength );
+            real = real.map( ParameterMap.withRef( LIST_LENGTH, listlength ) );
             return this;
         }
 
@@ -222,7 +231,7 @@ public final class VPartsCGI
          */
         public Builder pathstyle( final DirectoryPathFormat style )
         {
-            real = real.with( pathstyleParam, style );
+            real = real.map( ParameterMap.withRef( PATH_STYLE, style ) );
             return this;
         }
     }
@@ -234,7 +243,7 @@ public final class VPartsCGI
      */
     public Mode getMode()
     {
-        return parameterMap.get( modeParam );
+        return parameterMap.get( MODE );
     }
 
     /**
@@ -244,7 +253,7 @@ public final class VPartsCGI
      */
     public int getTime()
     {
-        return parameterMap.get( timeParam );
+        return parameterMap.get( TIME );
     }
 
     /**
@@ -254,7 +263,7 @@ public final class VPartsCGI
      */
     public int getRange()
     {
-        return parameterMap.get( rangeParam );
+        return parameterMap.get( RANGE );
     }
 
     /**
@@ -265,7 +274,7 @@ public final class VPartsCGI
      */
     public int getExpiry()
     {
-        return parameterMap.get( expiryParam );
+        return parameterMap.get( EXPIRY );
     }
 
     /**
@@ -276,7 +285,7 @@ public final class VPartsCGI
      */
     public boolean getWatermark()
     {
-        return parameterMap.get( watermarkParam );
+        return parameterMap.get( WATERMARK );
     }
 
     /**
@@ -286,7 +295,7 @@ public final class VPartsCGI
      */
     public int getWatermarkStep()
     {
-        return parameterMap.get( wmarkstepParam );
+        return parameterMap.get( WMARKSTEP );
     }
 
     /**
@@ -296,7 +305,7 @@ public final class VPartsCGI
      */
     public Format getFormat()
     {
-        return parameterMap.get( formatParam );
+        return parameterMap.get( FORMAT );
     }
 
     /**
@@ -306,7 +315,7 @@ public final class VPartsCGI
      */
     public int getListlength()
     {
-        return parameterMap.get( listlengthParam );
+        return parameterMap.get( LIST_LENGTH );
     }
 
     /**
@@ -316,17 +325,14 @@ public final class VPartsCGI
      */
     public DirectoryPathFormat getPathstyle()
     {
-        return parameterMap.get( pathstyleParam );
+        return parameterMap.get( PATH_STYLE );
     }
 
     @Override
     public String toString()
     {
-        return "/vparts.cgi?format="
-                + parameterMap.get( formatParam )
-                + "&"
-                + parameterMap.toURLParameters( Lists.remove( params,
-                        formatParam ) );
+        return "/vparts.cgi?format=" + parameterMap.get( FORMAT ) + "&"
+                + parameterMap.toURLParameters( Lists.remove( params, FORMAT ) );
     }
 
     /**

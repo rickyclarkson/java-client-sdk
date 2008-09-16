@@ -49,11 +49,11 @@ public class EventsCGIResultTest
     }
 
     /**
-     * Creates an infinite series of completed random EventCGIResult.Builders.
+     * Creates an infinite series of completed random EventsCGIResult.Builders.
      * 
      * @param random
      *        the random number generator to use.
-     * @return an infinite series of completed random EventCGIResult.Builders.
+     * @return an infinite series of completed random EventsCGIResult.Builders.
      */
     public static final Iterator<EventsCGIResult.Builder> eventBuilderGenerator(
             final Random random )
@@ -178,18 +178,10 @@ public class EventsCGIResultTest
     @Test
     public void testStatusRetention()
     {
-        try
-        {
-            assertTrue( new EventsCGIResult.Builder().cam( 1 ).alarm( "test" ).julianTime(
-                    100 ).offset( 5 ).file( "ignore" ).onDisk( true ).duration(
-                    40 ).preAlarm( 1 ).archive( 1 ).status( Status.NONE ).alarmType(
-                    AlarmType.CAMERA ).build().getStatus() == Status.NONE );
-        }
-        catch ( final NullPointerException e )
-        {
-            e.printStackTrace();
-            throw e;
-        }
+        assertTrue( new EventsCGIResult.Builder().cam( 1 ).alarm( "test" ).julianTime(
+                100 ).offset( 5 ).file( "ignore" ).onDisk( true ).duration( 40 ).preAlarm(
+                1 ).archive( 1 ).status( Status.NONE ).alarmType(
+                AlarmType.CAMERA ).build().getStatus() == Status.NONE );
     }
 
     /**

@@ -29,7 +29,7 @@ public class IntegrationTests
     {
         final Random random = new Random( 0 );
 
-        final Generator<Builder> builders = EventsCGITest.randomEventCGIBuilders( random );
+        final Generator<Builder> builders = EventsCGITest.randomEventsCGIBuilders( random );
 
         for ( int a = 0; a < Generators.LIMIT; a++ )
         {

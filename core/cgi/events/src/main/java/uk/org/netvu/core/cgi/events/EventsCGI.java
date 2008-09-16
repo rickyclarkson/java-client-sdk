@@ -9,6 +9,7 @@ import java.util.List;
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.Lists;
+import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.Validator;
@@ -19,24 +20,24 @@ import uk.org.netvu.core.cgi.common.Validator;
  */
 public final class EventsCGI
 {
-    private static final Parameter<Integer, Integer> timeParam = notNegative( param(
+    private static final Parameter<Integer, Integer> TIME = notNegative( param(
             "time", "The time from which to search, in seconds since 1970.", 0,
             Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Integer> rangeParam = notNegative( param(
+    private static final Parameter<Integer, Integer> RANGE = notNegative( param(
             "range", "The timespan to search in seconds", Integer.MAX_VALUE,
             Conversion.stringToInt ) );
 
-    private static final Parameter<Format, Format> formatParam = param(
-            "format", "The format that the results should be returned in",
-            Format.CSV, Format.fromString );
+    private static final Parameter<Format, Format> FORMAT = param( "format",
+            "The format that the results should be returned in", Format.CSV,
+            Format.fromString );
 
-    private static final Parameter<Integer, Integer> lengthParam = param(
+    private static final Parameter<Integer, Integer> LENGTH = param(
             "listlength",
             "The maximum number of results to obtain.  Negative values reverse the direction of the search.",
             100, Conversion.stringToInt );
 
-    private static final Parameter<String, String> textParam = param(
+    private static final Parameter<String, String> TEXT = param(
             "text",
             "The text to search for in the text-in-image data.  If specified, "
                     + "causes the embedded text-in-image data to be searched for "
@@ -46,51 +47,52 @@ public final class EventsCGI
                     + "character in the search string.", "",
             Conversion.<String> identity() );
 
-    private static final Parameter<Long, Long> camMaskParam = param( "cammask",
+    private static final Parameter<Long, Long> CAM_MASK = param( "cammask",
             "The 64-bit mask of cameras whose images we want to obtain.", 0L,
             Conversion.hexStringToLong, Conversion.longToHexString );
 
-    private static final Parameter<Integer, Integer> alarmMaskParam = param(
+    private static final Parameter<Integer, Integer> ALARM_MASK = param(
             "almmask",
             "The 32-bit mask of the alarms that we are interested in.", 0,
             Conversion.hexStringToInt, Conversion.intToHexString );
 
-    private static final Parameter<Long, Long> vmdMaskParam = param( "vmdmask",
+    private static final Parameter<Long, Long> VMD_MASK_PARAM = param(
+            "vmdmask",
             "The 64-bit mask of video motion detection channels to search in.",
             0L, Conversion.hexStringToLong, Conversion.longToHexString );
 
-    private static final Parameter<Integer, Integer> gpsMaskParam = param(
+    private static final Parameter<Integer, Integer> GPS_MASK_PARAM = param(
             "gpsmask", "The 32-bit mask of GPS event types to search for.", 0,
             Conversion.hexStringToInt, Conversion.intToHexString );
 
-    private static final Parameter<Integer, Integer> sysMaskParam = param(
+    private static final Parameter<Integer, Integer> SYS_MASK_PARAM = param(
             "sysmask", "The 32-bit mask of system event types.", 0,
             Conversion.hexStringToInt, Conversion.intToHexString );
 
     private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
     {
         {
-            add( timeParam );
-            add( rangeParam );
-            add( formatParam );
-            add( lengthParam );
-            add( textParam );
-            add( camMaskParam );
-            add( alarmMaskParam );
-            add( vmdMaskParam );
-            add( gpsMaskParam );
-            add( sysMaskParam );
+            add( TIME );
+            add( RANGE );
+            add( FORMAT );
+            add( LENGTH );
+            add( TEXT );
+            add( CAM_MASK );
+            add( ALARM_MASK );
+            add( VMD_MASK_PARAM );
+            add( GPS_MASK_PARAM );
+            add( SYS_MASK_PARAM );
         }
     };
 
     private static final List<Parameter<?, ?>> exclusiveParams = new ArrayList<Parameter<?, ?>>()
     {
         {
-            add( textParam );
-            add( alarmMaskParam );
-            add( vmdMaskParam );
-            add( gpsMaskParam );
-            add( sysMaskParam );
+            add( TEXT );
+            add( ALARM_MASK );
+            add( VMD_MASK_PARAM );
+            add( GPS_MASK_PARAM );
+            add( SYS_MASK_PARAM );
         }
     };
 
@@ -103,8 +105,8 @@ public final class EventsCGI
      */
     public static final class Builder
     {
-        private ParameterMap real = new ParameterMap(
-                Validator.mutuallyExclusive( exclusiveParams ) );
+        private Option<ParameterMap> real = new Option.Some<ParameterMap>(
+                new ParameterMap( Validator.mutuallyExclusive( exclusiveParams ) ) );
 
         /**
          * The time from which to search, in seconds since 1970.
@@ -115,8 +117,15 @@ public final class EventsCGI
          */
         public Builder time( final int time )
         {
-            real = real.with( timeParam, time );
+            validate();
+            real = real.map( ParameterMap.withRef( TIME, time ) );
+
             return this;
+        }
+
+        private void validate()
+        {
+
         }
 
         /**
@@ -127,7 +136,7 @@ public final class EventsCGI
          */
         public Builder range( final int range )
         {
-            real = real.with( rangeParam, range );
+            real = real.map( ParameterMap.withRef( RANGE, range ) );
             return this;
         }
 
@@ -142,7 +151,7 @@ public final class EventsCGI
          */
         public Builder format( final Format format )
         {
-            real = real.with( formatParam, format );
+            real = real.map( ParameterMap.withRef( FORMAT, format ) );
             return this;
         }
 
@@ -156,7 +165,7 @@ public final class EventsCGI
          */
         public Builder length( final int maxLength )
         {
-            real = real.with( lengthParam, maxLength );
+            real = real.map( ParameterMap.withRef( LENGTH, maxLength ) );
             return this;
         }
 
@@ -174,7 +183,7 @@ public final class EventsCGI
          */
         public Builder text( final String text )
         {
-            real = real.with( textParam, text );
+            real = real.map( ParameterMap.withRef( TEXT, text ) );
             return this;
         }
 
@@ -187,7 +196,7 @@ public final class EventsCGI
          */
         public Builder camMask( final long camMask )
         {
-            real = real.with( camMaskParam, camMask );
+            real = real.map( ParameterMap.withRef( CAM_MASK, camMask ) );
             return this;
         }
 
@@ -200,7 +209,7 @@ public final class EventsCGI
          */
         public Builder alarmMask( final int alarmMask )
         {
-            real = real.with( alarmMaskParam, alarmMask );
+            real = real.map( ParameterMap.withRef( ALARM_MASK, alarmMask ) );
             return this;
         }
 
@@ -213,7 +222,7 @@ public final class EventsCGI
          */
         public Builder vmdMask( final long vmdMask )
         {
-            real = real.with( vmdMaskParam, vmdMask );
+            real = real.map( ParameterMap.withRef( VMD_MASK_PARAM, vmdMask ) );
             return this;
         }
 
@@ -226,7 +235,7 @@ public final class EventsCGI
          */
         public Builder gpsMask( final int gpsMask )
         {
-            real = real.with( gpsMaskParam, gpsMask );
+            real = real.map( ParameterMap.withRef( GPS_MASK_PARAM, gpsMask ) );
             return this;
         }
 
@@ -239,7 +248,7 @@ public final class EventsCGI
          */
         public Builder sysMask( final int sysMask )
         {
-            real = real.with( sysMaskParam, sysMask );
+            real = real.map( ParameterMap.withRef( SYS_MASK_PARAM, sysMask ) );
             return this;
         }
 
@@ -250,7 +259,14 @@ public final class EventsCGI
          */
         public EventsCGI build()
         {
-            return new EventsCGI( real );
+            try
+            {
+                return new EventsCGI( real.get() );
+            }
+            finally
+            {
+                real = new Option.None<ParameterMap>();
+            }
         }
     }
 
@@ -268,7 +284,7 @@ public final class EventsCGI
      */
     public int getTime()
     {
-        return parameterMap.get( timeParam );
+        return parameterMap.get( TIME );
     }
 
     /**
@@ -278,7 +294,7 @@ public final class EventsCGI
      */
     public int getRange()
     {
-        return parameterMap.get( rangeParam );
+        return parameterMap.get( RANGE );
     }
 
     /**
@@ -288,7 +304,7 @@ public final class EventsCGI
      */
     public Format getFormat()
     {
-        return parameterMap.get( formatParam );
+        return parameterMap.get( FORMAT );
     }
 
     /**
@@ -299,7 +315,7 @@ public final class EventsCGI
      */
     public int getMaxLength()
     {
-        return parameterMap.get( lengthParam );
+        return parameterMap.get( LENGTH );
     }
 
     /**
@@ -309,7 +325,7 @@ public final class EventsCGI
      */
     public String getText()
     {
-        return parameterMap.get( textParam );
+        return parameterMap.get( TEXT );
     }
 
     /**
@@ -319,7 +335,7 @@ public final class EventsCGI
      */
     public long getCamMask()
     {
-        return parameterMap.get( camMaskParam );
+        return parameterMap.get( CAM_MASK );
     }
 
     /**
@@ -329,7 +345,7 @@ public final class EventsCGI
      */
     public int getAlarmMask()
     {
-        return parameterMap.get( alarmMaskParam );
+        return parameterMap.get( ALARM_MASK );
     }
 
     /**
@@ -339,7 +355,7 @@ public final class EventsCGI
      */
     public long getVmdMask()
     {
-        return parameterMap.get( vmdMaskParam );
+        return parameterMap.get( VMD_MASK_PARAM );
     }
 
     /**
@@ -349,7 +365,7 @@ public final class EventsCGI
      */
     public int getGpsMask()
     {
-        return parameterMap.get( gpsMaskParam );
+        return parameterMap.get( GPS_MASK_PARAM );
     }
 
     /**
@@ -359,7 +375,7 @@ public final class EventsCGI
      */
     public int getSysMask()
     {
-        return parameterMap.get( sysMaskParam );
+        return parameterMap.get( SYS_MASK_PARAM );
     }
 
     /**
@@ -388,7 +404,7 @@ public final class EventsCGI
     public String toString()
     {
         final String theRest = parameterMap.toURLParameters( Lists.remove(
-                params, formatParam ) );
+                params, FORMAT ) );
 
         return "/events.cgi?format=" + getFormat()
                 + ( theRest.length() == 0 ? "" : "&" ) + theRest;

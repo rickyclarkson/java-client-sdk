@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/decoder"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/variable"/>
+	<classpathentry kind="lib" path="/home/ricky/.m2/repository/junit/junit/4.4/junit-4.4.jar"/>
+	<classpathentry kind="src" path="/events"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

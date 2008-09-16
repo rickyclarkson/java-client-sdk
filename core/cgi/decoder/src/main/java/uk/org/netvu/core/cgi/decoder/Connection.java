@@ -22,27 +22,27 @@ import uk.org.netvu.core.cgi.common.Validator;
  */
 public final class Connection
 {
-    private static final Parameter<String, Option<String>> slaveIPParam = param(
+    private static final Parameter<String, Option<String>> SLAVE_IP_PARAM = param(
             "slaveip", "The source video server address",
             Conversion.<String> identity() );
-    private static final Parameter<Integer, Option<Integer>> seqParam = param(
+    private static final Parameter<Integer, Option<Integer>> SEQ_PARAM = param(
             "seq", "Bitmask of source cameras", Conversion.hexStringToInt );
-    private static final Parameter<Integer, Option<Integer>> dwellParam = param(
+    private static final Parameter<Integer, Option<Integer>> DWELL_PARAM = param(
             "dwell", "The time to dwell on each camera in the seq bitmask",
             Conversion.stringToInt );
-    private static final Parameter<Integer, Option<Integer>> camParam = param(
+    private static final Parameter<Integer, Option<Integer>> CAM = param(
             "cam", "The source camera", Conversion.stringToInt );
-    private static final Parameter<Integer, Option<Integer>> audioChannelParam = param(
+    private static final Parameter<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = param(
             "audio", "The source audio channel", Conversion.stringToInt );
 
     private static final List<Parameter<?, ? extends Option<?>>> params = new ArrayList<Parameter<?, ? extends Option<?>>>()
     {
         {
-            add( slaveIPParam );
-            add( seqParam );
-            add( dwellParam );
-            add( camParam );
-            add( audioChannelParam );
+            add( SLAVE_IP_PARAM );
+            add( SEQ_PARAM );
+            add( DWELL_PARAM );
+            add( CAM );
+            add( AUDIO_CHANNEL_PARAM );
         }
     };
 
@@ -58,9 +58,9 @@ public final class Connection
             @Override
             public boolean isValid( final ParameterMap parameterMap )
             {
-                return parameterMap.isDefault( camParam ) ? true
-                        : parameterMap.isDefault( seqParam )
-                                && parameterMap.isDefault( dwellParam );
+                return parameterMap.isDefault( CAM ) ? true
+                        : parameterMap.isDefault( SEQ_PARAM )
+                                && parameterMap.isDefault( DWELL_PARAM );
             }
         } ) );
     }
@@ -80,7 +80,7 @@ public final class Connection
      */
     public Connection slaveIP( final String slaveIP )
     {
-        return new Connection( parameterMap.with( slaveIPParam, slaveIP ) );
+        return new Connection( parameterMap.with( SLAVE_IP_PARAM, slaveIP ) );
     }
 
     /**
@@ -93,7 +93,7 @@ public final class Connection
      */
     public Connection seq( final int seq )
     {
-        return new Connection( parameterMap.with( seqParam, seq ) );
+        return new Connection( parameterMap.with( SEQ_PARAM, seq ) );
     }
 
     /**
@@ -106,7 +106,7 @@ public final class Connection
      */
     public Connection dwell( final int dwell )
     {
-        return new Connection( parameterMap.with( dwellParam, dwell ) );
+        return new Connection( parameterMap.with( DWELL_PARAM, dwell ) );
     }
 
     /**
@@ -119,7 +119,7 @@ public final class Connection
      */
     public Connection cam( final int cam )
     {
-        return new Connection( parameterMap.with( camParam, cam ) );
+        return new Connection( parameterMap.with( CAM, cam ) );
     }
 
     /**
@@ -132,7 +132,7 @@ public final class Connection
      */
     public Connection audio( final int audioChannel )
     {
-        return new Connection( parameterMap.with( audioChannelParam,
+        return new Connection( parameterMap.with( AUDIO_CHANNEL_PARAM,
                 audioChannel ) );
     }
 
@@ -174,7 +174,7 @@ public final class Connection
      */
     public String getSlaveIP()
     {
-        return parameterMap.get( slaveIPParam ).get();
+        return parameterMap.get( SLAVE_IP_PARAM ).get();
     }
 
     /**
@@ -185,7 +185,7 @@ public final class Connection
      */
     public int getCam()
     {
-        return parameterMap.get( camParam ).get();
+        return parameterMap.get( CAM ).get();
     }
 
     /**
@@ -196,7 +196,7 @@ public final class Connection
      */
     public int getSeq()
     {
-        return parameterMap.get( seqParam ).get();
+        return parameterMap.get( SEQ_PARAM ).get();
     }
 
     /**
@@ -207,6 +207,6 @@ public final class Connection
      */
     public int getDwell()
     {
-        return parameterMap.get( dwellParam ).get();
+        return parameterMap.get( DWELL_PARAM ).get();
     }
 }

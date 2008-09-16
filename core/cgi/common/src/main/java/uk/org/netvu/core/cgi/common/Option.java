@@ -59,6 +59,12 @@ public abstract class Option<T>
         {
             return t;
         }
+
+        @Override
+        public <U> Option<U> map( final Conversion<T, U> conversion )
+        {
+            return new Some<U>( conversion.convert( t ) );
+        }
     }
 
     /**
@@ -87,6 +93,12 @@ public abstract class Option<T>
         {
             throw new IllegalStateException();
         }
+
+        @Override
+        public <U> Option<U> map( final Conversion<T, U> conversion )
+        {
+            return new None<U>();
+        }
     }
 
     /**
@@ -103,4 +115,6 @@ public abstract class Option<T>
      * @return the element held by this Option.
      */
     public abstract T get();
+
+    public abstract <U> Option<U> map( Conversion<T, U> conversion );
 }

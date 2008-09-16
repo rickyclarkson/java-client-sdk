@@ -26,23 +26,23 @@ import uk.org.netvu.core.cgi.common.URLBuilder;
  */
 public final class DecoderCGI
 {
-    private static final Parameter<Persistence, Persistence> persistenceParam = param(
+    private static final Parameter<Persistence, Persistence> PERSISTENCE = param(
             "persistence",
             "Whether to make the changes persistent (survive reboot) or temporary",
             Persistence.TEMPORARY,
             Conversion.<String, Persistence> throwUnsupportedOperationException() );
 
-    private static final Parameter<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> connectionsParam = sparseArrayParam(
+    private static final Parameter<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = sparseArrayParam(
             "connections",
             "The differences to make to the connections system variable",
             Connection.fromURL, Connection.urlEncode );
 
-    private static final Parameter<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> layoutsParam = sparseArrayParam(
+    private static final Parameter<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> LAYOUTS = sparseArrayParam(
             "layouts",
             "The differences to make to the layouts system variable",
             Layout.fromURL, Layout.urlEncode );
 
-    private static final Parameter<String[], Option<String[]>> outputTitlesParam = param(
+    private static final Parameter<String[], Option<String[]>> OUTPUT_TITLES = param(
             "output_titles", "The titles to give to each output channel",
             Conversion.<String, String[]> throwUnsupportedOperationException(),
             new Conversion<String[], String>()
@@ -64,7 +64,7 @@ public final class DecoderCGI
                 }
             } );
 
-    private static final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> commandsParam = sparseArrayParam(
+    private static final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = sparseArrayParam(
             "commands",
             "The differences to make to the commands system variable",
             Conversion.<String> identity(), new Conversion<String, String>()
@@ -79,10 +79,10 @@ public final class DecoderCGI
     private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
     {
         {
-            add( connectionsParam );
-            add( layoutsParam );
-            add( outputTitlesParam );
-            add( commandsParam );
+            add( CONNECTIONS );
+            add( LAYOUTS );
+            add( OUTPUT_TITLES );
+            add( COMMANDS );
         }
     };
 
@@ -111,8 +111,7 @@ public final class DecoderCGI
      */
     public DecoderCGI persistence( final Persistence persistence )
     {
-        return new DecoderCGI(
-                parameterMap.with( persistenceParam, persistence ) );
+        return new DecoderCGI( parameterMap.with( PERSISTENCE, persistence ) );
     }
 
     /**
@@ -127,7 +126,7 @@ public final class DecoderCGI
      */
     public DecoderCGI connection( final int index, final Connection connection )
     {
-        return new DecoderCGI( parameterMap.with( connectionsParam,
+        return new DecoderCGI( parameterMap.with( CONNECTIONS,
                 Collections.singletonList( Pair.pair( index, connection ) ) ) );
     }
 
@@ -143,7 +142,7 @@ public final class DecoderCGI
      */
     public DecoderCGI layout( final int index, final Layout layout )
     {
-        return new DecoderCGI( parameterMap.with( layoutsParam,
+        return new DecoderCGI( parameterMap.with( LAYOUTS,
                 Collections.singletonList( Pair.pair( index, layout ) ) ) );
     }
 
@@ -156,7 +155,7 @@ public final class DecoderCGI
      */
     public DecoderCGI outputTitles( final String... titles )
     {
-        return new DecoderCGI( parameterMap.with( outputTitlesParam, titles ) );
+        return new DecoderCGI( parameterMap.with( OUTPUT_TITLES, titles ) );
     }
 
     /**
@@ -171,7 +170,7 @@ public final class DecoderCGI
      */
     public DecoderCGI command( final int index, final String command )
     {
-        return new DecoderCGI( parameterMap.with( commandsParam,
+        return new DecoderCGI( parameterMap.with( COMMANDS,
                 Collections.singletonList( Pair.pair( index, command ) ) ) );
     }
 
@@ -182,7 +181,7 @@ public final class DecoderCGI
      */
     public Map<Integer, String> getCommands()
     {
-        return parameterMap.get( commandsParam );
+        return parameterMap.get( COMMANDS );
     }
 
     /**
@@ -192,7 +191,7 @@ public final class DecoderCGI
      */
     public Map<Integer, Layout> getLayouts()
     {
-        return parameterMap.get( layoutsParam );
+        return parameterMap.get( LAYOUTS );
     }
 
     /**
@@ -202,7 +201,7 @@ public final class DecoderCGI
      */
     public String[] getOutputTitles()
     {
-        return parameterMap.get( outputTitlesParam ).get();
+        return parameterMap.get( OUTPUT_TITLES ).get();
     }
 
     /**
@@ -212,7 +211,7 @@ public final class DecoderCGI
      */
     public TreeMap<Integer, Connection> getConnections()
     {
-        return parameterMap.get( connectionsParam );
+        return parameterMap.get( CONNECTIONS );
     }
 
     /**
@@ -232,7 +231,7 @@ public final class DecoderCGI
      */
     public Persistence getPersistence()
     {
-        return parameterMap.get( persistenceParam );
+        return parameterMap.get( PERSISTENCE );
     }
 
     /**

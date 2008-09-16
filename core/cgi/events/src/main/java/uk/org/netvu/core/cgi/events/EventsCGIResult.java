@@ -21,51 +21,51 @@ import uk.org.netvu.core.cgi.common.Strings;
  */
 public final class EventsCGIResult
 {
-    private static final Parameter<Integer, Option<Integer>> camParameter = bound(
-            0, 64, Parameter.param( "cam", "The system camera number",
+    private static final Parameter<Integer, Option<Integer>> CAM = bound( 0,
+            64, Parameter.param( "cam", "The system camera number",
                     Conversion.stringToInt ) );
 
-    private static final Parameter<String, Option<String>> alarmParameter = param(
+    private static final Parameter<String, Option<String>> ALARM = param(
             "alarm", "The alarm description.", Conversion.<String> identity() );
 
-    private static final Parameter<Integer, Option<Integer>> julianTimeParameter = notNegative( param(
+    private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = notNegative( param(
             "time", "The Julianised time that the event occurred at",
             Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Option<Integer>> offsetParameter = Parameter.bound(
+    private static final Parameter<Integer, Option<Integer>> OFFSET = Parameter.bound(
             -90000, 90000, param( "offset", "", Conversion.stringToInt ) );
 
-    private static final Parameter<String, Option<String>> fileParameter = param(
+    private static final Parameter<String, Option<String>> FILE = param(
             "file", "", Conversion.<String> identity() );
 
-    private static final Parameter<Boolean, Option<Boolean>> onDiskParameter = param(
+    private static final Parameter<Boolean, Option<Boolean>> ON_DISK = param(
             "onDisk", "", Conversion.stringToBoolean );
 
-    private static final Parameter<Integer, Option<Integer>> durationParameter = notNegative( param(
+    private static final Parameter<Integer, Option<Integer>> DURATION = notNegative( param(
             "duration", "", Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Option<Integer>> preAlarmParameter = notNegative( param(
+    private static final Parameter<Integer, Option<Integer>> PRE_ALARM = notNegative( param(
             "preAlarm", "", Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Option<Integer>> archiveParameter = notNegative( param(
+    private static final Parameter<Integer, Option<Integer>> ARCHIVE = notNegative( param(
             "archive", "", Conversion.stringToInt ) );
-    private static final Parameter<Status, Status> statusParameter = param(
-            "status", "", Status.NONE, Status.fromString );
-    private static final Parameter<AlarmType, AlarmType> alarmTypeParameter = param(
+    private static final Parameter<Status, Status> STATUS = param( "status",
+            "", Status.NONE, Status.fromString );
+    private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = param(
             "alarmType", "", AlarmType.NONE, AlarmType.fromString );
 
     private static final ArrayList<Parameter<?, ? extends Option<?>>> compulsoryParams = new ArrayList<Parameter<?, ? extends Option<?>>>()
     {
         {
-            add( camParameter );
-            add( alarmParameter );
-            add( julianTimeParameter );
-            add( offsetParameter );
-            add( fileParameter );
-            add( onDiskParameter );
-            add( durationParameter );
-            add( preAlarmParameter );
-            add( archiveParameter );
+            add( CAM );
+            add( ALARM );
+            add( JULIAN_TIME );
+            add( OFFSET );
+            add( FILE );
+            add( ON_DISK );
+            add( DURATION );
+            add( PRE_ALARM );
+            add( ARCHIVE );
         }
     };
 
@@ -99,7 +99,8 @@ public final class EventsCGIResult
      */
     public static final class Builder
     {
-        private ParameterMap real = new ParameterMap();
+        private Option<ParameterMap> real = new Option.Some<ParameterMap>(
+                new ParameterMap() );
 
         /**
          * Adds the system camera number to the builder.
@@ -110,7 +111,7 @@ public final class EventsCGIResult
          */
         public Builder cam( final int cam )
         {
-            real = real.with( camParameter, cam );
+            real = real.map( ParameterMap.withRef( CAM, cam ) );
             return this;
         }
 
@@ -123,7 +124,7 @@ public final class EventsCGIResult
          */
         public Builder alarm( final String alarm )
         {
-            real = real.with( alarmParameter, alarm );
+            real = real.map( ParameterMap.withRef( ALARM, alarm ) );
             return this;
         }
 
@@ -136,7 +137,7 @@ public final class EventsCGIResult
          */
         public Builder julianTime( final int julianTime )
         {
-            real = real.with( julianTimeParameter, julianTime );
+            real = real.map( ParameterMap.withRef( JULIAN_TIME, julianTime ) );
             return this;
         }
 
@@ -149,7 +150,7 @@ public final class EventsCGIResult
          */
         public Builder offset( final int offset )
         {
-            real = real.with( offsetParameter, offset );
+            real = real.map( ParameterMap.withRef( OFFSET, offset ) );
             return this;
         }
 
@@ -163,7 +164,7 @@ public final class EventsCGIResult
          */
         public Builder file( final String file )
         {
-            real = real.with( fileParameter, file );
+            real = real.map( ParameterMap.withRef( FILE, file ) );
             return this;
         }
 
@@ -177,7 +178,7 @@ public final class EventsCGIResult
          */
         public Builder onDisk( final boolean onDisk )
         {
-            real = real.with( onDiskParameter, onDisk );
+            real = real.map( ParameterMap.withRef( ON_DISK, onDisk ) );
             return this;
         }
 
@@ -190,7 +191,7 @@ public final class EventsCGIResult
          */
         public Builder duration( final int duration )
         {
-            real = real.with( durationParameter, duration );
+            real = real.map( ParameterMap.withRef( DURATION, duration ) );
             return this;
         }
 
@@ -204,7 +205,7 @@ public final class EventsCGIResult
          */
         public Builder preAlarm( final int preAlarm )
         {
-            real = real.with( preAlarmParameter, preAlarm );
+            real = real.map( ParameterMap.withRef( PRE_ALARM, preAlarm ) );
             return this;
         }
 
@@ -219,7 +220,7 @@ public final class EventsCGIResult
          */
         public Builder archive( final int archive )
         {
-            real = real.with( archiveParameter, archive );
+            real = real.map( ParameterMap.withRef( ARCHIVE, archive ) );
             return this;
         }
 
@@ -233,7 +234,7 @@ public final class EventsCGIResult
          */
         public Builder status( final Status status )
         {
-            real = real.with( statusParameter, status );
+            real = real.map( ParameterMap.withRef( STATUS, status ) );
             return this;
         }
 
@@ -246,7 +247,7 @@ public final class EventsCGIResult
          */
         public Builder alarmType( final AlarmType alarmType )
         {
-            real = real.with( alarmTypeParameter, alarmType );
+            real = real.map( ParameterMap.withRef( ALARM_TYPE, alarmType ) );
             return this;
         }
 
@@ -258,7 +259,14 @@ public final class EventsCGIResult
          */
         public EventsCGIResult build()
         {
-            return new EventsCGIResult( real );
+            try
+            {
+                return new EventsCGIResult( real.get() );
+            }
+            finally
+            {
+                real = new Option.None<ParameterMap>();
+            }
         }
     }
 
@@ -269,7 +277,7 @@ public final class EventsCGIResult
      */
     public int getCam()
     {
-        return parameterMap.get( camParameter ).get();
+        return parameterMap.get( CAM ).get();
     }
 
     /**
@@ -279,7 +287,7 @@ public final class EventsCGIResult
      */
     public String getAlarm()
     {
-        return parameterMap.get( alarmParameter ).get();
+        return parameterMap.get( ALARM ).get();
     }
 
     /**
@@ -289,7 +297,7 @@ public final class EventsCGIResult
      */
     public int getJulianTime()
     {
-        return parameterMap.get( julianTimeParameter ).get();
+        return parameterMap.get( JULIAN_TIME ).get();
     }
 
     /**
@@ -299,7 +307,7 @@ public final class EventsCGIResult
      */
     public int getOffset()
     {
-        return parameterMap.get( offsetParameter ).get();
+        return parameterMap.get( OFFSET ).get();
     }
 
     /**
@@ -309,7 +317,7 @@ public final class EventsCGIResult
      */
     public String getFile()
     {
-        return parameterMap.get( fileParameter ).get();
+        return parameterMap.get( FILE ).get();
     }
 
     /**
@@ -319,7 +327,7 @@ public final class EventsCGIResult
      */
     public boolean isOnDisk()
     {
-        return parameterMap.get( onDiskParameter ).get();
+        return parameterMap.get( ON_DISK ).get();
     }
 
     /**
@@ -330,7 +338,7 @@ public final class EventsCGIResult
      */
     public int getDuration()
     {
-        return parameterMap.get( durationParameter ).get();
+        return parameterMap.get( DURATION ).get();
     }
 
     /**
@@ -342,7 +350,7 @@ public final class EventsCGIResult
      */
     public int getPreAlarm()
     {
-        return parameterMap.get( preAlarmParameter ).get();
+        return parameterMap.get( PRE_ALARM ).get();
     }
 
     /**
@@ -354,7 +362,7 @@ public final class EventsCGIResult
      */
     public int getArchive()
     {
-        return parameterMap.get( archiveParameter ).get();
+        return parameterMap.get( ARCHIVE ).get();
     }
 
     /**
@@ -364,7 +372,7 @@ public final class EventsCGIResult
      */
     public AlarmType getAlarmType()
     {
-        return parameterMap.get( alarmTypeParameter );
+        return parameterMap.get( ALARM_TYPE );
     }
 
     /**
@@ -375,7 +383,7 @@ public final class EventsCGIResult
      */
     public Status getStatus()
     {
-        return parameterMap.get( statusParameter );
+        return parameterMap.get( STATUS );
     }
 
     /**
@@ -401,11 +409,11 @@ public final class EventsCGIResult
                 compulsoryParams );
         if ( values.length > 11 )
         {
-            params.add( statusParameter );
+            params.add( STATUS );
         }
         if ( values.length > 12 )
         {
-            params.add( alarmTypeParameter );
+            params.add( ALARM_TYPE );
         }
 
         return new EventsCGIResult( ParameterMap.fromStrings( params,

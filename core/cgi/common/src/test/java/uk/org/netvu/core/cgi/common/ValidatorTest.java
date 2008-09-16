@@ -10,17 +10,17 @@ import org.junit.Test;
  */
 public class ValidatorTest
 {
-    private static final Parameter<String, Option<String>> name = Parameter.param(
+    private static final Parameter<String, Option<String>> NAME = Parameter.param(
             "name", "foo", Conversion.<String> identity() );
 
-    private static final Parameter<String, Option<String>> address = Parameter.param(
+    private static final Parameter<String, Option<String>> ADDRESS = Parameter.param(
             "address", "foo", Conversion.<String> identity() );
 
     private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
     {
         {
-            add( name );
-            add( address );
+            add( NAME );
+            add( ADDRESS );
         }
     };
 
@@ -31,7 +31,7 @@ public class ValidatorTest
     @Test
     public void mutuallyExclusivePass()
     {
-        new ParameterMap( Validator.mutuallyExclusive( params ) ).with( name,
+        new ParameterMap( Validator.mutuallyExclusive( params ) ).with( NAME,
                 "bob" );
     }
 
@@ -41,7 +41,7 @@ public class ValidatorTest
     @Test(expected = IllegalStateException.class)
     public void mutuallyExclusiveFail()
     {
-        new ParameterMap( Validator.mutuallyExclusive( params ) ).with( name,
-                "bob" ).with( address, "here" );
+        new ParameterMap( Validator.mutuallyExclusive( params ) ).with( NAME,
+                "bob" ).with( ADDRESS, "here" );
     }
 }
