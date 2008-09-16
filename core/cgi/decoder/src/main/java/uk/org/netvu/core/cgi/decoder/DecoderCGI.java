@@ -11,11 +11,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import uk.org.netvu.core.cgi.common.Conversion;
-import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Pair;
 import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.Reduction;
 import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.URLBuilder;
@@ -86,19 +86,19 @@ public final class DecoderCGI
         }
     };
 
-    private final GenericBuilder builder;
+    private final ParameterMap parameterMap;
 
     /**
      * Constructs a DecoderCGI with no values set.
      */
     public DecoderCGI()
     {
-        this( new GenericBuilder() );
+        this( new ParameterMap() );
     }
 
-    private DecoderCGI( final GenericBuilder builder )
+    private DecoderCGI( final ParameterMap parameterMap )
     {
-        this.builder = builder;
+        this.parameterMap = parameterMap;
     }
 
     /**
@@ -111,7 +111,8 @@ public final class DecoderCGI
      */
     public DecoderCGI persistence( final Persistence persistence )
     {
-        return new DecoderCGI( builder.with( persistenceParam, persistence ) );
+        return new DecoderCGI(
+                parameterMap.with( persistenceParam, persistence ) );
     }
 
     /**
@@ -126,7 +127,7 @@ public final class DecoderCGI
      */
     public DecoderCGI connection( final int index, final Connection connection )
     {
-        return new DecoderCGI( builder.with( connectionsParam,
+        return new DecoderCGI( parameterMap.with( connectionsParam,
                 Collections.singletonList( Pair.pair( index, connection ) ) ) );
     }
 
@@ -142,7 +143,7 @@ public final class DecoderCGI
      */
     public DecoderCGI layout( final int index, final Layout layout )
     {
-        return new DecoderCGI( builder.with( layoutsParam,
+        return new DecoderCGI( parameterMap.with( layoutsParam,
                 Collections.singletonList( Pair.pair( index, layout ) ) ) );
     }
 
@@ -155,7 +156,7 @@ public final class DecoderCGI
      */
     public DecoderCGI outputTitles( final String... titles )
     {
-        return new DecoderCGI( builder.with( outputTitlesParam, titles ) );
+        return new DecoderCGI( parameterMap.with( outputTitlesParam, titles ) );
     }
 
     /**
@@ -170,7 +171,7 @@ public final class DecoderCGI
      */
     public DecoderCGI command( final int index, final String command )
     {
-        return new DecoderCGI( builder.with( commandsParam,
+        return new DecoderCGI( parameterMap.with( commandsParam,
                 Collections.singletonList( Pair.pair( index, command ) ) ) );
     }
 
@@ -181,7 +182,7 @@ public final class DecoderCGI
      */
     public Map<Integer, String> getCommands()
     {
-        return builder.get( commandsParam );
+        return parameterMap.get( commandsParam );
     }
 
     /**
@@ -191,7 +192,7 @@ public final class DecoderCGI
      */
     public Map<Integer, Layout> getLayouts()
     {
-        return builder.get( layoutsParam );
+        return parameterMap.get( layoutsParam );
     }
 
     /**
@@ -201,7 +202,7 @@ public final class DecoderCGI
      */
     public String[] getOutputTitles()
     {
-        return builder.get( outputTitlesParam ).get();
+        return parameterMap.get( outputTitlesParam ).get();
     }
 
     /**
@@ -211,7 +212,7 @@ public final class DecoderCGI
      */
     public TreeMap<Integer, Connection> getConnections()
     {
-        return builder.get( connectionsParam );
+        return parameterMap.get( connectionsParam );
     }
 
     /**
@@ -223,7 +224,7 @@ public final class DecoderCGI
     public String toURLParameters()
     {
         return "decoder" + getPersistence() + '?'
-                + builder.toURLParameters( params );
+                + parameterMap.toURLParameters( params );
     }
 
     /**
@@ -231,7 +232,7 @@ public final class DecoderCGI
      */
     public Persistence getPersistence()
     {
-        return builder.get( persistenceParam );
+        return parameterMap.get( persistenceParam );
     }
 
     /**
@@ -245,7 +246,7 @@ public final class DecoderCGI
      */
     public static DecoderCGI fromString( final String string )
     {
-        return new DecoderCGI( GenericBuilder.fromURL( string, params ) ).persistence( string.contains( ".frm" ) ? Persistence.PERSISTENT
+        return new DecoderCGI( ParameterMap.fromURL( string, params ) ).persistence( string.contains( ".frm" ) ? Persistence.PERSISTENT
                 : Persistence.TEMPORARY );
     }
 }

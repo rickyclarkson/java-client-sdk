@@ -9,11 +9,11 @@ import java.util.Map;
  * An immutable object that stores the values associated with parameters and
  * provides an interface to retrieving those values. For internal use only.
  */
-public final class GenericBuilder
+public final class ParameterMap
 {
     /**
-     * The validator that is executed against a GenericBuilder that has new
-     * values. An invalid GenericBuilder is never returned to callers.
+     * The validator that is executed against a ParameterMap that has new
+     * values. An invalid ParameterMap is never returned to callers.
      */
     public final Validator validator;
 
@@ -23,14 +23,14 @@ public final class GenericBuilder
     public final Map<Parameter<?, ?>, Object> values;
 
     /**
-     * Constructs a GenericBuilder that is always valid.
+     * Constructs a ParameterMap that is always valid.
      */
-    public GenericBuilder()
+    public ParameterMap()
     {
         this( new Validator()
         {
             @Override
-            public boolean isValid( final GenericBuilder builder )
+            public boolean isValid( final ParameterMap parameterMap )
             {
                 return true;
             }
@@ -38,17 +38,17 @@ public final class GenericBuilder
     }
 
     /**
-     * Constructs a GenericBuilder with the supplied validator.
+     * Constructs a ParameterMap with the supplied validator.
      * 
      * @param validator
-     *        a test against a GenericBuilder for validity.
+     *        a test against a ParameterMap for validity.
      */
-    public GenericBuilder( final Validator validator )
+    public ParameterMap( final Validator validator )
     {
         this( new HashMap<Parameter<?, ?>, Object>(), validator );
     }
 
-    GenericBuilder( final Map<Parameter<?, ?>, Object> values,
+    ParameterMap( final Map<Parameter<?, ?>, Object> values,
             final Validator validator )
     {
         this.validator = validator;
@@ -56,9 +56,9 @@ public final class GenericBuilder
     }
 
     /**
-     * Constructs a new GenericBuilder with the specified value for the
-     * specified parameter, or throws an IllegalStateException if the new
-     * GenericBuilder would be invalid.
+     * Constructs a new ParameterMap with the specified value for the specified
+     * parameter, or throws an IllegalStateException if the new ParameterMap
+     * would be invalid.
      * 
      * @param <T>
      *        the input type of the parameter.
@@ -68,10 +68,10 @@ public final class GenericBuilder
      *        the parameter to store a value for.
      * @param value
      *        the value to store.
-     * @return a new GenericBuilder with the specified value for the specified
+     * @return a new ParameterMap with the specified value for the specified
      *         parameter.
      */
-    public <T, R> GenericBuilder with( final Parameter<T, R> parameter,
+    public <T, R> ParameterMap with( final Parameter<T, R> parameter,
             final T value )
     {
         final Map<Parameter<?, ?>, Object> copy = new HashMap<Parameter<?, ?>, Object>(
@@ -79,25 +79,25 @@ public final class GenericBuilder
 
         copy.put( parameter, parameter.reduce( value, get( parameter ) ) );
 
-        final GenericBuilder built = new GenericBuilder( copy, validator );
+        final ParameterMap built = new ParameterMap( copy, validator );
         if ( !validator.isValid( built ) )
         {
             throw new IllegalStateException( value + " for "
                     + parameter.getName()
-                    + " violates the constraints on this builder" );
+                    + " violates the constraints on this parameter map" );
         }
 
         return built;
     }
 
     /**
-     * Identifies whether the GenericBuilder only has the parameter's default
+     * Identifies whether the ParameterMap only has the parameter's default
      * value.
      * 
      * @param parameter
      *        the parameter of interest.
-     * @return true if the GenericBuilder only has the parameter's default
-     *         value, false otherwise.
+     * @return true if the ParameterMap only has the parameter's default value,
+     *         false otherwise.
      */
     public boolean isDefault( final Parameter<?, ?> parameter )
     {
@@ -120,7 +120,7 @@ public final class GenericBuilder
                 : parameter.getDefaultValue();
     }
 
-    private <T, R> GenericBuilder withFromString( final Parameter<T, R> param,
+    private <T, R> ParameterMap withFromString( final Parameter<T, R> param,
             final URLParameter keyAndValue )
     {
         return with( param, param.fromURLParameter( keyAndValue ) );
@@ -128,18 +128,18 @@ public final class GenericBuilder
 
     /**
      * Parses the specified URL, with the specified parameters, to return a
-     * GenericBuilder holding the values parsed from the URL.
+     * ParameterMap holding the values parsed from the URL.
      * 
      * @param url
      *        the URL to parse.
      * @param params
      *        the parameters of interest.
-     * @return a GenericBuilder holding the values parsed from the URL.
+     * @return a ParameterMap holding the values parsed from the URL.
      */
-    public static GenericBuilder fromURL( final String url,
+    public static ParameterMap fromURL( final String url,
             final List<? extends Parameter<?, ?>> params )
     {
-        GenericBuilder builder = new GenericBuilder();
+        ParameterMap parameterMap = new ParameterMap();
         final List<URLParameter> parts = URLExtractor.nameValuePairs( url );
 
         for ( final URLParameter part : parts )
@@ -148,12 +148,12 @@ public final class GenericBuilder
             {
                 if ( part.name.startsWith( param.getName() ) )
                 {
-                    builder = builder.withFromString( param, part );
+                    parameterMap = parameterMap.withFromString( param, part );
                 }
             }
         }
 
-        return builder;
+        return parameterMap;
     }
 
     /**
@@ -178,7 +178,7 @@ public final class GenericBuilder
 
     /**
      * Parses each of the specified Strings and gives it to the corresponding
-     * parameter, returning a GenericBuilder holding the parsed values.
+     * parameter, returning a ParameterMap holding the parsed values.
      * 
      * @param params
      *        the parameters of interest, corresponding with the strings
@@ -186,20 +186,20 @@ public final class GenericBuilder
      * @param strings
      *        the Strings of interest, corresponding with the params parameter
      *        by index.
-     * @return a GenericBuilder holding the parsed values.
+     * @return a ParameterMap holding the parsed values.
      */
-    public static GenericBuilder fromStrings(
-            final List<Parameter<?, ?>> params, final List<String> strings )
+    public static ParameterMap fromStrings( final List<Parameter<?, ?>> params,
+            final List<String> strings )
     {
-        GenericBuilder builder = new GenericBuilder();
+        ParameterMap parameterMap = new ParameterMap();
 
         for ( final Pair<Parameter<?, ?>, String> pair : Lists.zip( params,
                 strings ) )
         {
-            builder = builder.withFromString( pair.first(), new URLParameter(
+            parameterMap = parameterMap.withFromString( pair.first(), new URLParameter(
                     pair.first().getName(), pair.second() ) );
         }
 
-        return builder;
+        return parameterMap;
     }
 }

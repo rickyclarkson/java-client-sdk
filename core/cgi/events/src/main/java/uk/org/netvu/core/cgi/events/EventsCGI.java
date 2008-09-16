@@ -8,9 +8,9 @@ import java.util.List;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Format;
-import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.Validator;
 
 /**
@@ -103,7 +103,7 @@ public final class EventsCGI
      */
     public static final class Builder
     {
-        private GenericBuilder real = new GenericBuilder(
+        private ParameterMap real = new ParameterMap(
                 Validator.mutuallyExclusive( exclusiveParams ) );
 
         /**
@@ -254,11 +254,11 @@ public final class EventsCGI
         }
     }
 
-    private final GenericBuilder builder;
+    private final ParameterMap parameterMap;
 
-    private EventsCGI( final GenericBuilder builder )
+    private EventsCGI( final ParameterMap parameterMap )
     {
-        this.builder = builder;
+        this.parameterMap = parameterMap;
     }
 
     /**
@@ -268,7 +268,7 @@ public final class EventsCGI
      */
     public int getTime()
     {
-        return builder.get( timeParam );
+        return parameterMap.get( timeParam );
     }
 
     /**
@@ -278,7 +278,7 @@ public final class EventsCGI
      */
     public int getRange()
     {
-        return builder.get( rangeParam );
+        return parameterMap.get( rangeParam );
     }
 
     /**
@@ -288,7 +288,7 @@ public final class EventsCGI
      */
     public Format getFormat()
     {
-        return builder.get( formatParam );
+        return parameterMap.get( formatParam );
     }
 
     /**
@@ -299,7 +299,7 @@ public final class EventsCGI
      */
     public int getMaxLength()
     {
-        return builder.get( lengthParam );
+        return parameterMap.get( lengthParam );
     }
 
     /**
@@ -309,7 +309,7 @@ public final class EventsCGI
      */
     public String getText()
     {
-        return builder.get( textParam );
+        return parameterMap.get( textParam );
     }
 
     /**
@@ -319,7 +319,7 @@ public final class EventsCGI
      */
     public long getCamMask()
     {
-        return builder.get( camMaskParam );
+        return parameterMap.get( camMaskParam );
     }
 
     /**
@@ -329,7 +329,7 @@ public final class EventsCGI
      */
     public int getAlarmMask()
     {
-        return builder.get( alarmMaskParam );
+        return parameterMap.get( alarmMaskParam );
     }
 
     /**
@@ -339,7 +339,7 @@ public final class EventsCGI
      */
     public long getVmdMask()
     {
-        return builder.get( vmdMaskParam );
+        return parameterMap.get( vmdMaskParam );
     }
 
     /**
@@ -349,7 +349,7 @@ public final class EventsCGI
      */
     public int getGpsMask()
     {
-        return builder.get( gpsMaskParam );
+        return parameterMap.get( gpsMaskParam );
     }
 
     /**
@@ -359,7 +359,7 @@ public final class EventsCGI
      */
     public int getSysMask()
     {
-        return builder.get( sysMaskParam );
+        return parameterMap.get( sysMaskParam );
     }
 
     /**
@@ -377,7 +377,7 @@ public final class EventsCGI
             throw new IllegalArgumentException();
         }
 
-        return new EventsCGI( GenericBuilder.fromURL( string, params ) );
+        return new EventsCGI( ParameterMap.fromURL( string, params ) );
     }
 
     /**
@@ -387,8 +387,8 @@ public final class EventsCGI
     @Override
     public String toString()
     {
-        final String theRest = builder.toURLParameters( Lists.remove( params,
-                formatParam ) );
+        final String theRest = parameterMap.toURLParameters( Lists.remove(
+                params, formatParam ) );
 
         return "/events.cgi?format=" + getFormat()
                 + ( theRest.length() == 0 ? "" : "&" ) + theRest;

@@ -3,16 +3,16 @@ package uk.org.netvu.core.cgi.common;
 import java.util.List;
 
 /**
- * An object that can identify whether a GenericBuilder is valid.
+ * An object that can identify whether a ParameterMap is valid.
  */
 public abstract class Validator
 {
     /**
-     * @param builder
-     *        the GenericBuilder to check.
-     * @return true if the GenericBuilder is valid, false otherwise.
+     * @param parameterMap
+     *        the ParameterMap to check.
+     * @return true if the ParameterMap is valid, false otherwise.
      */
-    public abstract boolean isValid( GenericBuilder builder );
+    public abstract boolean isValid( ParameterMap parameterMap );
 
     /**
      * A convenience method that produces a Validator that ensures that only one
@@ -29,12 +29,13 @@ public abstract class Validator
         return new Validator()
         {
             @Override
-            public boolean isValid( final GenericBuilder builder )
+            public boolean isValid( final ParameterMap parameterMap )
             {
                 int count = 0;
                 for ( final Parameter<?, ?> exclusiveParameter : exclusiveParameters )
                 {
-                    count += builder.isDefault( exclusiveParameter ) ? 0 : 1;
+                    count += parameterMap.isDefault( exclusiveParameter ) ? 0
+                            : 1;
                 }
 
                 return count < 2;

@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.netvu.core.cgi.common.Conversion;
-import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.ReversibleReplace;
 import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.URLBuilder;
@@ -46,28 +46,28 @@ public final class Connection
         }
     };
 
-    private final GenericBuilder builder;
+    private final ParameterMap parameterMap;
 
     /**
      * Constructs a Connection.
      */
     public Connection()
     {
-        this( new GenericBuilder( new Validator()
+        this( new ParameterMap( new Validator()
         {
             @Override
-            public boolean isValid( final GenericBuilder builder )
+            public boolean isValid( final ParameterMap parameterMap )
             {
-                return builder.isDefault( camParam ) ? true
-                        : builder.isDefault( seqParam )
-                                && builder.isDefault( dwellParam );
+                return parameterMap.isDefault( camParam ) ? true
+                        : parameterMap.isDefault( seqParam )
+                                && parameterMap.isDefault( dwellParam );
             }
         } ) );
     }
 
-    private Connection( final GenericBuilder builder )
+    private Connection( final ParameterMap parameterMap )
     {
-        this.builder = builder;
+        this.parameterMap = parameterMap;
     }
 
     /**
@@ -80,7 +80,7 @@ public final class Connection
      */
     public Connection slaveIP( final String slaveIP )
     {
-        return new Connection( builder.with( slaveIPParam, slaveIP ) );
+        return new Connection( parameterMap.with( slaveIPParam, slaveIP ) );
     }
 
     /**
@@ -93,7 +93,7 @@ public final class Connection
      */
     public Connection seq( final int seq )
     {
-        return new Connection( builder.with( seqParam, seq ) );
+        return new Connection( parameterMap.with( seqParam, seq ) );
     }
 
     /**
@@ -106,7 +106,7 @@ public final class Connection
      */
     public Connection dwell( final int dwell )
     {
-        return new Connection( builder.with( dwellParam, dwell ) );
+        return new Connection( parameterMap.with( dwellParam, dwell ) );
     }
 
     /**
@@ -119,7 +119,7 @@ public final class Connection
      */
     public Connection cam( final int cam )
     {
-        return new Connection( builder.with( camParam, cam ) );
+        return new Connection( parameterMap.with( camParam, cam ) );
     }
 
     /**
@@ -132,7 +132,8 @@ public final class Connection
      */
     public Connection audio( final int audioChannel )
     {
-        return new Connection( builder.with( audioChannelParam, audioChannel ) );
+        return new Connection( parameterMap.with( audioChannelParam,
+                audioChannel ) );
     }
 
     private static final ReversibleReplace replacer = Strings.reversibleReplace(
@@ -143,7 +144,7 @@ public final class Connection
         @Override
         public String convert( final Connection connection )
         {
-            return URLBuilder.encode( replacer.replace( connection.builder.toURLParameters( params ) ) );
+            return URLBuilder.encode( replacer.replace( connection.parameterMap.toURLParameters( params ) ) );
         }
     }.andThen( Strings.surroundWithQuotes );
 
@@ -154,7 +155,7 @@ public final class Connection
         {
             try
             {
-                return new Connection( GenericBuilder.fromURL(
+                return new Connection( ParameterMap.fromURL(
                         replacer.undo( URLDecoder.decode( urlParameters,
                                 "UTF-8" ) ), params ) );
             }
@@ -173,7 +174,7 @@ public final class Connection
      */
     public String getSlaveIP()
     {
-        return builder.get( slaveIPParam ).get();
+        return parameterMap.get( slaveIPParam ).get();
     }
 
     /**
@@ -184,7 +185,7 @@ public final class Connection
      */
     public int getCam()
     {
-        return builder.get( camParam ).get();
+        return parameterMap.get( camParam ).get();
     }
 
     /**
@@ -195,7 +196,7 @@ public final class Connection
      */
     public int getSeq()
     {
-        return builder.get( seqParam ).get();
+        return parameterMap.get( seqParam ).get();
     }
 
     /**
@@ -206,6 +207,6 @@ public final class Connection
      */
     public int getDwell()
     {
-        return builder.get( dwellParam ).get();
+        return parameterMap.get( dwellParam ).get();
     }
 }

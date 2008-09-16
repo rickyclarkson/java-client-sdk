@@ -3,26 +3,26 @@ package uk.org.netvu.core.cgi.variable;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ParameterMap;
 
 /**
  * Builds and parses variable.cgi URLs.
  */
 public final class VariableCGI
 {
-    private final GenericBuilder builder;
+    private final ParameterMap parameterMap;
 
-    VariableCGI( final GenericBuilder builder )
+    VariableCGI( final ParameterMap parameterMap )
     {
-        if ( builder.get( variableParam ).isNone() )
+        if ( parameterMap.get( variableParam ).isNone() )
         {
             throw new IllegalStateException( variableParam.getName()
                     + " has not been set to a value" );
         }
 
-        this.builder = builder;
+        this.parameterMap = parameterMap;
     }
 
     private static final Parameter<Variable, Option<Variable>> variableParam = Parameter.param(
@@ -45,7 +45,7 @@ public final class VariableCGI
      */
     public static final class Builder
     {
-        GenericBuilder real = new GenericBuilder();
+        ParameterMap real = new ParameterMap();
 
         /**
          * Sets the variable parameter to the specified Variable.
@@ -91,7 +91,7 @@ public final class VariableCGI
      */
     public Variable getVariable()
     {
-        return builder.get( variableParam ).get();
+        return parameterMap.get( variableParam ).get();
     }
 
     /**
@@ -101,13 +101,13 @@ public final class VariableCGI
      */
     public VariableType getType()
     {
-        return builder.get( typeParam );
+        return parameterMap.get( typeParam );
     }
 
     @Override
     public String toString()
     {
-        return "/variable.cgi?" + builder.toURLParameters( params );
+        return "/variable.cgi?" + parameterMap.toURLParameters( params );
     }
 
     /**
@@ -120,6 +120,6 @@ public final class VariableCGI
      */
     public static VariableCGI fromString( final String url )
     {
-        return new VariableCGI( GenericBuilder.fromURL( url, params ) );
+        return new VariableCGI( ParameterMap.fromURL( url, params ) );
     }
 }

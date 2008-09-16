@@ -11,7 +11,7 @@ import java.util.TreeMap;
 import org.junit.Test;
 
 /**
- * Unit tests for GenericBuilder.
+ * Unit tests for ParameterMap.
  */
 public final class GenericBuilderTest
 {
@@ -19,13 +19,13 @@ public final class GenericBuilderTest
             Conversion.<String> identity() );
 
     /**
-     * Tests that a value stored in a GenericBuilder gets converted as per the
+     * Tests that a value stored in a ParameterMap gets converted as per the
      * Parameter's rules.
      */
     @Test
     public void conversion()
     {
-        assertTrue( Integer.parseInt( new GenericBuilder().with( param, "10" ).get(
+        assertTrue( Integer.parseInt( new ParameterMap().with( param, "10" ).get(
                 param ).get() ) == 10 );
     }
 
@@ -36,7 +36,7 @@ public final class GenericBuilderTest
     @Test(expected = IllegalStateException.class)
     public void repeating()
     {
-        new GenericBuilder().with( param, "10" ).with( param, "10" );
+        new ParameterMap().with( param, "10" ).with( param, "10" );
     }
 
     private static final Parameter<Integer, Option<Integer>> time = Parameter.notNegative( Parameter.param(
@@ -51,13 +51,13 @@ public final class GenericBuilderTest
     @Test(expected = IllegalStateException.class)
     public void validatorFail()
     {
-        new GenericBuilder( new Validator()
+        new ParameterMap( new Validator()
         {
             @Override
-            public boolean isValid( final GenericBuilder builder )
+            public boolean isValid( final ParameterMap parameterMap )
             {
-                final Option<Integer> oTime = builder.get( time );
-                final Option<Integer> oRange = builder.get( range );
+                final Option<Integer> oTime = parameterMap.get( time );
+                final Option<Integer> oRange = parameterMap.get( range );
 
                 return oTime.isNone() || oRange.isNone() ? true : oTime.get()
                         + oRange.get() >= 0;
@@ -66,17 +66,17 @@ public final class GenericBuilderTest
     }
 
     /**
-     * Tests that GenericBuilder.isDefault works as specified.
+     * Tests that ParameterMap.isDefault works as specified.
      */
     @Test
     public void testIsDefault()
     {
-        assertTrue( new GenericBuilder().isDefault( time ) );
-        assertFalse( new GenericBuilder().with( time, 40 ).isDefault( time ) );
+        assertTrue( new ParameterMap().isDefault( time ) );
+        assertFalse( new ParameterMap().with( time, 40 ).isDefault( time ) );
     }
 
     /**
-     * Tests that parsing a URL results in a GenericBuilder holding the correct
+     * Tests that parsing a URL results in a ParameterMap holding the correct
      * values.
      */
     @Test
@@ -90,13 +90,13 @@ public final class GenericBuilderTest
             }
         };
 
-        final GenericBuilder builder = GenericBuilder.fromURL(
+        final ParameterMap parameterMap = ParameterMap.fromURL(
                 "time=10&range=40", params );
 
-        assertTrue( builder.get( time ).get() == 10 );
-        assertTrue( builder.get( range ).get() == 40 );
+        assertTrue( parameterMap.get( time ).get() == 10 );
+        assertTrue( parameterMap.get( range ).get() == 40 );
 
-        assertTrue( builder.toURLParameters( params ).equals(
+        assertTrue( parameterMap.toURLParameters( params ).equals(
                 "time=10&range=40" ) );
     }
 
@@ -113,7 +113,7 @@ public final class GenericBuilderTest
                 Conversion.<String> identity(),
                 Conversion.<String, String> throwUnsupportedOperationException() );
 
-        assertTrue( new GenericBuilder().with( sparseIdentity,
+        assertTrue( new ParameterMap().with( sparseIdentity,
                 new ArrayList<Pair<Integer, String>>()
                 {
                     {
@@ -132,7 +132,7 @@ public final class GenericBuilderTest
     }
 
     /**
-     * Tests that GenericBuilder.fromStrings works as specified.
+     * Tests that ParameterMap.fromStrings works as specified.
      */
     @Test
     public void fromStrings()
@@ -150,7 +150,7 @@ public final class GenericBuilderTest
             }
         };
 
-        assertTrue( GenericBuilder.fromStrings( params,
+        assertTrue( ParameterMap.fromStrings( params,
                 Arrays.asList( "John", "Major" ) ).get( surname ).equals(
                 "Major" ) );
 

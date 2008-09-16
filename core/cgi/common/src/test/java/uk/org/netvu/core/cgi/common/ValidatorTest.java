@@ -31,7 +31,7 @@ public class ValidatorTest
     @Test
     public void mutuallyExclusivePass()
     {
-        new GenericBuilder( Validator.mutuallyExclusive( params ) ).with( name,
+        new ParameterMap( Validator.mutuallyExclusive( params ) ).with( name,
                 "bob" );
     }
 
@@ -41,7 +41,7 @@ public class ValidatorTest
     @Test(expected = IllegalStateException.class)
     public void mutuallyExclusiveFail()
     {
-        new GenericBuilder( Validator.mutuallyExclusive( params ) ).with( name,
+        new ParameterMap( Validator.mutuallyExclusive( params ) ).with( name,
                 "bob" ).with( address, "here" );
     }
 }

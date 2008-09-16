@@ -10,7 +10,7 @@ import org.junit.Test;
 /**
  * Tests for the Lists utility class.
  */
-public class IterablesTest
+public class ListsTest
 {
     /**
      * Tests that Lists.remove works as specified.

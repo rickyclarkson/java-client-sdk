@@ -10,10 +10,10 @@ import java.util.Collections;
 import java.util.List;
 
 import uk.org.netvu.core.cgi.common.Conversion;
-import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.Strings;
 
 /**
@@ -69,28 +69,28 @@ public final class EventsCGIResult
         }
     };
 
-    private final GenericBuilder builder;
+    private final ParameterMap parameterMap;
 
     /**
      * Constructs an EventsCGIResult given a Builder that contains all the
      * necessary information.
      * 
      * @param builder
-     *        the Builder to base this EventsCGIResult on.
+     *        the ParameterMap to base this EventsCGIResult on.
      */
-    private EventsCGIResult( final GenericBuilder builder )
+    private EventsCGIResult( final ParameterMap parameterMap )
     {
         for ( final Parameter<?, ? extends Option<?>> param : compulsoryParams )
         {
 
-            if ( builder.get( param ).isNone() )
+            if ( parameterMap.get( param ).isNone() )
             {
                 throw new IllegalStateException( "The parameter " + param
                         + " has not been given a value" );
             }
         }
 
-        this.builder = builder;
+        this.parameterMap = parameterMap;
     }
 
     /**
@@ -99,7 +99,7 @@ public final class EventsCGIResult
      */
     public static final class Builder
     {
-        private GenericBuilder real = new GenericBuilder();
+        private ParameterMap real = new ParameterMap();
 
         /**
          * Adds the system camera number to the builder.
@@ -269,7 +269,7 @@ public final class EventsCGIResult
      */
     public int getCam()
     {
-        return builder.get( camParameter ).get();
+        return parameterMap.get( camParameter ).get();
     }
 
     /**
@@ -279,7 +279,7 @@ public final class EventsCGIResult
      */
     public String getAlarm()
     {
-        return builder.get( alarmParameter ).get();
+        return parameterMap.get( alarmParameter ).get();
     }
 
     /**
@@ -289,7 +289,7 @@ public final class EventsCGIResult
      */
     public int getJulianTime()
     {
-        return builder.get( julianTimeParameter ).get();
+        return parameterMap.get( julianTimeParameter ).get();
     }
 
     /**
@@ -299,7 +299,7 @@ public final class EventsCGIResult
      */
     public int getOffset()
     {
-        return builder.get( offsetParameter ).get();
+        return parameterMap.get( offsetParameter ).get();
     }
 
     /**
@@ -309,7 +309,7 @@ public final class EventsCGIResult
      */
     public String getFile()
     {
-        return builder.get( fileParameter ).get();
+        return parameterMap.get( fileParameter ).get();
     }
 
     /**
@@ -319,7 +319,7 @@ public final class EventsCGIResult
      */
     public boolean isOnDisk()
     {
-        return builder.get( onDiskParameter ).get();
+        return parameterMap.get( onDiskParameter ).get();
     }
 
     /**
@@ -330,7 +330,7 @@ public final class EventsCGIResult
      */
     public int getDuration()
     {
-        return builder.get( durationParameter ).get();
+        return parameterMap.get( durationParameter ).get();
     }
 
     /**
@@ -342,7 +342,7 @@ public final class EventsCGIResult
      */
     public int getPreAlarm()
     {
-        return builder.get( preAlarmParameter ).get();
+        return parameterMap.get( preAlarmParameter ).get();
     }
 
     /**
@@ -354,7 +354,7 @@ public final class EventsCGIResult
      */
     public int getArchive()
     {
-        return builder.get( archiveParameter ).get();
+        return parameterMap.get( archiveParameter ).get();
     }
 
     /**
@@ -364,7 +364,7 @@ public final class EventsCGIResult
      */
     public AlarmType getAlarmType()
     {
-        return builder.get( alarmTypeParameter );
+        return parameterMap.get( alarmTypeParameter );
     }
 
     /**
@@ -375,7 +375,7 @@ public final class EventsCGIResult
      */
     public Status getStatus()
     {
-        return builder.get( statusParameter );
+        return parameterMap.get( statusParameter );
     }
 
     /**
@@ -408,7 +408,7 @@ public final class EventsCGIResult
             params.add( alarmTypeParameter );
         }
 
-        return new EventsCGIResult( GenericBuilder.fromStrings( params,
+        return new EventsCGIResult( ParameterMap.fromStrings( params,
                 Lists.removeIndices( Arrays.asList( values ), 0, 7 ) ) );
     }
 

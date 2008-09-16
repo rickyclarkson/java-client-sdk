@@ -10,9 +10,9 @@ import java.util.List;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Format;
-import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ParameterMap;
 
 /**
  * Builds and parses vparts.cgi requests.
@@ -76,11 +76,11 @@ public final class VPartsCGI
         }
     };
 
-    private final GenericBuilder builder;
+    private final ParameterMap parameterMap;
 
-    private VPartsCGI( final GenericBuilder builder )
+    private VPartsCGI( final ParameterMap parameterMap )
     {
-        this.builder = builder;
+        this.parameterMap = parameterMap;
     }
 
     /**
@@ -88,7 +88,7 @@ public final class VPartsCGI
      */
     public static final class Builder
     {
-        GenericBuilder real = new GenericBuilder();
+        ParameterMap real = new ParameterMap();
 
         /**
          * Constructs a VPartsCGI containing the stored parameters.
@@ -234,7 +234,7 @@ public final class VPartsCGI
      */
     public Mode getMode()
     {
-        return builder.get( modeParam );
+        return parameterMap.get( modeParam );
     }
 
     /**
@@ -244,7 +244,7 @@ public final class VPartsCGI
      */
     public int getTime()
     {
-        return builder.get( timeParam );
+        return parameterMap.get( timeParam );
     }
 
     /**
@@ -254,7 +254,7 @@ public final class VPartsCGI
      */
     public int getRange()
     {
-        return builder.get( rangeParam );
+        return parameterMap.get( rangeParam );
     }
 
     /**
@@ -265,7 +265,7 @@ public final class VPartsCGI
      */
     public int getExpiry()
     {
-        return builder.get( expiryParam );
+        return parameterMap.get( expiryParam );
     }
 
     /**
@@ -276,7 +276,7 @@ public final class VPartsCGI
      */
     public boolean getWatermark()
     {
-        return builder.get( watermarkParam );
+        return parameterMap.get( watermarkParam );
     }
 
     /**
@@ -286,7 +286,7 @@ public final class VPartsCGI
      */
     public int getWatermarkStep()
     {
-        return builder.get( wmarkstepParam );
+        return parameterMap.get( wmarkstepParam );
     }
 
     /**
@@ -296,7 +296,7 @@ public final class VPartsCGI
      */
     public Format getFormat()
     {
-        return builder.get( formatParam );
+        return parameterMap.get( formatParam );
     }
 
     /**
@@ -306,7 +306,7 @@ public final class VPartsCGI
      */
     public int getListlength()
     {
-        return builder.get( listlengthParam );
+        return parameterMap.get( listlengthParam );
     }
 
     /**
@@ -316,14 +316,17 @@ public final class VPartsCGI
      */
     public DirectoryPathFormat getPathstyle()
     {
-        return builder.get( pathstyleParam );
+        return parameterMap.get( pathstyleParam );
     }
 
     @Override
     public String toString()
     {
-        return "/vparts.cgi?format=" + builder.get( formatParam ) + "&"
-                + builder.toURLParameters( Lists.remove( params, formatParam ) );
+        return "/vparts.cgi?format="
+                + parameterMap.get( formatParam )
+                + "&"
+                + parameterMap.toURLParameters( Lists.remove( params,
+                        formatParam ) );
     }
 
     /**
@@ -335,6 +338,6 @@ public final class VPartsCGI
      */
     public static VPartsCGI fromString( final String url )
     {
-        return new VPartsCGI( GenericBuilder.fromURL( url, params ) );
+        return new VPartsCGI( ParameterMap.fromURL( url, params ) );
     }
 }

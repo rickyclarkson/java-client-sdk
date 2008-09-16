@@ -6,9 +6,9 @@ import static uk.org.netvu.core.cgi.common.Parameter.param;
 import java.util.ArrayList;
 
 import uk.org.netvu.core.cgi.common.Conversion;
-import uk.org.netvu.core.cgi.common.GenericBuilder;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.URLParameter;
 
@@ -52,11 +52,11 @@ public class VPartsCGIResult
         }
     };
 
-    private final GenericBuilder builder;
+    private final ParameterMap parameterMap;
 
-    private VPartsCGIResult( final GenericBuilder builder )
+    private VPartsCGIResult( final ParameterMap parameterMap )
     {
-        this.builder = builder;
+        this.parameterMap = parameterMap;
     }
 
     /**
@@ -64,7 +64,7 @@ public class VPartsCGIResult
      */
     public static final class Builder
     {
-        GenericBuilder real = new GenericBuilder();
+        ParameterMap real = new ParameterMap();
 
         /**
          * Sets the index of the result in the result set.
@@ -201,7 +201,7 @@ public class VPartsCGIResult
      */
     public int getIndex()
     {
-        return builder.get( indexParam ).get();
+        return parameterMap.get( indexParam ).get();
     }
 
     /**
@@ -211,7 +211,7 @@ public class VPartsCGIResult
      */
     public String getDirectory()
     {
-        return builder.get( directoryParam ).get();
+        return parameterMap.get( directoryParam ).get();
     }
 
     /**
@@ -221,7 +221,7 @@ public class VPartsCGIResult
      */
     public String getFilename()
     {
-        return builder.get( filenameParam ).get();
+        return parameterMap.get( filenameParam ).get();
     }
 
     /**
@@ -231,7 +231,7 @@ public class VPartsCGIResult
      */
     public int getStartTime()
     {
-        return builder.get( startTimeParam ).get();
+        return parameterMap.get( startTimeParam ).get();
     }
 
     /**
@@ -241,7 +241,7 @@ public class VPartsCGIResult
      */
     public int getEndTime()
     {
-        return builder.get( endTimeParam ).get();
+        return parameterMap.get( endTimeParam ).get();
     }
 
     /**
@@ -252,7 +252,7 @@ public class VPartsCGIResult
      */
     public int getExpiryTime()
     {
-        return builder.get( expiryTimeParam ).get();
+        return parameterMap.get( expiryTimeParam ).get();
     }
 
     /**
@@ -262,7 +262,7 @@ public class VPartsCGIResult
      */
     public int getNumberOfEntries()
     {
-        return builder.get( numberOfEntriesParam ).get();
+        return parameterMap.get( numberOfEntriesParam ).get();
     }
 
     /**
@@ -272,7 +272,7 @@ public class VPartsCGIResult
      */
     public int getCamMask()
     {
-        return builder.get( camMaskParam ).get();
+        return parameterMap.get( camMaskParam ).get();
     }
 
     /**
@@ -288,7 +288,7 @@ public class VPartsCGIResult
 
         for ( final Parameter<?, ? extends Option<?>> param : params )
         {
-            result.append( builder.get( param ).get() ).append( ", " );
+            result.append( parameterMap.get( param ).get() ).append( ", " );
         }
 
         return result.substring( 0, result.length() - 2 );
@@ -305,21 +305,21 @@ public class VPartsCGIResult
      */
     public static VPartsCGIResult fromCSV( final String csv )
     {
-        GenericBuilder builder = new GenericBuilder();
+        ParameterMap parameterMap = new ParameterMap();
         final String[] elements = Strings.split( csv );
         int a = 0;
         for ( final Parameter<?, ?> param : params )
         {
-            builder = hack( builder, param, elements[a] );
+            parameterMap = hack( parameterMap, param, elements[a] );
             a++;
         }
-        return new VPartsCGIResult( builder );
+        return new VPartsCGIResult( parameterMap );
     }
 
-    private static <T, R> GenericBuilder hack( final GenericBuilder builder,
+    private static <T, R> ParameterMap hack( final ParameterMap parameterMap,
             final Parameter<T, R> param, final String s )
     {
-        return builder.with( param, param.fromURLParameter( new URLParameter(
+        return parameterMap.with( param, param.fromURLParameter( new URLParameter(
                 param.getName(), s ) ) );
     }
 }
