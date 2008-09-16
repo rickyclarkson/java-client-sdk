@@ -15,7 +15,7 @@ public class AlarmTypeTest
     @Test
     public void testValidFind()
     {
-        assertTrue( AlarmType.find( 4 ).value == 4 );
+        assertTrue( EventsCGIResult.AlarmType.find( 4 ).value == 4 );
     }
 
     /**
@@ -25,7 +25,7 @@ public class AlarmTypeTest
     @Test(expected = IllegalArgumentException.class)
     public void testMixedFind()
     {
-        AlarmType.find( 3 );
+        EventsCGIResult.AlarmType.find( 3 );
     }
 
     /**
@@ -35,7 +35,7 @@ public class AlarmTypeTest
     @Test(expected = IllegalArgumentException.class)
     public void testNegativeFind()
     {
-        AlarmType.find( -1 );
+        EventsCGIResult.AlarmType.find( -1 );
     }
 
     /**
@@ -45,6 +45,6 @@ public class AlarmTypeTest
     @Test(expected = IllegalArgumentException.class)
     public void testLargeFind()
     {
-        AlarmType.find( 256 );
+        EventsCGIResult.AlarmType.find( 256 );
     }
 }

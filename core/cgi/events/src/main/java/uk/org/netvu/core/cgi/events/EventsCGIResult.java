@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Lists;
@@ -271,6 +272,81 @@ public final class EventsCGIResult
     }
 
     /**
+     * An enum consisting of various states a database record can be in.
+     */
+    public enum Status
+    {
+        /**
+         * The status was not included in the data.
+         */
+        NONE( 0 ),
+        /**
+         * A handle for writing the record has been allocated, and a timestamp
+         * for it set.
+         */
+        PENDING( 1 ),
+        /**
+         * The initial data in the record has been written, but there may be
+         * more data to write.
+         */
+        NEW( 2 ),
+        /**
+         * All data has been written or updated.
+         */
+        CLOSED( 4 ),
+        /**
+         * The data for this record has been archived to FTP server.
+         */
+        ARCHIVED( 8 );
+
+        /**
+         * The numeric value associated with this state.
+         */
+        public final int value;
+
+        Status( final int value )
+        {
+            this.value = value;
+        }
+
+        /**
+         * Finds the Status whose numeric value is the same as the value
+         * parameter.
+         * 
+         * @param value
+         *        the numeric value to search for.
+         * @return the Status whose numeric value is the same as the value
+         *         parameter.
+         */
+        public static Status find( final int value )
+        {
+            for ( final Status status : Status.values() )
+            {
+                if ( status.value == value )
+                {
+                    return status;
+                }
+            }
+
+            throw new IllegalArgumentException( String.valueOf( value ) );
+        }
+
+        static Status oneOf( final Random random )
+        {
+            return Status.values()[random.nextInt( Status.values().length )];
+        }
+
+        static final Conversion<String, Status> fromString = new Conversion<String, Status>()
+        {
+            @Override
+            public Status convert( final String s )
+            {
+                return find( Integer.parseInt( s ) );
+            }
+        };
+    }
+
+    /**
      * The system camera number.
      * 
      * @return the system camera number.
@@ -449,4 +525,106 @@ public final class EventsCGIResult
     {
         return toCSV( 0 );
     }
+
+    /**
+     * The type of alarm that caused an event.
+     */
+    public enum AlarmType
+    {
+        /**
+         * No alarm type was specified in the data.
+         */
+        NONE( 0 ),
+
+        /**
+         * An alarm contact and/or a VMD event.
+         */
+        ZONE( 1 ),
+
+        /**
+         * A VMD event.
+         */
+        VMD( 2 ),
+
+        /**
+         * A GPS event.
+         */
+        GPS( 4 ),
+
+        /**
+         * A system event, e.g., startup, set or unset.
+         */
+        SYSTEM( 8 ),
+
+        /**
+         * A dummy alarm type used for CGI parameters - never appears in a
+         * database record.
+         */
+        // TODO decide whether to make this NONE
+        CAMERA( 16 ),
+
+        /**
+         * Used for activity search, never appears in a database record.
+         */
+        // TODO decide whether to make this NONE
+        ACTIVITY( 32 ),
+
+        /**
+         * Used for text-in-image keyword search, never appears in a database
+         * record.
+         */
+        // TODO decide whether to make this NONE.
+        KEYWORD( 64 );
+
+        /**
+         * The numeric value associated with this state.
+         */
+        public final int value;
+
+        AlarmType( final int value )
+        {
+            this.value = value;
+        }
+
+        /**
+         * Finds the AlarmType whose numeric value is the same as the value
+         * parameter.
+         * 
+         * @param value
+         *        the numeric value to search for.
+         * @return the AlarmType whose numeric value is the same as the value
+         *         parameter.
+         * @throws IllegalArgumentException
+         *         if the value parameter does not match any AlarmType.
+         */
+        public static AlarmType find( final int value )
+                throws IllegalArgumentException
+        {
+            for ( final AlarmType type : AlarmType.values() )
+            {
+                if ( type.value == value )
+                {
+                    return type;
+                }
+            }
+
+            throw new IllegalArgumentException( value
+                    + " is not a valid alarm code" );
+        }
+
+        static AlarmType oneOf( final Random random )
+        {
+            return AlarmType.values()[random.nextInt( AlarmType.values().length )];
+        }
+
+        static final Conversion<String, AlarmType> fromString = new Conversion<String, AlarmType>()
+        {
+            @Override
+            public AlarmType convert( final String t )
+            {
+                return find( Integer.parseInt( t ) );
+            }
+        };
+    }
+
 }

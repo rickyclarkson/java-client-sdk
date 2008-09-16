@@ -78,8 +78,8 @@ public class EventsCGIResultTest
                         strings.next() ).julianTime( julianTime ).offset(
                         random.nextInt( 180000 ) - 90000 ).preAlarm(
                         nonNegatives.next() ).onDisk( random.nextBoolean() ).status(
-                        Status.oneOf( random ) ).alarmType(
-                        AlarmType.oneOf( random ) );
+                        EventsCGIResult.Status.oneOf( random ) ).alarmType(
+                        EventsCGIResult.AlarmType.oneOf( random ) );
             }
 
             public void remove()
@@ -180,8 +180,8 @@ public class EventsCGIResultTest
     {
         assertTrue( new EventsCGIResult.Builder().cam( 1 ).alarm( "test" ).julianTime(
                 100 ).offset( 5 ).file( "ignore" ).onDisk( true ).duration( 40 ).preAlarm(
-                1 ).archive( 1 ).status( Status.NONE ).alarmType(
-                AlarmType.CAMERA ).build().getStatus() == Status.NONE );
+                1 ).archive( 1 ).status( EventsCGIResult.Status.NONE ).alarmType(
+                EventsCGIResult.AlarmType.CAMERA ).build().getStatus() == EventsCGIResult.Status.NONE );
     }
 
     /**

@@ -15,7 +15,7 @@ public class StatusTest
     @Test
     public void testValidFind()
     {
-        assertTrue( Status.find( 4 ).value == 4 );
+        assertTrue( EventsCGIResult.Status.find( 4 ).value == 4 );
     }
 
     /**
@@ -25,7 +25,7 @@ public class StatusTest
     @Test(expected = IllegalArgumentException.class)
     public void testMixedFind()
     {
-        Status.find( 3 );
+        EventsCGIResult.Status.find( 3 );
     }
 
     /**
@@ -35,7 +35,7 @@ public class StatusTest
     @Test(expected = IllegalArgumentException.class)
     public void testNegativeFind()
     {
-        Status.find( -1 );
+        EventsCGIResult.Status.find( -1 );
     }
 
     /**
@@ -45,6 +45,6 @@ public class StatusTest
     @Test(expected = IllegalArgumentException.class)
     public void testLargeFind()
     {
-        Status.find( 256 );
+        EventsCGIResult.Status.find( 256 );
     }
 }
