@@ -38,16 +38,6 @@ public class ConversionTest
     }
 
     /**
-     * Tests that Conversion.throwUnsupportedOperationException() actually
-     * throws an UnsupportedOperationException when it receives data.
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public void throwUnsupportedOperationException()
-    {
-        Conversion.throwUnsupportedOperationException().convert( new Object() );
-    }
-
-    /**
      * Tests that Conversion.stringToBoolean correctly converts Strings to
      * booleans.
      */
@@ -64,7 +54,7 @@ public class ConversionTest
     @Test
     public void stringToInt()
     {
-        assertTrue( Conversion.stringToInt.convert( "50" ) == 50 );
+        assertTrue( Conversion.stringToInt.convert( "50" ).get() == 50 );
     }
 
     /**

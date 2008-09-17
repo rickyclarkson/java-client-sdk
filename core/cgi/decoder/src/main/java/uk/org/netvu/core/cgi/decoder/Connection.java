@@ -1,6 +1,6 @@
 package uk.org.netvu.core.cgi.decoder;
 
-import static uk.org.netvu.core.cgi.common.Parameter.param;
+import static uk.org.netvu.core.cgi.common.Parameter.param2;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -22,19 +22,22 @@ import uk.org.netvu.core.cgi.common.Validator;
  */
 public final class Connection
 {
-    private static final Parameter<String, Option<String>> SLAVE_IP_PARAM = param(
+    private static final Parameter<String, Option<String>> SLAVE_IP_PARAM = param2(
             "slaveip", "The source video server address",
-            Conversion.<String> identity() );
-    private static final Parameter<Integer, Option<Integer>> SEQ_PARAM = param(
-            "seq", "Bitmask of source cameras", Conversion.hexStringToInt );
-    private static final Parameter<Integer, Option<Integer>> DWELL_PARAM = param(
+            Option.<String> some() );
+    private static final Parameter<Integer, Option<Integer>> SEQ_PARAM = param2(
+            "seq", "Bitmask of source cameras",
+            Option.someRef( Conversion.hexStringToInt ) );
+    private static final Parameter<Integer, Option<Integer>> DWELL_PARAM = param2(
             "dwell", "The time to dwell on each camera in the seq bitmask",
             Conversion.stringToInt );
-    private static final Parameter<Integer, Option<Integer>> CAM = param(
+    private static final Parameter<Integer, Option<Integer>> CAM = param2(
             "cam", "The source camera", Conversion.stringToInt );
-    private static final Parameter<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = param(
+    private static final Parameter<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = param2(
             "audio", "The source audio channel", Conversion.stringToInt );
 
+    // this is an anonymous intialiser - it is creating a new ArrayList and
+    // adding values to it inline.
     private static final List<Parameter<?, ? extends Option<?>>> params = new ArrayList<Parameter<?, ? extends Option<?>>>()
     {
         {

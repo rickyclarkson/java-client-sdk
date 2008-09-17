@@ -1,6 +1,6 @@
 package uk.org.netvu.core.cgi.decoder;
 
-import static uk.org.netvu.core.cgi.common.Parameter.param;
+import static uk.org.netvu.core.cgi.common.Option.someRef;
 import static uk.org.netvu.core.cgi.common.Parameter.sparseArrayParam;
 
 import java.util.ArrayList;
@@ -26,56 +26,43 @@ import uk.org.netvu.core.cgi.common.URLBuilder;
  */
 public final class DecoderCGI
 {
-    private static final Parameter<Persistence, Persistence> PERSISTENCE = param(
+    private static final Parameter<Persistence, Persistence> PERSISTENCE = Parameter.param3(
             "persistence",
             "Whether to make the changes persistent (survive reboot) or temporary",
-            Persistence.TEMPORARY,
-            Conversion.<String, Persistence> throwUnsupportedOperationException() );
+            Persistence.TEMPORARY, Option.<String, Persistence> noneRef() );
 
     private static final Parameter<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = sparseArrayParam(
             "connections",
             "The differences to make to the connections system variable",
-            Connection.fromURL, Connection.urlEncode );
+            someRef( Connection.fromURL ), someRef( Connection.urlEncode ) );
 
     private static final Parameter<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> LAYOUTS = sparseArrayParam(
             "layouts",
             "The differences to make to the layouts system variable",
-            Layout.fromURL, Layout.urlEncode );
+            someRef( Layout.fromURL ), someRef( Layout.urlEncode ) );
 
-    private static final Parameter<String[], Option<String[]>> OUTPUT_TITLES = param(
+    private static final Parameter<String[], Option<String[]>> OUTPUT_TITLES = Parameter.param1(
             "output_titles", "The titles to give to each output channel",
-            Conversion.<String, String[]> throwUnsupportedOperationException(),
-            new Conversion<String[], String>()
+            Option.<String, String[]> noneRef(),
+            someRef( new Conversion<String[], String>()
             {
                 @Override
                 public String convert( final String[] array )
                 {
                     return Lists.reduce( Lists.map( Arrays.asList( array ),
                             Strings.surroundWithQuotes ),
-                            new Reduction<String, String>()
-                            {
-                                @Override
-                                public String reduce( final String value,
-                                        final String accumulator )
-                                {
-                                    return accumulator + ',' + value;
-                                }
-                            } );
+                            Reduction.intersperseWith( "," ) );
                 }
-            } );
+            } ) );
 
     private static final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = sparseArrayParam(
             "commands",
             "The differences to make to the commands system variable",
-            Conversion.<String> identity(), new Conversion<String, String>()
-            {
-                @Override
-                public String convert( final String s )
-                {
-                    return Strings.surroundWithQuotes.convert( URLBuilder.encode( s ) );
-                }
-            } );
+            someRef( Conversion.<String> identity() ),
+            someRef( URLBuilder.encode.andThen( Strings.surroundWithQuotes ) ) );
 
+    // this is an anonymous intialiser - it is creating a new ArrayList and
+    // adding values to it inline.
     private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
     {
         {

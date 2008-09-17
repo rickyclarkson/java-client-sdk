@@ -25,13 +25,15 @@ public final class VariableCGI
         this.parameterMap = parameterMap;
     }
 
-    private static final Parameter<Variable, Option<Variable>> VARIABLE = Parameter.param(
+    private static final Parameter<Variable, Option<Variable>> VARIABLE = Parameter.param2(
             "variable", "Name of the variable", Variable.fromString );
 
-    private static final Parameter<VariableType, VariableType> TYPE = Parameter.param(
+    private static final Parameter<VariableType, VariableType> TYPE = Parameter.param3(
             "type", "Specifies return type of variable", VariableType.HTTP,
             VariableType.fromString );
 
+    // this is an anonymous intialiser - it is creating a new ArrayList and
+    // adding values to it inline.
     private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
     {
         {

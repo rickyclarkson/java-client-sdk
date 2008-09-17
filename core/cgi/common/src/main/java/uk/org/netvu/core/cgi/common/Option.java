@@ -65,6 +65,18 @@ public abstract class Option<T>
         {
             return new Some<U>( conversion.convert( t ) );
         }
+
+        @Override
+        public void then( final Action<T> action )
+        {
+            action.invoke( t );
+        }
+
+        @Override
+        public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
+        {
+            return conversion.convert( t );
+        }
     }
 
     /**
@@ -99,6 +111,17 @@ public abstract class Option<T>
         {
             return new None<U>();
         }
+
+        @Override
+        public void then( final Action<T> action )
+        {
+        }
+
+        @Override
+        public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
+        {
+            return new Option.None<U>();
+        }
     }
 
     /**
@@ -117,4 +140,53 @@ public abstract class Option<T>
     public abstract T get();
 
     public abstract <U> Option<U> map( Conversion<T, U> conversion );
+
+    public static <T, U> Conversion<T, Option<U>> noneRef()
+    {
+        return new Conversion<T, Option<U>>()
+        {
+            @Override
+            public Option<U> convert( final T t )
+            {
+                return new Option.None<U>();
+            }
+        };
+    }
+
+    public abstract void then( Action<T> action );
+
+    public static <T> Conversion<T, Option<T>> some()
+    {
+        return new Conversion<T, Option<T>>()
+        {
+            @Override
+            public Option<T> convert( final T t )
+            {
+                return new Option.Some<T>( t );
+            }
+
+        };
+    }
+
+    public static <T, U> Conversion<T, Option<U>> someRef(
+            final Conversion<T, U> conversion )
+    {
+        return new Conversion<T, Option<U>>()
+        {
+            @Override
+            public Option<U> convert( final T t )
+            {
+                return new Option.Some<U>( conversion.convert( t ) );
+            }
+        };
+    }
+
+    @Override
+    public String toString()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public abstract <U> Option<U> bind( Conversion<T, Option<U>> conversion );
+
 }

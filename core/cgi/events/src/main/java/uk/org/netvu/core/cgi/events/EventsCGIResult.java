@@ -1,8 +1,10 @@
 package uk.org.netvu.core.cgi.events;
 
+import static uk.org.netvu.core.cgi.common.Option.someRef;
 import static uk.org.netvu.core.cgi.common.Parameter.bound;
 import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
-import static uk.org.netvu.core.cgi.common.Parameter.param;
+import static uk.org.netvu.core.cgi.common.Parameter.param2;
+import static uk.org.netvu.core.cgi.common.Parameter.param3;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,38 +25,40 @@ import uk.org.netvu.core.cgi.common.Strings;
 public final class EventsCGIResult
 {
     private static final Parameter<Integer, Option<Integer>> CAM = bound( 0,
-            64, Parameter.param( "cam", "The system camera number",
+            64, Parameter.param2( "cam", "The system camera number",
                     Conversion.stringToInt ) );
 
-    private static final Parameter<String, Option<String>> ALARM = param(
-            "alarm", "The alarm description.", Conversion.<String> identity() );
+    private static final Parameter<String, Option<String>> ALARM = param2(
+            "alarm", "The alarm description.", Option.<String> some() );
 
-    private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = notNegative( param(
+    private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = notNegative( param2(
             "time", "The Julianised time that the event occurred at",
             Conversion.stringToInt ) );
 
     private static final Parameter<Integer, Option<Integer>> OFFSET = Parameter.bound(
-            -90000, 90000, param( "offset", "", Conversion.stringToInt ) );
+            -90000, 90000, param2( "offset", "", Conversion.stringToInt ) );
 
-    private static final Parameter<String, Option<String>> FILE = param(
-            "file", "", Conversion.<String> identity() );
+    private static final Parameter<String, Option<String>> FILE = param2(
+            "file", "", Option.<String> some() );
 
-    private static final Parameter<Boolean, Option<Boolean>> ON_DISK = param(
-            "onDisk", "", Conversion.stringToBoolean );
+    private static final Parameter<Boolean, Option<Boolean>> ON_DISK = param2(
+            "onDisk", "", someRef( Conversion.stringToBoolean ) );
 
-    private static final Parameter<Integer, Option<Integer>> DURATION = notNegative( param(
+    private static final Parameter<Integer, Option<Integer>> DURATION = notNegative( param2(
             "duration", "", Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Option<Integer>> PRE_ALARM = notNegative( param(
+    private static final Parameter<Integer, Option<Integer>> PRE_ALARM = notNegative( param2(
             "preAlarm", "", Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Option<Integer>> ARCHIVE = notNegative( param(
+    private static final Parameter<Integer, Option<Integer>> ARCHIVE = notNegative( param2(
             "archive", "", Conversion.stringToInt ) );
-    private static final Parameter<Status, Status> STATUS = param( "status",
+    private static final Parameter<Status, Status> STATUS = param3( "status",
             "", Status.NONE, Status.fromString );
-    private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = param(
+    private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = param3(
             "alarmType", "", AlarmType.NONE, AlarmType.fromString );
 
+    // this is an anonymous intialiser - it is creating a new ArrayList and
+    // adding values to it inline.
     private static final ArrayList<Parameter<?, ? extends Option<?>>> compulsoryParams = new ArrayList<Parameter<?, ? extends Option<?>>>()
     {
         {
@@ -318,17 +322,17 @@ public final class EventsCGIResult
          * @return the Status whose numeric value is the same as the value
          *         parameter.
          */
-        public static Status find( final int value )
+        public static Option<Status> find( final int value )
         {
             for ( final Status status : Status.values() )
             {
                 if ( status.value == value )
                 {
-                    return status;
+                    return new Option.Some<Status>( status );
                 }
             }
 
-            throw new IllegalArgumentException( String.valueOf( value ) );
+            return new Option.None<Status>();
         }
 
         static Status oneOf( final Random random )
@@ -336,10 +340,10 @@ public final class EventsCGIResult
             return Status.values()[random.nextInt( Status.values().length )];
         }
 
-        static final Conversion<String, Status> fromString = new Conversion<String, Status>()
+        static final Conversion<String, Option<Status>> fromString = new Conversion<String, Option<Status>>()
         {
             @Override
-            public Status convert( final String s )
+            public Option<Status> convert( final String s )
             {
                 return find( Integer.parseInt( s ) );
             }
@@ -470,7 +474,7 @@ public final class EventsCGIResult
      *        the comma-separated values.
      * @return an EventsCGIResult containing the parsed values.
      */
-    public static EventsCGIResult fromString( final String line )
+    public static Option<EventsCGIResult> fromString( final String line )
     {
         final String[] values = Strings.split( line );
 
@@ -492,8 +496,16 @@ public final class EventsCGIResult
             params.add( ALARM_TYPE );
         }
 
-        return new EventsCGIResult( ParameterMap.fromStrings( params,
-                Lists.removeIndices( Arrays.asList( values ), 0, 7 ) ) );
+        return ParameterMap.fromStrings( params,
+                Lists.removeIndices( Arrays.asList( values ), 0, 7 ) ).map(
+                new Conversion<ParameterMap, EventsCGIResult>()
+                {
+                    @Override
+                    public EventsCGIResult convert( final ParameterMap map )
+                    {
+                        return new EventsCGIResult( map );
+                    }
+                } );
     }
 
     String toCSV( final int index )
@@ -583,30 +595,18 @@ public final class EventsCGIResult
             this.value = value;
         }
 
-        /**
-         * Finds the AlarmType whose numeric value is the same as the value
-         * parameter.
-         * 
-         * @param value
-         *        the numeric value to search for.
-         * @return the AlarmType whose numeric value is the same as the value
-         *         parameter.
-         * @throws IllegalArgumentException
-         *         if the value parameter does not match any AlarmType.
-         */
-        public static AlarmType find( final int value )
+        public static Option<AlarmType> find( final int value )
                 throws IllegalArgumentException
         {
             for ( final AlarmType type : AlarmType.values() )
             {
                 if ( type.value == value )
                 {
-                    return type;
+                    return new Option.Some<AlarmType>( type );
                 }
             }
 
-            throw new IllegalArgumentException( value
-                    + " is not a valid alarm code" );
+            return new Option.None<AlarmType>();
         }
 
         static AlarmType oneOf( final Random random )
@@ -614,10 +614,10 @@ public final class EventsCGIResult
             return AlarmType.values()[random.nextInt( AlarmType.values().length )];
         }
 
-        static final Conversion<String, AlarmType> fromString = new Conversion<String, AlarmType>()
+        static final Conversion<String, Option<AlarmType>> fromString = new Conversion<String, Option<AlarmType>>()
         {
             @Override
-            public AlarmType convert( final String t )
+            public Option<AlarmType> convert( final String t )
             {
                 return find( Integer.parseInt( t ) );
             }

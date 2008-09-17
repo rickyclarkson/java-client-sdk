@@ -51,7 +51,7 @@ public class IntegrationTests
                     String line;
                     while ( ( line = reader.readLine() ) != null )
                     {
-                        System.out.println( EventsCGIResult.fromString( line ).getAlarm() );
+                        System.out.println( EventsCGIResult.fromString( line ).get().getAlarm() );
                     }
                 }
                 finally

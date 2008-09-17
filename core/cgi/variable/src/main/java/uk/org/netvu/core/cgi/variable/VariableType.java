@@ -1,6 +1,7 @@
 package uk.org.netvu.core.cgi.variable;
 
 import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Option;
 
 /**
  * The return type of the variable.
@@ -17,12 +18,20 @@ public enum VariableType
      */
     INCLUDE;
 
-    static final Conversion<String, VariableType> fromString = new Conversion<String, VariableType>()
+    static final Conversion<String, Option<VariableType>> fromString = new Conversion<String, Option<VariableType>>()
     {
         @Override
-        public VariableType convert( final String t )
+        public Option<VariableType> convert( final String t )
         {
-            return VariableType.valueOf( t.toUpperCase() );
+            try
+            {
+                return new Option.Some<VariableType>(
+                        VariableType.valueOf( t.toUpperCase() ) );
+            }
+            catch ( final IllegalArgumentException exception )
+            {
+                return new Option.None<VariableType>();
+            }
         }
     };
 

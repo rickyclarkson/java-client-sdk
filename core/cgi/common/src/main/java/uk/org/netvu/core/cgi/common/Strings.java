@@ -116,12 +116,7 @@ public class Strings
     public static List<String> splitIgnoringQuotedSections(
             final String string, final char separator )
     {
-        final List<String> results = new ArrayList<String>()
-        {
-            {
-                add( "" );
-            }
-        };
+        final List<String> results = new ArrayList<String>( Arrays.asList( "" ) );
 
         boolean insideQuotes = false;
 

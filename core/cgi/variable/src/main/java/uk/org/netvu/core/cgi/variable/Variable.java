@@ -6,6 +6,7 @@ import static uk.org.netvu.core.cgi.variable.ArrayOrScalar.SCALAR;
 import java.util.regex.Pattern;
 
 import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Option;
 
 /**
  * An enumeration of supported system variables.
@@ -86,12 +87,20 @@ public enum Variable
         this.arrayOrScalar = arrayOrScalar;
     }
 
-    static final Conversion<String, Variable> fromString = new Conversion<String, Variable>()
+    static final Conversion<String, Option<Variable>> fromString = new Conversion<String, Option<Variable>>()
     {
         @Override
-        public Variable convert( final String s )
+        public Option<Variable> convert( final String s )
         {
-            return valueOf( s.replaceAll( Pattern.quote( "[]" ), "" ).toUpperCase() );
+            try
+            {
+                return new Option.Some<Variable>( valueOf( s.replaceAll(
+                        Pattern.quote( "[]" ), "" ).toUpperCase() ) );
+            }
+            catch ( final IllegalArgumentException exception )
+            {
+                return new Option.None<Variable>();
+            }
         }
     };
 

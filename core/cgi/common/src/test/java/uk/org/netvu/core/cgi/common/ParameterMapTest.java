@@ -15,8 +15,8 @@ import org.junit.Test;
  */
 public final class ParameterMapTest
 {
-    private final static Parameter<String, Option<String>> PARAM = Parameter.param(
-            "blah", "blah", Conversion.<String> identity() );
+    private final static Parameter<String, Option<String>> PARAM = Parameter.param2(
+            "blah", "blah", Option.<String> some() );
 
     /**
      * Tests that a value stored in a ParameterMap gets converted as per the
@@ -39,9 +39,9 @@ public final class ParameterMapTest
         new ParameterMap().with( PARAM, "10" ).with( PARAM, "10" );
     }
 
-    private static final Parameter<Integer, Option<Integer>> TIME = Parameter.notNegative( Parameter.param(
+    private static final Parameter<Integer, Option<Integer>> TIME = Parameter.notNegative( Parameter.param2(
             "time", "time since 1970", Conversion.stringToInt ) );
-    private static final Parameter<Integer, Option<Integer>> RANGE = Parameter.param(
+    private static final Parameter<Integer, Option<Integer>> RANGE = Parameter.param2(
             "range", "range to search", Conversion.stringToInt );
 
     /**
@@ -82,6 +82,8 @@ public final class ParameterMapTest
     @Test
     public void fromURL()
     {
+        // this is an anonymous intialiser - it is creating a new ArrayList and
+        // adding values to it inline.
         final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
         {
             {
@@ -108,11 +110,11 @@ public final class ParameterMapTest
     public void sparseArray()
     {
         final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> sparseIdentity = Parameter.sparseArrayParam(
-                "foo",
-                "bar",
-                Conversion.<String> identity(),
-                Conversion.<String, String> throwUnsupportedOperationException() );
+                "foo", "bar", Option.<String> some(),
+                Option.<String, String> noneRef() );
 
+        // these are anonymous intialisers - each creates a new ArrayList and
+        // adds values to it inline.
         assertTrue( new ParameterMap().with( sparseIdentity,
                 new ArrayList<Pair<Integer, String>>()
                 {
@@ -137,11 +139,13 @@ public final class ParameterMapTest
     @Test
     public void fromStrings()
     {
-        final Parameter<String, String> name = Parameter.param( "name", "foo",
-                "Bob", Conversion.<String> identity() );
-        final Parameter<String, String> surname = Parameter.param( "surname",
-                "foo", "Hope", Conversion.<String> identity() );
+        final Parameter<String, String> name = Parameter.param3( "name", "foo",
+                "Bob", Option.<String> some() );
+        final Parameter<String, String> surname = Parameter.param3( "surname",
+                "foo", "Hope", Option.<String> some() );
 
+        // this is an anonymous intialiser - it is creating a new ArrayList and
+        // adding values to it inline.
         final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
         {
             {
@@ -151,7 +155,7 @@ public final class ParameterMapTest
         };
 
         assertTrue( ParameterMap.fromStrings( params,
-                Arrays.asList( "John", "Major" ) ).get( surname ).equals(
+                Arrays.asList( "John", "Major" ) ).get().get( surname ).equals(
                 "Major" ) );
 
     }

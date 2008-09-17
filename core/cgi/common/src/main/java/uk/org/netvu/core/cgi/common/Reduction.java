@@ -22,4 +22,17 @@ public abstract class Reduction<T, R>
      * @return a value of type R.
      */
     public abstract R reduce( T newValue, R original );
+
+    public static final Reduction<String, String> intersperseWith(
+            final String separator )
+    {
+        return new Reduction<String, String>()
+        {
+            @Override
+            public String reduce( final String newValue, final String original )
+            {
+                return original + separator + newValue;
+            }
+        };
+    }
 }

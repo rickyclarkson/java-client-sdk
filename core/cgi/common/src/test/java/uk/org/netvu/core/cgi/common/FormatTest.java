@@ -23,7 +23,7 @@ public class FormatTest
         {
             final Format one = Format.oneOf( random );
             assertTrue( one.toString().equals( one.toString().toLowerCase() ) );
-            assertTrue( Format.fromString.convert( one.toString() ) == one );
+            assertTrue( Format.fromString.convert( one.toString() ).get() == one );
         }
     }
 }

@@ -15,36 +15,34 @@ public class AlarmTypeTest
     @Test
     public void validFind()
     {
-        assertTrue( EventsCGIResult.AlarmType.find( 4 ).value == 4 );
+        assertTrue( EventsCGIResult.AlarmType.find( 4 ).get().value == 4 );
     }
 
     /**
-     * Tests that a combination of two bits fails with an
-     * IllegalArgumentException.
+     * Tests that a combination of two bits gives an Option.None.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void mixedFind()
     {
-        EventsCGIResult.AlarmType.find( 3 );
+        assertTrue( EventsCGIResult.AlarmType.find( 3 ).isNone() );
     }
 
     /**
-     * Tests that negative arguments to find fail with an
-     * IllegalArgumentException.
+     * Tests that negative arguments to find give an Option.None.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void negativeFind()
     {
-        EventsCGIResult.AlarmType.find( -1 );
+        assertTrue( EventsCGIResult.AlarmType.find( -1 ).isNone() );
     }
 
     /**
-     * Tests that larger powers of 2 than there are constants for fail with an
-     * IllegalArgumentException.
+     * Tests that larger powers of 2 than there are constants for give an
+     * Option.None.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void largeFind()
     {
-        EventsCGIResult.AlarmType.find( 256 );
+        assertTrue( EventsCGIResult.AlarmType.find( 256 ).isNone() );
     }
 }

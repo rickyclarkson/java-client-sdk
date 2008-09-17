@@ -120,10 +120,19 @@ public final class ParameterMap
                 : parameter.getDefaultValue();
     }
 
-    private <T, R> ParameterMap withFromString( final Parameter<T, R> param,
-            final URLParameter keyAndValue )
+    private <T, R> Option<ParameterMap> withFromString(
+            final Parameter<T, R> param, final URLParameter keyAndValue )
     {
-        return with( param, param.fromURLParameter( keyAndValue ) );
+        return param.fromURLParameter( keyAndValue ).map(
+                new Conversion<T, ParameterMap>()
+                {
+                    @Override
+                    public ParameterMap convert( final T value )
+                    {
+                        return with( param, value );
+                    }
+
+                } );
     }
 
     /**
@@ -148,7 +157,8 @@ public final class ParameterMap
             {
                 if ( part.name.startsWith( param.getName() ) )
                 {
-                    parameterMap = parameterMap.withFromString( param, part );
+                    parameterMap = parameterMap.withFromString( param, part ).getOrElse(
+                            parameterMap );
                 }
             }
         }
@@ -188,16 +198,24 @@ public final class ParameterMap
      *        by index.
      * @return a ParameterMap holding the parsed values.
      */
-    public static ParameterMap fromStrings( final List<Parameter<?, ?>> params,
-            final List<String> strings )
+    public static Option<ParameterMap> fromStrings(
+            final List<Parameter<?, ?>> params, final List<String> strings )
     {
-        ParameterMap parameterMap = new ParameterMap();
+        Option<ParameterMap> parameterMap = new Option.Some<ParameterMap>(
+                new ParameterMap() );
 
         for ( final Pair<Parameter<?, ?>, String> pair : Lists.zip( params,
                 strings ) )
         {
-            parameterMap = parameterMap.withFromString( pair.first(),
-                    new URLParameter( pair.first().getName(), pair.second() ) );
+            parameterMap = parameterMap.bind( new Conversion<ParameterMap, Option<ParameterMap>>()
+            {
+                @Override
+                public Option<ParameterMap> convert( final ParameterMap map )
+                {
+                    return map.withFromString( pair.first(), new URLParameter(
+                            pair.first().getName(), pair.second() ) );
+                }
+            } );
         }
 
         return parameterMap;

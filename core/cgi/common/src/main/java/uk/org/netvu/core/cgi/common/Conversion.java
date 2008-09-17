@@ -28,12 +28,19 @@ public abstract class Conversion<T, R>
     /**
      * A conversion from Strings to Integers, using Integer.parseInt(String).
      */
-    public static final Conversion<String, Integer> stringToInt = new Conversion<String, Integer>()
+    public static final Conversion<String, Option<Integer>> stringToInt = new Conversion<String, Option<Integer>>()
     {
         @Override
-        public Integer convert( final String t )
+        public Option<Integer> convert( final String t )
         {
-            return Integer.parseInt( t );
+            try
+            {
+                return new Option.Some<Integer>( Integer.parseInt( t ) );
+            }
+            catch ( final NumberFormatException exception )
+            {
+                return new Option.None<Integer>();
+            }
         }
     };
 
@@ -147,29 +154,6 @@ public abstract class Conversion<T, R>
             public V convert( final T t )
             {
                 return conversion.convert( Conversion.this.convert( t ) );
-            }
-        };
-    }
-
-    /**
-     * A conversion that rejects all inputs with an
-     * UnsupportedOperationException.
-     * 
-     * @param <T>
-     *        the input type.
-     * @param <R>
-     *        the output type.
-     * @return a conversion that rejects all inputs with an
-     *         UnsupportedOperationException.
-     */
-    public static <T, R> Conversion<T, R> throwUnsupportedOperationException()
-    {
-        return new Conversion<T, R>()
-        {
-            @Override
-            public R convert( final T t )
-            {
-                throw new UnsupportedOperationException();
             }
         };
     }

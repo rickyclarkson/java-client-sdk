@@ -245,7 +245,7 @@ public class EventsCGITest
 
         for ( final String line : data )
         {
-            assertTrue( compare( line, EventsCGIResult.fromString( line ) ) );
+            assertTrue( compare( line, EventsCGIResult.fromString( line ).get() ) );
         }
     }
 
@@ -268,6 +268,8 @@ public class EventsCGITest
                 final Generator<Integer> nonNegativeInts = Generators.nonNegativeInts( random );
                 final Generator<String> strings = Generators.strings( random );
 
+                // this is an anonymous intialiser - it is creating a new
+                // ArrayList and adding values to it inline.
                 final List<Runnable> methods = new ArrayList<Runnable>()
                 {
                     {

@@ -47,9 +47,10 @@ public abstract class Parameter<T, R>
      * @return a Parameter that can take 0 or 1 values of type T, yielding them
      *         as an Option<T>.
      */
-    public static <T> Parameter<T, Option<T>> param( final String name,
-            final String description, final Conversion<String, T> fromString,
-            final Conversion<T, String> toString )
+    public static <T> Parameter<T, Option<T>> param1( final String name,
+            final String description,
+            final Conversion<String, Option<T>> fromString,
+            final Conversion<T, Option<String>> toString )
     {
         return new Parameter<T, Option<T>>( name, description,
                 new Option.None<T>() )
@@ -66,17 +67,24 @@ public abstract class Parameter<T, R>
             }
 
             @Override
-            public T fromURLParameter( final URLParameter nameAndValue )
+            public Option<T> fromURLParameter( final URLParameter nameAndValue )
             {
                 return createFromURL( fromString, nameAndValue );
             }
 
             @Override
-            public String toURLParameter(
+            public Option<String> toURLParameter(
                     final Pair<String, Option<T>> nameAndValue )
             {
-                return nameAndValue.first() + '='
-                        + toString.convert( nameAndValue.second().get() );
+                return nameAndValue.second().map( new Conversion<T, String>()
+                {
+                    @Override
+                    public String convert( final T value )
+                    {
+                        return nameAndValue.first() + '='
+                                + toString.convert( value ).get();
+                    }
+                } );
             }
         };
 
@@ -98,11 +106,15 @@ public abstract class Parameter<T, R>
      * @return a Parameter that can take 0 or 1 values of type T, yielding them
      *         as an Option<T>.
      */
-    public static <T> Parameter<T, Option<T>> param( final String name,
-            final String description, final Conversion<String, T> fromString )
+    public static <T> Parameter<T, Option<T>> param2( final String name,
+            final String description,
+            final Conversion<String, Option<T>> fromString )
     {
-        return param( name, description, fromString,
-                Conversion.<T> objectToString() );
+        return param1(
+                name,
+                description,
+                fromString,
+                Conversion.<T> objectToString().andThen( Option.<String> some() ) );
     }
 
     /**
@@ -123,9 +135,9 @@ public abstract class Parameter<T, R>
      * @return a Parameter that can take 0 or 1 values of type T, yielding that
      *         value or a default value.
      */
-    public static <T> Parameter<T, T> param( final String name,
+    public static <T> Parameter<T, T> param3( final String name,
             final String description, final T defaultValue,
-            final Conversion<String, T> fromString )
+            final Conversion<String, Option<T>> fromString )
     {
         return new Parameter<T, T>( name, description, defaultValue )
         {
@@ -141,16 +153,17 @@ public abstract class Parameter<T, R>
             }
 
             @Override
-            public T fromURLParameter( final URLParameter nameAndValue )
+            public Option<T> fromURLParameter( final URLParameter nameAndValue )
             {
                 return createFromURL( fromString, nameAndValue );
             }
 
             @Override
-            public String toURLParameter( final Pair<String, T> nameAndValue )
+            public Option<String> toURLParameter(
+                    final Pair<String, T> nameAndValue )
             {
-                return nameAndValue.first() + '='
-                        + URLBuilder.encode( nameAndValue.second().toString() );
+                return new Option.Some<String>( nameAndValue.first() + '='
+                        + URLBuilder.encode( nameAndValue.second().toString() ) );
             }
         };
     }
@@ -176,10 +189,10 @@ public abstract class Parameter<T, R>
      * @return a Parameter that can take 0 or 1 values of type T, yield that
      *         value or a default value.
      */
-    public static <T> Parameter<T, T> param( final String name,
+    public static <T> Parameter<T, T> param4( final String name,
             final String description, final T defaultValue,
-            final Conversion<String, T> fromString,
-            final Conversion<T, String> toString )
+            final Conversion<String, Option<T>> fromString,
+            final Conversion<T, Option<String>> toString )
     {
         return new Parameter<T, T>( name, description, defaultValue )
         {
@@ -195,17 +208,25 @@ public abstract class Parameter<T, R>
             }
 
             @Override
-            public T fromURLParameter( final URLParameter nameAndValue )
+            public Option<T> fromURLParameter( final URLParameter nameAndValue )
             {
                 return createFromURL( fromString, nameAndValue );
             }
 
             @Override
-            public String toURLParameter( final Pair<String, T> nameAndValue )
+            public Option<String> toURLParameter(
+                    final Pair<String, T> nameAndValue )
             {
-                return nameAndValue.first()
-                        + '='
-                        + URLBuilder.encode( toString.convert( nameAndValue.second() ) );
+                return toString.convert( nameAndValue.second() ).map(
+                        new Conversion<String, String>()
+                        {
+                            @Override
+                            public String convert( final String t )
+                            {
+                                return nameAndValue.first() + '='
+                                        + URLBuilder.encode( t );
+                            }
+                        } );
             }
         };
     }
@@ -245,13 +266,15 @@ public abstract class Parameter<T, R>
             }
 
             @Override
-            public Integer fromURLParameter( final URLParameter nameAndValue )
+            public Option<Integer> fromURLParameter(
+                    final URLParameter nameAndValue )
             {
                 return param.fromURLParameter( nameAndValue );
             }
 
             @Override
-            public String toURLParameter( final Pair<String, U> nameAndValue )
+            public Option<String> toURLParameter(
+                    final Pair<String, U> nameAndValue )
             {
                 return param.toURLParameter( nameAndValue );
             }
@@ -290,13 +313,14 @@ public abstract class Parameter<T, R>
             }
 
             @Override
-            public T fromURLParameter( final URLParameter nameAndValue )
+            public Option<T> fromURLParameter( final URLParameter nameAndValue )
             {
                 return param.fromURLParameter( nameAndValue );
             }
 
             @Override
-            public String toURLParameter( final Pair<String, U> nameAndValue )
+            public Option<String> toURLParameter(
+                    final Pair<String, U> nameAndValue )
             {
                 return param.toURLParameter( nameAndValue );
             }
@@ -326,8 +350,8 @@ public abstract class Parameter<T, R>
      */
     public static <T> Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>> sparseArrayParam(
             final String name, final String description,
-            final Conversion<String, T> fromString,
-            final Conversion<T, String> toString )
+            final Conversion<String, Option<T>> fromString,
+            final Conversion<T, Option<String>> toString )
     {
         return new Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>>(
                 name, description, new TreeMap<Integer, T>() )
@@ -348,7 +372,7 @@ public abstract class Parameter<T, R>
             }
 
             @Override
-            public List<Pair<Integer, T>> fromURLParameter(
+            public Option<List<Pair<Integer, T>>> fromURLParameter(
                     final URLParameter keyAndValue )
             {
                 final List<String> values = Strings.splitIgnoringQuotedSections(
@@ -360,33 +384,49 @@ public abstract class Parameter<T, R>
 
                 for ( final String value : values )
                 {
-                    results.add( Pair.pair(
-                            startIndex,
-                            fromString.convert( Strings.removeSurroundingQuotesLeniently( value ) ) ) );
+                    final int hack = startIndex;
+                    fromString.convert(
+                            Strings.removeSurroundingQuotesLeniently( value ) ).then(
+                            new Action<T>()
+                            {
+                                public void invoke( final T t )
+                                {
+                                    results.add( Pair.pair( hack, t ) );
+                                }
+                            } );
 
                     startIndex++;
                 }
 
-                return results;
+                return new Option.Some<List<Pair<Integer, T>>>( results );
             }
 
             @Override
-            public String toURLParameter(
+            public Option<String> toURLParameter(
                     final Pair<String, TreeMap<Integer, T>> nameAndMap )
             {
                 final StringBuilder result = new StringBuilder();
 
                 for ( final Map.Entry<Integer, T> entry : nameAndMap.second().entrySet() )
                 {
-                    if ( result.length() != 0 )
-                    {
-                        result.append( "&" );
-                    }
+                    toString.convert( entry.getValue() ).then(
+                            new Action<String>()
+                            {
+                                public void invoke( final String value )
+                                {
+                                    if ( result.length() != 0 )
+                                    {
+                                        result.append( "&" );
+                                    }
 
-                    result.append( ( name + '[' + entry.getKey() + ']' + "=" + URLBuilder.encode( toString.convert( entry.getValue() ) ) ) );
+                                    result.append( ( name + '['
+                                            + entry.getKey() + ']' + "=" + URLBuilder.encode( value ) ) );
+                                }
+                            } );
+
                 }
 
-                return result.toString();
+                return new Option.Some<String>( result.toString() );
             }
         };
     }
@@ -419,11 +459,12 @@ public abstract class Parameter<T, R>
      */
     public String toURLParameter( final ParameterMap parameterMap )
     {
-        return parameterMap.isDefault( this ) ? "" : toURLParameter( Pair.pair(
-                name, parameterMap.get( this ) ) );
+        return parameterMap.isDefault( this ) ? "" : toURLParameter(
+                Pair.pair( name, parameterMap.get( this ) ) ).get();
     }
 
-    private static <T> T createFromURL( final Conversion<String, T> conversion,
+    private static <T> Option<T> createFromURL(
+            final Conversion<String, Option<T>> conversion,
             final URLParameter pair )
     {
         return conversion.convert( pair.value );
@@ -446,7 +487,7 @@ public abstract class Parameter<T, R>
      *        the URLParameter to parse.
      * @return a value of type T, after parsing.
      */
-    public abstract T fromURLParameter( final URLParameter nameAndValue );
+    public abstract Option<T> fromURLParameter( final URLParameter nameAndValue );
 
     R getDefaultValue()
     {
@@ -455,5 +496,5 @@ public abstract class Parameter<T, R>
 
     abstract R reduce( final T newValue, final R original );
 
-    abstract String toURLParameter( final Pair<String, R> nameAndValue );
+    abstract Option<String> toURLParameter( final Pair<String, R> nameAndValue );
 }

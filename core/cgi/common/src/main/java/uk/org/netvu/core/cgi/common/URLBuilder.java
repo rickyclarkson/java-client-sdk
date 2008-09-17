@@ -26,4 +26,13 @@ public class URLBuilder
             throw null;
         }
     }
+
+    public static final Conversion<String, String> encode = new Conversion<String, String>()
+    {
+        @Override
+        public String convert( final String value )
+        {
+            return encode( value );
+        }
+    };
 }

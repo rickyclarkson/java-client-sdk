@@ -1,6 +1,7 @@
 package uk.org.netvu.core.cgi.vparts;
 
 import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Option;
 
 /**
  * Determines the function of the CGI call.
@@ -26,12 +27,19 @@ public enum Mode
      */
     REINITIALISE;
 
-    static Conversion<String, Mode> fromString = new Conversion<String, Mode>()
+    static Conversion<String, Option<Mode>> fromString = new Conversion<String, Option<Mode>>()
     {
         @Override
-        public Mode convert( final String s )
+        public Option<Mode> convert( final String s )
         {
-            return Mode.valueOf( s.toUpperCase() );
+            try
+            {
+                return new Option.Some<Mode>( Mode.valueOf( s.toUpperCase() ) );
+            }
+            catch ( final IllegalArgumentException exception )
+            {
+                return new Option.None<Mode>();
+            }
         }
     };
 

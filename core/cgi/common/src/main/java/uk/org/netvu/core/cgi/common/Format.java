@@ -40,12 +40,20 @@ public enum Format
      * A conversion that converts Strings to Formats according to the String
      * representation of Formats.
      */
-    public static final Conversion<String, Format> fromString = new Conversion<String, Format>()
+    public static final Conversion<String, Option<Format>> fromString = new Conversion<String, Option<Format>>()
     {
         @Override
-        public Format convert( final String t )
+        public Option<Format> convert( final String t )
         {
-            return Format.valueOf( t.toUpperCase() );
+            try
+            {
+                return new Option.Some<Format>(
+                        Format.valueOf( t.toUpperCase() ) );
+            }
+            catch ( final IllegalArgumentException exception )
+            {
+                return new Option.None<Format>();
+            }
         }
     };
 
