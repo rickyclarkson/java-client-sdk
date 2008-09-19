@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.org.netvu</groupId>
         <artifactId>core-client-development-pom</artifactId>
-        <version>1.5</version>
+        <version>1.6-SNAPSHOT</version>
         <relativePath>../core-client-development-pom</relativePath>
     </parent>
     <artifactId>sdk</artifactId>
