@@ -39,10 +39,15 @@ class SecondTest extends JUnit4(new Specification with Scalacheck {
   "be accepted by EventsCGIResult.AlarmType.find." in {
    Gen.elements(values: _*) must pass { x: Int => AlarmType.find(x).value == x } }
   "be rejected by EventsCGIResult.AlarmType.find." in {
-   Gen.choose(3, 63) suchThat { x: Int => !values.contains(x) } must pass { x: Int => AlarmType.find(x).isNone } }
+   Gen.choose(3, 63) suchThat { x: Int => !values.contains(x) } must pass {
+    x: Int => try { AlarmType.find(x)
+                    false } catch { case e: IllegalArgumentException => true
+                                    case _ => false } } }
   "be rejected by EventsCGIResult.AlarmType.find." in {
    Gen.choose(MIN_INT.toLong, MAX_INT.toLong).map(_.toInt) suchThat (x => x<0 || x>64) must pass {
-    x: Int => AlarmType.find(x).isNone } } } } )
+    x: Int => try { AlarmType.find(x)
+                    false } catch { case e: IllegalArgumentException => true
+                                    case _ => false } } } } } )
 
 import cgi.common.Format
 class EventsCGISecondTest extends JUnit4(new Specification with Scalacheck {
