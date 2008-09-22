@@ -77,15 +77,26 @@ public abstract class Parameter<T, R>
             public Option<String> toURLParameter(
                     final Pair<String, Option<T>> nameAndValue )
             {
-                return nameAndValue.second().map( new Conversion<T, String>()
-                {
-                    @Override
-                    public String convert( final T value )
-                    {
-                        return nameAndValue.first() + '='
-                                + toString.convert( value ).get();
-                    }
-                } );
+                return nameAndValue.second().bind(
+                        new Conversion<T, Option<String>>()
+                        {
+                            @Override
+                            public Option<String> convert( final T value )
+                            {
+                                return toString.convert( value ).map(
+                                        new Conversion<String, String>()
+                                        {
+                                            @Override
+                                            public String convert(
+                                                    final String valuePart )
+                                            {
+                                                return nameAndValue.first()
+                                                        + '=' + valuePart;
+                                            }
+
+                                        } );
+                            }
+                        } );
             }
         };
 
@@ -471,10 +482,10 @@ public abstract class Parameter<T, R>
      * @return this Parameter as a URL parameter, or an empty String if the
      *         value of the parameter is the Parameter's default value.
      */
-    public String toURLParameter( final ParameterMap parameterMap )
+    public Option<String> toURLParameter( final ParameterMap parameterMap )
     {
-        return parameterMap.isDefault( this ) ? "" : toURLParameter(
-                Pair.pair( name, parameterMap.get( this ) ) ).get();
+        return parameterMap.isDefault( this ) ? new Option.Some<String>( "" )
+                : toURLParameter( Pair.pair( name, parameterMap.get( this ) ) );
     }
 
     private static <T> Option<T> createFromURL(

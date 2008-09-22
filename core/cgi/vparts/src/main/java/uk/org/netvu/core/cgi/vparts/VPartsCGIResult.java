@@ -58,6 +58,15 @@ public class VPartsCGIResult
 
     private VPartsCGIResult( final ParameterMap parameterMap )
     {
+        for ( final Parameter<?, ? extends Option<?>> param : params )
+        {
+            if ( parameterMap.get( param ).isNone() )
+            {
+                throw new IllegalStateException( "The parameter "
+                        + param.getName() + " has not been given a value" );
+            }
+        }
+
         builtMap = parameterMap;
     }
 
@@ -183,16 +192,6 @@ public class VPartsCGIResult
          */
         public VPartsCGIResult build()
         {
-            for ( final Parameter<?, ? extends Option<?>> param : params )
-            {
-
-                if ( parameterMap.get( param ).isNone() )
-                {
-                    throw new IllegalStateException( "The parameter "
-                            + param.getName() + " has not been given a value" );
-                }
-            }
-
             return new VPartsCGIResult( parameterMap );
         }
     }

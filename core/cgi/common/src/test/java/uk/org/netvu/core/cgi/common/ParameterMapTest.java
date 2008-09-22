@@ -59,8 +59,25 @@ public final class ParameterMapTest
                 final Option<Integer> oTime = parameterMap.get( TIME );
                 final Option<Integer> oRange = parameterMap.get( RANGE );
 
-                return oTime.isNone() || oRange.isNone() ? true : oTime.get()
-                        + oRange.get() >= 0;
+                return oTime.fold( true, new Conversion<Integer, Boolean>()
+                {
+                    @Override
+                    public Boolean convert( final Integer time )
+                    {
+                        return oRange.fold( true,
+                                new Conversion<Integer, Boolean>()
+                                {
+                                    @Override
+                                    public Boolean convert( final Integer range )
+                                    {
+                                        return time + range >= 0;
+                                    }
+                                } );
+                    }
+
+                } );
+                // oTime.isNone() || oRange.isNone() ? true : oTime.get()
+                // + oRange.get() >= 0;
             }
         } ).with( TIME, 2000000000 ).with( RANGE, 2000000000 );
     }

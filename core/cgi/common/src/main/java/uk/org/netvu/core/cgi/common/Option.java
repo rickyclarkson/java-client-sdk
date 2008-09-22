@@ -55,12 +55,6 @@ public abstract class Option<T>
         }
 
         @Override
-        public T get()
-        {
-            return t;
-        }
-
-        @Override
         public <U> Option<U> map( final Conversion<T, U> conversion )
         {
             return new Some<U>( conversion.convert( t ) );
@@ -76,6 +70,18 @@ public abstract class Option<T>
         public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
         {
             return conversion.convert( t );
+        }
+
+        @Override
+        <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
+        {
+            return ifSome.convert( t );
+        }
+
+        @Override
+        public T get()
+        {
+            return t;
         }
     }
 
@@ -101,13 +107,6 @@ public abstract class Option<T>
         }
 
         @Override
-        public T get()
-        {
-            throw new IllegalStateException(
-                    "This Option has no element, get() cannot be called on it." );
-        }
-
-        @Override
         public <U> Option<U> map( final Conversion<T, U> conversion )
         {
             return new None<U>();
@@ -123,14 +122,21 @@ public abstract class Option<T>
         {
             return new Option.None<U>();
         }
-    }
 
-    /**
-     * Identifies whether the Option has no element or not.
-     * 
-     * @return true if the Option has no element, false otherwise.
-     */
-    public abstract boolean isNone();
+        @Override
+        <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
+        {
+            return ifNone;
+        }
+
+        @Override
+        public T get()
+        {
+            throw new IllegalStateException(
+                    "This Option has no element, get() cannot be called on it." );
+        }
+
+    }
 
     /**
      * Gets the element held by this Option, or throws an IllegalStateException
@@ -139,6 +145,13 @@ public abstract class Option<T>
      * @return the element held by this Option.
      */
     public abstract T get();
+
+    /**
+     * Identifies whether the Option has no element or not.
+     * 
+     * @return true if the Option has no element, false otherwise.
+     */
+    public abstract boolean isNone();
 
     /**
      * Maps the specified Conversion over this Option. If the Option is a Some,
@@ -251,4 +264,18 @@ public abstract class Option<T>
      *         to this Option.
      */
     abstract <U> Option<U> bind( Conversion<T, Option<U>> conversion );
+
+    /**
+     * Folds an Option, producing one value.
+     * 
+     * @param <U>
+     *        the type of the value to return.
+     * @param ifNone
+     *        the U to return if the Option is a None.
+     * @param ifSome
+     *        the Conversion to apply if the Option is a Some.
+     * @return a folded version of this Option according to the specified
+     *         parameters.
+     */
+    abstract <U> U fold( U ifNone, Conversion<T, U> ifSome );
 }

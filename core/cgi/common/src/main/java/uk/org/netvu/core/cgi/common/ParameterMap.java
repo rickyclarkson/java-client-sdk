@@ -179,7 +179,14 @@ public final class ParameterMap
         final StringBuilder builder = new StringBuilder();
         for ( final Parameter<?, ?> param : params )
         {
-            builder.append( param.toURLParameter( this ) ).append( "&" );
+            param.toURLParameter( this ).then( new Action<String>()
+            {
+                public void invoke( final String parameter )
+                {
+                    builder.append( parameter ).append( "&" );
+                }
+            } );
+
         }
 
         return builder.toString().replaceAll( "[&]+$", "" ).replaceAll( "[&]+",
