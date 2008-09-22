@@ -322,17 +322,17 @@ public final class EventsCGIResult
          * @return the Status whose numeric value is the same as the value
          *         parameter.
          */
-        public static Option<Status> find( final int value )
+        public static Status find( final int value )
         {
             for ( final Status status : Status.values() )
             {
                 if ( status.value == value )
                 {
-                    return new Option.Some<Status>( status );
+                    return status;
                 }
             }
 
-            return new Option.None<Status>();
+            throw new IllegalArgumentException("There is no Status with the value "+value);
         }
 
         static Status oneOf( final Random random )
@@ -345,7 +345,14 @@ public final class EventsCGIResult
             @Override
             public Option<Status> convert( final String s )
             {
-                return find( Integer.parseInt( s ) );
+                try
+                {
+                    return new Option.Some<Status>(find( Integer.parseInt( s ) ));
+                }
+                catch (IllegalArgumentException e)
+                {
+                    return new Option.None<Status>();
+                }
             }
         };
     }
@@ -595,18 +602,18 @@ public final class EventsCGIResult
             this.value = value;
         }
 
-        public static Option<AlarmType> find( final int value )
+        public static AlarmType find( final int value )
                 throws IllegalArgumentException
         {
             for ( final AlarmType type : AlarmType.values() )
             {
                 if ( type.value == value )
                 {
-                    return new Option.Some<AlarmType>( type );
+                    return type;
                 }
             }
 
-            return new Option.None<AlarmType>();
+            throw new IllegalArgumentException();
         }
 
         static AlarmType oneOf( final Random random )
@@ -619,9 +626,15 @@ public final class EventsCGIResult
             @Override
             public Option<AlarmType> convert( final String t )
             {
-                return find( Integer.parseInt( t ) );
+                try
+                {
+                    return new Option.Some<AlarmType>(find( Integer.parseInt( t ) ));
+                }
+                catch (IllegalArgumentException e)
+                {
+                    return new Option.None<AlarmType>();
+                }
             }
         };
     }
-
 }
