@@ -244,7 +244,7 @@ public abstract class Option<T>
     }
 
     @Override
-    public String toString()
+    public final String toString()
     {
         throw new UnsupportedOperationException(
                 "toString() not supported, to catch any accidental toString() calls early" );

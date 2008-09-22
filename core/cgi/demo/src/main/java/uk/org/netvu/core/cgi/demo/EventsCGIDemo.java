@@ -45,7 +45,7 @@ public class EventsCGIDemo
                     String line;
                     while ( ( line = reader.readLine() ) != null )
                     {
-                        System.out.println( EventsCGIResult.fromString( line ).get().getAlarm() );
+                        System.out.println( EventsCGIResult.fromString( line ).getAlarm() );
                     }
                 }
                 finally

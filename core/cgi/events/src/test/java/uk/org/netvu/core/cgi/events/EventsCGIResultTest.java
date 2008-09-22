@@ -140,14 +140,13 @@ public class EventsCGIResultTest
     }
 
     /**
-     * Tests that parsing a line of CSV with a malformed number gives an
-     * Option.None.
+     * Tests that parsing a line of CSV with a malformed number causes an
+     * IllegalArgumentException.
      */
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void numericError()
     {
-        assertTrue( EventsCGIResult.fromString(
-                "1, b, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0" ).isNone() );
+        EventsCGIResult.fromString( "1, b, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0" );
     }
 
     /**

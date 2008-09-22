@@ -16,6 +16,10 @@ import java.util.TreeMap;
  */
 public abstract class Parameter<T, R>
 {
+    /**
+     * The name of the Parameter, as it appears in URL parameters and in
+     * diagnostic messages.
+     */
     public final String name;
     private final String description;
     private final R defaultValue;

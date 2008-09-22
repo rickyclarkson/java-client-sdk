@@ -119,4 +119,8 @@ object EventsCGISecondTestObject extends Specification with Scalacheck {
   "be rejected" in {
    new Builder().format(null) must throwA(new NullPointerException)
    new Builder().text(null) must throwA(new NullPointerException)
-   EventsCGI.fromString(null) must throwA(new NullPointerException) } } }
+   EventsCGI.fromString(null) must throwA(new NullPointerException) } }
+
+ "Malformed URL parameters (invalid status)" should {
+  "be rejected" in {
+   EventsCGIResult.fromString("1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 3, 4") must throwA(new IllegalArgumentException) } } }

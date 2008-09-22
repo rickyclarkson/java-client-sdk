@@ -247,7 +247,7 @@ public class EventsCGITest
 
         for ( final String line : data )
         {
-            assertTrue( compare( line, EventsCGIResult.fromString( line ).get() ) );
+            assertTrue( compare( line, EventsCGIResult.fromString( line ) ) );
         }
     }
 

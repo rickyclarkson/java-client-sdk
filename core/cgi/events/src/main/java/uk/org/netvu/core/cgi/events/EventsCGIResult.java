@@ -106,7 +106,8 @@ public final class EventsCGIResult
         }
 
         /**
-         * Adds the system camera number to the builder.
+         * Adds the system camera number to the builder. Valid values are 0 to
+         * 64.
          * 
          * @param camera
          *        the system camera number.
@@ -119,7 +120,7 @@ public final class EventsCGIResult
         }
 
         /**
-         * Adds the alarm description to the builder.
+         * Adds the alarm description to the builder. Cannot be null.
          * 
          * @param alarm
          *        the alarm description.
@@ -132,7 +133,7 @@ public final class EventsCGIResult
         }
 
         /**
-         * Adds the time of the event to the builder.
+         * Adds the time of the event to the builder. Cannot be negative.
          * 
          * @param julianTime
          *        the time of the event.
@@ -145,7 +146,8 @@ public final class EventsCGIResult
         }
 
         /**
-         * Adds the offset from UTC of the event to the builder.
+         * Adds the offset from UTC of the event to the builder. Must be between
+         * -90000 and +90000.
          * 
          * @param offset
          *        the offset from UTC.
@@ -159,7 +161,7 @@ public final class EventsCGIResult
 
         /**
          * Adds the name of the video file that the result was found in to the
-         * builder.
+         * builder. Cannot be null.
          * 
          * @param file
          *        the name of the video file.
@@ -186,7 +188,7 @@ public final class EventsCGIResult
         }
 
         /**
-         * Adds the duration of the event to the builder.
+         * Adds the duration of the event to the builder. Cannot be negative.
          * 
          * @param duration
          *        the duration of the event.
@@ -200,7 +202,7 @@ public final class EventsCGIResult
 
         /**
          * Specifies the number of seconds before the alarm time that are
-         * relevant.
+         * relevant. Cannot be negative.
          * 
          * @param preAlarm
          *        the number of seconds before the alarm time that are relevant.
@@ -214,7 +216,7 @@ public final class EventsCGIResult
 
         /**
          * Specifies the number of seconds since 1970 after which the video for
-         * this event may be overwritten.
+         * this event may be overwritten. Cannot be negative.
          * 
          * @param archive
          *        the number of seconds since 1970 after which the video for
@@ -229,7 +231,7 @@ public final class EventsCGIResult
 
         /**
          * Specifies the status of the database record - i.e., how complete it
-         * is on disk.
+         * is on disk. Cannot be null.
          * 
          * @param status
          *        the status of the database record.
@@ -242,7 +244,8 @@ public final class EventsCGIResult
         }
 
         /**
-         * Specifies the type of alarm that this event represents.
+         * Specifies the type of alarm that this event represents. Cannot be
+         * null.
          * 
          * @param alarmType
          *        the type of alarm that this event represents.
@@ -476,7 +479,7 @@ public final class EventsCGIResult
      *        the comma-separated values.
      * @return an EventsCGIResult containing the parsed values.
      */
-    public static Option<EventsCGIResult> fromString( final String line )
+    public static EventsCGIResult fromString( final String line )
     {
         final String[] values = Strings.split( line );
 
@@ -498,8 +501,8 @@ public final class EventsCGIResult
             params.add( ALARM_TYPE );
         }
 
-        return ParameterMap.fromStrings( params,
-                Lists.removeIndices( Arrays.asList( values ), 0, 7 ) ).map(
+        final Option<EventsCGIResult> result = ParameterMap.fromStrings(
+                params, Lists.removeIndices( Arrays.asList( values ), 0, 7 ) ).map(
                 new Conversion<ParameterMap, EventsCGIResult>()
                 {
                     @Override
@@ -508,6 +511,14 @@ public final class EventsCGIResult
                         return new EventsCGIResult( map );
                     }
                 } );
+
+        if ( result.isNone() )
+        {
+            throw new IllegalArgumentException( "The supplied data, " + line
+                    + ", is not valid for EventsCGIResult.fromString" );
+        }
+
+        return result.get();
     }
 
     /**

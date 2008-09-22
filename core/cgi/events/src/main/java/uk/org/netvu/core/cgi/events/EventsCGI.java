@@ -128,7 +128,8 @@ public final class EventsCGI
         }
 
         /**
-         * The time from which to search, in seconds since 1970.
+         * The time from which to search, in seconds since 1970. Cannot be
+         * negative.
          * 
          * @param time
          *        the time from which to search.
@@ -141,7 +142,7 @@ public final class EventsCGI
         }
 
         /**
-         * The timespan to search, in seconds.
+         * The timespan to search, in seconds. Cannot be negative.
          * 
          * @param range
          * @return the builder.
@@ -155,7 +156,7 @@ public final class EventsCGI
         /**
          * The format that the results should come back in. Note that this API
          * defaults to CSV, though the servers default to JS; parsing CSV is
-         * easier.
+         * easier. Cannot be null.
          * 
          * @param format
          *        the format that results should come back in.
@@ -187,7 +188,7 @@ public final class EventsCGI
          * of the supplied string. The search is case sensitive. * can be used
          * as a wildcard to replace one or more characters in the search string.
          * ? can be used as a wildcard to replace a single character in the
-         * search string.
+         * search string. This parameter cannot be null.
          * 
          * @param text
          *        the text to search for.
