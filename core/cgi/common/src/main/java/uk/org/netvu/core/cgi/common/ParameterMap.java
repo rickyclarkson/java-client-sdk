@@ -74,6 +74,9 @@ public final class ParameterMap
     public <T, R> ParameterMap with( final Parameter<T, R> parameter,
             final T value )
     {
+        if (value == null)
+            throw new NullPointerException("Values for the "+parameter.name+" parameter cannot be null.");
+
         final Map<Parameter<?, ?>, Object> copy = new HashMap<Parameter<?, ?>, Object>(
                 values );
 
@@ -83,7 +86,7 @@ public final class ParameterMap
         if ( !validator.isValid( built ) )
         {
             throw new IllegalStateException( value + " for "
-                    + parameter.getName()
+                    + parameter.name
                     + " violates the constraints on this parameter map" );
         }
 
@@ -155,7 +158,7 @@ public final class ParameterMap
         {
             for ( final Parameter<?, ?> param : params )
             {
-                if ( part.name.startsWith( param.getName() ) )
+                if ( part.name.startsWith( param.name ) )
                 {
                     parameterMap = parameterMap.withFromString( param, part ).getOrElse(
                             parameterMap );
@@ -220,7 +223,7 @@ public final class ParameterMap
                 public Option<ParameterMap> convert( final ParameterMap map )
                 {
                     return map.withFromString( pair.first(), new URLParameter(
-                            pair.first().getName(), pair.second() ) );
+                            pair.first().name, pair.second() ) );
                 }
             } );
         }

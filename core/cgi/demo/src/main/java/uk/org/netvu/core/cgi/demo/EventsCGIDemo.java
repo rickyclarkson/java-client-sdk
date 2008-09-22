@@ -25,31 +25,38 @@ public class EventsCGIDemo
      */
     public static void main( final String[] args ) throws IOException
     {
-        final EventsCGI cgi = new EventsCGI.Builder().format( Format.CSV ).build();
-        final URL url = new URL( "http://remguard_mews.adnv.adh" + cgi );
-
-        final InputStream in = url.openStream();
-
-        try
+        if ( args.length == 0 )
         {
-            final BufferedReader reader = new BufferedReader(
-                    new InputStreamReader( in, "UTF-8" ) );
+            System.err.println( "Please supply the name of a camera server" );
+        }
+        else
+        {
+            final EventsCGI cgi = new EventsCGI.Builder().format( Format.CSV ).build();
+            final URL url = new URL( "http://" + args[0] + cgi );
+
+            final InputStream in = url.openStream();
+
             try
             {
-                String line;
-                while ( ( line = reader.readLine() ) != null )
+                final BufferedReader reader = new BufferedReader(
+                        new InputStreamReader( in, "UTF-8" ) );
+                try
                 {
-                    System.out.println( EventsCGIResult.fromString( line ).get().getAlarm() );
+                    String line;
+                    while ( ( line = reader.readLine() ) != null )
+                    {
+                        System.out.println( EventsCGIResult.fromString( line ).get().getAlarm() );
+                    }
+                }
+                finally
+                {
+                    reader.close();
                 }
             }
             finally
             {
-                reader.close();
+                in.close();
             }
-        }
-        finally
-        {
-            in.close();
         }
     }
 }

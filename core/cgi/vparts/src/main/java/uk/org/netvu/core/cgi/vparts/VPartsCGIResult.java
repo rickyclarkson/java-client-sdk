@@ -1,7 +1,7 @@
 package uk.org.netvu.core.cgi.vparts;
 
 import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
-import static uk.org.netvu.core.cgi.common.Parameter.param2;
+import static uk.org.netvu.core.cgi.common.Parameter.param;
 
 import java.util.ArrayList;
 
@@ -17,24 +17,24 @@ import uk.org.netvu.core.cgi.common.URLParameter;
  */
 public class VPartsCGIResult
 {
-    private static final Parameter<Integer, Option<Integer>> INDEX = param2(
+    private static final Parameter<Integer, Option<Integer>> INDEX = param(
             "index", "The index of this result in the results",
             Conversion.stringToInt );
-    private static final Parameter<String, Option<String>> DIRECTORY = param2(
+    private static final Parameter<String, Option<String>> DIRECTORY = param(
             "directory", "The directory where this video can be found",
             Option.<String> some() );
-    private static final Parameter<String, Option<String>> FILENAME = param2(
+    private static final Parameter<String, Option<String>> FILENAME = param(
             "filename", "The name of the file where this video can be found",
             Option.<String> some() );
-    private static final Parameter<Integer, Option<Integer>> START_TIME = notNegative( param2(
+    private static final Parameter<Integer, Option<Integer>> START_TIME = notNegative( param(
             "start_time", "The start time", Conversion.stringToInt ) );
-    private static final Parameter<Integer, Option<Integer>> END_TIME = notNegative( param2(
+    private static final Parameter<Integer, Option<Integer>> END_TIME = notNegative( param(
             "end_time", "The end time", Conversion.stringToInt ) );
-    private static final Parameter<Integer, Option<Integer>> EXPIRY_TIME = notNegative( param2(
+    private static final Parameter<Integer, Option<Integer>> EXPIRY_TIME = notNegative( param(
             "expiry_time", "The expiry time", Conversion.stringToInt ) );
-    private static final Parameter<Integer, Option<Integer>> NUMBER_OF_ENTRIES = param2(
+    private static final Parameter<Integer, Option<Integer>> NUMBER_OF_ENTRIES = param(
             "n_entries", "The number of entries", Conversion.stringToInt );
-    private static final Parameter<Integer, Option<Integer>> CAM_MASK = param2(
+    private static final Parameter<Integer, Option<Integer>> CAM_MASK = param(
             "cammask", "The bitmask of cameras that this video comes from",
             Conversion.stringToInt );
 
@@ -63,7 +63,7 @@ public class VPartsCGIResult
             if ( parameterMap.get( param ).isNone() )
             {
                 throw new IllegalStateException( "The parameter "
-                        + param.getName() + " has not been given a value" );
+                        + param.name + " has not been given a value" );
             }
         }
 
@@ -322,6 +322,6 @@ public class VPartsCGIResult
             final Parameter<T, R> param, final String s )
     {
         return parameterMap.with( param, param.fromURLParameter(
-                new URLParameter( param.getName(), s ) ).get() );
+                new URLParameter( param.name, s ) ).get() );
     }
 }

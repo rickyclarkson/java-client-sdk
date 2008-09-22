@@ -40,11 +40,11 @@ public class EventsCGITest
         assertTrue( events.getRange() == Integer.MAX_VALUE );
         assertTrue( events.getMaxLength() == 100 );
         assertTrue( events.getText().equals( "" ) );
-        assertTrue( events.getCamMask() == 0 );
+        assertTrue( events.getCameraMask() == 0 );
         assertTrue( events.getAlarmMask() == 0 );
-        assertTrue( events.getVmdMask() == 0 );
+        assertTrue( events.getVideoMotionDetectionMask() == 0 );
         assertTrue( events.getGpsMask() == 0 );
-        assertTrue( events.getSysMask() == 0 );
+        assertTrue( events.getSystemMask() == 0 );
     }
 
     /**
@@ -110,7 +110,7 @@ public class EventsCGITest
         {
             public void invoke( final Builder builder )
             {
-                builder.vmdMask( 8 );
+                builder.videoMotionDetectionMask( 8 );
             }
         } );
         params.add( new Action<Builder>()
@@ -124,7 +124,7 @@ public class EventsCGITest
         {
             public void invoke( final Builder builder )
             {
-                builder.sysMask( 23 );
+                builder.systemMask( 23 );
             }
         } );
 
@@ -161,15 +161,15 @@ public class EventsCGITest
 
         assertTrue( new EventsCGI.Builder().alarmMask( randomInt ).build().getAlarmMask() == randomInt );
         assertTrue( new EventsCGI.Builder().range( randomNonNegativeInt ).build().getRange() == randomNonNegativeInt );
-        assertTrue( new EventsCGI.Builder().camMask( randomLong ).build().getCamMask() == randomLong );
+        assertTrue( new EventsCGI.Builder().cameraMask( randomLong ).build().getCameraMask() == randomLong );
         assertTrue( new EventsCGI.Builder().gpsMask( randomInt ).build().getGpsMask() == randomInt );
         assertTrue( new EventsCGI.Builder().length( randomInt ).build().getMaxLength() == randomInt );
-        assertTrue( new EventsCGI.Builder().sysMask( randomInt ).build().getSysMask() == randomInt );
+        assertTrue( new EventsCGI.Builder().systemMask( randomInt ).build().getSystemMask() == randomInt );
 
         return new EventsCGI.Builder().text( randomString ).build().getText().equals(
                 randomString )
                 && new EventsCGI.Builder().time( randomNonNegativeInt ).build().getTime() == randomNonNegativeInt
-                && new EventsCGI.Builder().vmdMask( randomLong ).build().getVmdMask() == randomLong;
+                && new EventsCGI.Builder().videoMotionDetectionMask( randomLong ).build().getVideoMotionDetectionMask() == randomLong;
     }
 
     /**
@@ -287,7 +287,7 @@ public class EventsCGITest
                         {
                             public void run()
                             {
-                                builder.camMask( random.nextLong() );
+                                builder.cameraMask( random.nextLong() );
                             }
                         } );
 
@@ -327,7 +327,7 @@ public class EventsCGITest
                         {
                             public void run()
                             {
-                                builder.sysMask( random.nextInt() );
+                                builder.systemMask( random.nextInt() );
                             }
                         } );
 
@@ -351,7 +351,7 @@ public class EventsCGITest
                         {
                             public void run()
                             {
-                                builder.vmdMask( random.nextLong() );
+                                builder.videoMotionDetectionMask( random.nextLong() );
                             }
                         } );
                     }

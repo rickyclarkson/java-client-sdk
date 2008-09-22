@@ -27,17 +27,17 @@ public final class VariableCGI
     {
         if ( parameterMap.get( VARIABLE ).isNone() )
         {
-            throw new IllegalStateException( VARIABLE.getName()
+            throw new IllegalStateException( VARIABLE.name
                     + " has not been set to a value" );
         }
 
         this.parameterMap = parameterMap;
     }
 
-    private static final Parameter<Variable, Option<Variable>> VARIABLE = Parameter.param2(
+    private static final Parameter<Variable, Option<Variable>> VARIABLE = Parameter.param(
             "variable", "Name of the variable", Variable.fromString );
 
-    private static final Parameter<VariableType, VariableType> TYPE = Parameter.param3(
+    private static final Parameter<VariableType, VariableType> TYPE = Parameter.param(
             "type", "Specifies return type of variable", VariableType.HTTP,
             VariableType.fromString );
 

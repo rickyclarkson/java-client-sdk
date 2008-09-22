@@ -26,7 +26,7 @@ import uk.org.netvu.core.cgi.common.URLBuilder;
  */
 public final class DecoderCGI
 {
-    private static final Parameter<Persistence, Persistence> PERSISTENCE = Parameter.param3(
+    private static final Parameter<Persistence, Persistence> PERSISTENCE = Parameter.param(
             "persistence",
             "Whether to make the changes persistent (survive reboot) or temporary",
             Persistence.TEMPORARY, Option.<String, Persistence> noneRef() );

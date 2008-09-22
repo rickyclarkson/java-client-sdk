@@ -2,7 +2,7 @@ package uk.org.netvu.core.cgi.events;
 
 import static uk.org.netvu.core.cgi.common.Option.someRef;
 import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
-import static uk.org.netvu.core.cgi.common.Parameter.param3;
+import static uk.org.netvu.core.cgi.common.Parameter.param;
 import static uk.org.netvu.core.cgi.common.Parameter.param4;
 
 import java.util.ArrayList;
@@ -22,24 +22,24 @@ import uk.org.netvu.core.cgi.common.Validator;
  */
 public final class EventsCGI
 {
-    private static final Parameter<Integer, Integer> TIME = notNegative( param3(
+    private static final Parameter<Integer, Integer> TIME = notNegative( param(
             "time", "The time from which to search, in seconds since 1970.", 0,
             Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Integer> RANGE = notNegative( param3(
+    private static final Parameter<Integer, Integer> RANGE = notNegative( param(
             "range", "The timespan to search in seconds", Integer.MAX_VALUE,
             Conversion.stringToInt ) );
 
-    private static final Parameter<Format, Format> FORMAT = param3( "format",
+    private static final Parameter<Format, Format> FORMAT = param( "format",
             "The format that the results should be returned in", Format.CSV,
             Format.fromString );
 
-    private static final Parameter<Integer, Integer> LENGTH = param3(
+    private static final Parameter<Integer, Integer> LENGTH = param(
             "listlength",
             "The maximum number of results to obtain.  Negative values reverse the direction of the search.",
             100, Conversion.stringToInt );
 
-    private static final Parameter<String, String> TEXT = param3(
+    private static final Parameter<String, String> TEXT = param(
             "text",
             "The text to search for in the text-in-image data.  If specified, "
                     + "causes the embedded text-in-image data to be searched for "
@@ -49,7 +49,7 @@ public final class EventsCGI
                     + "character in the search string.", "",
             Option.<String> some() );
 
-    private static final Parameter<Long, Long> CAM_MASK = param4( "cammask",
+    private static final Parameter<Long, Long> CAMERA_MASK = param4( "cammask",
             "The 64-bit mask of cameras whose images we want to obtain.", 0L,
             someRef( Conversion.hexStringToLong ),
             someRef( Conversion.longToHexString ) );
@@ -60,18 +60,18 @@ public final class EventsCGI
             someRef( Conversion.hexStringToInt ),
             someRef( Conversion.intToHexString ) );
 
-    private static final Parameter<Long, Long> VMD_MASK_PARAM = param4(
+    private static final Parameter<Long, Long> VIDEO_MOTION_DETECTION_MASK = param4(
             "vmdmask",
             "The 64-bit mask of video motion detection channels to search in.",
             0L, someRef( Conversion.hexStringToLong ),
             someRef( Conversion.longToHexString ) );
 
-    private static final Parameter<Integer, Integer> GPS_MASK_PARAM = param4(
+    private static final Parameter<Integer, Integer> GPS_MASK = param4(
             "gpsmask", "The 32-bit mask of GPS event types to search for.", 0,
             someRef( Conversion.hexStringToInt ),
             someRef( Conversion.intToHexString ) );
 
-    private static final Parameter<Integer, Integer> SYS_MASK_PARAM = param4(
+    private static final Parameter<Integer, Integer> SYSTEM_MASK_PARAM = param4(
             "sysmask", "The 32-bit mask of system event types.", 0,
             someRef( Conversion.hexStringToInt ),
             someRef( Conversion.intToHexString ) );
@@ -86,11 +86,11 @@ public final class EventsCGI
             add( FORMAT );
             add( LENGTH );
             add( TEXT );
-            add( CAM_MASK );
+            add( CAMERA_MASK );
             add( ALARM_MASK );
-            add( VMD_MASK_PARAM );
-            add( GPS_MASK_PARAM );
-            add( SYS_MASK_PARAM );
+            add( VIDEO_MOTION_DETECTION_MASK );
+            add( GPS_MASK );
+            add( SYSTEM_MASK_PARAM );
         }
     };
 
@@ -101,9 +101,9 @@ public final class EventsCGI
         {
             add( TEXT );
             add( ALARM_MASK );
-            add( VMD_MASK_PARAM );
-            add( GPS_MASK_PARAM );
-            add( SYS_MASK_PARAM );
+            add( VIDEO_MOTION_DETECTION_MASK );
+            add( GPS_MASK );
+            add( SYSTEM_MASK_PARAM );
         }
     };
 
@@ -120,6 +120,14 @@ public final class EventsCGI
                 new ParameterMap( Validator.mutuallyExclusive( exclusiveParams ) ) );
 
         /**
+         * Constructs a Builder ready to take in all the optional values for
+         * events.cgi.
+         */
+        public Builder()
+        {
+        }
+
+        /**
          * The time from which to search, in seconds since 1970.
          * 
          * @param time
@@ -128,15 +136,8 @@ public final class EventsCGI
          */
         public Builder time( final int time )
         {
-            validate();
             real = real.map( ParameterMap.withRef( TIME, time ) );
-
             return this;
-        }
-
-        private void validate()
-        {
-
         }
 
         /**
@@ -205,9 +206,9 @@ public final class EventsCGI
          *        the mask of cameras whose images we want to obtain.
          * @return the builder.
          */
-        public Builder camMask( final long camMask )
+        public Builder cameraMask( final long camMask )
         {
-            real = real.map( ParameterMap.withRef( CAM_MASK, camMask ) );
+            real = real.map( ParameterMap.withRef( CAMERA_MASK, camMask ) );
             return this;
         }
 
@@ -227,13 +228,15 @@ public final class EventsCGI
         /**
          * The 64-bit mask of video motion detection channels to search in.
          * 
-         * @param vmdMask
+         * @param videoMotionDetectionMask
          *        the mask of video motion detection channels to search in.
          * @return the builder.
          */
-        public Builder vmdMask( final long vmdMask )
+        public Builder videoMotionDetectionMask(
+                final long videoMotionDetectionMask )
         {
-            real = real.map( ParameterMap.withRef( VMD_MASK_PARAM, vmdMask ) );
+            real = real.map( ParameterMap.withRef( VIDEO_MOTION_DETECTION_MASK,
+                    videoMotionDetectionMask ) );
             return this;
         }
 
@@ -246,7 +249,7 @@ public final class EventsCGI
          */
         public Builder gpsMask( final int gpsMask )
         {
-            real = real.map( ParameterMap.withRef( GPS_MASK_PARAM, gpsMask ) );
+            real = real.map( ParameterMap.withRef( GPS_MASK, gpsMask ) );
             return this;
         }
 
@@ -257,9 +260,9 @@ public final class EventsCGI
          *        the mask of system event types to search for.
          * @return the builder.
          */
-        public Builder sysMask( final int sysMask )
+        public Builder systemMask( final int sysMask )
         {
-            real = real.map( ParameterMap.withRef( SYS_MASK_PARAM, sysMask ) );
+            real = real.map( ParameterMap.withRef( SYSTEM_MASK_PARAM, sysMask ) );
             return this;
         }
 
@@ -344,9 +347,9 @@ public final class EventsCGI
      * 
      * @return the mask of cameras to search for.
      */
-    public long getCamMask()
+    public long getCameraMask()
     {
-        return parameterMap.get( CAM_MASK );
+        return parameterMap.get( CAMERA_MASK );
     }
 
     /**
@@ -364,9 +367,9 @@ public final class EventsCGI
      * 
      * @return the mask of video motion detection channels to search in.
      */
-    public long getVmdMask()
+    public long getVideoMotionDetectionMask()
     {
-        return parameterMap.get( VMD_MASK_PARAM );
+        return parameterMap.get( VIDEO_MOTION_DETECTION_MASK );
     }
 
     /**
@@ -376,7 +379,7 @@ public final class EventsCGI
      */
     public int getGpsMask()
     {
-        return parameterMap.get( GPS_MASK_PARAM );
+        return parameterMap.get( GPS_MASK );
     }
 
     /**
@@ -384,9 +387,9 @@ public final class EventsCGI
      * 
      * @return the mask of system event types to search for.
      */
-    public int getSysMask()
+    public int getSystemMask()
     {
-        return parameterMap.get( SYS_MASK_PARAM );
+        return parameterMap.get( SYSTEM_MASK_PARAM );
     }
 
     /**
@@ -401,7 +404,8 @@ public final class EventsCGI
     {
         if ( string.length() == 0 )
         {
-            throw new IllegalArgumentException("Cannot parse an empty String into an EventsCGI.");
+            throw new IllegalArgumentException(
+                    "Cannot parse an empty String into an EventsCGI." );
         }
 
         return new EventsCGI( ParameterMap.fromURL( string, params ) );

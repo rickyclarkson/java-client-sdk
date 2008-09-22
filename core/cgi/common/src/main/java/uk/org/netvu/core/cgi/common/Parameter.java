@@ -16,7 +16,7 @@ import java.util.TreeMap;
  */
 public abstract class Parameter<T, R>
 {
-    private final String name;
+    public final String name;
     private final String description;
     private final R defaultValue;
 
@@ -118,7 +118,7 @@ public abstract class Parameter<T, R>
      * @return a Parameter that can take 0 or 1 values of type T, yielding them
      *         as an Option<T>.
      */
-    public static <T> Parameter<T, Option<T>> param2( final String name,
+    public static <T> Parameter<T, Option<T>> param( final String name,
             final String description,
             final Conversion<String, Option<T>> fromString )
     {
@@ -147,7 +147,7 @@ public abstract class Parameter<T, R>
      * @return a Parameter that can take 0 or 1 values of type T, yielding that
      *         value or a default value.
      */
-    public static <T> Parameter<T, T> param3( final String name,
+    public static <T> Parameter<T, T> param( final String name,
             final String description, final T defaultValue,
             final Conversion<String, Option<T>> fromString )
     {
@@ -493,16 +493,6 @@ public abstract class Parameter<T, R>
             final URLParameter pair )
     {
         return conversion.convert( pair.value );
-    }
-
-    /**
-     * Gets the name of the Parameter.
-     * 
-     * @return the name of the Parameter.
-     */
-    public String getName()
-    {
-        return name;
     }
 
     /**

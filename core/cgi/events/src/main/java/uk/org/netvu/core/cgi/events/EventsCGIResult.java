@@ -3,8 +3,7 @@ package uk.org.netvu.core.cgi.events;
 import static uk.org.netvu.core.cgi.common.Option.someRef;
 import static uk.org.netvu.core.cgi.common.Parameter.bound;
 import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
-import static uk.org.netvu.core.cgi.common.Parameter.param2;
-import static uk.org.netvu.core.cgi.common.Parameter.param3;
+import static uk.org.netvu.core.cgi.common.Parameter.param;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,45 +22,45 @@ import uk.org.netvu.core.cgi.common.Strings;
  */
 public final class EventsCGIResult
 {
-    private static final Parameter<Integer, Option<Integer>> CAM = bound( 0,
-            64, Parameter.param2( "cam", "The system camera number",
+    private static final Parameter<Integer, Option<Integer>> CAMERA_PARAMETER = bound(
+            0, 64, Parameter.param( "cam", "The system camera number",
                     Conversion.stringToInt ) );
 
-    private static final Parameter<String, Option<String>> ALARM = param2(
+    private static final Parameter<String, Option<String>> ALARM = param(
             "alarm", "The alarm description.", Option.<String> some() );
 
-    private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = notNegative( param2(
+    private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = notNegative( param(
             "time", "The Julianised time that the event occurred at",
             Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Option<Integer>> OFFSET = Parameter.bound(
-            -90000, 90000, param2( "offset", "", Conversion.stringToInt ) );
+    private static final Parameter<Integer, Option<Integer>> OFFSET = bound(
+            -90000, 90000, param( "offset", "", Conversion.stringToInt ) );
 
-    private static final Parameter<String, Option<String>> FILE = param2(
+    private static final Parameter<String, Option<String>> FILE = param(
             "file", "", Option.<String> some() );
 
-    private static final Parameter<Boolean, Option<Boolean>> ON_DISK = param2(
+    private static final Parameter<Boolean, Option<Boolean>> ON_DISK = param(
             "onDisk", "", someRef( Conversion.stringToBoolean ) );
 
-    private static final Parameter<Integer, Option<Integer>> DURATION = notNegative( param2(
+    private static final Parameter<Integer, Option<Integer>> DURATION = notNegative( param(
             "duration", "", Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Option<Integer>> PRE_ALARM = notNegative( param2(
+    private static final Parameter<Integer, Option<Integer>> PRE_ALARM = notNegative( param(
             "preAlarm", "", Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Option<Integer>> ARCHIVE = notNegative( param2(
+    private static final Parameter<Integer, Option<Integer>> ARCHIVE = notNegative( param(
             "archive", "", Conversion.stringToInt ) );
-    private static final Parameter<Status, Status> STATUS = param3( "status",
+    private static final Parameter<Status, Status> STATUS = param( "status",
             "", Status.NONE, Status.fromString );
-    private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = param3(
+    private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = param(
             "alarmType", "", AlarmType.NONE, AlarmType.fromString );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
-    private static final ArrayList<Parameter<?, ? extends Option<?>>> compulsoryParams = new ArrayList<Parameter<?, ? extends Option<?>>>()
+    private static final ArrayList<Parameter<?, ? extends Option<?>>> compulsoryParameters = new ArrayList<Parameter<?, ? extends Option<?>>>()
     {
         {
-            add( CAM );
+            add( CAMERA_PARAMETER );
             add( ALARM );
             add( JULIAN_TIME );
             add( OFFSET );
@@ -73,21 +72,20 @@ public final class EventsCGIResult
         }
     };
 
-    private final ParameterMap parameterMap;
+    private final ParameterMap builtMap;
 
-    private EventsCGIResult( final ParameterMap parameterMap )
+    private EventsCGIResult( final ParameterMap builtMap )
     {
-        for ( final Parameter<?, ? extends Option<?>> param : compulsoryParams )
+        for ( final Parameter<?, ? extends Option<?>> parameter : compulsoryParameters )
         {
-
-            if ( parameterMap.get( param ).isNone() )
+            if ( builtMap.get( parameter ).isNone() )
             {
-                throw new IllegalStateException( "The parameter " + param
+                throw new IllegalStateException( "The parameter " + parameter
                         + " has not been given a value" );
             }
         }
 
-        this.parameterMap = parameterMap;
+        this.builtMap = builtMap;
     }
 
     /**
@@ -100,15 +98,23 @@ public final class EventsCGIResult
                 new ParameterMap() );
 
         /**
+         * Constructs a builder ready to take in all the information needed to
+         * construct an EventsCGIResult.
+         */
+        public Builder()
+        {
+        }
+
+        /**
          * Adds the system camera number to the builder.
          * 
-         * @param cam
+         * @param camera
          *        the system camera number.
          * @return the builder.
          */
-        public Builder cam( final int cam )
+        public Builder camera( final int camera )
         {
-            real = real.map( ParameterMap.withRef( CAM, cam ) );
+            real = real.map( ParameterMap.withRef( CAMERA_PARAMETER, camera ) );
             return this;
         }
 
@@ -353,7 +359,7 @@ public final class EventsCGIResult
      */
     public int getCam()
     {
-        return parameterMap.get( CAM ).get();
+        return builtMap.get( CAMERA_PARAMETER ).get();
     }
 
     /**
@@ -363,7 +369,7 @@ public final class EventsCGIResult
      */
     public String getAlarm()
     {
-        return parameterMap.get( ALARM ).get();
+        return builtMap.get( ALARM ).get();
     }
 
     /**
@@ -373,7 +379,7 @@ public final class EventsCGIResult
      */
     public int getJulianTime()
     {
-        return parameterMap.get( JULIAN_TIME ).get();
+        return builtMap.get( JULIAN_TIME ).get();
     }
 
     /**
@@ -383,7 +389,7 @@ public final class EventsCGIResult
      */
     public int getOffset()
     {
-        return parameterMap.get( OFFSET ).get();
+        return builtMap.get( OFFSET ).get();
     }
 
     /**
@@ -393,7 +399,7 @@ public final class EventsCGIResult
      */
     public String getFile()
     {
-        return parameterMap.get( FILE ).get();
+        return builtMap.get( FILE ).get();
     }
 
     /**
@@ -403,7 +409,7 @@ public final class EventsCGIResult
      */
     public boolean isOnDisk()
     {
-        return parameterMap.get( ON_DISK ).get();
+        return builtMap.get( ON_DISK ).get();
     }
 
     /**
@@ -414,7 +420,7 @@ public final class EventsCGIResult
      */
     public int getDuration()
     {
-        return parameterMap.get( DURATION ).get();
+        return builtMap.get( DURATION ).get();
     }
 
     /**
@@ -426,7 +432,7 @@ public final class EventsCGIResult
      */
     public int getPreAlarm()
     {
-        return parameterMap.get( PRE_ALARM ).get();
+        return builtMap.get( PRE_ALARM ).get();
     }
 
     /**
@@ -438,7 +444,7 @@ public final class EventsCGIResult
      */
     public int getArchive()
     {
-        return parameterMap.get( ARCHIVE ).get();
+        return builtMap.get( ARCHIVE ).get();
     }
 
     /**
@@ -448,7 +454,7 @@ public final class EventsCGIResult
      */
     public AlarmType getAlarmType()
     {
-        return parameterMap.get( ALARM_TYPE );
+        return builtMap.get( ALARM_TYPE );
     }
 
     /**
@@ -459,7 +465,7 @@ public final class EventsCGIResult
      */
     public Status getStatus()
     {
-        return parameterMap.get( STATUS );
+        return builtMap.get( STATUS );
     }
 
     /**
@@ -482,7 +488,7 @@ public final class EventsCGIResult
         }
 
         final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>(
-                compulsoryParams );
+                compulsoryParameters );
         if ( values.length > 11 )
         {
             params.add( STATUS );

@@ -69,7 +69,7 @@ public class EventsCGIResultTest
                 final int julianTime = nonNegatives.next();
 
                 return new EventsCGIResult.Builder().alarm( strings.next() ).archive(
-                        nonNegatives.next() ).cam( random.nextInt( 65 ) ).duration(
+                        nonNegatives.next() ).camera( random.nextInt( 65 ) ).duration(
                         Math.max( 0, nonNegatives.next() - julianTime ) ).file(
                         strings.next() ).julianTime( julianTime ).offset(
                         random.nextInt( 180000 ) - 90000 ).preAlarm(
@@ -167,7 +167,7 @@ public class EventsCGIResultTest
     @Test
     public void retention()
     {
-        final EventsCGIResult result = new EventsCGIResult.Builder().cam( 1 ).alarm(
+        final EventsCGIResult result = new EventsCGIResult.Builder().camera( 1 ).alarm(
                 "test" ).julianTime( 100 ).offset( 5 ).file( "ignore" ).onDisk(
                 true ).duration( 40 ).preAlarm( 1 ).archive( 1 ).status(
                 EventsCGIResult.Status.NONE ).alarmType(
@@ -239,7 +239,7 @@ public class EventsCGIResultTest
     @Test(expected = IllegalArgumentException.class)
     public void highCameraNumber()
     {
-        aBuilder().cam( 65 ).build();
+        aBuilder().camera( 65 ).build();
     }
 
     private Builder aBuilder()

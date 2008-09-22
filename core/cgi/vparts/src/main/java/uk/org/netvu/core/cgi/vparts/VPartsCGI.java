@@ -4,7 +4,7 @@ import static uk.org.netvu.core.cgi.common.Option.someRef;
 import static uk.org.netvu.core.cgi.common.Parameter.bound;
 import static uk.org.netvu.core.cgi.common.Parameter.not;
 import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
-import static uk.org.netvu.core.cgi.common.Parameter.param3;
+import static uk.org.netvu.core.cgi.common.Parameter.param;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,43 +23,43 @@ public final class VPartsCGI
 {
     private static final Parameter<Format, Format> FORMAT = not(
             Format.HTML,
-            param3(
+            param(
                     "format",
                     "Determines output format.  js is for JavaScript, csv for comma separated variables",
                     Format.CSV, Format.fromString ) );
 
-    private static final Parameter<Mode, Mode> MODE = param3( "mode",
+    private static final Parameter<Mode, Mode> MODE = param( "mode",
             "Determines the function of the cgi call", Mode.READ,
             Mode.fromString );
 
-    private static final Parameter<Integer, Integer> TIME = notNegative( param3(
+    private static final Parameter<Integer, Integer> TIME = notNegative( param(
             "time", "Julianised GMT start time for database search", 0,
             Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Integer> RANGE = notNegative( param3(
+    private static final Parameter<Integer, Integer> RANGE = notNegative( param(
             "range", "Timespan to search in seconds.", Integer.MAX_VALUE,
             Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Integer> EXPIRY = param3(
+    private static final Parameter<Integer, Integer> EXPIRY = param(
             "expiry",
             "Sets the expiry time for partitions, used in protect mode; Julianised GMT",
             0, Conversion.stringToInt );
 
-    private static final Parameter<Boolean, Boolean> WATERMARK = param3(
+    private static final Parameter<Boolean, Boolean> WATERMARK = param(
             "watermark",
             "Tells the CGI to generate watermark codes in read mode", false,
             someRef( Conversion.stringToBoolean ) );
 
     private static final Parameter<Integer, Integer> WMARKSTEP = bound( 1, 256,
-            param3( "wmarkstepParam",
+            param( "wmarkstepParam",
                     "Defines the step size to be used in watermark.", 1,
                     Conversion.stringToInt ) );
 
-    private static final Parameter<Integer, Integer> LIST_LENGTH = param3(
+    private static final Parameter<Integer, Integer> LIST_LENGTH = param(
             "listlength", "Maximum number of entries in the list", 100,
             Conversion.stringToInt );
 
-    private static final Parameter<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = param3(
+    private static final Parameter<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = param(
             "pathstyle", "Format of directory paths.",
             DirectoryPathFormat.SHORT, DirectoryPathFormat.fromString );
 

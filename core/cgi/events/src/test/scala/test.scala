@@ -28,7 +28,11 @@ class AlarmTypeTest {
                               case _ => false } )) } }
 
 import _root_.org.specs.runner.JUnit4
+import _root_.org.specs.runner._
 import _root_.org.specs.{Specification, Scalacheck}
+import _root_.org.specs._
+import _root_.org.specs.specification._
+import Sugar._
 
 class SecondTest extends JUnit4(new Specification with Scalacheck {
  import EventsCGIResult.AlarmType
@@ -50,22 +54,23 @@ class SecondTest extends JUnit4(new Specification with Scalacheck {
                                     case _ => false } } } } } )
 
 import cgi.common.Format
-class EventsCGISecondTest extends JUnit4(new Specification with Scalacheck {
+class EventsCGISecondTest extends JUnit4(EventsCGISecondTestObject)
+object EventsCGISecondTestObject extends Specification with Scalacheck {
  import EventsCGI.Builder
- val events = new Builder().build
 
  "The default values for EventsCGI.Builder" should {
   "be the same as in the specification." in {
+   val events = new Builder().build
    events.getFormat mustEqual Format.CSV
    events.getTime mustEqual 0
    events.getRange mustEqual Integer.MAX_VALUE
    events.getMaxLength mustEqual 100
    events.getText mustEqual ""
-   events.getCamMask mustEqual 0
+   events.getCameraMask mustEqual 0
    events.getAlarmMask mustEqual 0
-   events.getVmdMask mustEqual 0
+   events.getVideoMotionDetectionMask mustEqual 0
    events.getGpsMask mustEqual 0
-   events.getSysMask mustEqual 0 } }
+   events.getSystemMask mustEqual 0 } }
 
  "Applying the time parameter more than once" should {
   "cause an IllegalStateException" in {
@@ -86,9 +91,9 @@ class EventsCGISecondTest extends JUnit4(new Specification with Scalacheck {
  "Supplying any two of the alarm mask, vmd mask, gps mask and sys mask parameters" should {
   "cause an IllegalStateException, as they are mutually exclusive." in {
    val parameters = List[Builder => Unit](b => b alarmMask 4,
-                                          b => b vmdMask 8,
+                                          b => b videoMotionDetectionMask 8,
                                           b => b gpsMask 32,
-                                          b => b sysMask 23)
+                                          b => b systemMask 23)
    for (first <- parameters; second <- parameters; if first != second) {
     val builder = new Builder
     first(builder)
@@ -101,11 +106,17 @@ class EventsCGISecondTest extends JUnit4(new Specification with Scalacheck {
  "The built EventsCGI" should {
   "have the values supplied to the Builder" in {
    property((a: Int) => new Builder().alarmMask(a).build.getAlarmMask == a) must pass
-   property((a: Int) => a >= 0 ==> (new Builder().gpsMask(a).build.getGpsMask == a)) must pass
-   property((a: Long) => new Builder().camMask(a).build.getCamMask == a) must pass
+   property((a: Int) => a >= 0 ==> (new Builder().range(a).build.getRange == a)) must pass
+   property((a: Long) => new Builder().cameraMask(a).build.getCameraMask == a) must pass
    property((a: Int) => new Builder().gpsMask(a).build.getGpsMask == a) must pass
    property((a: Int) => new Builder().length(a).build.getMaxLength == a) must pass
-   property((a: Int) => new Builder().sysMask(a).build.getSysMask == a) must pass
+   property((a: Int) => new Builder().systemMask(a).build.getSystemMask == a) must pass
    property((a: String) => new Builder().text(a).build.getText == a) must pass
    property((a: Int) => a >= 0 ==> (new Builder().time(a).build.getTime == a)) must pass
-   property((a: Long) => new Builder().vmdMask(a).build.getVmdMask == a) must pass } } } )
+   property((a: Long) => new Builder().videoMotionDetectionMask(a).build.getVideoMotionDetectionMask == a) must pass } }
+
+ "Null values" should {
+  "be rejected" in {
+   new Builder().format(null) must throwA(new NullPointerException)
+   new Builder().text(null) must throwA(new NullPointerException)
+   EventsCGI.fromString(null) must throwA(new NullPointerException) } } }

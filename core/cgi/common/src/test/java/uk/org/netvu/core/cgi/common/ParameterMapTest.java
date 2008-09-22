@@ -15,7 +15,7 @@ import org.junit.Test;
  */
 public final class ParameterMapTest
 {
-    private final static Parameter<String, Option<String>> PARAM = Parameter.param2(
+    private final static Parameter<String, Option<String>> PARAM = Parameter.param(
             "blah", "blah", Option.<String> some() );
 
     /**
@@ -39,9 +39,9 @@ public final class ParameterMapTest
         new ParameterMap().with( PARAM, "10" ).with( PARAM, "10" );
     }
 
-    private static final Parameter<Integer, Option<Integer>> TIME = Parameter.notNegative( Parameter.param2(
+    private static final Parameter<Integer, Option<Integer>> TIME = Parameter.notNegative( Parameter.param(
             "time", "time since 1970", Conversion.stringToInt ) );
-    private static final Parameter<Integer, Option<Integer>> RANGE = Parameter.param2(
+    private static final Parameter<Integer, Option<Integer>> RANGE = Parameter.param(
             "range", "range to search", Conversion.stringToInt );
 
     /**
@@ -156,9 +156,9 @@ public final class ParameterMapTest
     @Test
     public void fromStrings()
     {
-        final Parameter<String, String> name = Parameter.param3( "name", "foo",
+        final Parameter<String, String> name = Parameter.param( "name", "foo",
                 "Bob", Option.<String> some() );
-        final Parameter<String, String> surname = Parameter.param3( "surname",
+        final Parameter<String, String> surname = Parameter.param( "surname",
                 "foo", "Hope", Option.<String> some() );
 
         // this is an anonymous intialiser - it is creating a new ArrayList and
