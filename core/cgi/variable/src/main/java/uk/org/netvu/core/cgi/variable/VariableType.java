@@ -18,6 +18,11 @@ public enum VariableType
      */
     INCLUDE;
 
+    /**
+     * A Conversion that, given a String, will return a Some containing HTTP or
+     * INCLUDE if the String case-insensitively matches one of those, and None
+     * otherwise.
+     */
     static final Conversion<String, Option<VariableType>> fromString = new Conversion<String, Option<VariableType>>()
     {
         @Override

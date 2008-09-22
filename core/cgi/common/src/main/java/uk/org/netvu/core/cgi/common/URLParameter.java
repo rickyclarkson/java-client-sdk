@@ -29,6 +29,11 @@ public final class URLParameter
         this.value = value;
     }
 
+    /**
+     * A Conversion that, given a Pair of Strings, produces a URLParameter where
+     * the first String corresponds to the key, and the second String
+     * corresponds to the value.
+     */
     static final Conversion<Pair<String, String>, URLParameter> fromPair = new Conversion<Pair<String, String>, URLParameter>()
     {
         @Override

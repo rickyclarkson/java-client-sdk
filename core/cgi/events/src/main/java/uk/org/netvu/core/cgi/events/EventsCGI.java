@@ -401,7 +401,7 @@ public final class EventsCGI
     {
         if ( string.length() == 0 )
         {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Cannot parse an empty String into an EventsCGI.");
         }
 
         return new EventsCGI( ParameterMap.fromURL( string, params ) );

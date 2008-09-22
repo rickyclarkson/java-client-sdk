@@ -27,6 +27,10 @@ public class URLBuilder
         }
     }
 
+    /**
+     * A Conversion that, given a String, returns a URL-encoded version of it.
+     * UTF-8 is assumed.
+     */
     public static final Conversion<String, String> encode = new Conversion<String, String>()
     {
         @Override

@@ -85,8 +85,22 @@ public final class Lists
         return accumulator;
     }
 
-    public static <T, U> List<Pair<T, U>> zip( final List<T> ts,
-            final List<U> us )
+    /**
+     * Zips two Lists together, giving a new List containing Pairs each
+     * consisting of one element from each List, in order.
+     * 
+     * @param <T>
+     *        the type of the elements of the first List.
+     * @param <U>
+     *        the type of the elements of the second List.
+     * @param ts
+     *        the first List to zip.
+     * @param us
+     *        the second List to zip.
+     * @return a new List containing Paris each consisting of one element from
+     *         each List, in order.
+     */
+    static <T, U> List<Pair<T, U>> zip( final List<T> ts, final List<U> us )
     {
         final Iterator<T> tIterator = ts.iterator();
         final Iterator<U> uIterator = us.iterator();
@@ -101,6 +115,17 @@ public final class Lists
         return results;
     }
 
+    /**
+     * Given a list, returns a list where each element is a pair of that element
+     * and its index.
+     * 
+     * @param <T>
+     *        the type of the elements in the list.
+     * @param ts
+     *        the list to zip.
+     * @return a list where each element is a pair of that element and its
+     *         index.
+     */
     public static <T> List<Pair<T, Integer>> zipWithIndex( final List<T> ts )
     {
         final List<Pair<T, Integer>> results = new ArrayList<Pair<T, Integer>>();
@@ -121,7 +146,7 @@ public final class Lists
      * modified.
      * 
      * @param <T>
-     *        the type of the List.
+     *        the type of the elements of the List.
      * @param values
      *        the List to copy values from.
      * @param indices
@@ -144,6 +169,19 @@ public final class Lists
         return results;
     }
 
+    /**
+     * Given a List and a predicate, constructs a List consisting of only the
+     * elements of that List that pass the predicate.
+     * 
+     * @param <T>
+     *        the type of the elements of the List.
+     * @param list
+     *        the List to filter.
+     * @param conversion
+     *        the predicate to filter by.
+     * @return a List consisting of only the elements of the passed-in List that
+     *         pass the predicate.
+     */
     public static <T> List<T> filter( final List<T> list,
             final Conversion<T, Boolean> conversion )
     {

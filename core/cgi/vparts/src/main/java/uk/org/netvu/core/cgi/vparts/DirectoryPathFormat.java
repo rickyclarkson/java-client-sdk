@@ -18,6 +18,10 @@ public enum DirectoryPathFormat
      */
     LONG;
 
+    /**
+     * A Conversion that, given a String, will produce a Some containing SHORT
+     * or LONG if the String matches it (ignoring case), and a None otherwise.
+     */
     static final Conversion<String, Option<DirectoryPathFormat>> fromString = new Conversion<String, Option<DirectoryPathFormat>>()
     {
         @Override

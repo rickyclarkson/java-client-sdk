@@ -55,6 +55,9 @@ public enum Layout
      */
     PICTURE_IN_PICTURE( 8 );
 
+    /**
+     * The numeric value associated with this Layout.
+     */
     final int value;
 
     Layout( final int value )
@@ -62,6 +65,9 @@ public enum Layout
         this.value = value;
     }
 
+    /**
+     * Converts a Layout to its String representation for use in URL parameters.
+     */
     static final Conversion<Layout, String> urlEncode = new Conversion<Layout, String>()
     {
         @Override
@@ -71,6 +77,9 @@ public enum Layout
         }
     };
 
+    /**
+     * Converts the String representation of a Layout to a Layout.
+     */
     static final Conversion<String, Layout> fromURL = new Conversion<String, Layout>()
     {
         @Override
@@ -97,7 +106,8 @@ public enum Layout
             }
         }
 
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException(
+                "There is no Layout with the value " + value + '.' );
     }
 
 }

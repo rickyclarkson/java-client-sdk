@@ -142,6 +142,10 @@ public final class Connection
     private static final ReversibleReplace replacer = Strings.reversibleReplace(
             "&", "," );
 
+    /**
+     * A Conversion that, given a Connection, produces a URL-encoded String
+     * containing a representation of it as URL parameters.
+     */
     static final Conversion<Connection, String> urlEncode = new Conversion<Connection, String>()
     {
         @Override
@@ -151,6 +155,10 @@ public final class Connection
         }
     }.andThen( Strings.surroundWithQuotes );
 
+    /**
+     * A Conversion that, given a String containing URL parameters, produces a
+     * Connection from it.
+     */
     static final Conversion<String, Connection> fromURL = new Conversion<String, Connection>()
     {
         @Override

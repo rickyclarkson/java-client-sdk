@@ -27,6 +27,10 @@ public enum Mode
      */
     REINITIALISE;
 
+    /**
+     * Converts a String to a Mode if it matches a Mode's name
+     * (case-insensitive), returning a Some if it does, and a None otherwise.
+     */
     static Conversion<String, Option<Mode>> fromString = new Conversion<String, Option<Mode>>()
     {
         @Override

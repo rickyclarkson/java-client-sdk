@@ -54,11 +54,11 @@ public class VPartsCGIResult
         }
     };
 
-    private final ParameterMap parameterMap;
+    private final ParameterMap builtMap;
 
     private VPartsCGIResult( final ParameterMap parameterMap )
     {
-        this.parameterMap = parameterMap;
+        builtMap = parameterMap;
     }
 
     /**
@@ -66,7 +66,7 @@ public class VPartsCGIResult
      */
     public static final class Builder
     {
-        ParameterMap real = new ParameterMap();
+        private ParameterMap parameterMap = new ParameterMap();
 
         /**
          * Sets the index of the result in the result set.
@@ -77,7 +77,7 @@ public class VPartsCGIResult
          */
         public Builder index( final int index )
         {
-            real = real.with( INDEX, index );
+            parameterMap = parameterMap.with( INDEX, index );
             return this;
         }
 
@@ -90,7 +90,7 @@ public class VPartsCGIResult
          */
         public Builder directory( final String directory )
         {
-            real = real.with( DIRECTORY, directory );
+            parameterMap = parameterMap.with( DIRECTORY, directory );
             return this;
         }
 
@@ -103,7 +103,7 @@ public class VPartsCGIResult
          */
         public Builder filename( final String filename )
         {
-            real = real.with( FILENAME, filename );
+            parameterMap = parameterMap.with( FILENAME, filename );
             return this;
         }
 
@@ -116,7 +116,7 @@ public class VPartsCGIResult
          */
         public Builder startTime( final int startTime )
         {
-            real = real.with( START_TIME, startTime );
+            parameterMap = parameterMap.with( START_TIME, startTime );
             return this;
         }
 
@@ -129,7 +129,7 @@ public class VPartsCGIResult
          */
         public Builder endTime( final int endTime )
         {
-            real = real.with( END_TIME, endTime );
+            parameterMap = parameterMap.with( END_TIME, endTime );
             return this;
         }
 
@@ -144,7 +144,7 @@ public class VPartsCGIResult
          */
         public Builder expiryTime( final int expiryTime )
         {
-            real = real.with( EXPIRY_TIME, expiryTime );
+            parameterMap = parameterMap.with( EXPIRY_TIME, expiryTime );
             return this;
         }
 
@@ -157,7 +157,8 @@ public class VPartsCGIResult
          */
         public Builder numberOfEntries( final int numberOfEntries )
         {
-            real = real.with( NUMBER_OF_ENTRIES, numberOfEntries );
+            parameterMap = parameterMap.with( NUMBER_OF_ENTRIES,
+                    numberOfEntries );
             return this;
         }
 
@@ -171,7 +172,7 @@ public class VPartsCGIResult
          */
         public Builder camMask( final int camMask )
         {
-            real = real.with( CAM_MASK, camMask );
+            parameterMap = parameterMap.with( CAM_MASK, camMask );
             return this;
         }
 
@@ -185,14 +186,14 @@ public class VPartsCGIResult
             for ( final Parameter<?, ? extends Option<?>> param : params )
             {
 
-                if ( real.get( param ).isNone() )
+                if ( parameterMap.get( param ).isNone() )
                 {
                     throw new IllegalStateException( "The parameter "
                             + param.getName() + " has not been given a value" );
                 }
             }
 
-            return new VPartsCGIResult( real );
+            return new VPartsCGIResult( parameterMap );
         }
     }
 
@@ -203,7 +204,7 @@ public class VPartsCGIResult
      */
     public int getIndex()
     {
-        return parameterMap.get( INDEX ).get();
+        return builtMap.get( INDEX ).get();
     }
 
     /**
@@ -213,7 +214,7 @@ public class VPartsCGIResult
      */
     public String getDirectory()
     {
-        return parameterMap.get( DIRECTORY ).get();
+        return builtMap.get( DIRECTORY ).get();
     }
 
     /**
@@ -223,7 +224,7 @@ public class VPartsCGIResult
      */
     public String getFilename()
     {
-        return parameterMap.get( FILENAME ).get();
+        return builtMap.get( FILENAME ).get();
     }
 
     /**
@@ -233,7 +234,7 @@ public class VPartsCGIResult
      */
     public int getStartTime()
     {
-        return parameterMap.get( START_TIME ).get();
+        return builtMap.get( START_TIME ).get();
     }
 
     /**
@@ -243,7 +244,7 @@ public class VPartsCGIResult
      */
     public int getEndTime()
     {
-        return parameterMap.get( END_TIME ).get();
+        return builtMap.get( END_TIME ).get();
     }
 
     /**
@@ -254,7 +255,7 @@ public class VPartsCGIResult
      */
     public int getExpiryTime()
     {
-        return parameterMap.get( EXPIRY_TIME ).get();
+        return builtMap.get( EXPIRY_TIME ).get();
     }
 
     /**
@@ -264,7 +265,7 @@ public class VPartsCGIResult
      */
     public int getNumberOfEntries()
     {
-        return parameterMap.get( NUMBER_OF_ENTRIES ).get();
+        return builtMap.get( NUMBER_OF_ENTRIES ).get();
     }
 
     /**
@@ -274,7 +275,7 @@ public class VPartsCGIResult
      */
     public int getCamMask()
     {
-        return parameterMap.get( CAM_MASK ).get();
+        return builtMap.get( CAM_MASK ).get();
     }
 
     /**
@@ -290,7 +291,7 @@ public class VPartsCGIResult
 
         for ( final Parameter<?, ? extends Option<?>> param : params )
         {
-            result.append( parameterMap.get( param ).get() ).append( ", " );
+            result.append( builtMap.get( param ).get() ).append( ", " );
         }
 
         return result.substring( 0, result.length() - 2 );

@@ -14,6 +14,15 @@ public final class VariableCGI
 {
     private final ParameterMap parameterMap;
 
+    /**
+     * Constructs a VariableCGI using the values from the given ParameterMap.
+     * 
+     * @param parameterMap
+     *        the map containing the values to use.
+     * @throws IllegalStateException
+     *         if the ParameterMap does not contain a value for the VARIABLE
+     *         parameter.
+     */
     VariableCGI( final ParameterMap parameterMap )
     {
         if ( parameterMap.get( VARIABLE ).isNone() )
@@ -47,7 +56,7 @@ public final class VariableCGI
      */
     public static final class Builder
     {
-        Option<ParameterMap> real = new Option.Some<ParameterMap>(
+        private Option<ParameterMap> parameterMap = new Option.Some<ParameterMap>(
                 new ParameterMap() );
 
         /**
@@ -59,7 +68,8 @@ public final class VariableCGI
          */
         public Builder variable( final Variable variable )
         {
-            real = real.map( ParameterMap.withRef( VARIABLE, variable ) );
+            parameterMap = parameterMap.map( ParameterMap.withRef( VARIABLE,
+                    variable ) );
             return this;
         }
 
@@ -72,7 +82,7 @@ public final class VariableCGI
          */
         public Builder type( final VariableType type )
         {
-            real = real.map( ParameterMap.withRef( TYPE, type ) );
+            parameterMap = parameterMap.map( ParameterMap.withRef( TYPE, type ) );
             return this;
         }
 
@@ -85,11 +95,11 @@ public final class VariableCGI
         {
             try
             {
-                return new VariableCGI( real.get() );
+                return new VariableCGI( parameterMap.get() );
             }
             finally
             {
-                real = new Option.None<ParameterMap>();
+                parameterMap = new Option.None<ParameterMap>();
             }
         }
     }

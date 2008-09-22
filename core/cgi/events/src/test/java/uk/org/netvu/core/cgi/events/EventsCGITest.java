@@ -150,10 +150,8 @@ public class EventsCGITest
         }
     }
 
-    /**
-     * Tests that the built EventsCGI has the values supplied to the builder,
-     * using random data generation.
-     */
+    // Tests that the built EventsCGI has the values supplied to the builder,
+    // using random data generation.
     private static boolean testRetention( final Random random )
     {
         final int randomInt = random.nextInt();
@@ -206,6 +204,10 @@ public class EventsCGITest
         }
     }
 
+    // compares some CSV with the generated CSV from an EventsCGIResult,
+    // ignoring fields 0 and 7.
+    // note that it's 0 and 6 in the code because deleting the first changes the
+    // indices of the rest.
     private boolean compare( final String input, final EventsCGIResult output )
     {
         final List<String> fields = new ArrayList<String>(

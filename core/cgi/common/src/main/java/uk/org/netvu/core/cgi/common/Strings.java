@@ -82,12 +82,38 @@ public class Strings
                 string.substring( index + 1 ) ) : Arrays.asList( string );
     }
 
+    /**
+     * Gives the part of the given String that is before the first instance of
+     * the given separator, or the whole string if the separator isn't found in
+     * the String.
+     * 
+     * @param string
+     *        the String to parse.
+     * @param separator
+     *        the separator to split on.
+     * @return the part of the given String that is before the first instance of
+     *         the given separator, or the whole string if the separator isn't
+     *         found in the String.
+     */
     static String beforeFirstLeniently( final String string,
             final String separator )
     {
         return partitionLeniently( string, separator ).get( 0 );
     }
 
+    /**
+     * Gives the part of the given String that is after the last instance of the
+     * given separator, or the whole string if the separator isn't found in the
+     * String.
+     * 
+     * @param string
+     *        the String to parse.
+     * @param separator
+     *        the separator to split on.
+     * @return the part of the given String that is after the last instance of
+     *         the given separator, or the whole string if the separator isn't
+     *         found in the string.
+     */
     static String afterLastLeniently( final String string,
             final String separator )
     {
@@ -95,6 +121,19 @@ public class Strings
         return list.get( list.size() - 1 );
     }
 
+    /**
+     * Gives the part of the given String that is after the first instance of
+     * the given separator, or the whole String if the separator isn't found in
+     * the String.
+     * 
+     * @param string
+     *        the String to parse.
+     * @param separator
+     *        the separator to split on.
+     * @return the part of the given String that is after the first instance of
+     *         the given separator, or the whole String if the separator isn't
+     *         found in the String.
+     */
     static String afterFirstLeniently( final String string,
             final String separator )
     {
@@ -141,20 +180,37 @@ public class Strings
         return results;
     }
 
+    /**
+     * Gives a Conversion that can split a given String into two parts around
+     * the given separator.
+     * 
+     * @param separator
+     *        the separator to use.
+     * @return
+     */
     static Conversion<String, Pair<String, String>> partition(
-            final String string )
+            final char separator )
     {
         return new Conversion<String, Pair<String, String>>()
         {
             @Override
             public Pair<String, String> convert( final String param )
             {
-                return Pair.pair( param.substring( 0, param.indexOf( '=' ) ),
-                        param.substring( param.indexOf( '=' ) + 1 ) );
+                return Pair.pair(
+                        param.substring( 0, param.indexOf( separator ) ),
+                        param.substring( param.indexOf( separator ) + 1 ) );
             }
         };
     }
 
+    /**
+     * Removes leading and trailing double quotes from a String. If they don't
+     * exist then it returns the original String.
+     * 
+     * @param value
+     *        the String to trim double quotes from.
+     * @return a String without leading and trailing double quotes.
+     */
     static String removeSurroundingQuotesLeniently( final String value )
     {
         return value.startsWith( "\"" ) && value.endsWith( "\"" ) ? value.substring(

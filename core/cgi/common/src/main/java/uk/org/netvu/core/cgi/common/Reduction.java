@@ -23,6 +23,16 @@ public abstract class Reduction<T, R>
      */
     public abstract R reduce( T newValue, R original );
 
+    /**
+     * A Reduction that, given two Strings, constructs a new String containing
+     * the two Strings with the given separator between them. Applied across a
+     * List it can be used to comma-separate the List, etc.
+     * 
+     * @param separator
+     *        the String to use to separate each pair of Strings received.
+     * @return a Reduction that constructs a new String containing two Strings
+     *         with the given separator between them.
+     */
     public static final Reduction<String, String> intersperseWith(
             final String separator )
     {

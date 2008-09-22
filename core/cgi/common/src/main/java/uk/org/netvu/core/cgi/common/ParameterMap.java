@@ -48,7 +48,7 @@ public final class ParameterMap
         this( new HashMap<Parameter<?, ?>, Object>(), validator );
     }
 
-    ParameterMap( final Map<Parameter<?, ?>, Object> values,
+    private ParameterMap( final Map<Parameter<?, ?>, Object> values,
             final Validator validator )
     {
         this.validator = validator;
@@ -221,6 +221,19 @@ public final class ParameterMap
         return parameterMap;
     }
 
+    /**
+     * A Conversion that takes in a ParameterMap and produces a new ParameterMap
+     * containing the given Parameter and its value.
+     * 
+     * @param <T>
+     *        the type of the Parameter.
+     * @param parameter
+     *        the parameter to apply to ParameterMaps.
+     * @param value
+     *        the value to apply for that parameter.
+     * @return a Conversion that takes in a ParameterMap and produces a new
+     *         ParameterMap containing the given Parameter and its value.
+     */
     public static <T> Conversion<ParameterMap, ParameterMap> withRef(
             final Parameter<T, ?> parameter, final T value )
     {

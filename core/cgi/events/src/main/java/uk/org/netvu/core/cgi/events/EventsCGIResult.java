@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Lists;
@@ -76,13 +75,6 @@ public final class EventsCGIResult
 
     private final ParameterMap parameterMap;
 
-    /**
-     * Constructs an EventsCGIResult given a Builder that contains all the
-     * necessary information.
-     * 
-     * @param builder
-     *        the ParameterMap to base this EventsCGIResult on.
-     */
     private EventsCGIResult( final ParameterMap parameterMap )
     {
         for ( final Parameter<?, ? extends Option<?>> param : compulsoryParams )
@@ -332,24 +324,21 @@ public final class EventsCGIResult
                 }
             }
 
-            throw new IllegalArgumentException("There is no Status with the value "+value);
+            throw new IllegalArgumentException(
+                    "There is no Status with the value " + value );
         }
 
-        static Status oneOf( final Random random )
-        {
-            return Status.values()[random.nextInt( Status.values().length )];
-        }
-
-        static final Conversion<String, Option<Status>> fromString = new Conversion<String, Option<Status>>()
+        private static final Conversion<String, Option<Status>> fromString = new Conversion<String, Option<Status>>()
         {
             @Override
             public Option<Status> convert( final String s )
             {
                 try
                 {
-                    return new Option.Some<Status>(find( Integer.parseInt( s ) ));
+                    return new Option.Some<Status>(
+                            find( Integer.parseInt( s ) ) );
                 }
-                catch (IllegalArgumentException e)
+                catch ( final IllegalArgumentException e )
                 {
                     return new Option.None<Status>();
                 }
@@ -515,7 +504,16 @@ public final class EventsCGIResult
                 } );
     }
 
-    String toCSV( final int index )
+    /**
+     * Creates a CSV representation of this EventsCGIResult. Note that the CSV
+     * contains an index, twice, and the EventsCGIResult does not store that, so
+     * a caller needs to pass the index of the result to toCSV().
+     * 
+     * @param index
+     *        the value of the index field in the CSV.
+     * @return a CSV representation of this EventsCGIResult.
+     */
+    public String toCSV( final int index )
     {
         // "overwitten" is taken from server output
 
@@ -533,16 +531,6 @@ public final class EventsCGIResult
 
         return Strings.intersperse( ", ", Lists.map( all,
                 Conversion.objectToString() ) );
-    }
-
-    /**
-     * Converts this object to a String holding comma separated values in the
-     * same format as in the events database. The index field is always 0.
-     */
-    @Override
-    public String toString()
-    {
-        return toCSV( 0 );
     }
 
     /**
@@ -602,6 +590,15 @@ public final class EventsCGIResult
             this.value = value;
         }
 
+        /**
+         * Finds an AlarmType that has the supplied value.
+         * 
+         * @param value
+         *        the value to search the AlarmTypes for.
+         * @return the AlarmType that has the supplied value.
+         * @throws IllegalArgumentException
+         *         if no matching AlarmType exists.
+         */
         public static AlarmType find( final int value )
                 throws IllegalArgumentException
         {
@@ -613,24 +610,21 @@ public final class EventsCGIResult
                 }
             }
 
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    "There is no AlarmType with the value " + value );
         }
 
-        static AlarmType oneOf( final Random random )
-        {
-            return AlarmType.values()[random.nextInt( AlarmType.values().length )];
-        }
-
-        static final Conversion<String, Option<AlarmType>> fromString = new Conversion<String, Option<AlarmType>>()
+        private static final Conversion<String, Option<AlarmType>> fromString = new Conversion<String, Option<AlarmType>>()
         {
             @Override
             public Option<AlarmType> convert( final String t )
             {
                 try
                 {
-                    return new Option.Some<AlarmType>(find( Integer.parseInt( t ) ));
+                    return new Option.Some<AlarmType>(
+                            find( Integer.parseInt( t ) ) );
                 }
-                catch (IllegalArgumentException e)
+                catch ( final IllegalArgumentException e )
                 {
                     return new Option.None<AlarmType>();
                 }

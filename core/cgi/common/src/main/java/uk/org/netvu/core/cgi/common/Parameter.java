@@ -63,7 +63,8 @@ public abstract class Parameter<T, R>
                     return new Option.Some<T>( newValue );
                 }
 
-                throw new IllegalStateException();
+                throw new IllegalStateException( "The " + name
+                        + " parameter has already been set to a value." );
             }
 
             @Override
@@ -149,7 +150,10 @@ public abstract class Parameter<T, R>
                     return newValue;
                 }
 
-                throw new IllegalStateException();
+                throw new IllegalStateException(
+                        "The "
+                                + name
+                                + " parameter has already been set to a value other than its default" );
             }
 
             @Override
@@ -204,7 +208,10 @@ public abstract class Parameter<T, R>
                     return newValue;
                 }
 
-                throw new IllegalStateException();
+                throw new IllegalStateException(
+                        "The "
+                                + name
+                                + " parameter has already been set to a value other than its default" );
             }
 
             @Override
@@ -262,7 +269,10 @@ public abstract class Parameter<T, R>
                     return param.reduce( newValue, original );
                 }
 
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException( "The value " + newValue
+                        + " is not within the bounds for the " + param.name
+                        + " parameter (" + lowerInclusive + " to "
+                        + higherInclusive + " inclusive)." );
             }
 
             @Override
@@ -307,7 +317,11 @@ public abstract class Parameter<T, R>
             {
                 if ( newValue.equals( banned ) )
                 {
-                    throw new IllegalArgumentException();
+                    throw new IllegalArgumentException(
+                            "The "
+                                    + param.name
+                                    + " parameter is not allowed to take the supplied value, "
+                                    + newValue + '.' );
                 }
                 return param.reduce( newValue, original );
             }
@@ -489,12 +503,34 @@ public abstract class Parameter<T, R>
      */
     public abstract Option<T> fromURLParameter( final URLParameter nameAndValue );
 
+    /**
+     * Gives the default value for this Parameter.
+     * 
+     * @return the default value for this Parameter.
+     */
     R getDefaultValue()
     {
         return defaultValue;
     }
 
+    /**
+     * Takes in a new value and an original value and produces a new value from
+     * merging them. What this actually does depends on the particular Parameter
+     * implementation.
+     * 
+     * @param newValue
+     * @param original
+     * @return
+     */
     abstract R reduce( final T newValue, final R original );
 
+    /**
+     * Converts a name and value into a URLParameter, placing it in a Some if
+     * that succeeds, or in a None if that is an unsupported operation for this
+     * Parameter.
+     * 
+     * @param nameAndValue
+     * @return
+     */
     abstract Option<String> toURLParameter( final Pair<String, R> nameAndValue );
 }

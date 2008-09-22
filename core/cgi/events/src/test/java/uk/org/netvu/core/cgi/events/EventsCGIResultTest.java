@@ -2,14 +2,15 @@ package uk.org.netvu.core.cgi.events;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.Iterator;
 import java.util.Random;
 
 import org.junit.Test;
 
 import uk.org.netvu.core.cgi.common.Generator;
 import uk.org.netvu.core.cgi.common.Generators;
+import uk.org.netvu.core.cgi.events.EventsCGIResult.AlarmType;
 import uk.org.netvu.core.cgi.events.EventsCGIResult.Builder;
+import uk.org.netvu.core.cgi.events.EventsCGIResult.Status;
 
 /**
  * Tests EventsCGIResult implementations.
@@ -23,26 +24,16 @@ public class EventsCGIResultTest
      *        the random number generator
      * @return an Iterator producing random events.
      */
-    public static final Iterator<EventsCGIResult> eventGenerator(
+    public static final Generator<EventsCGIResult> eventGenerator(
             final Random random )
     {
-        final Iterator<EventsCGIResult.Builder> builders = eventBuilderGenerator( random );
+        final Generator<EventsCGIResult.Builder> builders = eventBuilderGenerator( random );
 
-        return new Iterator<EventsCGIResult>()
+        return new Generator<EventsCGIResult>()
         {
-            public void remove()
-            {
-                builders.remove();
-            }
-
             public EventsCGIResult next()
             {
                 return builders.next().build();
-            }
-
-            public boolean hasNext()
-            {
-                return builders.hasNext();
             }
         };
 
@@ -55,16 +46,21 @@ public class EventsCGIResultTest
      *        the random number generator to use.
      * @return an infinite series of completed random EventsCGIResult.Builders.
      */
-    public static final Iterator<EventsCGIResult.Builder> eventBuilderGenerator(
+    public static final Generator<EventsCGIResult.Builder> eventBuilderGenerator(
             final Random random )
     {
         final Generator<String> strings = Generators.strings( random );
 
-        return new Iterator<EventsCGIResult.Builder>()
+        return new Generator<EventsCGIResult.Builder>()
         {
-            public boolean hasNext()
+            private AlarmType oneAlarm( final Random random )
             {
-                return true;
+                return AlarmType.values()[random.nextInt( AlarmType.values().length )];
+            }
+
+            private Status oneStatus( final Random random )
+            {
+                return Status.values()[random.nextInt( Status.values().length )];
             }
 
             public EventsCGIResult.Builder next()
@@ -78,15 +74,8 @@ public class EventsCGIResultTest
                         strings.next() ).julianTime( julianTime ).offset(
                         random.nextInt( 180000 ) - 90000 ).preAlarm(
                         nonNegatives.next() ).onDisk( random.nextBoolean() ).status(
-                        EventsCGIResult.Status.oneOf( random ) ).alarmType(
-                        EventsCGIResult.AlarmType.oneOf( random ) );
+                        oneStatus( random ) ).alarmType( oneAlarm( random ) );
             }
-
-            public void remove()
-            {
-                throw new UnsupportedOperationException();
-            }
-
         };
     }
 
@@ -110,7 +99,7 @@ public class EventsCGIResultTest
     @Test
     public void generatedEvents()
     {
-        final Iterator<EventsCGIResult> events = EventsCGIResultTest.eventGenerator( new Random(
+        final Generator<EventsCGIResult> events = EventsCGIResultTest.eventGenerator( new Random(
                 0 ) );
 
         for ( int a = 0; a < Generators.LIMIT; a++ )
@@ -172,16 +161,29 @@ public class EventsCGIResultTest
     }
 
     /**
-     * Tests that the status passed to EventsCGIResult.Builder is retained in
+     * Tests that the values passed to EventsCGIResult.Builder are retained in
      * the built EventsCGIResult.
      */
     @Test
-    public void statusRetention()
+    public void retention()
     {
-        assertTrue( new EventsCGIResult.Builder().cam( 1 ).alarm( "test" ).julianTime(
-                100 ).offset( 5 ).file( "ignore" ).onDisk( true ).duration( 40 ).preAlarm(
-                1 ).archive( 1 ).status( EventsCGIResult.Status.NONE ).alarmType(
-                EventsCGIResult.AlarmType.CAMERA ).build().getStatus() == EventsCGIResult.Status.NONE );
+        final EventsCGIResult result = new EventsCGIResult.Builder().cam( 1 ).alarm(
+                "test" ).julianTime( 100 ).offset( 5 ).file( "ignore" ).onDisk(
+                true ).duration( 40 ).preAlarm( 1 ).archive( 1 ).status(
+                EventsCGIResult.Status.NONE ).alarmType(
+                EventsCGIResult.AlarmType.CAMERA ).build();
+
+        assertTrue( result.getCam() == 1 );
+        assertTrue( result.getAlarm().equals( "test" ) );
+        assertTrue( result.getJulianTime() == 100 );
+        assertTrue( result.getOffset() == 5 );
+        assertTrue( result.getFile().equals( "ignore" ) );
+        assertTrue( result.isOnDisk() );
+        assertTrue( result.getDuration() == 40 );
+        assertTrue( result.getPreAlarm() == 1 );
+        assertTrue( result.getArchive() == 1 );
+        assertTrue( result.getStatus() == EventsCGIResult.Status.NONE );
+        assertTrue( result.getAlarmType() == EventsCGIResult.AlarmType.CAMERA );
     }
 
     /**
@@ -191,7 +193,7 @@ public class EventsCGIResultTest
     public void testToString()
     {
         final Random random = new Random( 0 );
-        final Iterator<EventsCGIResult> gen = eventGenerator( random );
+        final Generator<EventsCGIResult> gen = eventGenerator( random );
 
         for ( int a = 0; a < Generators.LIMIT; a++ )
         {

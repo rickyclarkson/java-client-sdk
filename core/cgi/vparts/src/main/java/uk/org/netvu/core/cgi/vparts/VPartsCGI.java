@@ -80,11 +80,11 @@ public final class VPartsCGI
         }
     };
 
-    private final ParameterMap parameterMap;
+    private final ParameterMap builtMap;
 
-    private VPartsCGI( final ParameterMap parameterMap )
+    private VPartsCGI( final ParameterMap builtMap )
     {
-        this.parameterMap = parameterMap;
+        this.builtMap = builtMap;
     }
 
     /**
@@ -92,7 +92,7 @@ public final class VPartsCGI
      */
     public static final class Builder
     {
-        Option<ParameterMap> real = new Option.Some<ParameterMap>(
+        private Option<ParameterMap> parameterMap = new Option.Some<ParameterMap>(
                 new ParameterMap() );
 
         /**
@@ -104,11 +104,11 @@ public final class VPartsCGI
         {
             try
             {
-                return new VPartsCGI( real.get() );
+                return new VPartsCGI( parameterMap.get() );
             }
             finally
             {
-                real = new Option.None<ParameterMap>();
+                parameterMap = new Option.None<ParameterMap>();
             }
         }
 
@@ -121,7 +121,7 @@ public final class VPartsCGI
          */
         public Builder mode( final Mode mode )
         {
-            real = real.map( ParameterMap.withRef( MODE, mode ) );
+            parameterMap = parameterMap.map( ParameterMap.withRef( MODE, mode ) );
             return this;
         }
 
@@ -134,7 +134,7 @@ public final class VPartsCGI
          */
         public Builder time( final int time )
         {
-            real = real.map( ParameterMap.withRef( TIME, time ) );
+            parameterMap = parameterMap.map( ParameterMap.withRef( TIME, time ) );
             return this;
         }
 
@@ -147,7 +147,7 @@ public final class VPartsCGI
          */
         public Builder range( final int range )
         {
-            real = real.map( ParameterMap.withRef( RANGE, range ) );
+            parameterMap = parameterMap.map( ParameterMap.withRef( RANGE, range ) );
             return this;
         }
 
@@ -164,7 +164,8 @@ public final class VPartsCGI
          */
         public Builder expiry( final int expiry )
         {
-            real = real.map( ParameterMap.withRef( EXPIRY, expiry ) );
+            parameterMap = parameterMap.map( ParameterMap.withRef( EXPIRY,
+                    expiry ) );
             return this;
         }
 
@@ -179,7 +180,8 @@ public final class VPartsCGI
          */
         public Builder watermark( final boolean watermark )
         {
-            real = real.map( ParameterMap.withRef( WATERMARK, watermark ) );
+            parameterMap = parameterMap.map( ParameterMap.withRef( WATERMARK,
+                    watermark ) );
             return this;
         }
 
@@ -194,7 +196,8 @@ public final class VPartsCGI
          */
         public Builder watermarkStep( final int step )
         {
-            real = real.map( ParameterMap.withRef( WMARKSTEP, step ) );
+            parameterMap = parameterMap.map( ParameterMap.withRef( WMARKSTEP,
+                    step ) );
             return this;
         }
 
@@ -208,7 +211,8 @@ public final class VPartsCGI
          */
         public Builder format( final Format format )
         {
-            real = real.map( ParameterMap.withRef( FORMAT, format ) );
+            parameterMap = parameterMap.map( ParameterMap.withRef( FORMAT,
+                    format ) );
             return this;
         }
 
@@ -221,7 +225,8 @@ public final class VPartsCGI
          */
         public Builder listlength( final int listlength )
         {
-            real = real.map( ParameterMap.withRef( LIST_LENGTH, listlength ) );
+            parameterMap = parameterMap.map( ParameterMap.withRef( LIST_LENGTH,
+                    listlength ) );
             return this;
         }
 
@@ -234,7 +239,8 @@ public final class VPartsCGI
          */
         public Builder pathstyle( final DirectoryPathFormat style )
         {
-            real = real.map( ParameterMap.withRef( PATH_STYLE, style ) );
+            parameterMap = parameterMap.map( ParameterMap.withRef( PATH_STYLE,
+                    style ) );
             return this;
         }
     }
@@ -246,7 +252,7 @@ public final class VPartsCGI
      */
     public Mode getMode()
     {
-        return parameterMap.get( MODE );
+        return builtMap.get( MODE );
     }
 
     /**
@@ -256,7 +262,7 @@ public final class VPartsCGI
      */
     public int getTime()
     {
-        return parameterMap.get( TIME );
+        return builtMap.get( TIME );
     }
 
     /**
@@ -266,7 +272,7 @@ public final class VPartsCGI
      */
     public int getRange()
     {
-        return parameterMap.get( RANGE );
+        return builtMap.get( RANGE );
     }
 
     /**
@@ -277,7 +283,7 @@ public final class VPartsCGI
      */
     public int getExpiry()
     {
-        return parameterMap.get( EXPIRY );
+        return builtMap.get( EXPIRY );
     }
 
     /**
@@ -288,7 +294,7 @@ public final class VPartsCGI
      */
     public boolean getWatermark()
     {
-        return parameterMap.get( WATERMARK );
+        return builtMap.get( WATERMARK );
     }
 
     /**
@@ -298,7 +304,7 @@ public final class VPartsCGI
      */
     public int getWatermarkStep()
     {
-        return parameterMap.get( WMARKSTEP );
+        return builtMap.get( WMARKSTEP );
     }
 
     /**
@@ -308,7 +314,7 @@ public final class VPartsCGI
      */
     public Format getFormat()
     {
-        return parameterMap.get( FORMAT );
+        return builtMap.get( FORMAT );
     }
 
     /**
@@ -318,7 +324,7 @@ public final class VPartsCGI
      */
     public int getListlength()
     {
-        return parameterMap.get( LIST_LENGTH );
+        return builtMap.get( LIST_LENGTH );
     }
 
     /**
@@ -328,14 +334,14 @@ public final class VPartsCGI
      */
     public DirectoryPathFormat getPathstyle()
     {
-        return parameterMap.get( PATH_STYLE );
+        return builtMap.get( PATH_STYLE );
     }
 
     @Override
     public String toString()
     {
-        return "/vparts.cgi?format=" + parameterMap.get( FORMAT ) + "&"
-                + parameterMap.toURLParameters( Lists.remove( params, FORMAT ) );
+        return "/vparts.cgi?format=" + builtMap.get( FORMAT ) + "&"
+                + builtMap.toURLParameters( Lists.remove( params, FORMAT ) );
     }
 
     /**

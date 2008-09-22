@@ -87,6 +87,11 @@ public enum Variable
         this.arrayOrScalar = arrayOrScalar;
     }
 
+    /**
+     * A Conversion that, given a String possibly ending in [], ignores the []
+     * and matches it, case-insensitively, to one of the given Variables,
+     * returning it as a Some, or returning a None if there was no match.
+     */
     static final Conversion<String, Option<Variable>> fromString = new Conversion<String, Option<Variable>>()
     {
         @Override
