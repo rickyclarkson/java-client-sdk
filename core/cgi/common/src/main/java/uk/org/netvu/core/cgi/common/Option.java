@@ -23,122 +23,6 @@ public abstract class Option<T>
     public abstract T getOrElse( T reserve );
 
     /**
-     * An implementation of Option that has 1 element.
-     * 
-     * @param <T>
-     *        the type of the element.
-     */
-    public static final class Some<T>
-            extends Option<T>
-    {
-        private final T t;
-
-        /**
-         * @param t
-         *        the value that this Some holds.
-         */
-        public Some( final T t )
-        {
-            this.t = t;
-        }
-
-        @Override
-        public T getOrElse( final T reserve )
-        {
-            return t;
-        }
-
-        @Override
-        public boolean isNone()
-        {
-            return false;
-        }
-
-        @Override
-        public <U> Option<U> map( final Conversion<T, U> conversion )
-        {
-            return new Some<U>( conversion.convert( t ) );
-        }
-
-        @Override
-        public void then( final Action<T> action )
-        {
-            action.invoke( t );
-        }
-
-        @Override
-        public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
-        {
-            return conversion.convert( t );
-        }
-
-        @Override
-        <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
-        {
-            return ifSome.convert( t );
-        }
-
-        @Override
-        public T get()
-        {
-            return t;
-        }
-    }
-
-    /**
-     * An implementation of Option that has no element.
-     * 
-     * @param <T>
-     *        the type of this Option.
-     */
-    public static final class None<T>
-            extends Option<T>
-    {
-        @Override
-        public T getOrElse( final T reserve )
-        {
-            return reserve;
-        }
-
-        @Override
-        public boolean isNone()
-        {
-            return true;
-        }
-
-        @Override
-        public <U> Option<U> map( final Conversion<T, U> conversion )
-        {
-            return new None<U>();
-        }
-
-        @Override
-        public void then( final Action<T> action )
-        {
-        }
-
-        @Override
-        public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
-        {
-            return new Option.None<U>();
-        }
-
-        @Override
-        <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
-        {
-            return ifNone;
-        }
-
-        @Override
-        public T get()
-        {
-            throw new IllegalStateException(
-                    "This Option has no element, get() cannot be called on it." );
-        }
-
-    }
-
-    /**
      * Gets the element held by this Option, or throws an IllegalStateException
      * if there is none.
      * 
@@ -183,7 +67,7 @@ public abstract class Option<T>
             @Override
             public Option<U> convert( final T t )
             {
-                return new Option.None<U>();
+                return none();
             }
         };
     }
@@ -211,7 +95,7 @@ public abstract class Option<T>
             @Override
             public Option<T> convert( final T t )
             {
-                return new Option.Some<T>( t );
+                return some( t );
             }
 
         };
@@ -238,11 +122,127 @@ public abstract class Option<T>
             @Override
             public Option<U> convert( final T t )
             {
-                return new Option.Some<U>( conversion.convert( t ) );
+                return some( conversion.convert( t ) );
             }
         };
     }
 
+    /**
+     * Creates an Option holding one element.
+     * 
+     * @param <T>
+     *        the type of the element.
+     * @param t
+     *        the element.
+     * @return an Option holding one element.
+     */
+    public static <T> Option<T> some( final T t )
+    {
+        return new Option<T>()
+        {
+            @Override
+            public T getOrElse( final T reserve )
+            {
+                return t;
+            }
+
+            @Override
+            public boolean isNone()
+            {
+                return false;
+            }
+
+            @Override
+            public <U> Option<U> map( final Conversion<T, U> conversion )
+            {
+                return Option.some( conversion.convert( t ) );
+            }
+
+            @Override
+            public void then( final Action<T> action )
+            {
+                action.invoke( t );
+            }
+
+            @Override
+            public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
+            {
+                return conversion.convert( t );
+            }
+
+            @Override
+            <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
+            {
+                return ifSome.convert( t );
+            }
+
+            @Override
+            public T get()
+            {
+                return t;
+            }
+        };
+    }
+
+    /**
+     * Creates an Option holding no elements.
+     * 
+     * @param <T>
+     *        the type of the Option.
+     * @return an Option holding no elements.
+     */
+    public static <T> Option<T> none()
+    {
+        return new Option<T>()
+        {
+            @Override
+            public T getOrElse( final T reserve )
+            {
+                return reserve;
+            }
+
+            @Override
+            public boolean isNone()
+            {
+                return true;
+            }
+
+            @Override
+            public <U> Option<U> map( final Conversion<T, U> conversion )
+            {
+                return Option.none();
+            }
+
+            @Override
+            public void then( final Action<T> action )
+            {
+            }
+
+            @Override
+            public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
+            {
+                return Option.none();
+            }
+
+            @Override
+            <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
+            {
+                return ifNone;
+            }
+
+            @Override
+            public T get()
+            {
+                throw new IllegalStateException(
+                        "This Option has no element, get() cannot be called on it." );
+            }
+        };
+    }
+
+    /**
+     * Throws an UnsupportedOperationException to catch any accidental
+     * toString() calls early.
+     */
     @Override
     public final String toString()
     {

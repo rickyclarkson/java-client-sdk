@@ -30,12 +30,11 @@ public enum VariableType
         {
             try
             {
-                return new Option.Some<VariableType>(
-                        VariableType.valueOf( t.toUpperCase() ) );
+                return Option.some( VariableType.valueOf( t.toUpperCase() ) );
             }
             catch ( final IllegalArgumentException exception )
             {
-                return new Option.None<VariableType>();
+                return Option.none();
             }
         }
     };

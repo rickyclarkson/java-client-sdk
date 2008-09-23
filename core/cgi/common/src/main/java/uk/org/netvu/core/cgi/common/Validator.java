@@ -42,4 +42,16 @@ public abstract class Validator
             }
         };
     }
+
+    /**
+     * A Validator that accepts any ParameterMap.
+     */
+    static final Validator TRUE = new Validator()
+    {
+        @Override
+        public boolean isValid( final ParameterMap parameterMap )
+        {
+            return true;
+        }
+    };
 }

@@ -76,8 +76,6 @@ public final class ParameterMapTest
                     }
 
                 } );
-                // oTime.isNone() || oRange.isNone() ? true : oTime.get()
-                // + oRange.get() >= 0;
             }
         } ).with( TIME, 2000000000 ).with( RANGE, 2000000000 );
     }

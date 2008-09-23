@@ -9,6 +9,10 @@ import java.util.List;
  */
 public final class Lists
 {
+    private Lists()
+    {
+    }
+
     /**
      * Creates a List by passing all items from the specified List through the
      * specified Conversion.

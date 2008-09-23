@@ -1,79 +1,60 @@
-!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
-<head>
-<!--
-
-  @(#)package.html	1.60 98/01/27
-
-  Copyright 1998 Sun Microsystems, Inc. 901 San Antonio Road, 
-  Palo Alto, California, 94303, U.S.A.  All Rights Reserved.
-
-  This software is the confidential and proprietary information of Sun
-  Microsystems, Inc. ("Confidential Information").  You shall not
-  disclose such Confidential Information and shall use it only in
-  accordance with the terms of the license agreement you entered into
-  with Sun.
-
-  CopyrightVersion 1.2
-
--->
-</head>
 <body bgcolor="white">
 
-Provides building and parsing for events.cgi queries and their results.  Below is an example program that uses this package.
+Provides building and parsing for events.cgi queries and their results.
 
+To build a Java object representing an events.cgi query (in this case only showing the events from the last 100 seconds), and to get a URL from it:
 <pre><code>
-package uk.org.netvu.core.cgi.events;
+    import uk.org.netvu.core.cgi.events.EventsCGI;
+    import java.util.Date;
+    import java.net.URL;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-
-/**
- * A demonstration program that runs ad_events.cgi on a server and reports the
- * results as they arrive.
- */
-class ServerDemo
-{
-    /**
-     * The main method to start the program with.
-     * 
-     * @param args
-     *        ignored.
-     * @throws IOException
-     */
-    public static void main( final String[] args ) throws IOException
+    public class Main
     {
-        final EventsCGI cgi = new EventsCGI.Builder().format( Format.CSV ).build();
-        final URL url = new URL( "http://remguard_mews.adnv.adh" + cgi );
-
-        final InputStream in = url.openStream();
-
-        try
+        public static void main(String[] args)
         {
-            final BufferedReader reader = new BufferedReader(
-                    new InputStreamReader( in, "UTF-8" ) );
-            try
-            {
-                String line;
-                while ( ( line = reader.readLine() ) != null )
-                {
-                    System.out.println( EventsCGIResult.fromString( line ).getAlarm() );
-                }
-            }
-            finally
-            {
-                reader.close();
-            }
-        }
-        finally
-        {
-            in.close();
+            int oneHundredSecondsAgo = (int)(new Date().getTime() / 1000) - 100;
+            EventsCGI cgi = new EventsCGI.Builder().time(oneHundredSecondsAgo).range(100).build();
+            URL url = "http://my-host/"+cgi.toString();
+            // code here for actually connecting to that URL and doing work with it.
         }
     }
-}</code></pre>
+</code></pre>
+Note that the time and range parameters shown above are only examples, there are a number of parameters that events.cgi can filter on.
 
+To parse a URL (or part of a URL) into an EventsCGI object:
+<pre><code>
+    import uk.org.netvu.core.cgi.events.EventsCGI;
+
+    public class Main
+    {
+        public static void main(String[] args)
+        {
+            EventsCGI cgi = EventsCGI.fromString("http://my-host/events.cgi?time=5000000&cam=4");
+        }
+    }
+</code></pre>
+The servers send JavaScript by default when a query is sent - this library is only capable of parsing CSV, so it defaults to sending a 'format' parameter of type CSV.
+
+To parse the CSV returned by the server (in this case hard-coded):
+<pre><code>
+    import uk.org.netvu.core.cgi.events.EventsCGIResult;
+
+    public class Main
+    {
+        public static void main(String[] args)
+        {
+            EventsCGIResult result = EventsCGIResult.fromString(
+                "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0, 4, 8" );
+            // note that 'overwitten' is the spelling used by the servers.
+            System.out.println( result.getStatus() );
+            System.out.println( result.getAlarm() );
+
+            System.out.println( result.toCSV(1) ); //this is explained in the next paragraph.
+        }
+    }
+</code></pre>
+To output CSV from the EventsCGIResult, use EventsCGIResult's toCSV(int) method, as shown in the preceding code sample.  The int parameter represents the index of the result within the set of results, which is not stored in EventsCGIResult.  It is necessary to generate CSV in the same format that the server outputs though.
 </body>
 </html>

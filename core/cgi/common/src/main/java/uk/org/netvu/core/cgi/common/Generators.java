@@ -7,6 +7,10 @@ import java.util.Random;
  */
 public final class Generators
 {
+    private Generators()
+    {
+    }
+
     /**
      * A limit on iterations - control this to control how long tests that use
      * random data run for.
@@ -28,6 +32,11 @@ public final class Generators
      */
     public static Generator<String> strings( final Random random )
     {
+        if (random == null)
+        {
+            throw new NullPointerException();
+        }
+
         return new Generator<String>()
         {
             public String next()

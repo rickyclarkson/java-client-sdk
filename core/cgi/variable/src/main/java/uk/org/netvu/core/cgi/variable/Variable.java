@@ -99,12 +99,12 @@ public enum Variable
         {
             try
             {
-                return new Option.Some<Variable>( valueOf( s.replaceAll(
+                return Option.some( valueOf( s.replaceAll(
                         Pattern.quote( "[]" ), "" ).toUpperCase() ) );
             }
             catch ( final IllegalArgumentException exception )
             {
-                return new Option.None<Variable>();
+                return Option.none();
             }
         }
     };

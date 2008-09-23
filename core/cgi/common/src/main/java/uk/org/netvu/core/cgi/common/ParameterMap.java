@@ -27,14 +27,7 @@ public final class ParameterMap
      */
     public ParameterMap()
     {
-        this( new Validator()
-        {
-            @Override
-            public boolean isValid( final ParameterMap parameterMap )
-            {
-                return true;
-            }
-        } );
+        this( Validator.TRUE );
     }
 
     /**
@@ -74,8 +67,11 @@ public final class ParameterMap
     public <T, R> ParameterMap with( final Parameter<T, R> parameter,
             final T value )
     {
-        if (value == null)
-            throw new NullPointerException("Values for the "+parameter.name+" parameter cannot be null.");
+        if ( value == null )
+        {
+            throw new NullPointerException( "Values for the " + parameter.name
+                    + " parameter cannot be null." );
+        }
 
         final Map<Parameter<?, ?>, Object> copy = new HashMap<Parameter<?, ?>, Object>(
                 values );
@@ -85,8 +81,7 @@ public final class ParameterMap
         final ParameterMap built = new ParameterMap( copy, validator );
         if ( !validator.isValid( built ) )
         {
-            throw new IllegalStateException( value + " for "
-                    + parameter.name
+            throw new IllegalStateException( value + " for " + parameter.name
                     + " violates the constraints on this parameter map" );
         }
 
@@ -116,7 +111,7 @@ public final class ParameterMap
      *        the parameter of interest.
      * @return the stored value for the specified parameter.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     public <T> T get( final Parameter<?, T> parameter )
     {
         return values.containsKey( parameter ) ? (T) values.get( parameter )
@@ -211,8 +206,7 @@ public final class ParameterMap
     public static Option<ParameterMap> fromStrings(
             final List<Parameter<?, ?>> params, final List<String> strings )
     {
-        Option<ParameterMap> parameterMap = new Option.Some<ParameterMap>(
-                new ParameterMap() );
+        Option<ParameterMap> parameterMap = Option.some( new ParameterMap() );
 
         for ( final Pair<Parameter<?, ?>, String> pair : Lists.zip( params,
                 strings ) )

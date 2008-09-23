@@ -123,4 +123,12 @@ object EventsCGISecondTestObject extends Specification with Scalacheck {
 
  "Malformed URL parameters (invalid status)" should {
   "be rejected" in {
-   EventsCGIResult.fromString("1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 3, 4") must throwA(new IllegalArgumentException) } } }
+   EventsCGIResult.fromString("1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 3, 4") must throwA(new IllegalArgumentException) } }
+
+ "Malformed URL parameters (invalid alarm type)" should {
+  "be rejected" in {
+   EventsCGIResult.fromString("1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 2, 5") must throwA(new IllegalArgumentException) } }
+
+ "EventsCGIResult.toString()" should {
+  "not be supported" in {
+   EventsCGIResult.fromString("1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 2, 4").toString must throwA(new UnsupportedOperationException) } } }

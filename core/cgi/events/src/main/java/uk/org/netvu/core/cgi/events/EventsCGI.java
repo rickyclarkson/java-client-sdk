@@ -116,8 +116,8 @@ public final class EventsCGI
      */
     public static final class Builder
     {
-        private Option<ParameterMap> real = new Option.Some<ParameterMap>(
-                new ParameterMap( Validator.mutuallyExclusive( exclusiveParams ) ) );
+        private Option<ParameterMap> real = Option.some( new ParameterMap(
+                Validator.mutuallyExclusive( exclusiveParams ) ) );
 
         /**
          * Constructs a Builder ready to take in all the optional values for
@@ -280,7 +280,7 @@ public final class EventsCGI
             }
             finally
             {
-                real = new Option.None<ParameterMap>();
+                real = Option.none();
             }
         }
     }

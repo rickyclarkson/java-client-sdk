@@ -92,8 +92,7 @@ public final class VPartsCGI
      */
     public static final class Builder
     {
-        private Option<ParameterMap> parameterMap = new Option.Some<ParameterMap>(
-                new ParameterMap() );
+        private Option<ParameterMap> parameterMap = Option.some( new ParameterMap() );
 
         /**
          * Constructs a VPartsCGI containing the stored parameters.
@@ -108,7 +107,7 @@ public final class VPartsCGI
             }
             finally
             {
-                parameterMap = new Option.None<ParameterMap>();
+                parameterMap = Option.none();
             }
         }
 

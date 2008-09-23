@@ -122,7 +122,7 @@ public class EventsCGIResultTest
      * Tests that parsing a line of CSV with not enough values throws an
      * IllegalArgumentException.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void notEnoughColumns()
     {
         EventsCGIResult.fromString( "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2" );
@@ -133,7 +133,7 @@ public class EventsCGIResultTest
      * Tests that parsing a line of CSV with too many values throws an
      * IllegalArgumentException.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void tooManyColumns()
     {
         EventsCGIResult.fromString( "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14" );
@@ -143,7 +143,7 @@ public class EventsCGIResultTest
      * Tests that parsing a line of CSV with a malformed number causes an
      * IllegalArgumentException.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void numericError()
     {
         EventsCGIResult.fromString( "1, b, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0" );
@@ -153,7 +153,7 @@ public class EventsCGIResultTest
      * Tests that parsing a line of CSV with a negative timestamp throws an
      * IllegalArgumentException.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void negativeTime()
     {
         EventsCGIResult.fromString( "1, 1, COURTYARD, -111488075, 3600, ,overwitten, 1, 10, 2, 0" );
@@ -186,17 +186,17 @@ public class EventsCGIResultTest
     }
 
     /**
-     * Tests that the toString() implementation returns a non-empty String..
+     * Tests that toCSV() returns a non-empty String.
      */
     @Test
-    public void testToString()
+    public void testToCSV()
     {
         final Random random = new Random( 0 );
         final Generator<EventsCGIResult> gen = eventGenerator( random );
 
         for ( int a = 0; a < Generators.LIMIT; a++ )
         {
-            assertTrue( gen.next().toString().length() > 0 );
+            assertTrue( gen.next().toCSV( 0 ).length() > 0 );
         }
     }
 
@@ -204,7 +204,7 @@ public class EventsCGIResultTest
      * Tests that parsing a null String yields a NullPointerException. The use
      * case "Build events.cgi query" specifies this.
      */
-    @Test(expected = NullPointerException.class)
+    @Test( expected = NullPointerException.class )
     public void nullPointerException()
     {
         EventsCGIResult.fromString( null );
@@ -215,7 +215,7 @@ public class EventsCGIResultTest
      * IllegalArgumentException. The use case "Build events.cgi query" specifies
      * this.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void emptyString()
     {
         EventsCGIResult.fromString( "" );
@@ -225,7 +225,7 @@ public class EventsCGIResultTest
      * Tests that parsing a malformed String yields an IllegalArgumentException.
      * The use case "Build events.cgi query" specifies this.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void parsingMalformedString()
     {
         EventsCGIResult.fromString( "3, 4, 5" );
@@ -235,7 +235,7 @@ public class EventsCGIResultTest
      * Tests that parsing a String containing a camera number that is too high
      * yields an {@link IllegalArgumentException}.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void highCameraNumber()
     {
         aBuilder().camera( 65 ).build();
@@ -250,7 +250,7 @@ public class EventsCGIResultTest
      * Tests that an offset lower than -90000 yields an
      * {@link IllegalArgumentException}.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void largeNegativeOffset()
     {
         aBuilder().offset( -90001 ).build();
@@ -260,7 +260,7 @@ public class EventsCGIResultTest
      * Tests that an offset greater than 90000 yields an
      * {@link IllegalArgumentException}.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void largeOffset()
     {
         aBuilder().offset( 90001 ).build();
@@ -269,7 +269,7 @@ public class EventsCGIResultTest
     /**
      * Tests that an incomplete EventsCGIResult cannot be built.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test( expected = IllegalStateException.class )
     public void incompleteObject()
     {
         new EventsCGIResult.Builder().build();

@@ -94,8 +94,7 @@ public final class EventsCGIResult
      */
     public static final class Builder
     {
-        private Option<ParameterMap> real = new Option.Some<ParameterMap>(
-                new ParameterMap() );
+        private Option<ParameterMap> real = Option.some( new ParameterMap() );
 
         /**
          * Constructs a builder ready to take in all the information needed to
@@ -271,7 +270,7 @@ public final class EventsCGIResult
             }
             finally
             {
-                real = new Option.None<ParameterMap>();
+                real = Option.none();
             }
         }
     }
@@ -344,12 +343,11 @@ public final class EventsCGIResult
             {
                 try
                 {
-                    return new Option.Some<Status>(
-                            find( Integer.parseInt( s ) ) );
+                    return Option.some( find( Integer.parseInt( s ) ) );
                 }
                 catch ( final IllegalArgumentException e )
                 {
-                    return new Option.None<Status>();
+                    return Option.none();
                 }
             }
         };
@@ -551,6 +549,16 @@ public final class EventsCGIResult
     }
 
     /**
+     * Throws an UnsupportedOperationException - use toCSV instead.
+     */
+    @Deprecated
+    @Override
+    public String toString()
+    {
+        throw new UnsupportedOperationException( "Use toCSV instead." );
+    }
+
+    /**
      * The type of alarm that caused an event.
      */
     public enum AlarmType
@@ -631,19 +639,22 @@ public final class EventsCGIResult
                     "There is no AlarmType with the value " + value );
         }
 
-        private static final Conversion<String, Option<AlarmType>> fromString = new Conversion<String, Option<AlarmType>>()
+        /**
+         * A Conversion that converts any String into an AlarmType if it can,
+         * storing the result in an Option.
+         */
+        static final Conversion<String, Option<AlarmType>> fromString = new Conversion<String, Option<AlarmType>>()
         {
             @Override
             public Option<AlarmType> convert( final String t )
             {
                 try
                 {
-                    return new Option.Some<AlarmType>(
-                            find( Integer.parseInt( t ) ) );
+                    return Option.some( find( Integer.parseInt( t ) ) );
                 }
                 catch ( final IllegalArgumentException e )
                 {
-                    return new Option.None<AlarmType>();
+                    return Option.none();
                 }
             }
         };

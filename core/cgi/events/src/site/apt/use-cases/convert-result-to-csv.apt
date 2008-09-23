@@ -84,4 +84,4 @@ Convert events.cgi result to CSV
 1, Camera fail, 1214995184, 3600, ,exists, 57, 1, 0, 0, 4, 8
 ---
 
-
+ The CSV might omit the <Status> and <AlarmType> parts; in this case they are assumed to default to 0.

@@ -306,7 +306,7 @@ Parameter<Integer> number =
 
   As hinted at earlier, it seems a shame to have to provide default values for parameters that should always be set.  For the name parameter, the default value is null, and for the age parameter, it is 0, but we never want those defaults to escape - they're only there because we have to store something.
 
-  It's likely that there are a few good ways of solving this, but the way chosen here turns out to be general enough to work for yet another use case that was unknown at the time ('sparse arrays', later in this document).
+  It's likely that there are a few good ways of solving this, but the way chosen here turns out to be general enough to work for yet another use case that was unknown at the time ('sparse arrays', documented in the DecoderCGI module).
 
   Sometimes in APIs you might be faced with a choice between returning some error code, null or throwing an exception.  There is another option that you'll see dotted around in some APIs - to return a list instead, where that list is empty in the error case.  This is convenient for the caller, who doesn't have to remember to check for null, or catch some exception, but can just iterate over the returned list.
 
@@ -348,7 +348,7 @@ else
 
   Option could trivially implement the Iterable interface, so that you could use it in a foreach loop, but as Option is not exposed in our APIs, and we don't yet have a reason to use it in a foreach loop, it doesn't.
 
-  So, back to Parameter, for a name parameter that has no default, it might be handy to store the value as an Option.  But as some parameters do have real defaults, it wouldn't make sense to make all Parameters store their value as Options.  Plus, Option would be insufficient for the sparse arrays use case documented later.  So Parameter needs two type parameters, not one.  The first describes the type going in, the second describes the type coming out (being stored), quite like a filter.
+  So, back to Parameter, for a name parameter that has no default, it might be handy to store the value as an Option.  But as some parameters do have real defaults, it wouldn't make sense to make all Parameters store their value as Options.  Plus, Option would be insufficient for the sparse arrays as documented in the DecoderCGI's rationalelater.  So Parameter needs two type parameters, not one.  The first describes the type going in, the second describes the type coming out (being stored), quite like a filter.
 
 ----
 
@@ -361,10 +361,6 @@ private final Parameter<Integer, Option<Integer>> age =
 ----
 
   Note that bound and maxOnce work together for the age parameter, as two filters.
-
-** Sparse Arrays
-
-  In a later project, the DecoderCGI, there is a use case that makes the choices that went into Parameter's design work for us - a sparse array.  The decoder.frm and decoder.var CGI requests are capable of updating parts of a number of system variables.  So they might update elements 3, 4 and 6 of the layouts array.  The array on the server is a normal array, but the elements being updated form a sparse array, which is something like a Map\<Integer, Layout\> in Java.  The DecoderCGI's layouts parameter can take a Pair\<Integer, Layout\> and add it to a Map\<Integer, Layout\>.  The reality is slightly more involved than that (for example, a TreeMap is preferred to a Map as it is guaranteed to be ordered by its keys).
 
   One more factor is needed to explain the differences between what has been described here thus far and the actual code; immutability.  Mutable state is a problem in software in general - a mutable object needs managing.  If Sun exposed the char[] inside java.lang.String I could make System.out.println( "Hello World"); actually print "Well, hello".  If you expose an internal List, array or StringBuilder that you depend on then you're likely to cause problems for yourself.  There are solutions, such as defensively cloning objects, but all these problems go away if you make objects immutable where possible.
 
@@ -444,6 +440,6 @@ public class Person
 
 ----
 
-  Something that has changed here is the maxOnce method has been renamed to param, which is only because there are no parameters that are allowed to be set twice (other than sparse arrays), so the name maxOnce seemed redundant.  Person also has no other private fields than the finalValues field, which is quite safe because the values held by finalValues cannot change.
+  Something that has changed here is the maxOnce method has been renamed to param, which is only because there are no parameters that are allowed to be set twice so far, so the name maxOnce seemed redundant.  Person also has no other private fields than the finalValues field, which is quite safe because the values held by finalValues cannot change.
 
   Also, because a large part of the project is about parsing and building URLs, you'll notice that the parameters here include a Conversion\<String, T\>, which is just an object that describes how to go from a String to the type expected by the parameter.  This helps in keeping parsing and building from and to URLs minimal (GenericBuilder has a couple of convenience methods for this).

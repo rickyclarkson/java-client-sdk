@@ -35,11 +35,11 @@ public abstract class Conversion<T, R>
         {
             try
             {
-                return new Option.Some<Integer>( Integer.parseInt( t ) );
+                return Option.some( Integer.parseInt( t ) );
             }
             catch ( final NumberFormatException exception )
             {
-                return new Option.None<Integer>();
+                return Option.none();
             }
         }
     };

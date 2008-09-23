@@ -9,6 +9,10 @@ import java.util.List;
  */
 public class Strings
 {
+    private Strings()
+    {
+    }
+
     /**
      * Gives the substring of the specified String after the specified char.
      * 

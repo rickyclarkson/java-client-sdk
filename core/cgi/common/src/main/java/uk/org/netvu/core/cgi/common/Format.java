@@ -47,12 +47,11 @@ public enum Format
         {
             try
             {
-                return new Option.Some<Format>(
-                        Format.valueOf( t.toUpperCase() ) );
+                return Option.some( Format.valueOf( t.toUpperCase() ) );
             }
             catch ( final IllegalArgumentException exception )
             {
-                return new Option.None<Format>();
+                return Option.none();
             }
         }
     };

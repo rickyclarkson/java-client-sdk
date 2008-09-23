@@ -29,12 +29,11 @@ public enum DirectoryPathFormat
         {
             try
             {
-                return new Option.Some<DirectoryPathFormat>(
-                        DirectoryPathFormat.valueOf( t.toUpperCase() ) );
+                return Option.some( DirectoryPathFormat.valueOf( t.toUpperCase() ) );
             }
             catch ( final IllegalArgumentException exception )
             {
-                return new Option.None<DirectoryPathFormat>();
+                return Option.none();
             }
         }
     };

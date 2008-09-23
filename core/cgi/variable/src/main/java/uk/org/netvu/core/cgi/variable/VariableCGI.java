@@ -56,8 +56,7 @@ public final class VariableCGI
      */
     public static final class Builder
     {
-        private Option<ParameterMap> parameterMap = new Option.Some<ParameterMap>(
-                new ParameterMap() );
+        private Option<ParameterMap> parameterMap = Option.some( new ParameterMap() );
 
         /**
          * Sets the variable parameter to the specified Variable.
@@ -99,7 +98,7 @@ public final class VariableCGI
             }
             finally
             {
-                parameterMap = new Option.None<ParameterMap>();
+                parameterMap = Option.none();
             }
         }
     }

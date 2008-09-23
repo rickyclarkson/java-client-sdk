@@ -8,6 +8,10 @@ import java.net.URLEncoder;
  */
 public class URLBuilder
 {
+    private URLBuilder()
+    {
+    }
+
     /**
      * Encodes the specified value for safe use in URLs.
      * 

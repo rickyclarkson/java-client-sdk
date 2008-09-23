@@ -16,8 +16,8 @@ public class OptionTest
     @Test
     public void getOrElse()
     {
-        assertTrue( new Option.Some<Integer>( 5 ).getOrElse( 0 ) == 5 );
-        assertTrue( new Option.None<Integer>().getOrElse( 0 ) == 0 );
+        assertTrue( Option.some( 5 ).getOrElse( 0 ) == 5 );
+        assertTrue( Option.<Integer> none().getOrElse( 0 ) == 0 );
     }
 
     /**
@@ -26,8 +26,8 @@ public class OptionTest
     @Test
     public void isNone()
     {
-        assertFalse( new Option.Some<Integer>( 5 ).isNone() );
-        assertTrue( new Option.None<Integer>().isNone() );
+        assertFalse( Option.some( 5 ).isNone() );
+        assertTrue( Option.none().isNone() );
     }
 
     /**
@@ -36,7 +36,7 @@ public class OptionTest
     @Test
     public void get()
     {
-        assertTrue( new Option.Some<Integer>( 5 ).get() == 5 );
+        assertTrue( Option.some( 5 ).get() == 5 );
     }
 
     /**
@@ -45,6 +45,6 @@ public class OptionTest
     @Test(expected = IllegalStateException.class)
     public void noGet()
     {
-        new Option.None<Integer>().get();
+        Option.none().get();
     }
 }

@@ -57,14 +57,14 @@ public abstract class Parameter<T, R>
             final Conversion<T, Option<String>> toString )
     {
         return new Parameter<T, Option<T>>( name, description,
-                new Option.None<T>() )
+                Option.<T> none() )
         {
             @Override
             public Option<T> reduce( final T newValue, final Option<T> original )
             {
                 if ( original.isNone() )
                 {
-                    return new Option.Some<T>( newValue );
+                    return Option.some( newValue );
                 }
 
                 throw new IllegalStateException( "The " + name
@@ -181,7 +181,7 @@ public abstract class Parameter<T, R>
             public Option<String> toURLParameter(
                     final Pair<String, T> nameAndValue )
             {
-                return new Option.Some<String>( nameAndValue.first() + '='
+                return Option.some( nameAndValue.first() + '='
                         + URLBuilder.encode( nameAndValue.second().toString() ) );
             }
         };
@@ -427,7 +427,7 @@ public abstract class Parameter<T, R>
                     startIndex++;
                 }
 
-                return new Option.Some<List<Pair<Integer, T>>>( results );
+                return Option.some( results );
             }
 
             @Override
@@ -448,14 +448,15 @@ public abstract class Parameter<T, R>
                                         result.append( "&" );
                                     }
 
-                                    result.append( ( name + '['
-                                            + entry.getKey() + ']' + "=" + URLBuilder.encode( value ) ) );
+                                    result.append( name + '[' + entry.getKey()
+                                            + ']' + "="
+                                            + URLBuilder.encode( value ) );
                                 }
                             } );
 
                 }
 
-                return new Option.Some<String>( result.toString() );
+                return Option.some( result.toString() );
             }
         };
     }
@@ -488,7 +489,7 @@ public abstract class Parameter<T, R>
      */
     public Option<String> toURLParameter( final ParameterMap parameterMap )
     {
-        return parameterMap.isDefault( this ) ? new Option.Some<String>( "" )
+        return parameterMap.isDefault( this ) ? Option.some( "" )
                 : toURLParameter( Pair.pair( name, parameterMap.get( this ) ) );
     }
 

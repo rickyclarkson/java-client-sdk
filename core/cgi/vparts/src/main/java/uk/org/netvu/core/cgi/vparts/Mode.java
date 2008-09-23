@@ -38,11 +38,11 @@ public enum Mode
         {
             try
             {
-                return new Option.Some<Mode>( Mode.valueOf( s.toUpperCase() ) );
+                return Option.some( Mode.valueOf( s.toUpperCase() ) );
             }
             catch ( final IllegalArgumentException exception )
             {
-                return new Option.None<Mode>();
+                return Option.none();
             }
         }
     };

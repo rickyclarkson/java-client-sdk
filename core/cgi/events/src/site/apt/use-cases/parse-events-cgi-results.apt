@@ -137,3 +137,5 @@ Parse events.cgi result
 Comma separated field definitions
 
  <<Note 1:>> The actual values returned in the comma separated data are "exists" or "overwritten" but these should be mapped to <<<true>>> and <<<false>>> respectively.
+
+ <<Note 2:>> The Status and AlarmType fields are sometimes omitted; in this case 0 should be used for each.

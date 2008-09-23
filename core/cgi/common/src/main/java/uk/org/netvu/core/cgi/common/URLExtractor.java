@@ -8,6 +8,10 @@ import java.util.List;
  */
 final class URLExtractor
 {
+    private URLExtractor()
+    {
+    }
+
     /**
      * Parses a URL to get the X part, the name of the query, in this example:
      * http://foo.bar/baz/spam/eggs/X?a=b It looks for anything between the last

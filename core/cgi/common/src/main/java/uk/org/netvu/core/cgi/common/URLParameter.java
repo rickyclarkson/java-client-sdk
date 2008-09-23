@@ -43,6 +43,10 @@ public final class URLParameter
         }
     };
 
+    /**
+     * This URLParameter is equal to another object if the other object is a
+     * URLParameter holding an equal name and value.
+     */
     @Override
     public boolean equals( final Object other )
     {
@@ -51,6 +55,9 @@ public final class URLParameter
                 && ( (URLParameter) other ).value.equals( value );
     }
 
+    /**
+     * Computes a hashcode using the name and value.
+     */
     @Override
     public int hashCode()
     {
