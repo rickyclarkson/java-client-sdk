@@ -89,6 +89,9 @@ public final class Generators
      */
     public static Generator<Integer> nonNegativeInts( final Random random )
     {
+        if ( random == null )
+            throw new NullPointerException();
+
         return new Generator<Integer>()
         {
             public Integer next()

@@ -56,4 +56,16 @@ public final class Pair<T, U>
     {
         return u;
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        return other instanceof Pair && ((Pair)other).first().equals(first()) && ((Pair)other).second().equals(second());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return first().hashCode()+13651*second().hashCode();
+    }
 }

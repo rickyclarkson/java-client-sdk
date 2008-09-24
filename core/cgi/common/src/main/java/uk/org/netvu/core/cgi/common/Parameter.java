@@ -155,6 +155,8 @@ public abstract class Parameter<T, R>
             final String description, final T defaultValue,
             final Conversion<String, Option<T>> fromString )
     {
+        Checks.notNull(name, description, defaultValue, fromString);
+
         return new Parameter<T, T>( name, description, defaultValue )
         {
             @Override
@@ -213,6 +215,8 @@ public abstract class Parameter<T, R>
             final Conversion<String, Option<T>> fromString,
             final Conversion<T, Option<String>> toString )
     {
+        Checks.notNull(name, description, defaultValue, fromString, toString);
+
         return new Parameter<T, T>( name, description, defaultValue )
         {
             @Override
