@@ -484,7 +484,7 @@ public abstract class Parameter<T, R>
 
     /**
      * Converts this Parameter plus the value stored for it in the specified
-     * ParameterMap into a URLParameter, if the value is not the default value.
+     * ParameterMap into a URL-style parameter, if the value is not the default value.
      * 
      * @param parameterMap
      *        the ParameterMap to get the value from.
