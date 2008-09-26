@@ -176,7 +176,7 @@ class ConversionSecondTest extends JUnit4(new Specification with Scalacheck {
  "Conversion.stringToInt" should { "give an empty Option when supplied with 'foo'" in {
   Conversion.stringToInt.convert("foo").isNone mustEqual true } } })
 
-class ParameterMapSecondTest extends JUnit4(new Specification with Scalacheck {
+class ParameterMapSecondTest extends JUnit4(new Specification {
  import java.lang.Integer
  val parameter = Parameter.param[Integer]("foo", "bar", Conversion.stringToInt)
  "ParameterMap.with" should { "give a NullPointerException when supplied with a null" in {
