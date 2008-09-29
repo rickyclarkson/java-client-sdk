@@ -1,12 +1,8 @@
 package uk.org.netvu.core.cgi.events
 
-import _root_.org.scalacheck.{Gen, Prop}
-import _root_.org.scalacheck._
-import Prop.{property, extendedBoolean}
-import Prop._
-import Gen.{parameterized, value}
-import _root_.org.junit.{Test, Assert}
-import Assert.assertTrue
+import _root_.org.{scalacheck, specs, junit}
+import junit.Test
+import junit.Assert.assertTrue
 
 class AlarmTypeTest {
  import EventsCGIResult.AlarmType.find
@@ -27,12 +23,8 @@ class AlarmTypeTest {
               false } catch { case e: IllegalArgumentException => true
                               case _ => false } )) } }
 
-import _root_.org.specs.runner.JUnit4
-import _root_.org.specs.runner._
-import _root_.org.specs.{Specification, Scalacheck}
-import _root_.org.specs._
-import _root_.org.specs.specification._
-import Sugar._
+import specs.runner.JUnit4
+import specs.{Specification, Scalacheck}
 
 class SecondTest extends JUnit4(new Specification with Scalacheck {
  import EventsCGIResult.AlarmType
@@ -41,14 +33,14 @@ class SecondTest extends JUnit4(new Specification with Scalacheck {
  val values = List(0, 1, 2, 4, 8, 16, 32, 64)
  "A value in the set "+values.mkString should {
   "be accepted by EventsCGIResult.AlarmType.find." in {
-   Gen.elements(values: _*) must pass { x: Int => AlarmType.find(x).value == x } }
+   scalacheck.Gen.elements(values: _*) must pass { x: Int => AlarmType.find(x).value == x } }
   "be rejected by EventsCGIResult.AlarmType.find." in {
-   Gen.choose(3, 63) suchThat { x: Int => !values.contains(x) } must pass {
+   scalacheck.Gen.choose(3, 63) suchThat { x: Int => !values.contains(x) } must pass {
     x: Int => try { AlarmType.find(x)
                     false } catch { case e: IllegalArgumentException => true
                                     case _ => false } } }
   "be rejected by EventsCGIResult.AlarmType.find." in {
-   Gen.choose(MIN_INT.toLong, MAX_INT.toLong).map(_.toInt) suchThat (x => x<0 || x>64) must pass {
+   scalacheck.Gen.choose(MIN_INT.toLong, MAX_INT.toLong).map(_.toInt) suchThat (x => x<0 || x>64) must pass {
     x: Int => try { AlarmType.find(x)
                     false } catch { case e: IllegalArgumentException => true
                                     case _ => false } } } } } )
@@ -99,12 +91,14 @@ object EventsCGISecondTestObject extends Specification with Scalacheck {
     first(builder)
     second(builder) must throwA(new IllegalStateException) } } }
 
- implicit val arbLong: Arbitrary[Long] = Arbitrary(parameterized(params => {
+ implicit val arbLong: scalacheck.Arbitrary[Long] = scalacheck.Arbitrary(scalacheck.Gen.parameterized(params => {
   def aInt = params.rand.choose(1, Integer.MAX_VALUE) - params.rand.choose(0, 1) * Integer.MAX_VALUE
-  value(aInt.toLong << 32 + aInt) } ) ) 
+  scalacheck.Gen.value(aInt.toLong << 32 + aInt) } ) )
 
  "The built EventsCGI" should {
   "have the values supplied to the Builder" in {
+   import scalacheck.Prop.{property, extendedBoolean}
+
    property((a: Int) => new Builder().alarmMask(a).build.getAlarmMask == a) must pass
    property((a: Int) => a >= 0 ==> (new Builder().range(a).build.getRange == a)) must pass
    property((a: Long) => new Builder().cameraMask(a).build.getCameraMask == a) must pass
@@ -123,12 +117,15 @@ object EventsCGISecondTestObject extends Specification with Scalacheck {
 
  "Malformed URL parameters (invalid status)" should {
   "be rejected" in {
-   EventsCGIResult.fromString("1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 3, 4") must throwA(new IllegalArgumentException) } }
+   val string = "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 3, 4"
+   EventsCGIResult.fromString(string) must throwA(new IllegalArgumentException) } }
 
  "Malformed URL parameters (invalid alarm type)" should {
   "be rejected" in {
-   EventsCGIResult.fromString("1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 2, 5") must throwA(new IllegalArgumentException) } }
+   val string = "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 2, 5"
+   EventsCGIResult.fromString(string) must throwA(new IllegalArgumentException) } }
 
  "EventsCGIResult.toString()" should {
   "not be supported" in {
-   EventsCGIResult.fromString("1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 2, 4").toString must throwA(new UnsupportedOperationException) } } }
+   val string = "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 2, 4"
+   EventsCGIResult.fromString(string).toString must throwA(new UnsupportedOperationException) } } }
