@@ -86,7 +86,7 @@ public class VPartsCGIResult
          */
         public Builder index( final int index )
         {
-            parameterMap = parameterMap.with( INDEX, index );
+            parameterMap = parameterMap.set( INDEX, index );
             return this;
         }
 
@@ -99,7 +99,7 @@ public class VPartsCGIResult
          */
         public Builder directory( final String directory )
         {
-            parameterMap = parameterMap.with( DIRECTORY, directory );
+            parameterMap = parameterMap.set( DIRECTORY, directory );
             return this;
         }
 
@@ -112,7 +112,7 @@ public class VPartsCGIResult
          */
         public Builder filename( final String filename )
         {
-            parameterMap = parameterMap.with( FILENAME, filename );
+            parameterMap = parameterMap.set( FILENAME, filename );
             return this;
         }
 
@@ -125,7 +125,7 @@ public class VPartsCGIResult
          */
         public Builder startTime( final int startTime )
         {
-            parameterMap = parameterMap.with( START_TIME, startTime );
+            parameterMap = parameterMap.set( START_TIME, startTime );
             return this;
         }
 
@@ -138,7 +138,7 @@ public class VPartsCGIResult
          */
         public Builder endTime( final int endTime )
         {
-            parameterMap = parameterMap.with( END_TIME, endTime );
+            parameterMap = parameterMap.set( END_TIME, endTime );
             return this;
         }
 
@@ -153,7 +153,7 @@ public class VPartsCGIResult
          */
         public Builder expiryTime( final int expiryTime )
         {
-            parameterMap = parameterMap.with( EXPIRY_TIME, expiryTime );
+            parameterMap = parameterMap.set( EXPIRY_TIME, expiryTime );
             return this;
         }
 
@@ -166,7 +166,7 @@ public class VPartsCGIResult
          */
         public Builder numberOfEntries( final int numberOfEntries )
         {
-            parameterMap = parameterMap.with( NUMBER_OF_ENTRIES,
+            parameterMap = parameterMap.set( NUMBER_OF_ENTRIES,
                     numberOfEntries );
             return this;
         }
@@ -181,7 +181,7 @@ public class VPartsCGIResult
          */
         public Builder camMask( final int camMask )
         {
-            parameterMap = parameterMap.with( CAM_MASK, camMask );
+            parameterMap = parameterMap.set( CAM_MASK, camMask );
             return this;
         }
 
@@ -321,7 +321,7 @@ public class VPartsCGIResult
     private static <T, R> ParameterMap hack( final ParameterMap parameterMap,
             final Parameter<T, R> param, final String s )
     {
-        return parameterMap.with( param, param.fromURLParameter(
+        return parameterMap.set( param, param.fromURLParameter(
                 new URLParameter( param.name, s ) ).get() );
     }
 }

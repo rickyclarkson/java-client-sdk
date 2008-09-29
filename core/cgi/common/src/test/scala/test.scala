@@ -1,29 +1,35 @@
 package uk.org.netvu.core.cgi.common
 
-import _root_.org.specs.{Specification, Scalacheck}
-import _root_.org.specs.util.DataTables
-import _root_.org.specs.runner.JUnit4
-import _root_.org.scalacheck.Prop.property
+import _root_.org.{specs, scalacheck}
+
+import specs.{Specification, Scalacheck}
+import specs.util.DataTables
+import specs.runner.JUnit4
+import scalacheck.Prop.property
 
 import java.util.Random
 
 object Implicits {
- implicit def function1ToConversion[T, R](f: T => R) = new Conversion[T, R] { def convert(t: T) = f(t) } }
+ implicit def function1ToConversion[T, R](f: T => R) = new Conversion[T, R] { def convert(t: T) = f(t) }
+ implicit def reductionToFunction2(r: Reduction[String, String]) = (o: String, n: String) => r.reduce(n, o) }
 
 class URLBuilderTest extends JUnit4(new Specification with Scalacheck {
  "Values encoded with URLBuilder" should {
   "be unaffected when decoded with the same encoding (UTF-8)" in {
    import java.net.URLDecoder.decode
-   property { x: String => decode(URLBuilder.encode.convert(x), "UTF-8") == x } must pass } } } )
+   import URLBuilder.encode.convert
+   property { x: String => decode(convert(x), "UTF-8") == x } must pass } } } )
 
 class ReductionTest extends JUnit4(new Specification {
+ import Implicits.reductionToFunction2
+
  "Interspersing 1, 2, 3, 4, 5 with ':'" should {
   "produce 1:2:3:4:5" in {
-   implicit def reduction2Function2(r: Reduction[String, String]) = (o: String, n: String) => r.reduce(n, o)
    List("1", "2", "3", "4", "5").reduceLeft{ Reduction.intersperseWith(":") } mustEqual "1:2:3:4:5" } } } )
 
 class GeneratorsTest extends JUnit4(new Specification with Scalacheck {
- import Generators._
+ import Generators.{strings, stringsAndNull, nonNegativeInts}
+
  "strings" should { "give the same values on each call" in { def it = strings(new Random(0)).next
                                                              it mustEqual it } } 
  "stringsAndNull" should {
@@ -46,7 +52,7 @@ class GeneratorsTest extends JUnit4(new Specification with Scalacheck {
                         it mustEqual it } } } } )
     
 class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
- "Supplying a null toString to a Parameter" should {
+ "Supplying a null Conversion to a Parameter" should {
   "cause a NullPointerException" in {
    Parameter.param("foo", "bar", 3, null) must throwA(new NullPointerException)
    Parameter.param4("foo", "bar", 3, null, to) must throwA(new NullPointerException)
@@ -59,12 +65,12 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
  
  "Supplying a value to an ordinary Parameter twice" should {
   "cause an IllegalStateException" in {
-   for (p <- params) new ParameterMap `with` (p, 4) `with` (p, 5) must throwA(new IllegalStateException) } }
+   for (p <- params) new ParameterMap set (p, 4) set (p, 5) must throwA(new IllegalStateException) } }
 
  "Converting a Parameter to a URL" should {
   "give an Option holding the name of the Parameter when the Parameter has a non-default value" in {
    for { p <- params map (p => Parameter.not(4, p)) }
-    p.toURLParameter(new ParameterMap().`with`(p, 3)).get must include("foo") }
+    p.toURLParameter(new ParameterMap().set(p, 3)).get must include("foo") }
   "give an Option holding an empty String when the Parameter has a default value" in {
    for (p <- params) p.toURLParameter(new ParameterMap).get mustEqual "" } }
 
@@ -76,15 +82,15 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
  "A bound Parameter" should {
   val bound = Parameter.bound(1, 10, Parameter.param("foo", "bar", 3, from))
   "accept values inside its boupnds" in {
-   new ParameterMap().`with`[Integer, Integer](bound, 4) get bound mustEqual 4 }
+   new ParameterMap().set[Integer, Integer](bound, 4) get bound mustEqual 4 }
   "reject values outside its bounds" in {
-   new ParameterMap().`with`[Integer, Integer](bound, 140) must throwA(new IllegalArgumentException)
-   new ParameterMap().`with`[Integer, Integer](bound, 0) must throwA(new IllegalArgumentException) } }
+   new ParameterMap().set[Integer, Integer](bound, 140) must throwA(new IllegalArgumentException)
+   new ParameterMap().set[Integer, Integer](bound, 0) must throwA(new IllegalArgumentException) } }
 
  "A 'not' Parameter" should {
   val theNot = Parameter.not(5, Parameter.param("foo", "bar", 3, from))
-  "allow unbanned values" in { new ParameterMap `with` (theNot, 2) get theNot mustEqual 2 }
-  "reject banned values" in { new ParameterMap `with` (theNot, 5) must throwA(new IllegalArgumentException) } }
+  "allow unbanned values" in { new ParameterMap set (theNot, 2) get theNot mustEqual 2 }
+  "reject banned values" in { new ParameterMap set (theNot, 5) must throwA(new IllegalArgumentException) } }
 
  import scala.collection.jcl.Conversions.{convertList, convertMap}
  import Pair.pair
@@ -119,7 +125,8 @@ class OptionSecondTest extends JUnit4(new Specification with Scalacheck {
   Option.some(5).toString must throwA(new UnsupportedOperationException) } } })
 
 class StringsSecondTest extends JUnit4(new Specification with Scalacheck {
- import Strings._
+ import Strings.{ fromFirst, reversibleReplace, removeSurroundingQuotesLeniently, intersperse }
+
  """fromFirst('l', "hello")""" should { "give lo" in { Strings.fromFirst('l', "hello") mustEqual("lo") } }
  "Interspersing a list from 1 to 5 with a comma" should { "give 1,2,3,4,5" in {
   intersperse(",",
@@ -179,12 +186,12 @@ class ConversionSecondTest extends JUnit4(new Specification with Scalacheck {
 class ParameterMapSecondTest extends JUnit4(new Specification {
  import java.lang.Integer
  val parameter = Parameter.param[Integer]("foo", "bar", Conversion.stringToInt)
- "ParameterMap.with" should { "give a NullPointerException when supplied with a null" in {
-  new ParameterMap().`with`(null, 3) must throwA(new NullPointerException)
-  new ParameterMap().`with`(parameter, null) must throwA(new NullPointerException)
-  new ParameterMap().`with`(null, null) must throwA(new NullPointerException) } }
- "withRef" should { "be able to convert a ParameterMap into another with the supplied Parameter and value" in {
-  ParameterMap.withRef[Integer](parameter, 3).convert(new ParameterMap).get(parameter).get mustEqual 3 } } })
+ "ParameterMap.set" should { "give a NullPointerException when supplied with a null" in {
+  new ParameterMap().set(null, 3) must throwA(new NullPointerException)
+  new ParameterMap().set(parameter, null) must throwA(new NullPointerException)
+  new ParameterMap().set(null, null) must throwA(new NullPointerException) } }
+ "setter" should { "be able to convert a ParameterMap into another with the supplied Parameter and value" in {
+  ParameterMap.setter[Integer](parameter, 3).convert(new ParameterMap).get(parameter).get mustEqual 3 } } })
 
 class URLParameterSecondTest extends JUnit4(new Specification with DataTables {
  "equals" should {

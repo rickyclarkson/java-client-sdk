@@ -64,7 +64,7 @@ public final class ParameterMap
      * @return a new ParameterMap with the specified value for the specified
      *         parameter.
      */
-    public <T, R> ParameterMap with( final Parameter<T, R> parameter,
+    public <T, R> ParameterMap set( final Parameter<T, R> parameter,
             final T value )
     {
         if ( value == null )
@@ -127,7 +127,7 @@ public final class ParameterMap
                     @Override
                     public ParameterMap convert( final T value )
                     {
-                        return with( param, value );
+                        return set( param, value );
                     }
 
                 } );
@@ -238,7 +238,7 @@ public final class ParameterMap
      * @return a Conversion that takes in a ParameterMap and produces a new
      *         ParameterMap containing the given Parameter and its value.
      */
-    public static <T> Conversion<ParameterMap, ParameterMap> withRef(
+    public static <T> Conversion<ParameterMap, ParameterMap> setter(
             final Parameter<T, ?> parameter, final T value )
     {
         return new Conversion<ParameterMap, ParameterMap>()
@@ -246,7 +246,7 @@ public final class ParameterMap
             @Override
             public ParameterMap convert( final ParameterMap map )
             {
-                return map.with( parameter, value );
+                return map.set( parameter, value );
             }
         };
     }

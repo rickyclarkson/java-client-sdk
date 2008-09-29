@@ -137,7 +137,7 @@ public final class EventsCGI
          */
         public Builder time( final int time )
         {
-            real = real.map( ParameterMap.withRef( TIME, time ) );
+            real = real.map( ParameterMap.setter( TIME, time ) );
             return this;
         }
 
@@ -149,7 +149,7 @@ public final class EventsCGI
          */
         public Builder range( final int range )
         {
-            real = real.map( ParameterMap.withRef( RANGE, range ) );
+            real = real.map( ParameterMap.setter( RANGE, range ) );
             return this;
         }
 
@@ -164,7 +164,7 @@ public final class EventsCGI
          */
         public Builder format( final Format format )
         {
-            real = real.map( ParameterMap.withRef( FORMAT, format ) );
+            real = real.map( ParameterMap.setter( FORMAT, format ) );
             return this;
         }
 
@@ -178,7 +178,7 @@ public final class EventsCGI
          */
         public Builder length( final int maxLength )
         {
-            real = real.map( ParameterMap.withRef( LENGTH, maxLength ) );
+            real = real.map( ParameterMap.setter( LENGTH, maxLength ) );
             return this;
         }
 
@@ -196,7 +196,7 @@ public final class EventsCGI
          */
         public Builder text( final String text )
         {
-            real = real.map( ParameterMap.withRef( TEXT, text ) );
+            real = real.map( ParameterMap.setter( TEXT, text ) );
             return this;
         }
 
@@ -209,7 +209,7 @@ public final class EventsCGI
          */
         public Builder cameraMask( final long camMask )
         {
-            real = real.map( ParameterMap.withRef( CAMERA_MASK, camMask ) );
+            real = real.map( ParameterMap.setter( CAMERA_MASK, camMask ) );
             return this;
         }
 
@@ -222,7 +222,7 @@ public final class EventsCGI
          */
         public Builder alarmMask( final int alarmMask )
         {
-            real = real.map( ParameterMap.withRef( ALARM_MASK, alarmMask ) );
+            real = real.map( ParameterMap.setter( ALARM_MASK, alarmMask ) );
             return this;
         }
 
@@ -236,7 +236,7 @@ public final class EventsCGI
         public Builder videoMotionDetectionMask(
                 final long videoMotionDetectionMask )
         {
-            real = real.map( ParameterMap.withRef( VIDEO_MOTION_DETECTION_MASK,
+            real = real.map( ParameterMap.setter( VIDEO_MOTION_DETECTION_MASK,
                     videoMotionDetectionMask ) );
             return this;
         }
@@ -250,7 +250,7 @@ public final class EventsCGI
          */
         public Builder gpsMask( final int gpsMask )
         {
-            real = real.map( ParameterMap.withRef( GPS_MASK, gpsMask ) );
+            real = real.map( ParameterMap.setter( GPS_MASK, gpsMask ) );
             return this;
         }
 
@@ -263,7 +263,7 @@ public final class EventsCGI
          */
         public Builder systemMask( final int sysMask )
         {
-            real = real.map( ParameterMap.withRef( SYSTEM_MASK_PARAM, sysMask ) );
+            real = real.map( ParameterMap.setter( SYSTEM_MASK_PARAM, sysMask ) );
             return this;
         }
 

@@ -83,7 +83,7 @@ public final class Connection
      */
     public Connection slaveIP( final String slaveIP )
     {
-        return new Connection( parameterMap.with( SLAVE_IP_PARAM, slaveIP ) );
+        return new Connection( parameterMap.set( SLAVE_IP_PARAM, slaveIP ) );
     }
 
     /**
@@ -96,7 +96,7 @@ public final class Connection
      */
     public Connection seq( final int seq )
     {
-        return new Connection( parameterMap.with( SEQ_PARAM, seq ) );
+        return new Connection( parameterMap.set( SEQ_PARAM, seq ) );
     }
 
     /**
@@ -109,7 +109,7 @@ public final class Connection
      */
     public Connection dwell( final int dwell )
     {
-        return new Connection( parameterMap.with( DWELL_PARAM, dwell ) );
+        return new Connection( parameterMap.set( DWELL_PARAM, dwell ) );
     }
 
     /**
@@ -122,7 +122,7 @@ public final class Connection
      */
     public Connection cam( final int cam )
     {
-        return new Connection( parameterMap.with( CAM, cam ) );
+        return new Connection( parameterMap.set( CAM, cam ) );
     }
 
     /**
@@ -135,7 +135,7 @@ public final class Connection
      */
     public Connection audio( final int audioChannel )
     {
-        return new Connection( parameterMap.with( AUDIO_CHANNEL_PARAM,
+        return new Connection( parameterMap.set( AUDIO_CHANNEL_PARAM,
                 audioChannel ) );
     }
 

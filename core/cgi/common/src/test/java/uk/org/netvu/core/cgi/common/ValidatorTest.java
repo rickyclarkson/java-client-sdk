@@ -33,7 +33,7 @@ public class ValidatorTest
     @Test
     public void mutuallyExclusivePass()
     {
-        new ParameterMap( Validator.mutuallyExclusive( params ) ).with( NAME,
+        new ParameterMap( Validator.mutuallyExclusive( params ) ).set( NAME,
                 "bob" );
     }
 
@@ -43,7 +43,7 @@ public class ValidatorTest
     @Test(expected = IllegalStateException.class)
     public void mutuallyExclusiveFail()
     {
-        new ParameterMap( Validator.mutuallyExclusive( params ) ).with( NAME,
-                "bob" ).with( ADDRESS, "here" );
+        new ParameterMap( Validator.mutuallyExclusive( params ) ).set( NAME,
+                "bob" ).set( ADDRESS, "here" );
     }
 }

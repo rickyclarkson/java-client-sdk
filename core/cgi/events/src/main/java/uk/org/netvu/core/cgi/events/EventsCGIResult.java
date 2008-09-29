@@ -114,7 +114,7 @@ public final class EventsCGIResult
          */
         public Builder camera( final int camera )
         {
-            real = real.map( ParameterMap.withRef( CAMERA_PARAMETER, camera ) );
+            real = real.map( ParameterMap.setter( CAMERA_PARAMETER, camera ) );
             return this;
         }
 
@@ -127,7 +127,7 @@ public final class EventsCGIResult
          */
         public Builder alarm( final String alarm )
         {
-            real = real.map( ParameterMap.withRef( ALARM, alarm ) );
+            real = real.map( ParameterMap.setter( ALARM, alarm ) );
             return this;
         }
 
@@ -140,7 +140,7 @@ public final class EventsCGIResult
          */
         public Builder julianTime( final int julianTime )
         {
-            real = real.map( ParameterMap.withRef( JULIAN_TIME, julianTime ) );
+            real = real.map( ParameterMap.setter( JULIAN_TIME, julianTime ) );
             return this;
         }
 
@@ -154,7 +154,7 @@ public final class EventsCGIResult
          */
         public Builder offset( final int offset )
         {
-            real = real.map( ParameterMap.withRef( OFFSET, offset ) );
+            real = real.map( ParameterMap.setter( OFFSET, offset ) );
             return this;
         }
 
@@ -168,7 +168,7 @@ public final class EventsCGIResult
          */
         public Builder file( final String file )
         {
-            real = real.map( ParameterMap.withRef( FILE, file ) );
+            real = real.map( ParameterMap.setter( FILE, file ) );
             return this;
         }
 
@@ -182,7 +182,7 @@ public final class EventsCGIResult
          */
         public Builder onDisk( final boolean onDisk )
         {
-            real = real.map( ParameterMap.withRef( ON_DISK, onDisk ) );
+            real = real.map( ParameterMap.setter( ON_DISK, onDisk ) );
             return this;
         }
 
@@ -195,7 +195,7 @@ public final class EventsCGIResult
          */
         public Builder duration( final int duration )
         {
-            real = real.map( ParameterMap.withRef( DURATION, duration ) );
+            real = real.map( ParameterMap.setter( DURATION, duration ) );
             return this;
         }
 
@@ -209,7 +209,7 @@ public final class EventsCGIResult
          */
         public Builder preAlarm( final int preAlarm )
         {
-            real = real.map( ParameterMap.withRef( PRE_ALARM, preAlarm ) );
+            real = real.map( ParameterMap.setter( PRE_ALARM, preAlarm ) );
             return this;
         }
 
@@ -224,7 +224,7 @@ public final class EventsCGIResult
          */
         public Builder archive( final int archive )
         {
-            real = real.map( ParameterMap.withRef( ARCHIVE, archive ) );
+            real = real.map( ParameterMap.setter( ARCHIVE, archive ) );
             return this;
         }
 
@@ -238,7 +238,7 @@ public final class EventsCGIResult
          */
         public Builder status( final Status status )
         {
-            real = real.map( ParameterMap.withRef( STATUS, status ) );
+            real = real.map( ParameterMap.setter( STATUS, status ) );
             return this;
         }
 
@@ -252,7 +252,7 @@ public final class EventsCGIResult
          */
         public Builder alarmType( final AlarmType alarmType )
         {
-            real = real.map( ParameterMap.withRef( ALARM_TYPE, alarmType ) );
+            real = real.map( ParameterMap.setter( ALARM_TYPE, alarmType ) );
             return this;
         }
 

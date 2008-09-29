@@ -67,7 +67,7 @@ public final class VariableCGI
          */
         public Builder variable( final Variable variable )
         {
-            parameterMap = parameterMap.map( ParameterMap.withRef( VARIABLE,
+            parameterMap = parameterMap.map( ParameterMap.setter( VARIABLE,
                     variable ) );
             return this;
         }
@@ -81,7 +81,7 @@ public final class VariableCGI
          */
         public Builder type( final VariableType type )
         {
-            parameterMap = parameterMap.map( ParameterMap.withRef( TYPE, type ) );
+            parameterMap = parameterMap.map( ParameterMap.setter( TYPE, type ) );
             return this;
         }
 

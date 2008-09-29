@@ -98,7 +98,7 @@ public final class DecoderCGI
      */
     public DecoderCGI persistence( final Persistence persistence )
     {
-        return new DecoderCGI( parameterMap.with( PERSISTENCE, persistence ) );
+        return new DecoderCGI( parameterMap.set( PERSISTENCE, persistence ) );
     }
 
     /**
@@ -113,7 +113,7 @@ public final class DecoderCGI
      */
     public DecoderCGI connection( final int index, final Connection connection )
     {
-        return new DecoderCGI( parameterMap.with( CONNECTIONS,
+        return new DecoderCGI( parameterMap.set( CONNECTIONS,
                 Collections.singletonList( Pair.pair( index, connection ) ) ) );
     }
 
@@ -129,7 +129,7 @@ public final class DecoderCGI
      */
     public DecoderCGI layout( final int index, final Layout layout )
     {
-        return new DecoderCGI( parameterMap.with( LAYOUTS,
+        return new DecoderCGI( parameterMap.set( LAYOUTS,
                 Collections.singletonList( Pair.pair( index, layout ) ) ) );
     }
 
@@ -142,7 +142,7 @@ public final class DecoderCGI
      */
     public DecoderCGI outputTitles( final String... titles )
     {
-        return new DecoderCGI( parameterMap.with( OUTPUT_TITLES, titles ) );
+        return new DecoderCGI( parameterMap.set( OUTPUT_TITLES, titles ) );
     }
 
     /**
@@ -157,7 +157,7 @@ public final class DecoderCGI
      */
     public DecoderCGI command( final int index, final String command )
     {
-        return new DecoderCGI( parameterMap.with( COMMANDS,
+        return new DecoderCGI( parameterMap.set( COMMANDS,
                 Collections.singletonList( Pair.pair( index, command ) ) ) );
     }
 

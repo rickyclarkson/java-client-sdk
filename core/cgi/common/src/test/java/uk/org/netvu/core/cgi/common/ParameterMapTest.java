@@ -25,7 +25,7 @@ public final class ParameterMapTest
     @Test
     public void conversion()
     {
-        assertTrue( Integer.parseInt( new ParameterMap().with( PARAM, "10" ).get(
+        assertTrue( Integer.parseInt( new ParameterMap().set( PARAM, "10" ).get(
                 PARAM ).get() ) == 10 );
     }
 
@@ -36,7 +36,7 @@ public final class ParameterMapTest
     @Test(expected = IllegalStateException.class)
     public void repeating()
     {
-        new ParameterMap().with( PARAM, "10" ).with( PARAM, "10" );
+        new ParameterMap().set( PARAM, "10" ).set( PARAM, "10" );
     }
 
     private static final Parameter<Integer, Option<Integer>> TIME = Parameter.notNegative( Parameter.param(
@@ -77,7 +77,7 @@ public final class ParameterMapTest
 
                 } );
             }
-        } ).with( TIME, 2000000000 ).with( RANGE, 2000000000 );
+        } ).set( TIME, 2000000000 ).set( RANGE, 2000000000 );
     }
 
     /**
@@ -87,7 +87,7 @@ public final class ParameterMapTest
     public void isDefault()
     {
         assertTrue( new ParameterMap().isDefault( TIME ) );
-        assertFalse( new ParameterMap().with( TIME, 40 ).isDefault( TIME ) );
+        assertFalse( new ParameterMap().set( TIME, 40 ).isDefault( TIME ) );
     }
 
     /**
@@ -130,14 +130,14 @@ public final class ParameterMapTest
 
         // these are anonymous intialisers - each creates a new ArrayList and
         // adds values to it inline.
-        assertTrue( new ParameterMap().with( sparseIdentity,
+        assertTrue( new ParameterMap().set( sparseIdentity,
                 new ArrayList<Pair<Integer, String>>()
                 {
                     {
                         add( Pair.pair( 4, "bar" ) );
                         add( Pair.pair( 5, "foo" ) );
                     }
-                } ).with( sparseIdentity,
+                } ).set( sparseIdentity,
                 new ArrayList<Pair<Integer, String>>()
                 {
                     {

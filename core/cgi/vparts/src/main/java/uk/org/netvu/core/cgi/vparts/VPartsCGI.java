@@ -120,7 +120,7 @@ public final class VPartsCGI
          */
         public Builder mode( final Mode mode )
         {
-            parameterMap = parameterMap.map( ParameterMap.withRef( MODE, mode ) );
+            parameterMap = parameterMap.map( ParameterMap.setter( MODE, mode ) );
             return this;
         }
 
@@ -133,7 +133,7 @@ public final class VPartsCGI
          */
         public Builder time( final int time )
         {
-            parameterMap = parameterMap.map( ParameterMap.withRef( TIME, time ) );
+            parameterMap = parameterMap.map( ParameterMap.setter( TIME, time ) );
             return this;
         }
 
@@ -146,7 +146,7 @@ public final class VPartsCGI
          */
         public Builder range( final int range )
         {
-            parameterMap = parameterMap.map( ParameterMap.withRef( RANGE, range ) );
+            parameterMap = parameterMap.map( ParameterMap.setter( RANGE, range ) );
             return this;
         }
 
@@ -163,7 +163,7 @@ public final class VPartsCGI
          */
         public Builder expiry( final int expiry )
         {
-            parameterMap = parameterMap.map( ParameterMap.withRef( EXPIRY,
+            parameterMap = parameterMap.map( ParameterMap.setter( EXPIRY,
                     expiry ) );
             return this;
         }
@@ -179,7 +179,7 @@ public final class VPartsCGI
          */
         public Builder watermark( final boolean watermark )
         {
-            parameterMap = parameterMap.map( ParameterMap.withRef( WATERMARK,
+            parameterMap = parameterMap.map( ParameterMap.setter( WATERMARK,
                     watermark ) );
             return this;
         }
@@ -195,7 +195,7 @@ public final class VPartsCGI
          */
         public Builder watermarkStep( final int step )
         {
-            parameterMap = parameterMap.map( ParameterMap.withRef( WMARKSTEP,
+            parameterMap = parameterMap.map( ParameterMap.setter( WMARKSTEP,
                     step ) );
             return this;
         }
@@ -210,7 +210,7 @@ public final class VPartsCGI
          */
         public Builder format( final Format format )
         {
-            parameterMap = parameterMap.map( ParameterMap.withRef( FORMAT,
+            parameterMap = parameterMap.map( ParameterMap.setter( FORMAT,
                     format ) );
             return this;
         }
@@ -224,7 +224,7 @@ public final class VPartsCGI
          */
         public Builder listlength( final int listlength )
         {
-            parameterMap = parameterMap.map( ParameterMap.withRef( LIST_LENGTH,
+            parameterMap = parameterMap.map( ParameterMap.setter( LIST_LENGTH,
                     listlength ) );
             return this;
         }
@@ -238,7 +238,7 @@ public final class VPartsCGI
          */
         public Builder pathstyle( final DirectoryPathFormat style )
         {
-            parameterMap = parameterMap.map( ParameterMap.withRef( PATH_STYLE,
+            parameterMap = parameterMap.map( ParameterMap.setter( PATH_STYLE,
                     style ) );
             return this;
         }

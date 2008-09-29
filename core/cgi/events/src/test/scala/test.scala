@@ -46,8 +46,8 @@ class SecondTest extends JUnit4(new Specification with Scalacheck {
                                     case _ => false } } } } } )
 
 import cgi.common.Format
-class EventsCGISecondTest extends JUnit4(EventsCGISecondTestObject)
-object EventsCGISecondTestObject extends Specification with Scalacheck {
+
+class EventsCGISecondTest extends JUnit4(new Specification with Scalacheck {
  import EventsCGI.Builder
 
  "The default values for EventsCGI.Builder" should {
@@ -128,4 +128,4 @@ object EventsCGISecondTestObject extends Specification with Scalacheck {
  "EventsCGIResult.toString()" should {
   "not be supported" in {
    val string = "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 2, 4"
-   EventsCGIResult.fromString(string).toString must throwA(new UnsupportedOperationException) } } }
+   EventsCGIResult.fromString(string).toString must throwA(new UnsupportedOperationException) } } })
