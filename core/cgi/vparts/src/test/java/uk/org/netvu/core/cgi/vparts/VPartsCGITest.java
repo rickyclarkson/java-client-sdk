@@ -31,7 +31,7 @@ public class VPartsCGITest
     /**
      * Tests that setting the same value twice causes an IllegalStateException.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test( expected = IllegalStateException.class )
     public void repeating()
     {
         new VPartsCGI.Builder().expiry( 5 ).expiry( 5 );
@@ -41,7 +41,7 @@ public class VPartsCGITest
      * Tests that setting the watermark step to an invalid value causes an
      * IllegalArgumentException.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void outOfBounds()
     {
         new VPartsCGI.Builder().watermarkStep( 1000 );
@@ -51,7 +51,7 @@ public class VPartsCGITest
      * Tests that setting the time to a negative value causes an
      * IllegalArgumentException.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void negativeTime()
     {
         new VPartsCGI.Builder().time( -10 );
@@ -60,7 +60,7 @@ public class VPartsCGITest
     /**
      * Tests that setting the format to HTML causes an IllegalArgumentException.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void formatHTML()
     {
         new VPartsCGI.Builder().format( Format.HTML ).build();

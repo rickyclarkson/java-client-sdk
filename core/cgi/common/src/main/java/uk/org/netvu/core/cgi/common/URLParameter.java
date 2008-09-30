@@ -53,7 +53,7 @@ public final class URLParameter
         return other instanceof URLParameter
                 && ( (URLParameter) other ).name.equals( name )
                 && ( (URLParameter) other ).value.equals( value );
-                }
+    }
 
     /**
      * Computes a hashcode using the name and value.

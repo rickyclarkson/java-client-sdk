@@ -1,6 +1,5 @@
 package uk.org.netvu.core.cgi.events;
 
-import static uk.org.netvu.core.cgi.common.Option.someRef;
 import static uk.org.netvu.core.cgi.common.Parameter.bound;
 import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
 import static uk.org.netvu.core.cgi.common.Parameter.parameter;
@@ -17,6 +16,7 @@ import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.Strings;
+import uk.org.netvu.core.cgi.common.TwoWayConversion;
 
 /**
  * A single result from the events database.
@@ -25,36 +25,39 @@ public final class EventsCGIResult
 {
     private static final Parameter<Integer, Option<Integer>> CAMERA_PARAMETER = bound(
             0, 64, Parameter.parameter( "cam", "The system camera number",
-                                        Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+                    TwoWayConversion.integer ) );
 
     private static final Parameter<String, Option<String>> ALARM = parameter(
-                                                                             "alarm", "The alarm description.", Option.<String> some(), Option.<String>some() );
+            "alarm", "The alarm description.", TwoWayConversion.string );
 
     private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = notNegative( parameter(
             "time", "The Julianised time that the event occurred at",
-            Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+            TwoWayConversion.integer ) );
 
     private static final Parameter<Integer, Option<Integer>> OFFSET = bound(
-                                                                            -90000, 90000, parameter( "offset", "", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+            -90000, 90000, parameter( "offset", "", TwoWayConversion.integer ) );
 
     private static final Parameter<String, Option<String>> FILE = parameter(
-                                                                        "file", "", Option.<String> some(), Option.<String>some() );
+            "file", "", TwoWayConversion.string );
 
     private static final Parameter<Boolean, Option<Boolean>> ON_DISK = parameter(
-                                                                                 "onDisk", "", someRef( Conversion.stringToBoolean), Conversion.<Boolean>objectToString().andThenSome() );
+            "onDisk", "", TwoWayConversion.total( Conversion.equal( "exists" ),
+                    Conversion.fromBoolean( "exists", "overwitten" ) ) );
 
     private static final Parameter<Integer, Option<Integer>> DURATION = notNegative( parameter(
-                                                                                               "duration", "", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+            "duration", "", TwoWayConversion.integer ) );
 
     private static final Parameter<Integer, Option<Integer>> PRE_ALARM = notNegative( parameter(
-                                                                                            "preAlarm", "", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+            "preAlarm", "", TwoWayConversion.integer ) );
 
     private static final Parameter<Integer, Option<Integer>> ARCHIVE = notNegative( parameter(
-                                                                                              "archive", "", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
-    private static final Parameter<Status, Status> STATUS = parameterWithDefault( "status",
-                                                                   "", Status.NONE, Status.fromString, Conversion.<Status>objectToString().andThenSome());
+            "archive", "", TwoWayConversion.integer ) );
+    private static final Parameter<Status, Status> STATUS = parameterWithDefault(
+            "status", "", Status.NONE,
+            TwoWayConversion.convenientPartial( Status.fromString ) );
     private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = parameterWithDefault(
-                                                                            "alarmType", "", AlarmType.NONE, AlarmType.fromString, Conversion.<AlarmType>objectToString().andThenSome() );
+            "alarmType", "", AlarmType.NONE,
+            TwoWayConversion.convenientPartial( AlarmType.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
@@ -271,7 +274,7 @@ public final class EventsCGIResult
             }
             finally
             {
-                real = Option.none();
+                real = Option.none( "The Builder has already had build() called on it" );
             }
         }
     }
@@ -348,7 +351,7 @@ public final class EventsCGIResult
                 }
                 catch ( final IllegalArgumentException e )
                 {
-                    return Option.none();
+                    return Option.none( s + " is not a valid Status" );
                 }
             }
         };
@@ -513,8 +516,11 @@ public final class EventsCGIResult
 
         if ( result.isNone() )
         {
-            throw new IllegalArgumentException( "The supplied data, " + line
-                    + ", is not valid for EventsCGIResult.fromString" );
+            throw new IllegalArgumentException(
+                    "The supplied data, "
+                            + line
+                            + ", is not valid for EventsCGIResult.fromString, because: "
+                            + result.reason() );
         }
 
         return result.get();
@@ -655,7 +661,7 @@ public final class EventsCGIResult
                 }
                 catch ( final IllegalArgumentException e )
                 {
-                    return Option.none();
+                    return Option.none( t + " is not a valid AlarmType" );
                 }
             }
         };

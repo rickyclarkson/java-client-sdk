@@ -3,10 +3,10 @@ package uk.org.netvu.core.cgi.variable;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
+import uk.org.netvu.core.cgi.common.TwoWayConversion;
 
 /**
  * Builds and parses variable.cgi URLs.
@@ -36,11 +36,12 @@ public final class VariableCGI
     }
 
     private static final Parameter<Variable, Option<Variable>> VARIABLE = Parameter.parameter(
-                                                                                              "variable", "Name of the variable", Variable.fromString, Conversion.<Variable>objectToString().andThenSome());
+            "variable", "Name of the variable",
+            TwoWayConversion.convenientPartial( Variable.fromString ) );
 
     private static final Parameter<VariableType, VariableType> TYPE = Parameter.parameterWithDefault(
             "type", "Specifies return type of variable", VariableType.HTTP,
-            VariableType.fromString, Conversion.<VariableType>objectToString().andThenSome() );
+            TwoWayConversion.convenientPartial( VariableType.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
@@ -99,7 +100,7 @@ public final class VariableCGI
             }
             finally
             {
-                parameterMap = Option.none();
+                parameterMap = Option.none( "This Builder has already been built once." );
             }
         }
     }
@@ -140,6 +141,11 @@ public final class VariableCGI
      */
     public static VariableCGI fromString( final String url )
     {
-        return new VariableCGI( ParameterMap.fromURL( url, params ) );
+        Option<ParameterMap> map = ParameterMap.fromURL( url, params );
+        if ( map.isNone() )
+            throw new IllegalArgumentException( "Cannot parse " + url
+                    + " into a VariableCGI because " + map.reason() );
+
+        return new VariableCGI( map.get() );
     }
 }

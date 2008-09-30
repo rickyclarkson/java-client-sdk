@@ -51,7 +51,7 @@ public enum Format
             }
             catch ( final IllegalArgumentException exception )
             {
-                return Option.none();
+                return Option.none( t + " is not a valid Format" );
             }
         }
     };

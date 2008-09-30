@@ -19,6 +19,19 @@ public class ConversionTest
         assertTrue( Conversion.<Boolean> identity().convert( true ) == true );
     }
 
+    private static <T, U> Conversion<Option<T>, Option<U>> lift(
+            final Conversion<T, U> conversion )
+    {
+        return new Conversion<Option<T>, Option<U>>()
+        {
+            @Override
+            public Option<U> convert( final Option<T> ot )
+            {
+                return ot.map( conversion );
+            }
+        };
+    }
+
     /**
      * Tests that chaining 2 Conversions with andThen() yields the correct
      * result.
@@ -27,14 +40,14 @@ public class ConversionTest
     public void andThen()
     {
         assertTrue( Conversion.hexStringToInt.andThen(
-                new Conversion<Integer, Integer>()
+                lift( new Conversion<Integer, Integer>()
                 {
                     @Override
                     public Integer convert( final Integer i )
                     {
                         return i * 2;
                     }
-                } ).convert( "FF" ) == 510 );
+                } ) ).convert( "FF" ).get() == 510 );
     }
 
     /**
@@ -44,8 +57,8 @@ public class ConversionTest
     @Test
     public void stringToBoolean()
     {
-        assertTrue( Conversion.stringToBoolean.convert( "true" ) );
-        assertFalse( Conversion.stringToBoolean.convert( "false" ) );
+        assertTrue( Conversion.stringToBoolean.convert( "true" ).get() );
+        assertFalse( Conversion.stringToBoolean.convert( "false" ).get() );
     }
 
     /**
@@ -73,7 +86,7 @@ public class ConversionTest
     @Test
     public void hexStringToInt()
     {
-        assertTrue( Conversion.hexStringToInt.convert( "ff" ) == 255 );
+        assertTrue( Conversion.hexStringToInt.convert( "ff" ).get() == 255 );
     }
 
     /**
@@ -83,7 +96,7 @@ public class ConversionTest
     @Test
     public void hexStringToLong()
     {
-        assertTrue( Conversion.hexStringToLong.convert( "ff" ) == 255 );
+        assertTrue( Conversion.hexStringToLong.convert( "ff" ).get() == 255 );
     }
 
     /**

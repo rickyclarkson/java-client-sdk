@@ -34,7 +34,8 @@ public enum VariableType
             }
             catch ( final IllegalArgumentException exception )
             {
-                return Option.none();
+                return Option.none( "Cannot parse " + t
+                        + " into a VariableType" );
             }
         }
     };

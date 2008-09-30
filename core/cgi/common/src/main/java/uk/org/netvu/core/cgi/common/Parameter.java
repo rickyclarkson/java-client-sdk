@@ -42,22 +42,18 @@ public abstract class Parameter<T, R>
      *        the name of the Parameter.
      * @param description
      *        a textual description of the Parameter.
-     * @param fromString
-     *        a Conversion from Strings to values of type T, which is used in
-     *        parsing URLs, etc.
-     * @param toString
-     *        a Conversion from values of type T to Strings, which is used in
-     *        generating URLs, etc.
+     * @param conversions
+     *        an object that can convert a String to a T and back.
      * @return a Parameter that can take 0 or 1 values of type T, yielding them
      *         as an Option<T>.
      */
     public static <T> Parameter<T, Option<T>> parameter( final String name,
             final String description,
-            final Conversion<String, Option<T>> fromString,
-            final Conversion<T, Option<String>> toString )
+            final TwoWayConversion<String, T> conversions )
     {
         return new Parameter<T, Option<T>>( name, description,
-                Option.<T> none() )
+                Option.<T> none( "The value for the " + name
+                        + " parameter has not been set yet" ) )
         {
             @Override
             public Option<T> reduce( final T newValue, final Option<T> original )
@@ -74,7 +70,7 @@ public abstract class Parameter<T, R>
             @Override
             public Option<T> fromURLParameter( final URLParameter nameAndValue )
             {
-                return createFromURL( fromString, nameAndValue );
+                return createFromURL( conversions.a2b(), nameAndValue );
             }
 
             @Override
@@ -87,7 +83,7 @@ public abstract class Parameter<T, R>
                             @Override
                             public Option<String> convert( final T value )
                             {
-                                return toString.convert( value ).map(
+                                return conversions.b2a().convert( value ).map(
                                         new Conversion<String, String>()
                                         {
                                             @Override
@@ -118,21 +114,16 @@ public abstract class Parameter<T, R>
      *        a textual description of the Parameter.
      * @param defaultValue
      *        the default value for the Parameter.
-     * @param fromString
-     *        a Conversion from Strings to values of type T, which is used in
-     *        parsing URLs, etc.
-     * @param toString
-     *        a Conversion from values of type T to Strings, which is used in
-     *        generating URLs, etc.
+     * @param conversions
+     *        an object that can convert a String to a T and back.
      * @return a Parameter that can take 0 or 1 values of type T, yield that
      *         value or a default value.
      */
     public static <T> Parameter<T, T> parameterWithDefault( final String name,
             final String description, final T defaultValue,
-            final Conversion<String, Option<T>> fromString,
-            final Conversion<T, Option<String>> toString )
+            final TwoWayConversion<String, T> conversions )
     {
-        Checks.notNull(name, description, defaultValue, fromString, toString);
+        Checks.notNull( name, description, defaultValue, conversions );
 
         return new Parameter<T, T>( name, description, defaultValue )
         {
@@ -153,14 +144,14 @@ public abstract class Parameter<T, R>
             @Override
             public Option<T> fromURLParameter( final URLParameter nameAndValue )
             {
-                return createFromURL( fromString, nameAndValue );
+                return createFromURL( conversions.a2b(), nameAndValue );
             }
 
             @Override
             public Option<String> toURLParameter(
                     final Pair<String, T> nameAndValue )
             {
-                return toString.convert( nameAndValue.second() ).map(
+                return conversions.b2a().convert( nameAndValue.second() ).map(
                         new Conversion<String, String>()
                         {
                             @Override
@@ -401,7 +392,8 @@ public abstract class Parameter<T, R>
 
     /**
      * Converts this Parameter plus the value stored for it in the specified
-     * ParameterMap into a URL-style parameter, if the value is not the default value.
+     * ParameterMap into a URL-style parameter, if the value is not the default
+     * value.
      * 
      * @param parameterMap
      *        the ParameterMap to get the value from.

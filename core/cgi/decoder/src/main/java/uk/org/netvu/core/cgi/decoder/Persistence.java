@@ -1,6 +1,5 @@
 package uk.org.netvu.core.cgi.decoder;
 
-
 /**
  * Specifies whether a DecoderCGI's query sets variables temporarily or
  * persistently.

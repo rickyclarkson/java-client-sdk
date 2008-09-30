@@ -104,7 +104,7 @@ public enum Variable
             }
             catch ( final IllegalArgumentException exception )
             {
-                return Option.none();
+                return Option.none( "Cannot parse " + s + " into a Variable" );
             }
         }
     };

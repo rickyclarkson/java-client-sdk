@@ -51,7 +51,7 @@ public class EventsCGITest
      * Tests that applying one parameter more than once will throw an
      * IllegalStateException
      */
-    @Test(expected = IllegalStateException.class)
+    @Test( expected = IllegalStateException.class )
     public void twoTimeParameters()
     {
         new EventsCGI.Builder().time( 100 ).time( 200 );
@@ -443,7 +443,7 @@ public class EventsCGITest
      * Tests that parsing null yields a NullPointerException. Specified in the
      * use cases for the events interface.
      */
-    @Test(expected = NullPointerException.class)
+    @Test( expected = NullPointerException.class )
     public void parseNull()
     {
         EventsCGI.fromString( null );
@@ -454,7 +454,7 @@ public class EventsCGITest
      * {@link IllegalArgumentException}. Specified in the use cases for the
      * events interface.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void parseEmptyString()
     {
         EventsCGI.fromString( "" );
@@ -465,9 +465,11 @@ public class EventsCGITest
      * {@link IllegalArgumentException}. Specified in the use cases for the
      * events interface.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void invalidParse()
     {
+        System.out.println( "invalidParse!" );
+        System.out.println( EventsCGI.fromString( "?almmask=six" ) );
         EventsCGI.fromString( "?almmask=six" );
     }
 }

@@ -1,6 +1,5 @@
 package uk.org.netvu.core.cgi.vparts;
 
-import static uk.org.netvu.core.cgi.common.Option.someRef;
 import static uk.org.netvu.core.cgi.common.Parameter.bound;
 import static uk.org.netvu.core.cgi.common.Parameter.not;
 import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
@@ -9,12 +8,12 @@ import static uk.org.netvu.core.cgi.common.Parameter.parameterWithDefault;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
+import uk.org.netvu.core.cgi.common.TwoWayConversion;
 
 /**
  * Builds and parses vparts.cgi requests.
@@ -26,42 +25,44 @@ public final class VPartsCGI
             parameterWithDefault(
                     "format",
                     "Determines output format.  js is for JavaScript, csv for comma separated variables",
-                    Format.CSV, Format.fromString, Conversion.<Format>objectToString().andThenSome() ) );
+                    Format.CSV,
+                    TwoWayConversion.convenientPartial( Format.fromString ) ) );
 
-    private static final Parameter<Mode, Mode> MODE = parameterWithDefault ( "mode",
-            "Determines the function of the cgi call", Mode.READ,
-                                                                             Mode.fromString, Conversion.<Mode>objectToString().andThenSome() );
+    private static final Parameter<Mode, Mode> MODE = parameterWithDefault(
+            "mode", "Determines the function of the cgi call", Mode.READ,
+            TwoWayConversion.convenientPartial( Mode.fromString ) );
 
     private static final Parameter<Integer, Integer> TIME = notNegative( parameterWithDefault(
             "time", "Julianised GMT start time for database search", 0,
-            Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+            TwoWayConversion.integer ) );
 
     private static final Parameter<Integer, Integer> RANGE = notNegative( parameterWithDefault(
             "range", "Timespan to search in seconds.", Integer.MAX_VALUE,
-            Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+            TwoWayConversion.integer ) );
 
     private static final Parameter<Integer, Integer> EXPIRY = parameterWithDefault(
             "expiry",
             "Sets the expiry time for partitions, used in protect mode; Julianised GMT",
-            0, Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
+            0, TwoWayConversion.integer );
 
     private static final Parameter<Boolean, Boolean> WATERMARK = parameterWithDefault(
             "watermark",
             "Tells the CGI to generate watermark codes in read mode", false,
-            someRef( Conversion.stringToBoolean ), Conversion.<Boolean>objectToString().andThenSome() );
+            TwoWayConversion.bool );
 
     private static final Parameter<Integer, Integer> WMARKSTEP = bound( 1, 256,
             parameterWithDefault( "wmarkstepParam",
                     "Defines the step size to be used in watermark.", 1,
-                                  Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+                    TwoWayConversion.integer ) );
 
     private static final Parameter<Integer, Integer> LIST_LENGTH = parameterWithDefault(
             "listlength", "Maximum number of entries in the list", 100,
-            Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
+            TwoWayConversion.integer );
 
     private static final Parameter<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = parameterWithDefault(
             "pathstyle", "Format of directory paths.",
-            DirectoryPathFormat.SHORT, DirectoryPathFormat.fromString, Conversion.<DirectoryPathFormat>objectToString().andThenSome() );
+            DirectoryPathFormat.SHORT,
+            TwoWayConversion.convenientPartial( DirectoryPathFormat.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
@@ -107,7 +108,7 @@ public final class VPartsCGI
             }
             finally
             {
-                parameterMap = Option.none();
+                parameterMap = Option.none( "This Builder has already had build() called on it" );
             }
         }
 
@@ -352,6 +353,12 @@ public final class VPartsCGI
      */
     public static VPartsCGI fromString( final String url )
     {
-        return new VPartsCGI( ParameterMap.fromURL( url, params ) );
+        Option<ParameterMap> map = ParameterMap.fromURL( url, params );
+        if ( map.isNone() )
+            throw new IllegalArgumentException( url
+                    + " cannot be parsed into a VPartsCGI, because "
+                    + map.reason() );
+
+        return new VPartsCGI( map.get() );
     }
 }

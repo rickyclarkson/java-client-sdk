@@ -33,7 +33,7 @@ public enum DirectoryPathFormat
             }
             catch ( final IllegalArgumentException exception )
             {
-                return Option.none();
+                return Option.none( t + " is not a valid DirectoryPathFormat" );
             }
         }
     };

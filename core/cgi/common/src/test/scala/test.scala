@@ -54,13 +54,16 @@ class GeneratorsTest extends JUnit4(new Specification with Scalacheck {
 class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
  "Supplying a null Conversion to a Parameter" should {
   "cause a NullPointerException" in {
-   Parameter.parameterWithDefault("foo", "bar", 3, null, to) must throwA(new NullPointerException)
-   Parameter.parameterWithDefault("foo", "bar", 3, from, null) must throwA(new NullPointerException) } }
+   Parameter.parameterWithDefault("foo", "bar", 3, TwoWayConversion.partial(null, to)) must throwA(new NullPointerException)
+   Parameter.parameterWithDefault("foo", "bar", 3, TwoWayConversion.partial(from, null)) must throwA(new NullPointerException)
+   Parameter.parameterWithDefault("foo", "bar", 3, null) must throwA(new NullPointerException)
+} }
 
  def to[T] = new Conversion[T, Option[String]] { def convert(t: T) = Option.some("foo") }
- def from[T] = new Conversion[String, Option[T]] { def convert(s: String): Option[T] = Option.none[T] }
+ def from[T] = new Conversion[String, Option[T]] { def convert(s: String): Option[T] = Option.none[T]("Unsupported") }
 
- val param = Parameter.parameterWithDefault("foo", "bar", 3, from, to)
+ val param = Parameter.parameterWithDefault("foo", "bar", 3,
+                                            TwoWayConversion.partial(from, to))
  
  "Supplying a value to an ordinary Parameter twice" should {
   "cause an IllegalStateException" in {
@@ -74,11 +77,11 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
 
  "Converting a URL to a Parameter" should {
   "succeed" in {
-   val p = Parameter.parameterWithDefault[Integer]("foo", "bar", 3, Conversion.stringToInt, to)
+   val p = Parameter.parameterWithDefault[Integer]("foo", "bar", 3, TwoWayConversion.partial(Conversion.stringToInt, to))
    Parameter.not[Integer, Integer](4, p).fromURLParameter(new URLParameter("foo", "8")).get mustEqual 8 } }
 
  "A bound Parameter" should {
-  val bound = Parameter.bound(1, 10, Parameter.parameterWithDefault("foo", "bar", 3, from, to))
+  val bound = Parameter.bound(1, 10, Parameter.parameterWithDefault("foo", "bar", 3, TwoWayConversion.partial(from, to)))
   "accept values inside its bounds" in {
    new ParameterMap().set[Integer, Integer](bound, 4) get bound mustEqual 4 }
   "reject values outside its bounds" in {
@@ -86,7 +89,7 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
    new ParameterMap().set[Integer, Integer](bound, 0) must throwA(new IllegalArgumentException) } }
 
  "A 'not' Parameter" should {
-  val theNot = Parameter.not(5, Parameter.parameterWithDefault("foo", "bar", 3, from, to))
+  val theNot = Parameter.not(5, Parameter.parameterWithDefault("foo", "bar", 3, TwoWayConversion.partial(from, to)))
   "allow unbanned values" in { new ParameterMap set (theNot, 2) get theNot mustEqual 2 }
   "reject banned values" in { new ParameterMap set (theNot, 5) must throwA(new IllegalArgumentException) } }
 
@@ -105,22 +108,36 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
    sparse.toURLParameter(pair("foo", map)).get mustEqual "foo[2]=3&foo[3]=4" } } })
 
 class OptionSecondTest extends JUnit4(new Specification with Scalacheck {
+ import Option.{noneRef, someRef, none, some}
+
  "noneRef" should { "give a Conversion that always produces an empty Option" in {
-  Option.noneRef[Int, String].convert(5).isNone must beTrue } }
+  noneRef[Int, String]("foo").convert(5).isNone must beTrue } }
+
  "someRef" should { "give a Conversion that always produces an Option containing one element" in {
-  Option.someRef(Conversion.objectToString[Int]).convert(5).isNone must beFalse } }
- "Option.none" should {
+  someRef(Conversion.objectToString[Int]).convert(5).isNone must beFalse } }
+
+ "none" should {
   "give an empty Option when mapped over" in {
-   Option.none[Int].map(new Conversion[Int, Int] { def convert(x: Int) = x * 2 } ).isNone must beTrue }
-  "do nothing on 'then'" in {
-   { Option.none[Int].then(new Action[Int] { def invoke(x: Int) = throw null })
-     true } must beTrue }
+   none[Int]("foo" ).map(new Conversion[Int, Int] { def convert(x: Int) = x * 2 } ).isNone must beTrue }
+  "do nothing on 'then'" in { { none[Int]("foo").then(new Action[Int] { def invoke(x: Int) = throw null })
+                                true } must beTrue }
   "give an empty Option on 'bind'" in {
    import Implicits.function1ToConversion
-   Option.none[Int].bind{ x: Int => Option.some(x * 2) }.isNone must beTrue } }
- "Option.toString" should { "throw an UnsupportedOperationException" in {
-  Option.none[Int].toString must throwA(new UnsupportedOperationException)
-  Option.some(5).toString must throwA(new UnsupportedOperationException) } } })
+   none[Int]("foo").bind{ x: Int => some(x * 2) }.isNone must beTrue } }
+
+ "toString" should { "throw an UnsupportedOperationException" in {
+  none[Int]("foo").toString must throwA(new UnsupportedOperationException)
+  some(5).toString must throwA(new UnsupportedOperationException) } }
+
+ "reason" should {
+  "throw a NullPointerException" in { some(5).reason must throwA(new NullPointerException) }
+  "give a String" in { none("foo").reason mustEqual "foo" } }
+
+ "equals" should { "cause an UnsupportedOperationException" in {
+  some(5) == some(5) must throwA(new UnsupportedOperationException) } }
+
+ "hashCode" should { "cause an UnsupportedOperationException" in {
+  some(5).hashCode must throwA(new UnsupportedOperationException) } } })
 
 class StringsSecondTest extends JUnit4(new Specification with Scalacheck {
  import Strings.{ fromFirst, reversibleReplace, removeSurroundingQuotesLeniently, intersperse }
@@ -179,11 +196,25 @@ class FormatSecondTest extends JUnit4(new Specification with Scalacheck {
 
 class ConversionSecondTest extends JUnit4(new Specification with Scalacheck {
  "Conversion.stringToInt" should { "give an empty Option when supplied with 'foo'" in {
-  Conversion.stringToInt.convert("foo").isNone mustEqual true } } })
+  Conversion.stringToInt.convert("foo").isNone mustEqual true } }
+ "Conversion.stringToBoolean" should {
+  "give true when given \"true\"" in { Conversion.stringToBoolean.convert("true").get mustEqual true }
+  "give false when given \"false\"" in { Conversion.stringToBoolean.convert("false").get mustEqual false }
+  "give an empty Option when given \"foo\"" in { Conversion.stringToBoolean.convert("foo").isNone mustEqual true } }
+ "Conversion.hexStringToInt" should { "give an empty Option when given \"foo\"" in {
+  Conversion.hexStringToInt.convert("foo").isNone mustEqual true } }
+ "Conversion.hexStringtoLong" should { "give an empty Option when given \"foo\"" in {
+  Conversion.hexStringToLong.convert("foo").isNone mustEqual true } }
+ "Conversion.equal(\"foo\")" should {
+  "give true when given \"foo\"" in { Conversion.equal("foo").convert("foo") mustEqual true }
+  "give false when given \"bar\"" in { Conversion.equal("foo").convert("bar") mustEqual false } }
+ "Conversion.fromBoolean" should {
+  "return its first parameter if the boolean is true" in { Conversion.fromBoolean(4, 10).convert(true) mustEqual 4 }
+  "return its second parameter if the boolean if false" in { Conversion.fromBoolean(4, 10).convert(false) mustEqual 10 } } })
 
 class ParameterMapSecondTest extends JUnit4(new Specification {
  import java.lang.Integer
- val parameter = Parameter.parameter[Integer]("foo", "bar", Conversion.stringToInt, Conversion.objectToString[Integer].andThenSome);
+ val parameter = Parameter.parameter[Integer]("foo", "bar", TwoWayConversion.integer)
  "ParameterMap.set" should { "give a NullPointerException when supplied with a null" in {
   new ParameterMap().set(null, 3) must throwA(new NullPointerException)
   new ParameterMap().set(parameter, null) must throwA(new NullPointerException)

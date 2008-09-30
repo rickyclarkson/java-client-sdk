@@ -32,7 +32,7 @@ public final class Generators
      */
     public static Generator<String> strings( final Random random )
     {
-        if (random == null)
+        if ( random == null )
         {
             throw new NullPointerException();
         }
@@ -90,7 +90,9 @@ public final class Generators
     public static Generator<Integer> nonNegativeInts( final Random random )
     {
         if ( random == null )
+        {
             throw new NullPointerException();
+        }
 
         return new Generator<Integer>()
         {

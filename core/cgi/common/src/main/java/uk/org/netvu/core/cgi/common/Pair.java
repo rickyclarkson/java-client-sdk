@@ -57,15 +57,27 @@ public final class Pair<T, U>
         return u;
     }
 
+    /**
+     * Compares this object and another for equality.
+     * 
+     * @return true if the other object is a Pair with equivalent values, false
+     *         otherwise.
+     */
+    @SuppressWarnings( "unchecked" )
     @Override
-    public boolean equals(Object other)
+    public boolean equals( final Object other )
     {
-        return other instanceof Pair && ((Pair)other).first().equals(first()) && ((Pair)other).second().equals(second());
+        return other instanceof Pair
+                && ( (Pair) other ).first().equals( first() )
+                && ( (Pair) other ).second().equals( second() );
     }
 
+    /**
+     * Gives a hashCode computed from the fields, for consistency with equals.
+     */
     @Override
     public int hashCode()
     {
-        return first().hashCode()+13651*second().hashCode();
+        return first().hashCode() + 13651 * second().hashCode();
     }
 }

@@ -11,10 +11,10 @@ import org.junit.Test;
 public class ValidatorTest
 {
     private static final Parameter<String, Option<String>> NAME = Parameter.parameter(
-                                                                                      "name", "foo", Option.<String> some(), Option.<String>some() );
+            "name", "foo", TwoWayConversion.string );
 
     private static final Parameter<String, Option<String>> ADDRESS = Parameter.parameter(
-                                                                                         "address", "foo", Option.<String> some(), Option.<String>some() );
+            "address", "foo", TwoWayConversion.string );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
@@ -40,7 +40,7 @@ public class ValidatorTest
     /**
      * Tests that mutually exclusive parameters really are mutually exclusive.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test( expected = IllegalStateException.class )
     public void mutuallyExclusiveFail()
     {
         new ParameterMap( Validator.mutuallyExclusive( params ) ).set( NAME,

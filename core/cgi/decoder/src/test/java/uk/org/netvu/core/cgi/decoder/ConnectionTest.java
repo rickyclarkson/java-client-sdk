@@ -36,7 +36,7 @@ public class ConnectionTest
     /**
      * Tests that cam and seq are mutually exclusive.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test( expected = IllegalStateException.class )
     public void mutualExclusiveParameters1()
     {
         new Connection().cam( 2 ).seq( 4 );
@@ -45,7 +45,7 @@ public class ConnectionTest
     /**
      * Tests that cam and dwell are mutually exclusive.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test( expected = IllegalStateException.class )
     public void mutualExclusiveParameters2()
     {
         new Connection().cam( 2 ).dwell( 10 );

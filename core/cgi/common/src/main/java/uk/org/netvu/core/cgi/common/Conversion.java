@@ -1,5 +1,8 @@
 package uk.org.netvu.core.cgi.common;
 
+import static uk.org.netvu.core.cgi.common.Option.none;
+import static uk.org.netvu.core.cgi.common.Option.some;
+
 import java.math.BigInteger;
 
 /**
@@ -16,12 +19,15 @@ public abstract class Conversion<T, R>
     /**
      * A conversion from Strings to Booleans, using Boolean.valueOf(String).
      */
-    public static final Conversion<String, Boolean> stringToBoolean = new Conversion<String, Boolean>()
+    public static final Conversion<String, Option<Boolean>> stringToBoolean = new Conversion<String, Option<Boolean>>()
     {
         @Override
-        public Boolean convert( final String t )
+        public Option<Boolean> convert( final String t )
         {
-            return Boolean.valueOf( t );
+            return t.equals( "true" ) ? some( true )
+                    : t.equals( "false" ) ? some( false )
+                            : Option.<Boolean> none( t
+                                    + " is neither true nor false" );
         }
     };
 
@@ -39,7 +45,7 @@ public abstract class Conversion<T, R>
             }
             catch ( final NumberFormatException exception )
             {
-                return Option.none();
+                return Option.none( t + " is not a valid Integer" );
             }
         }
     };
@@ -47,24 +53,38 @@ public abstract class Conversion<T, R>
     /**
      * A conversion from Strings containing hexadecimal to ints.
      */
-    public static final Conversion<String, Integer> hexStringToInt = new Conversion<String, Integer>()
+    public static final Conversion<String, Option<Integer>> hexStringToInt = new Conversion<String, Option<Integer>>()
     {
         @Override
-        public Integer convert( final String t )
+        public Option<Integer> convert( final String t )
         {
-            return (int) Long.parseLong( t, 16 );
+            try
+            {
+                return some( (int) Long.parseLong( t, 16 ) );
+            }
+            catch ( final NumberFormatException e )
+            {
+                return none( t + " is not a valid long" );
+            }
         }
     };
 
     /**
      * A conversion from Strings containing hexadecimal to longs.
      */
-    public static final Conversion<String, Long> hexStringToLong = new Conversion<String, Long>()
+    public static final Conversion<String, Option<Long>> hexStringToLong = new Conversion<String, Option<Long>>()
     {
         @Override
-        public Long convert( final String t )
+        public Option<Long> convert( final String t )
         {
-            return new BigInteger( t, 16 ).longValue();
+            try
+            {
+                return some( new BigInteger( t, 16 ).longValue() );
+            }
+            catch ( final NumberFormatException e )
+            {
+                return none( t + " is not a valid long, in hexadecimal" );
+            }
         }
     };
 
@@ -158,11 +178,6 @@ public abstract class Conversion<T, R>
         };
     }
 
-    public final Conversion<T, Option<R>> andThenSome()
-    {
-        return andThen(Option.<R>some());
-    }
-
     /**
      * A conversion that uses Object's toString() to convert objects of type T
      * to Strings.
@@ -180,6 +195,56 @@ public abstract class Conversion<T, R>
             public String convert( final T t )
             {
                 return t.toString();
+            }
+        };
+    }
+
+    /**
+     * A Conversion that returns true if the value it receives is the same as
+     * the specified parameter.
+     * 
+     * @param <T>
+     *        the type of the values that this Conversion can receive.
+     * @param other
+     *        the parameter to test values again.
+     * @return a Conversion that returns true if the value it receives is the
+     *         same as the specified parameter.
+     */
+    public static <T> Conversion<T, Boolean> equal( final T other )
+    {
+        return new Conversion<T, Boolean>()
+        {
+            @Override
+            public Boolean convert( final T t )
+            {
+                return other.equals( t );
+            }
+        };
+    }
+
+    /**
+     * A Conversion that, given a boolean, returns the ifTrue parameter if the
+     * boolean is true, and returns the ifFalse parameter otherwise.
+     * 
+     * @param <T>
+     *        the type of value to return.
+     * @param ifTrue
+     *        the value to return if the boolean is true.
+     * @param ifFalse
+     *        the value to return if the boolean is false.
+     * @return a Conversion that, given a boolean, returns the ifTrue parameter
+     *         if the boolean is true, and returns the ifFalse parameter
+     *         otherwise.
+     */
+    public static <T> Conversion<Boolean, T> fromBoolean( final T ifTrue,
+            final T ifFalse )
+    {
+        return new Conversion<Boolean, T>()
+        {
+            @Override
+            public T convert( final Boolean b )
+            {
+                return b ? ifTrue : ifFalse;
             }
         };
     }

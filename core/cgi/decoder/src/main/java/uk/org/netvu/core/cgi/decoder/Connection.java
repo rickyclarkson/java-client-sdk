@@ -13,6 +13,7 @@ import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.ReversibleReplace;
 import uk.org.netvu.core.cgi.common.Strings;
+import uk.org.netvu.core.cgi.common.TwoWayConversion;
 import uk.org.netvu.core.cgi.common.URLBuilder;
 import uk.org.netvu.core.cgi.common.Validator;
 
@@ -24,17 +25,16 @@ public final class Connection
 {
     private static final Parameter<String, Option<String>> SLAVE_IP_PARAM = parameter(
             "slaveip", "The source video server address",
-            Option.<String> some(), Option.<String>some() );
+            TwoWayConversion.string );
     private static final Parameter<Integer, Option<Integer>> SEQ_PARAM = parameter(
-            "seq", "Bitmask of source cameras",
-            Option.someRef( Conversion.hexStringToInt ), Conversion.intToHexString.andThenSome() );
+            "seq", "Bitmask of source cameras", TwoWayConversion.hexInt );
     private static final Parameter<Integer, Option<Integer>> DWELL_PARAM = parameter(
             "dwell", "The time to dwell on each camera in the seq bitmask",
-            Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
+            TwoWayConversion.integer );
     private static final Parameter<Integer, Option<Integer>> CAM = parameter(
-                                                                         "cam", "The source camera", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
+            "cam", "The source camera", TwoWayConversion.integer );
     private static final Parameter<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = parameter(
-                                                                                             "audio", "The source audio channel", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
+            "audio", "The source audio channel", TwoWayConversion.integer );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
@@ -166,9 +166,16 @@ public final class Connection
         {
             try
             {
-                return new Connection( ParameterMap.fromURL(
+                Option<ParameterMap> map = ParameterMap.fromURL(
                         replacer.undo( URLDecoder.decode( urlParameters,
-                                "UTF-8" ) ), params ) );
+                                "UTF-8" ) ), params );
+
+                if ( map.isNone() )
+                    throw new IllegalArgumentException( "Cannot parse "
+                            + urlParameters + " into a Connection, because "
+                            + map.reason() );
+
+                return new Connection( map.get() );
             }
             catch ( final UnsupportedEncodingException e )
             {

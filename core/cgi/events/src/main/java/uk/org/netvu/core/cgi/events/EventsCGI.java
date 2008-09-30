@@ -1,19 +1,17 @@
 package uk.org.netvu.core.cgi.events;
 
-import static uk.org.netvu.core.cgi.common.Option.someRef;
 import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
-import static uk.org.netvu.core.cgi.common.Parameter.parameter;
 import static uk.org.netvu.core.cgi.common.Parameter.parameterWithDefault;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
+import uk.org.netvu.core.cgi.common.TwoWayConversion;
 import uk.org.netvu.core.cgi.common.Validator;
 
 /**
@@ -24,20 +22,20 @@ public final class EventsCGI
 {
     private static final Parameter<Integer, Integer> TIME = notNegative( parameterWithDefault(
             "time", "The time from which to search, in seconds since 1970.", 0,
-            Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+            TwoWayConversion.integer ) );
 
     private static final Parameter<Integer, Integer> RANGE = notNegative( parameterWithDefault(
             "range", "The timespan to search in seconds", Integer.MAX_VALUE,
-            Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+            TwoWayConversion.integer ) );
 
-    private static final Parameter<Format, Format> FORMAT = parameterWithDefault( "format",
-            "The format that the results should be returned in", Format.CSV,
-                                                                                  Format.fromString, Conversion.<Format>objectToString().andThenSome() );
+    private static final Parameter<Format, Format> FORMAT = parameterWithDefault(
+            "format", "The format that the results should be returned in",
+            Format.CSV, TwoWayConversion.convenientPartial( Format.fromString ) );
 
     private static final Parameter<Integer, Integer> LENGTH = parameterWithDefault(
             "listlength",
             "The maximum number of results to obtain.  Negative values reverse the direction of the search.",
-            100, Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
+            100, TwoWayConversion.integer );
 
     private static final Parameter<String, String> TEXT = parameterWithDefault(
             "text",
@@ -47,34 +45,30 @@ public final class EventsCGI
                     + "* can be used as a wildcard to replace one or more characters in "
                     + "the search string. ? can be used as a wildcard to replace a single "
                     + "character in the search string.", "",
-            Option.<String>some(), Option.<String>some() );
+            TwoWayConversion.string );
 
-    private static final Parameter<Long, Long> CAMERA_MASK = parameterWithDefault( "cammask",
+    private static final Parameter<Long, Long> CAMERA_MASK = parameterWithDefault(
+            "cammask",
             "The 64-bit mask of cameras whose images we want to obtain.", 0L,
-            someRef( Conversion.hexStringToLong ),
-            someRef( Conversion.longToHexString ) );
+            TwoWayConversion.hexLong );
 
     private static final Parameter<Integer, Integer> ALARM_MASK = parameterWithDefault(
             "almmask",
             "The 32-bit mask of the alarms that we are interested in.", 0,
-            someRef( Conversion.hexStringToInt ),
-            someRef( Conversion.intToHexString ) );
+            TwoWayConversion.hexInt );
 
     private static final Parameter<Long, Long> VIDEO_MOTION_DETECTION_MASK = parameterWithDefault(
             "vmdmask",
             "The 64-bit mask of video motion detection channels to search in.",
-            0L, someRef( Conversion.hexStringToLong ),
-            someRef( Conversion.longToHexString ) );
+            0L, TwoWayConversion.hexLong );
 
     private static final Parameter<Integer, Integer> GPS_MASK = parameterWithDefault(
             "gpsmask", "The 32-bit mask of GPS event types to search for.", 0,
-            someRef( Conversion.hexStringToInt ),
-            someRef( Conversion.intToHexString ) );
+            TwoWayConversion.hexInt );
 
     private static final Parameter<Integer, Integer> SYSTEM_MASK_PARAM = parameterWithDefault(
             "sysmask", "The 32-bit mask of system event types.", 0,
-            someRef( Conversion.hexStringToInt ),
-            someRef( Conversion.intToHexString ) );
+            TwoWayConversion.hexInt );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
@@ -280,7 +274,7 @@ public final class EventsCGI
             }
             finally
             {
-                real = Option.none();
+                real = Option.none( "This Builder has already been built once." );
             }
         }
     }
@@ -409,7 +403,14 @@ public final class EventsCGI
                     "Cannot parse an empty String into an EventsCGI." );
         }
 
-        return new EventsCGI( ParameterMap.fromURL( string, params ) );
+        final Option<ParameterMap> map = ParameterMap.fromURL( string, params );
+
+        if ( map.isNone() )
+        {
+            throw new IllegalArgumentException( map.reason() );
+        }
+
+        return new EventsCGI( map.get() );
     }
 
     /**

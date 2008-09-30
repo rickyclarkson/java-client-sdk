@@ -38,6 +38,15 @@ public abstract class Option<T>
     public abstract boolean isNone();
 
     /**
+     * The reason that the Option has no element.
+     * 
+     * @throws NullPointerException
+     *         if the Option does have an element.
+     * @return the reason that the Option has no element.
+     */
+    public abstract String reason() throws NullPointerException;
+
+    /**
      * Maps the specified Conversion over this Option. If the Option is a Some,
      * then a new Some will be produced containing the value produced by running
      * the Conversion on the value held by this Option. If the Option is a None,
@@ -58,16 +67,18 @@ public abstract class Option<T>
      *        the type of the ignored value to convert.
      * @param <U>
      *        the type of the None to produce.
+     * @param reason
+     *        the reason that the Option has no element.
      * @return a Conversion that always yields a None.
      */
-    public static <T, U> Conversion<T, Option<U>> noneRef()
+    public static <T, U> Conversion<T, Option<U>> noneRef( final String reason )
     {
         return new Conversion<T, Option<U>>()
         {
             @Override
             public Option<U> convert( final T t )
             {
-                return none();
+                return none( reason );
             }
         };
     }
@@ -181,6 +192,12 @@ public abstract class Option<T>
             {
                 return t;
             }
+
+            @Override
+            public String reason()
+            {
+                throw null;
+            }
         };
     }
 
@@ -189,9 +206,11 @@ public abstract class Option<T>
      * 
      * @param <T>
      *        the type of the Option.
+     * @param reason
+     *        the reason that the Option has no elements.
      * @return an Option holding no elements.
      */
-    public static <T> Option<T> none()
+    public static <T> Option<T> none( final String reason )
     {
         return new Option<T>()
         {
@@ -210,7 +229,7 @@ public abstract class Option<T>
             @Override
             public <U> Option<U> map( final Conversion<T, U> conversion )
             {
-                return Option.none();
+                return Option.none( reason );
             }
 
             @Override
@@ -221,7 +240,7 @@ public abstract class Option<T>
             @Override
             public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
             {
-                return Option.none();
+                return Option.none( reason );
             }
 
             @Override
@@ -234,7 +253,14 @@ public abstract class Option<T>
             public T get()
             {
                 throw new IllegalStateException(
-                        "This Option has no element, get() cannot be called on it." );
+                        "This Option has no element, get() cannot be called on it.  The reason it has no element: "
+                                + reason );
+            }
+
+            @Override
+            public String reason()
+            {
+                return reason;
             }
         };
     }
@@ -248,6 +274,27 @@ public abstract class Option<T>
     {
         throw new UnsupportedOperationException(
                 "toString() not supported, to catch any accidental toString() calls early" );
+    }
+
+    /**
+     * Throws an UnsupportedOperationException to catch any accidental
+     * badly-typed equals comparisons early.
+     */
+    @Override
+    public final boolean equals( final Object o )
+    {
+        throw new UnsupportedOperationException(
+                "equals(Object) not supported, to catch any accidental badly-typed equals comparisons early" );
+    }
+
+    /**
+     * Throws an UnsupportedOperationException to be consistent with equals.
+     */
+    @Override
+    public final int hashCode()
+    {
+        throw new UnsupportedOperationException(
+                "hashCode not supported, to match equals." );
     }
 
     /**

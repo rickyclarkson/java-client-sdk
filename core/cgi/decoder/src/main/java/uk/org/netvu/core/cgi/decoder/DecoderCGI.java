@@ -18,6 +18,7 @@ import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.Reduction;
 import uk.org.netvu.core.cgi.common.Strings;
+import uk.org.netvu.core.cgi.common.TwoWayConversion;
 import uk.org.netvu.core.cgi.common.URLBuilder;
 
 /**
@@ -29,7 +30,8 @@ public final class DecoderCGI
     private static final Parameter<Persistence, Persistence> PERSISTENCE = Parameter.parameterWithDefault(
             "persistence",
             "Whether to make the changes persistent (survive reboot) or temporary",
-            Persistence.TEMPORARY, Option.<String, Persistence> noneRef(), Conversion.<Persistence>objectToString().andThenSome() );
+            Persistence.TEMPORARY,
+            TwoWayConversion.convenientPartial( Option.<String, Persistence> noneRef( "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name." ) ) );
 
     private static final Parameter<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = sparseArrayParam(
             "connections",
@@ -42,18 +44,21 @@ public final class DecoderCGI
             someRef( Layout.fromURL ), someRef( Layout.urlEncode ) );
 
     private static final Parameter<String[], Option<String[]>> OUTPUT_TITLES = Parameter.parameter(
-            "output_titles", "The titles to give to each output channel",
-            Option.<String, String[]> noneRef(),
-            someRef( new Conversion<String[], String>()
-            {
-                @Override
-                public String convert( final String[] array )
-                {
-                    return Lists.reduce( Lists.map( Arrays.asList( array ),
-                            Strings.surroundWithQuotes ),
-                            Reduction.intersperseWith( "," ) );
-                }
-            } ) );
+            "output_titles",
+            "The titles to give to each output channel",
+            TwoWayConversion.partial(
+                    Option.<String, String[]> noneRef( "Parsing not supported for output_titles" ),
+                    someRef( new Conversion<String[], String>()
+                    {
+                        @Override
+                        public String convert( final String[] array )
+                        {
+                            return Lists.reduce( Lists.map(
+                                    Arrays.asList( array ),
+                                    Strings.surroundWithQuotes ),
+                                    Reduction.intersperseWith( "," ) );
+                        }
+                    } ) ) );
 
     private static final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = sparseArrayParam(
             "commands",
@@ -232,7 +237,12 @@ public final class DecoderCGI
      */
     public static DecoderCGI fromString( final String string )
     {
-        return new DecoderCGI( ParameterMap.fromURL( string, params ) ).persistence( string.contains( ".frm" ) ? Persistence.PERSISTENT
+        Option<ParameterMap> map = ParameterMap.fromURL( string, params );
+        if ( map.isNone() )
+            throw new IllegalArgumentException( "Cannot parse " + string
+                    + " into a DecoderCGI, because " + map.reason() );
+
+        return new DecoderCGI( map.get() ).persistence( string.contains( ".frm" ) ? Persistence.PERSISTENT
                 : Persistence.TEMPORARY );
     }
 }

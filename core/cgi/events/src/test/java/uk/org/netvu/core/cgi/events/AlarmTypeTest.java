@@ -21,7 +21,7 @@ public class AlarmTypeTest
     /**
      * Tests that a combination of two bits causes an IllegalArgumentException.
      */
-    @Test(expected=IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void mixedFind()
     {
         EventsCGIResult.AlarmType.find( 3 );
@@ -30,7 +30,7 @@ public class AlarmTypeTest
     /**
      * Tests that negative arguments to find cause an IllegalArgumentException..
      */
-    @Test(expected=IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void negativeFind()
     {
         EventsCGIResult.AlarmType.find( -1 );
@@ -40,7 +40,7 @@ public class AlarmTypeTest
      * Tests that larger powers of 2 than there are constants for cause an
      * IllegalArgumentException.
      */
-    @Test(expected=IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void largeFind()
     {
         EventsCGIResult.AlarmType.find( 256 );

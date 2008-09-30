@@ -42,7 +42,7 @@ public enum Mode
             }
             catch ( final IllegalArgumentException exception )
             {
-                return Option.none();
+                return Option.none( s + " is not a valid Mode" );
             }
         }
     };

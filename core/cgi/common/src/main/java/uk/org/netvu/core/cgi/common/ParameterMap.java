@@ -1,5 +1,7 @@
 package uk.org.netvu.core.cgi.common;
 
+import static uk.org.netvu.core.cgi.common.Option.some;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -135,7 +137,8 @@ public final class ParameterMap
 
     /**
      * Parses the specified URL, with the specified parameters, to return a
-     * ParameterMap holding the values parsed from the URL.
+     * ParameterMap holding the values parsed from the URL, wrapped in an
+     * Option.
      * 
      * @param url
      *        the URL to parse.
@@ -143,10 +146,10 @@ public final class ParameterMap
      *        the parameters of interest.
      * @return a ParameterMap holding the values parsed from the URL.
      */
-    public static ParameterMap fromURL( final String url,
+    public static Option<ParameterMap> fromURL( final String url,
             final List<? extends Parameter<?, ?>> params )
     {
-        ParameterMap parameterMap = new ParameterMap();
+        Option<ParameterMap> parameterMap = some( new ParameterMap() );
         final List<URLParameter> parts = URLExtractor.nameValuePairs( url );
 
         for ( final URLParameter part : parts )
@@ -155,8 +158,15 @@ public final class ParameterMap
             {
                 if ( part.name.startsWith( param.name ) )
                 {
-                    parameterMap = parameterMap.withFromString( param, part ).getOrElse(
-                            parameterMap );
+                    parameterMap = parameterMap.bind( new Conversion<ParameterMap, Option<ParameterMap>>()
+                    {
+                        @Override
+                        public Option<ParameterMap> convert(
+                                final ParameterMap map )
+                        {
+                            return map.withFromString( param, part );
+                        }
+                    } );
                 }
             }
         }

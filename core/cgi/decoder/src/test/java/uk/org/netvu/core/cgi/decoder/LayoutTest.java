@@ -25,7 +25,7 @@ public class LayoutTest
     /**
      * Tests that invalid values throw an IllegalArgumentException.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void invalidURL()
     {
         Layout.fromURL.convert( "10" );

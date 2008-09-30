@@ -21,7 +21,7 @@ public class StatusTest
     /**
      * Tests that a combination of two bits throws an IllegalArgumentException.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void mixedFind()
     {
         EventsCGIResult.Status.find( 3 );
@@ -30,7 +30,7 @@ public class StatusTest
     /**
      * Tests that negative arguments to find give an IllegalArgumentException.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void negativeFind()
     {
         EventsCGIResult.Status.find( -1 );
@@ -40,7 +40,7 @@ public class StatusTest
      * Tests that larger powers of 2 than there are constants for cause an
      * IllegalArgumentException.
      */
-    @Test(expected=IllegalArgumentException.class)
+    @Test( expected = IllegalArgumentException.class )
     public void largeFind()
     {
         EventsCGIResult.Status.find( 256 );

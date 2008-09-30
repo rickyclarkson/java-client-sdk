@@ -53,7 +53,7 @@ public class VariableCGITest
      * Tests that building a VariableCGI with no variable parameter causes an
      * IllegalStateException.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test( expected = IllegalStateException.class )
     public void invalidBuild()
     {
         new VariableCGI.Builder().build();
