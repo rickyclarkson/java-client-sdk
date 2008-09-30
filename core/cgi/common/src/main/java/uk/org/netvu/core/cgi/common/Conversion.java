@@ -158,6 +158,11 @@ public abstract class Conversion<T, R>
         };
     }
 
+    public final Conversion<T, Option<R>> andThenSome()
+    {
+        return andThen(Option.<R>some());
+    }
+
     /**
      * A conversion that uses Object's toString() to convert objects of type T
      * to Strings.

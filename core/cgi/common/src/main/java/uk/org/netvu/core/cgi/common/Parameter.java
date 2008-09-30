@@ -51,7 +51,7 @@ public abstract class Parameter<T, R>
      * @return a Parameter that can take 0 or 1 values of type T, yielding them
      *         as an Option<T>.
      */
-    public static <T> Parameter<T, Option<T>> param1( final String name,
+    public static <T> Parameter<T, Option<T>> parameter( final String name,
             final String description,
             final Conversion<String, Option<T>> fromString,
             final Conversion<T, Option<String>> toString )
@@ -108,89 +108,6 @@ public abstract class Parameter<T, R>
 
     /**
      * Constructs a Parameter that can take 0 or 1 values of type T, yielding
-     * them as an Option<T>.
-     * 
-     * @param <T>
-     *        the type that the Parameter can take.
-     * @param name
-     *        the name of the Parameter.
-     * @param description
-     *        a textual description of the Parameter.
-     * @param fromString
-     *        a Conversion from Strings to values of type T, which is used in
-     *        parsing URLs, etc.
-     * @return a Parameter that can take 0 or 1 values of type T, yielding them
-     *         as an Option<T>.
-     */
-    public static <T> Parameter<T, Option<T>> param( final String name,
-            final String description,
-            final Conversion<String, Option<T>> fromString )
-    {
-        return param1(
-                name,
-                description,
-                fromString,
-                Conversion.<T> objectToString().andThen( Option.<String> some() ) );
-    }
-
-    /**
-     * Constructs a Parameter that can take 0 or 1 values of type T, yielding
-     * that value or a default value.
-     * 
-     * @param <T>
-     *        the type that the Parameter can take.
-     * @param name
-     *        the name of the Parameter.
-     * @param description
-     *        a textual description of the Parameter.
-     * @param defaultValue
-     *        the default value for the Parameter.
-     * @param fromString
-     *        a Conversion from Strings to values of type T, which is used in
-     *        parsing URLs, etc.
-     * @return a Parameter that can take 0 or 1 values of type T, yielding that
-     *         value or a default value.
-     */
-    public static <T> Parameter<T, T> param( final String name,
-            final String description, final T defaultValue,
-            final Conversion<String, Option<T>> fromString )
-    {
-        Checks.notNull(name, description, defaultValue, fromString);
-
-        return new Parameter<T, T>( name, description, defaultValue )
-        {
-            @Override
-            public T reduce( final T newValue, final T original )
-            {
-                if ( original.equals( defaultValue ) )
-                {
-                    return newValue;
-                }
-
-                throw new IllegalStateException(
-                        "The "
-                                + name
-                                + " parameter has already been set to a value other than its default" );
-            }
-
-            @Override
-            public Option<T> fromURLParameter( final URLParameter nameAndValue )
-            {
-                return createFromURL( fromString, nameAndValue );
-            }
-
-            @Override
-            public Option<String> toURLParameter(
-                    final Pair<String, T> nameAndValue )
-            {
-                return Option.some( nameAndValue.first() + '='
-                        + URLBuilder.encode( nameAndValue.second().toString() ) );
-            }
-        };
-    }
-
-    /**
-     * Constructs a Parameter that can take 0 or 1 values of type T, yielding
      * that value or a default value.
      * 
      * @param <T>
@@ -210,7 +127,7 @@ public abstract class Parameter<T, R>
      * @return a Parameter that can take 0 or 1 values of type T, yield that
      *         value or a default value.
      */
-    public static <T> Parameter<T, T> param4( final String name,
+    public static <T> Parameter<T, T> parameterWithDefault( final String name,
             final String description, final T defaultValue,
             final Conversion<String, Option<T>> fromString,
             final Conversion<T, Option<String>> toString )

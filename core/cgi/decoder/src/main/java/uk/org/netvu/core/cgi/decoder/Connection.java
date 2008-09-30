@@ -1,6 +1,6 @@
 package uk.org.netvu.core.cgi.decoder;
 
-import static uk.org.netvu.core.cgi.common.Parameter.param;
+import static uk.org.netvu.core.cgi.common.Parameter.parameter;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -22,19 +22,19 @@ import uk.org.netvu.core.cgi.common.Validator;
  */
 public final class Connection
 {
-    private static final Parameter<String, Option<String>> SLAVE_IP_PARAM = param(
+    private static final Parameter<String, Option<String>> SLAVE_IP_PARAM = parameter(
             "slaveip", "The source video server address",
-            Option.<String> some() );
-    private static final Parameter<Integer, Option<Integer>> SEQ_PARAM = param(
+            Option.<String> some(), Option.<String>some() );
+    private static final Parameter<Integer, Option<Integer>> SEQ_PARAM = parameter(
             "seq", "Bitmask of source cameras",
-            Option.someRef( Conversion.hexStringToInt ) );
-    private static final Parameter<Integer, Option<Integer>> DWELL_PARAM = param(
+            Option.someRef( Conversion.hexStringToInt ), Conversion.intToHexString.andThenSome() );
+    private static final Parameter<Integer, Option<Integer>> DWELL_PARAM = parameter(
             "dwell", "The time to dwell on each camera in the seq bitmask",
-            Conversion.stringToInt );
-    private static final Parameter<Integer, Option<Integer>> CAM = param(
-            "cam", "The source camera", Conversion.stringToInt );
-    private static final Parameter<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = param(
-            "audio", "The source audio channel", Conversion.stringToInt );
+            Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
+    private static final Parameter<Integer, Option<Integer>> CAM = parameter(
+                                                                         "cam", "The source camera", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
+    private static final Parameter<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = parameter(
+                                                                                             "audio", "The source audio channel", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

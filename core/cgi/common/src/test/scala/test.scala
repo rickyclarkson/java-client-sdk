@@ -54,41 +54,39 @@ class GeneratorsTest extends JUnit4(new Specification with Scalacheck {
 class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
  "Supplying a null Conversion to a Parameter" should {
   "cause a NullPointerException" in {
-   Parameter.param("foo", "bar", 3, null) must throwA(new NullPointerException)
-   Parameter.param4("foo", "bar", 3, null, to) must throwA(new NullPointerException)
-   Parameter.param4("foo", "bar", 3, from, null) must throwA(new NullPointerException) } }
+   Parameter.parameterWithDefault("foo", "bar", 3, null, to) must throwA(new NullPointerException)
+   Parameter.parameterWithDefault("foo", "bar", 3, from, null) must throwA(new NullPointerException) } }
 
  def to[T] = new Conversion[T, Option[String]] { def convert(t: T) = Option.some("foo") }
  def from[T] = new Conversion[String, Option[T]] { def convert(s: String): Option[T] = Option.none[T] }
 
- val params = List(Parameter.param("foo", "bar", 3, from), Parameter.param4("foo", "bar", 3, from, to))
+ val param = Parameter.parameterWithDefault("foo", "bar", 3, from, to)
  
  "Supplying a value to an ordinary Parameter twice" should {
   "cause an IllegalStateException" in {
-   for (p <- params) new ParameterMap set (p, 4) set (p, 5) must throwA(new IllegalStateException) } }
+   new ParameterMap set (param, 4) set (param, 5) must throwA(new IllegalStateException) } }
 
  "Converting a Parameter to a URL" should {
   "give an Option holding the name of the Parameter when the Parameter has a non-default value" in {
-   for { p <- params map (p => Parameter.not(4, p)) }
-    p.toURLParameter(new ParameterMap().set(p, 3)).get must include("foo") }
+   param.toURLParameter(new ParameterMap().set(param, 3)).get must include("foo") }
   "give an Option holding an empty String when the Parameter has a default value" in {
-   for (p <- params) p.toURLParameter(new ParameterMap).get mustEqual "" } }
+   param.toURLParameter(new ParameterMap).get mustEqual "" } }
 
  "Converting a URL to a Parameter" should {
   "succeed" in {
-   val p = Parameter.param4[Integer]("foo", "bar", 3, Conversion.stringToInt, to)
+   val p = Parameter.parameterWithDefault[Integer]("foo", "bar", 3, Conversion.stringToInt, to)
    Parameter.not[Integer, Integer](4, p).fromURLParameter(new URLParameter("foo", "8")).get mustEqual 8 } }
 
  "A bound Parameter" should {
-  val bound = Parameter.bound(1, 10, Parameter.param("foo", "bar", 3, from))
-  "accept values inside its boupnds" in {
+  val bound = Parameter.bound(1, 10, Parameter.parameterWithDefault("foo", "bar", 3, from, to))
+  "accept values inside its bounds" in {
    new ParameterMap().set[Integer, Integer](bound, 4) get bound mustEqual 4 }
   "reject values outside its bounds" in {
    new ParameterMap().set[Integer, Integer](bound, 140) must throwA(new IllegalArgumentException)
    new ParameterMap().set[Integer, Integer](bound, 0) must throwA(new IllegalArgumentException) } }
 
  "A 'not' Parameter" should {
-  val theNot = Parameter.not(5, Parameter.param("foo", "bar", 3, from))
+  val theNot = Parameter.not(5, Parameter.parameterWithDefault("foo", "bar", 3, from, to))
   "allow unbanned values" in { new ParameterMap set (theNot, 2) get theNot mustEqual 2 }
   "reject banned values" in { new ParameterMap set (theNot, 5) must throwA(new IllegalArgumentException) } }
 
@@ -185,7 +183,7 @@ class ConversionSecondTest extends JUnit4(new Specification with Scalacheck {
 
 class ParameterMapSecondTest extends JUnit4(new Specification {
  import java.lang.Integer
- val parameter = Parameter.param[Integer]("foo", "bar", Conversion.stringToInt)
+ val parameter = Parameter.parameter[Integer]("foo", "bar", Conversion.stringToInt, Conversion.objectToString[Integer].andThenSome);
  "ParameterMap.set" should { "give a NullPointerException when supplied with a null" in {
   new ParameterMap().set(null, 3) must throwA(new NullPointerException)
   new ParameterMap().set(parameter, null) must throwA(new NullPointerException)

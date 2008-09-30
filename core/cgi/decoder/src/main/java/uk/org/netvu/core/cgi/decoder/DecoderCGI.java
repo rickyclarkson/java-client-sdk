@@ -26,10 +26,10 @@ import uk.org.netvu.core.cgi.common.URLBuilder;
  */
 public final class DecoderCGI
 {
-    private static final Parameter<Persistence, Persistence> PERSISTENCE = Parameter.param(
+    private static final Parameter<Persistence, Persistence> PERSISTENCE = Parameter.parameterWithDefault(
             "persistence",
             "Whether to make the changes persistent (survive reboot) or temporary",
-            Persistence.TEMPORARY, Option.<String, Persistence> noneRef() );
+            Persistence.TEMPORARY, Option.<String, Persistence> noneRef(), Conversion.<Persistence>objectToString().andThenSome() );
 
     private static final Parameter<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = sparseArrayParam(
             "connections",
@@ -41,7 +41,7 @@ public final class DecoderCGI
             "The differences to make to the layouts system variable",
             someRef( Layout.fromURL ), someRef( Layout.urlEncode ) );
 
-    private static final Parameter<String[], Option<String[]>> OUTPUT_TITLES = Parameter.param1(
+    private static final Parameter<String[], Option<String[]>> OUTPUT_TITLES = Parameter.parameter(
             "output_titles", "The titles to give to each output channel",
             Option.<String, String[]> noneRef(),
             someRef( new Conversion<String[], String>()

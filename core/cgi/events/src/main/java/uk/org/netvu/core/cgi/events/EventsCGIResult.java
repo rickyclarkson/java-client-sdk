@@ -3,7 +3,8 @@ package uk.org.netvu.core.cgi.events;
 import static uk.org.netvu.core.cgi.common.Option.someRef;
 import static uk.org.netvu.core.cgi.common.Parameter.bound;
 import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
-import static uk.org.netvu.core.cgi.common.Parameter.param;
+import static uk.org.netvu.core.cgi.common.Parameter.parameter;
+import static uk.org.netvu.core.cgi.common.Parameter.parameterWithDefault;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,37 +24,37 @@ import uk.org.netvu.core.cgi.common.Strings;
 public final class EventsCGIResult
 {
     private static final Parameter<Integer, Option<Integer>> CAMERA_PARAMETER = bound(
-            0, 64, Parameter.param( "cam", "The system camera number",
-                    Conversion.stringToInt ) );
+            0, 64, Parameter.parameter( "cam", "The system camera number",
+                                        Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
 
-    private static final Parameter<String, Option<String>> ALARM = param(
-            "alarm", "The alarm description.", Option.<String> some() );
+    private static final Parameter<String, Option<String>> ALARM = parameter(
+                                                                             "alarm", "The alarm description.", Option.<String> some(), Option.<String>some() );
 
-    private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = notNegative( param(
+    private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = notNegative( parameter(
             "time", "The Julianised time that the event occurred at",
-            Conversion.stringToInt ) );
+            Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
 
     private static final Parameter<Integer, Option<Integer>> OFFSET = bound(
-            -90000, 90000, param( "offset", "", Conversion.stringToInt ) );
+                                                                            -90000, 90000, parameter( "offset", "", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
 
-    private static final Parameter<String, Option<String>> FILE = param(
-            "file", "", Option.<String> some() );
+    private static final Parameter<String, Option<String>> FILE = parameter(
+                                                                        "file", "", Option.<String> some(), Option.<String>some() );
 
-    private static final Parameter<Boolean, Option<Boolean>> ON_DISK = param(
-            "onDisk", "", someRef( Conversion.stringToBoolean ) );
+    private static final Parameter<Boolean, Option<Boolean>> ON_DISK = parameter(
+                                                                                 "onDisk", "", someRef( Conversion.stringToBoolean), Conversion.<Boolean>objectToString().andThenSome() );
 
-    private static final Parameter<Integer, Option<Integer>> DURATION = notNegative( param(
-            "duration", "", Conversion.stringToInt ) );
+    private static final Parameter<Integer, Option<Integer>> DURATION = notNegative( parameter(
+                                                                                               "duration", "", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
 
-    private static final Parameter<Integer, Option<Integer>> PRE_ALARM = notNegative( param(
-            "preAlarm", "", Conversion.stringToInt ) );
+    private static final Parameter<Integer, Option<Integer>> PRE_ALARM = notNegative( parameter(
+                                                                                            "preAlarm", "", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
 
-    private static final Parameter<Integer, Option<Integer>> ARCHIVE = notNegative( param(
-            "archive", "", Conversion.stringToInt ) );
-    private static final Parameter<Status, Status> STATUS = param( "status",
-            "", Status.NONE, Status.fromString );
-    private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = param(
-            "alarmType", "", AlarmType.NONE, AlarmType.fromString );
+    private static final Parameter<Integer, Option<Integer>> ARCHIVE = notNegative( parameter(
+                                                                                              "archive", "", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+    private static final Parameter<Status, Status> STATUS = parameterWithDefault( "status",
+                                                                   "", Status.NONE, Status.fromString, Conversion.<Status>objectToString().andThenSome());
+    private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = parameterWithDefault(
+                                                                            "alarmType", "", AlarmType.NONE, AlarmType.fromString, Conversion.<AlarmType>objectToString().andThenSome() );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

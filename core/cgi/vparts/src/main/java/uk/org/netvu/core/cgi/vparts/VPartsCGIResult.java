@@ -1,7 +1,7 @@
 package uk.org.netvu.core.cgi.vparts;
 
 import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
-import static uk.org.netvu.core.cgi.common.Parameter.param;
+import static uk.org.netvu.core.cgi.common.Parameter.parameter;
 
 import java.util.ArrayList;
 
@@ -17,26 +17,26 @@ import uk.org.netvu.core.cgi.common.URLParameter;
  */
 public class VPartsCGIResult
 {
-    private static final Parameter<Integer, Option<Integer>> INDEX = param(
+    private static final Parameter<Integer, Option<Integer>> INDEX = parameter(
             "index", "The index of this result in the results",
-            Conversion.stringToInt );
-    private static final Parameter<String, Option<String>> DIRECTORY = param(
+            Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
+    private static final Parameter<String, Option<String>> DIRECTORY = parameter(
             "directory", "The directory where this video can be found",
-            Option.<String> some() );
-    private static final Parameter<String, Option<String>> FILENAME = param(
+            Option.<String> some(), Option.<String>some() );
+    private static final Parameter<String, Option<String>> FILENAME = parameter(
             "filename", "The name of the file where this video can be found",
-            Option.<String> some() );
-    private static final Parameter<Integer, Option<Integer>> START_TIME = notNegative( param(
-            "start_time", "The start time", Conversion.stringToInt ) );
-    private static final Parameter<Integer, Option<Integer>> END_TIME = notNegative( param(
-            "end_time", "The end time", Conversion.stringToInt ) );
-    private static final Parameter<Integer, Option<Integer>> EXPIRY_TIME = notNegative( param(
-            "expiry_time", "The expiry time", Conversion.stringToInt ) );
-    private static final Parameter<Integer, Option<Integer>> NUMBER_OF_ENTRIES = param(
-            "n_entries", "The number of entries", Conversion.stringToInt );
-    private static final Parameter<Integer, Option<Integer>> CAM_MASK = param(
+            Option.<String> some(), Option.<String>some() );
+    private static final Parameter<Integer, Option<Integer>> START_TIME = notNegative( parameter(
+                                                                                             "start_time", "The start time", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+    private static final Parameter<Integer, Option<Integer>> END_TIME = notNegative( parameter(
+                                                                                               "end_time", "The end time", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+    private static final Parameter<Integer, Option<Integer>> EXPIRY_TIME = notNegative( parameter(
+                                                                                                  "expiry_time", "The expiry time", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+    private static final Parameter<Integer, Option<Integer>> NUMBER_OF_ENTRIES = parameter(
+                                                                                           "n_entries", "The number of entries", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
+    private static final Parameter<Integer, Option<Integer>> CAM_MASK = parameter(
             "cammask", "The bitmask of cameras that this video comes from",
-            Conversion.stringToInt );
+            Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

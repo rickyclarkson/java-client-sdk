@@ -4,7 +4,7 @@ import static uk.org.netvu.core.cgi.common.Option.someRef;
 import static uk.org.netvu.core.cgi.common.Parameter.bound;
 import static uk.org.netvu.core.cgi.common.Parameter.not;
 import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
-import static uk.org.netvu.core.cgi.common.Parameter.param;
+import static uk.org.netvu.core.cgi.common.Parameter.parameterWithDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,45 +23,45 @@ public final class VPartsCGI
 {
     private static final Parameter<Format, Format> FORMAT = not(
             Format.HTML,
-            param(
+            parameterWithDefault(
                     "format",
                     "Determines output format.  js is for JavaScript, csv for comma separated variables",
-                    Format.CSV, Format.fromString ) );
+                    Format.CSV, Format.fromString, Conversion.<Format>objectToString().andThenSome() ) );
 
-    private static final Parameter<Mode, Mode> MODE = param( "mode",
+    private static final Parameter<Mode, Mode> MODE = parameterWithDefault ( "mode",
             "Determines the function of the cgi call", Mode.READ,
-            Mode.fromString );
+                                                                             Mode.fromString, Conversion.<Mode>objectToString().andThenSome() );
 
-    private static final Parameter<Integer, Integer> TIME = notNegative( param(
+    private static final Parameter<Integer, Integer> TIME = notNegative( parameterWithDefault(
             "time", "Julianised GMT start time for database search", 0,
-            Conversion.stringToInt ) );
+            Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
 
-    private static final Parameter<Integer, Integer> RANGE = notNegative( param(
+    private static final Parameter<Integer, Integer> RANGE = notNegative( parameterWithDefault(
             "range", "Timespan to search in seconds.", Integer.MAX_VALUE,
-            Conversion.stringToInt ) );
+            Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
 
-    private static final Parameter<Integer, Integer> EXPIRY = param(
+    private static final Parameter<Integer, Integer> EXPIRY = parameterWithDefault(
             "expiry",
             "Sets the expiry time for partitions, used in protect mode; Julianised GMT",
-            0, Conversion.stringToInt );
+            0, Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
 
-    private static final Parameter<Boolean, Boolean> WATERMARK = param(
+    private static final Parameter<Boolean, Boolean> WATERMARK = parameterWithDefault(
             "watermark",
             "Tells the CGI to generate watermark codes in read mode", false,
-            someRef( Conversion.stringToBoolean ) );
+            someRef( Conversion.stringToBoolean ), Conversion.<Boolean>objectToString().andThenSome() );
 
     private static final Parameter<Integer, Integer> WMARKSTEP = bound( 1, 256,
-            param( "wmarkstepParam",
+            parameterWithDefault( "wmarkstepParam",
                     "Defines the step size to be used in watermark.", 1,
-                    Conversion.stringToInt ) );
+                                  Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
 
-    private static final Parameter<Integer, Integer> LIST_LENGTH = param(
+    private static final Parameter<Integer, Integer> LIST_LENGTH = parameterWithDefault(
             "listlength", "Maximum number of entries in the list", 100,
-            Conversion.stringToInt );
+            Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
 
-    private static final Parameter<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = param(
+    private static final Parameter<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = parameterWithDefault(
             "pathstyle", "Format of directory paths.",
-            DirectoryPathFormat.SHORT, DirectoryPathFormat.fromString );
+            DirectoryPathFormat.SHORT, DirectoryPathFormat.fromString, Conversion.<DirectoryPathFormat>objectToString().andThenSome() );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

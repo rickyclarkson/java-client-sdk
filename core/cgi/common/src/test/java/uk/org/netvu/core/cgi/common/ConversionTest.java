@@ -20,7 +20,7 @@ public class ConversionTest
     }
 
     /**
-     * Tests that chaining 2 Conversion with andThen() yields the correct
+     * Tests that chaining 2 Conversions with andThen() yields the correct
      * result.
      */
     @Test

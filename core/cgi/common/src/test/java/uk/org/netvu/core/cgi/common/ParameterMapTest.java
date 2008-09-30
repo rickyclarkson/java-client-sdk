@@ -15,8 +15,8 @@ import org.junit.Test;
  */
 public final class ParameterMapTest
 {
-    private final static Parameter<String, Option<String>> PARAM = Parameter.param(
-            "blah", "blah", Option.<String> some() );
+    private final static Parameter<String, Option<String>> PARAM = Parameter.parameter(
+                                                                                       "blah", "blah", Option.<String> some(), Option.<String>some() );
 
     /**
      * Tests that a value stored in a ParameterMap gets converted as per the
@@ -39,10 +39,10 @@ public final class ParameterMapTest
         new ParameterMap().set( PARAM, "10" ).set( PARAM, "10" );
     }
 
-    private static final Parameter<Integer, Option<Integer>> TIME = Parameter.notNegative( Parameter.param(
-            "time", "time since 1970", Conversion.stringToInt ) );
-    private static final Parameter<Integer, Option<Integer>> RANGE = Parameter.param(
-            "range", "range to search", Conversion.stringToInt );
+    private static final Parameter<Integer, Option<Integer>> TIME = Parameter.notNegative( Parameter.parameter(
+                                                                                                               "time", "time since 1970", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() ) );
+    private static final Parameter<Integer, Option<Integer>> RANGE = Parameter.parameter(
+                                                                                         "range", "range to search", Conversion.stringToInt, Conversion.<Integer>objectToString().andThenSome() );
 
     /**
      * Tests that an IllegalStateException is thrown when invalid parameter
@@ -154,10 +154,10 @@ public final class ParameterMapTest
     @Test
     public void fromStrings()
     {
-        final Parameter<String, String> name = Parameter.param( "name", "foo",
-                "Bob", Option.<String> some() );
-        final Parameter<String, String> surname = Parameter.param( "surname",
-                "foo", "Hope", Option.<String> some() );
+        final Parameter<String, String> name = Parameter.parameterWithDefault( "name", "foo",
+                                                                 "Bob", Option.<String> some(), Option.<String>some() );
+        final Parameter<String, String> surname = Parameter.parameterWithDefault( "surname",
+                                                                    "foo", "Hope", Option.<String> some(), Option.<String>some() );
 
         // this is an anonymous intialiser - it is creating a new ArrayList and
         // adding values to it inline.
