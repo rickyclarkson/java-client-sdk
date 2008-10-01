@@ -10,11 +10,9 @@ import org.junit.Test;
  */
 public class ValidatorTest
 {
-    private static final Parameter<String, Option<String>> NAME = Parameter.parameter(
-            "name", "foo", TwoWayConversion.string );
+    private static final Parameter<String, Option<String>> NAME = Parameter.parameter( "name", TwoWayConversion.string );
 
-    private static final Parameter<String, Option<String>> ADDRESS = Parameter.parameter(
-            "address", "foo", TwoWayConversion.string );
+    private static final Parameter<String, Option<String>> ADDRESS = Parameter.parameter( "address", TwoWayConversion.string );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

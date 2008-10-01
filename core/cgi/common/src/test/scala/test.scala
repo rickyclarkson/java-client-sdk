@@ -54,15 +54,15 @@ class GeneratorsTest extends JUnit4(new Specification with Scalacheck {
 class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
  "Supplying a null Conversion to a Parameter" should {
   "cause a NullPointerException" in {
-   Parameter.parameterWithDefault("foo", "bar", 3, TwoWayConversion.partial(null, to)) must throwA(new NullPointerException)
-   Parameter.parameterWithDefault("foo", "bar", 3, TwoWayConversion.partial(from, null)) must throwA(new NullPointerException)
-   Parameter.parameterWithDefault("foo", "bar", 3, null) must throwA(new NullPointerException)
+   Parameter.parameterWithDefault("foo", 3, TwoWayConversion.partial(null, to)) must throwA(new NullPointerException)
+   Parameter.parameterWithDefault("foo", 3, TwoWayConversion.partial(from, null)) must throwA(new NullPointerException)
+   Parameter.parameterWithDefault("foo", 3, null) must throwA(new NullPointerException)
 } }
 
  def to[T] = new Conversion[T, Option[String]] { def convert(t: T) = Option.some("foo") }
  def from[T] = new Conversion[String, Option[T]] { def convert(s: String): Option[T] = Option.none[T]("Unsupported") }
 
- val param = Parameter.parameterWithDefault("foo", "bar", 3,
+ val param = Parameter.parameterWithDefault("foo", 3,
                                             TwoWayConversion.partial(from, to))
  
  "Supplying a value to an ordinary Parameter twice" should {
@@ -77,11 +77,11 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
 
  "Converting a URL to a Parameter" should {
   "succeed" in {
-   val p = Parameter.parameterWithDefault[Integer]("foo", "bar", 3, TwoWayConversion.partial(Conversion.stringToInt, to))
+   val p = Parameter.parameterWithDefault[Integer]("foo", 3, TwoWayConversion.partial(Conversion.stringToInt, to))
    Parameter.not[Integer, Integer](4, p).fromURLParameter(new URLParameter("foo", "8")).get mustEqual 8 } }
 
  "A bound Parameter" should {
-  val bound = Parameter.bound(1, 10, Parameter.parameterWithDefault("foo", "bar", 3, TwoWayConversion.partial(from, to)))
+  val bound = Parameter.bound(1, 10, Parameter.parameterWithDefault("foo", 3, TwoWayConversion.partial(from, to)))
   "accept values inside its bounds" in {
    new ParameterMap().set[Integer, Integer](bound, 4) get bound mustEqual 4 }
   "reject values outside its bounds" in {
@@ -89,7 +89,7 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
    new ParameterMap().set[Integer, Integer](bound, 0) must throwA(new IllegalArgumentException) } }
 
  "A 'not' Parameter" should {
-  val theNot = Parameter.not(5, Parameter.parameterWithDefault("foo", "bar", 3, TwoWayConversion.partial(from, to)))
+  val theNot = Parameter.not(5, Parameter.parameterWithDefault("foo", 3, TwoWayConversion.partial(from, to)))
   "allow unbanned values" in { new ParameterMap set (theNot, 2) get theNot mustEqual 2 }
   "reject banned values" in { new ParameterMap set (theNot, 5) must throwA(new IllegalArgumentException) } }
 
@@ -98,7 +98,7 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
  import java.util.TreeMap
  
  "A sparse array Parameter" should {
-  val sparse = Parameter.sparseArrayParam[Integer]("foo", "bar", Conversion.stringToInt, Conversion.objectToString[Integer] andThen Option.some[String])
+  val sparse = Parameter.sparseArrayParam[Integer]("foo", TwoWayConversion.integer)
   "be convertible from URL parameters" in {
    convertList(sparse.fromURLParameter(new URLParameter("foo[2]", "3,6,9")).get) must {
     haveSameElementsAs(List[Pair[Integer, Integer]](pair(2,3), pair(3,6), pair(4, 9))) } }
@@ -214,7 +214,7 @@ class ConversionSecondTest extends JUnit4(new Specification with Scalacheck {
 
 class ParameterMapSecondTest extends JUnit4(new Specification {
  import java.lang.Integer
- val parameter = Parameter.parameter[Integer]("foo", "bar", TwoWayConversion.integer)
+ val parameter = Parameter.parameter[Integer]("foo", TwoWayConversion.integer)
  "ParameterMap.set" should { "give a NullPointerException when supplied with a null" in {
   new ParameterMap().set(null, 3) must throwA(new NullPointerException)
   new ParameterMap().set(parameter, null) must throwA(new NullPointerException)

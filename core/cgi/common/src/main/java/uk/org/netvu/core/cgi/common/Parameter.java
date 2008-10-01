@@ -21,14 +21,11 @@ public abstract class Parameter<T, R>
      * diagnostic messages.
      */
     public final String name;
-    private final String description;
     private final R defaultValue;
 
-    private Parameter( final String name, final String description,
-            final R defaultValue )
+    private Parameter( final String name, final R defaultValue )
     {
         this.name = name;
-        this.description = description;
         this.defaultValue = defaultValue;
     }
 
@@ -48,10 +45,9 @@ public abstract class Parameter<T, R>
      *         as an Option<T>.
      */
     public static <T> Parameter<T, Option<T>> parameter( final String name,
-            final String description,
             final TwoWayConversion<String, T> conversions )
     {
-        return new Parameter<T, Option<T>>( name, description,
+        return new Parameter<T, Option<T>>( name,
                 Option.<T> none( "The value for the " + name
                         + " parameter has not been set yet" ) )
         {
@@ -120,12 +116,11 @@ public abstract class Parameter<T, R>
      *         value or a default value.
      */
     public static <T> Parameter<T, T> parameterWithDefault( final String name,
-            final String description, final T defaultValue,
-            final TwoWayConversion<String, T> conversions )
+            final T defaultValue, final TwoWayConversion<String, T> conversions )
     {
-        Checks.notNull( name, description, defaultValue, conversions );
+        Checks.notNull( name, defaultValue, conversions );
 
-        return new Parameter<T, T>( name, description, defaultValue )
+        return new Parameter<T, T>( name, defaultValue )
         {
             @Override
             public T reduce( final T newValue, final T original )
@@ -185,8 +180,7 @@ public abstract class Parameter<T, R>
     public static <U> Parameter<Integer, U> bound( final int lowerInclusive,
             final int higherInclusive, final Parameter<Integer, U> param )
     {
-        return new Parameter<Integer, U>( param.name, param.description,
-                param.defaultValue )
+        return new Parameter<Integer, U>( param.name, param.defaultValue )
         {
             @Override
             public U reduce( final Integer newValue, final U original )
@@ -236,8 +230,7 @@ public abstract class Parameter<T, R>
     public static <T, U> Parameter<T, U> not( final T banned,
             final Parameter<T, U> param )
     {
-        return new Parameter<T, U>( param.name, param.description,
-                param.defaultValue )
+        return new Parameter<T, U>( param.name, param.defaultValue )
         {
             @Override
             public U reduce( final T newValue, final U original )
@@ -279,23 +272,18 @@ public abstract class Parameter<T, R>
      *        the name of the Parameter.
      * @param description
      *        a textual description of the Parameter.
-     * @param fromString
-     *        a Conversion from Strings to values of type T, used in parsing
-     *        URLs.
-     * @param toString
-     *        a Conversion from values of type T to Strings, used in generating
-     *        URLs.
+     * @param conversions
+     *        an object that can convert a String to a T and back.
      * @return a Parameter that accepts Pairs of Integers and values of type T,
      *         and yields a TreeMap of Integers to values of type T accordingly,
      *         representing a sparse array.
      */
+    // TODO use TwoWayConversion here.
     public static <T> Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>> sparseArrayParam(
-            final String name, final String description,
-            final Conversion<String, Option<T>> fromString,
-            final Conversion<T, Option<String>> toString )
+            final String name, final TwoWayConversion<String, T> conversions )
     {
         return new Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>>(
-                name, description, new TreeMap<Integer, T>() )
+                name, new TreeMap<Integer, T>() )
         {
             @Override
             public TreeMap<Integer, T> reduce(
@@ -326,7 +314,7 @@ public abstract class Parameter<T, R>
                 for ( final String value : values )
                 {
                     final int hack = startIndex;
-                    fromString.convert(
+                    conversions.a2b().convert(
                             Strings.removeSurroundingQuotesLeniently( value ) ).then(
                             new Action<T>()
                             {
@@ -350,7 +338,7 @@ public abstract class Parameter<T, R>
 
                 for ( final Map.Entry<Integer, T> entry : nameAndMap.second().entrySet() )
                 {
-                    toString.convert( entry.getValue() ).then(
+                    conversions.b2a().convert( entry.getValue() ).then(
                             new Action<String>()
                             {
                                 public void invoke( final String value )

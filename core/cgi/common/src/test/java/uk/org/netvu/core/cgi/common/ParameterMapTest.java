@@ -16,7 +16,7 @@ import org.junit.Test;
 public final class ParameterMapTest
 {
     private final static Parameter<String, Option<String>> PARAM = Parameter.parameter(
-            "blah", "blah", TwoWayConversion.string );
+            "blah", TwoWayConversion.string );
 
     /**
      * Tests that a value stored in a ParameterMap gets converted as per the
@@ -40,9 +40,9 @@ public final class ParameterMapTest
     }
 
     private static final Parameter<Integer, Option<Integer>> TIME = Parameter.notNegative( Parameter.parameter(
-            "time", "time since 1970", TwoWayConversion.integer ) );
+            "time", TwoWayConversion.integer ) );
     private static final Parameter<Integer, Option<Integer>> RANGE = Parameter.parameter(
-            "range", "range to search", TwoWayConversion.integer );
+            "range", TwoWayConversion.integer );
 
     /**
      * Tests that an IllegalStateException is thrown when invalid parameter
@@ -125,8 +125,10 @@ public final class ParameterMapTest
     public void sparseArray()
     {
         final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> sparseIdentity = Parameter.sparseArrayParam(
-                "foo", "bar", Option.<String> some(),
-                Option.<String, String> noneRef( "Conversion not supported" ) );
+                "foo",
+                TwoWayConversion.partial(
+                        Option.<String> some(),
+                        Option.<String, String> noneRef( "Conversion not supported" ) ) );
 
         // these are anonymous intialisers - each creates a new ArrayList and
         // adds values to it inline.
@@ -154,9 +156,9 @@ public final class ParameterMapTest
     public void fromStrings()
     {
         final Parameter<String, String> name = Parameter.parameterWithDefault(
-                "name", "foo", "Bob", TwoWayConversion.string );
+                "name", "Bob", TwoWayConversion.string );
         final Parameter<String, String> surname = Parameter.parameterWithDefault(
-                "surname", "foo", "Hope", TwoWayConversion.string );
+                "surname", "Hope", TwoWayConversion.string );
 
         // this is an anonymous intialiser - it is creating a new ArrayList and
         // adding values to it inline.

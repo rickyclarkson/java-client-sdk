@@ -24,40 +24,27 @@ import uk.org.netvu.core.cgi.common.TwoWayConversion;
 public final class EventsCGIResult
 {
     private static final Parameter<Integer, Option<Integer>> CAMERA_PARAMETER = bound(
-            0, 64, Parameter.parameter( "cam", "The system camera number",
-                    TwoWayConversion.integer ) );
+            0, 64, Parameter.parameter( "cam", TwoWayConversion.integer ) );
 
-    private static final Parameter<String, Option<String>> ALARM = parameter(
-            "alarm", "The alarm description.", TwoWayConversion.string );
+    private static final Parameter<String, Option<String>> ALARM = parameter( "alarm", TwoWayConversion.string );
 
-    private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = notNegative( parameter(
-            "time", "The Julianised time that the event occurred at",
-            TwoWayConversion.integer ) );
+    private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = notNegative( parameter( "time", TwoWayConversion.integer ) );
 
     private static final Parameter<Integer, Option<Integer>> OFFSET = bound(
-            -90000, 90000, parameter( "offset", "", TwoWayConversion.integer ) );
+            -90000, 90000, parameter( "offset", TwoWayConversion.integer ) );
 
-    private static final Parameter<String, Option<String>> FILE = parameter(
-            "file", "", TwoWayConversion.string );
+    private static final Parameter<String, Option<String>> FILE = parameter( "file", TwoWayConversion.string );
 
-    private static final Parameter<Boolean, Option<Boolean>> ON_DISK = parameter(
-            "onDisk", "", TwoWayConversion.total( Conversion.equal( "exists" ),
-                    Conversion.fromBoolean( "exists", "overwitten" ) ) );
+    private static final Parameter<Boolean, Option<Boolean>> ON_DISK = parameter( "onDisk", TwoWayConversion.total( Conversion.equal( "exists" ),
+    Conversion.fromBoolean( "exists", "overwitten" ) ) );
 
-    private static final Parameter<Integer, Option<Integer>> DURATION = notNegative( parameter(
-            "duration", "", TwoWayConversion.integer ) );
+    private static final Parameter<Integer, Option<Integer>> DURATION = notNegative( parameter( "duration", TwoWayConversion.integer ) );
 
-    private static final Parameter<Integer, Option<Integer>> PRE_ALARM = notNegative( parameter(
-            "preAlarm", "", TwoWayConversion.integer ) );
+    private static final Parameter<Integer, Option<Integer>> PRE_ALARM = notNegative( parameter( "preAlarm", TwoWayConversion.integer ) );
 
-    private static final Parameter<Integer, Option<Integer>> ARCHIVE = notNegative( parameter(
-            "archive", "", TwoWayConversion.integer ) );
-    private static final Parameter<Status, Status> STATUS = parameterWithDefault(
-            "status", "", Status.NONE,
-            TwoWayConversion.convenientPartial( Status.fromString ) );
-    private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = parameterWithDefault(
-            "alarmType", "", AlarmType.NONE,
-            TwoWayConversion.convenientPartial( AlarmType.fromString ) );
+    private static final Parameter<Integer, Option<Integer>> ARCHIVE = notNegative( parameter( "archive", TwoWayConversion.integer ) );
+    private static final Parameter<Status, Status> STATUS = parameterWithDefault( "status", Status.NONE, TwoWayConversion.convenientPartial( Status.fromString ) );
+    private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = parameterWithDefault( "alarmType", AlarmType.NONE, TwoWayConversion.convenientPartial( AlarmType.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

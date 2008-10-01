@@ -20,48 +20,36 @@ import uk.org.netvu.core.cgi.common.TwoWayConversion;
  */
 public final class VPartsCGI
 {
-    private static final Parameter<Format, Format> FORMAT = not(
-            Format.HTML,
-            parameterWithDefault(
-                    "format",
-                    "Determines output format.  js is for JavaScript, csv for comma separated variables",
-                    Format.CSV,
+    private static final Parameter<Format, Format> FORMAT = not( Format.HTML,
+            parameterWithDefault( "format", Format.CSV,
                     TwoWayConversion.convenientPartial( Format.fromString ) ) );
 
     private static final Parameter<Mode, Mode> MODE = parameterWithDefault(
-            "mode", "Determines the function of the cgi call", Mode.READ,
+            "mode", Mode.READ,
             TwoWayConversion.convenientPartial( Mode.fromString ) );
 
     private static final Parameter<Integer, Integer> TIME = notNegative( parameterWithDefault(
-            "time", "Julianised GMT start time for database search", 0,
-            TwoWayConversion.integer ) );
+            "time", 0, TwoWayConversion.integer ) );
 
     private static final Parameter<Integer, Integer> RANGE = notNegative( parameterWithDefault(
-            "range", "Timespan to search in seconds.", Integer.MAX_VALUE,
-            TwoWayConversion.integer ) );
+            "range", Integer.MAX_VALUE, TwoWayConversion.integer ) );
 
     private static final Parameter<Integer, Integer> EXPIRY = parameterWithDefault(
-            "expiry",
-            "Sets the expiry time for partitions, used in protect mode; Julianised GMT",
-            0, TwoWayConversion.integer );
+            "expiry", 0, TwoWayConversion.integer );
 
     private static final Parameter<Boolean, Boolean> WATERMARK = parameterWithDefault(
-            "watermark",
-            "Tells the CGI to generate watermark codes in read mode", false,
-            TwoWayConversion.bool );
+            "watermark", false, TwoWayConversion.bool );
 
-    private static final Parameter<Integer, Integer> WMARKSTEP = bound( 1, 256,
-            parameterWithDefault( "wmarkstepParam",
-                    "Defines the step size to be used in watermark.", 1,
-                    TwoWayConversion.integer ) );
+    private static final Parameter<Integer, Integer> WMARKSTEP = bound(
+            1,
+            256,
+            parameterWithDefault( "wmarkstepParam", 1, TwoWayConversion.integer ) );
 
     private static final Parameter<Integer, Integer> LIST_LENGTH = parameterWithDefault(
-            "listlength", "Maximum number of entries in the list", 100,
-            TwoWayConversion.integer );
+            "listlength", 100, TwoWayConversion.integer );
 
     private static final Parameter<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = parameterWithDefault(
-            "pathstyle", "Format of directory paths.",
-            DirectoryPathFormat.SHORT,
+            "pathstyle", DirectoryPathFormat.SHORT,
             TwoWayConversion.convenientPartial( DirectoryPathFormat.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
@@ -353,11 +341,13 @@ public final class VPartsCGI
      */
     public static VPartsCGI fromString( final String url )
     {
-        Option<ParameterMap> map = ParameterMap.fromURL( url, params );
+        final Option<ParameterMap> map = ParameterMap.fromURL( url, params );
         if ( map.isNone() )
+        {
             throw new IllegalArgumentException( url
                     + " cannot be parsed into a VPartsCGI, because "
                     + map.reason() );
+        }
 
         return new VPartsCGI( map.get() );
     }

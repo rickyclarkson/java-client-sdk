@@ -23,18 +23,11 @@ import uk.org.netvu.core.cgi.common.Validator;
  */
 public final class Connection
 {
-    private static final Parameter<String, Option<String>> SLAVE_IP_PARAM = parameter(
-            "slaveip", "The source video server address",
-            TwoWayConversion.string );
-    private static final Parameter<Integer, Option<Integer>> SEQ_PARAM = parameter(
-            "seq", "Bitmask of source cameras", TwoWayConversion.hexInt );
-    private static final Parameter<Integer, Option<Integer>> DWELL_PARAM = parameter(
-            "dwell", "The time to dwell on each camera in the seq bitmask",
-            TwoWayConversion.integer );
-    private static final Parameter<Integer, Option<Integer>> CAM = parameter(
-            "cam", "The source camera", TwoWayConversion.integer );
-    private static final Parameter<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = parameter(
-            "audio", "The source audio channel", TwoWayConversion.integer );
+    private static final Parameter<String, Option<String>> SLAVE_IP_PARAM = parameter( "slaveip", TwoWayConversion.string );
+    private static final Parameter<Integer, Option<Integer>> SEQ_PARAM = parameter( "seq", TwoWayConversion.hexInt );
+    private static final Parameter<Integer, Option<Integer>> DWELL_PARAM = parameter( "dwell", TwoWayConversion.integer );
+    private static final Parameter<Integer, Option<Integer>> CAM = parameter( "cam", TwoWayConversion.integer );
+    private static final Parameter<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = parameter( "audio", TwoWayConversion.integer );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

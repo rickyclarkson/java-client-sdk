@@ -21,54 +21,39 @@ import uk.org.netvu.core.cgi.common.Validator;
 public final class EventsCGI
 {
     private static final Parameter<Integer, Integer> TIME = notNegative( parameterWithDefault(
-            "time", "The time from which to search, in seconds since 1970.", 0,
-            TwoWayConversion.integer ) );
+            "time", 0, TwoWayConversion.integer ) );
 
     private static final Parameter<Integer, Integer> RANGE = notNegative( parameterWithDefault(
-            "range", "The timespan to search in seconds", Integer.MAX_VALUE,
-            TwoWayConversion.integer ) );
+            "range", Integer.MAX_VALUE, TwoWayConversion.integer ) );
 
     private static final Parameter<Format, Format> FORMAT = parameterWithDefault(
-            "format", "The format that the results should be returned in",
-            Format.CSV, TwoWayConversion.convenientPartial( Format.fromString ) );
+            "format", Format.CSV,
+            TwoWayConversion.convenientPartial( Format.fromString ) );
 
     private static final Parameter<Integer, Integer> LENGTH = parameterWithDefault(
             "listlength",
-            "The maximum number of results to obtain.  Negative values reverse the direction of the search.",
+
             100, TwoWayConversion.integer );
 
     private static final Parameter<String, String> TEXT = parameterWithDefault(
-            "text",
-            "The text to search for in the text-in-image data.  If specified, "
-                    + "causes the embedded text-in-image data to be searched for "
-                    + "occurences of the supplied string.  The search is case sensitive. "
-                    + "* can be used as a wildcard to replace one or more characters in "
-                    + "the search string. ? can be used as a wildcard to replace a single "
-                    + "character in the search string.", "",
-            TwoWayConversion.string );
+            "text", "", TwoWayConversion.string );
 
     private static final Parameter<Long, Long> CAMERA_MASK = parameterWithDefault(
-            "cammask",
-            "The 64-bit mask of cameras whose images we want to obtain.", 0L,
-            TwoWayConversion.hexLong );
+            "cammask", 0L, TwoWayConversion.hexLong );
 
     private static final Parameter<Integer, Integer> ALARM_MASK = parameterWithDefault(
-            "almmask",
-            "The 32-bit mask of the alarms that we are interested in.", 0,
-            TwoWayConversion.hexInt );
+            "almmask", 0, TwoWayConversion.hexInt );
 
     private static final Parameter<Long, Long> VIDEO_MOTION_DETECTION_MASK = parameterWithDefault(
             "vmdmask",
-            "The 64-bit mask of video motion detection channels to search in.",
+
             0L, TwoWayConversion.hexLong );
 
     private static final Parameter<Integer, Integer> GPS_MASK = parameterWithDefault(
-            "gpsmask", "The 32-bit mask of GPS event types to search for.", 0,
-            TwoWayConversion.hexInt );
+            "gpsmask", 0, TwoWayConversion.hexInt );
 
     private static final Parameter<Integer, Integer> SYSTEM_MASK_PARAM = parameterWithDefault(
-            "sysmask", "The 32-bit mask of system event types.", 0,
-            TwoWayConversion.hexInt );
+            "sysmask", 0, TwoWayConversion.hexInt );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

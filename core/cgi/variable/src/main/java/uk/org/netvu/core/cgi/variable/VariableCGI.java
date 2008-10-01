@@ -35,13 +35,9 @@ public final class VariableCGI
         this.parameterMap = parameterMap;
     }
 
-    private static final Parameter<Variable, Option<Variable>> VARIABLE = Parameter.parameter(
-            "variable", "Name of the variable",
-            TwoWayConversion.convenientPartial( Variable.fromString ) );
+    private static final Parameter<Variable, Option<Variable>> VARIABLE = Parameter.parameter( "variable", TwoWayConversion.convenientPartial( Variable.fromString ) );
 
-    private static final Parameter<VariableType, VariableType> TYPE = Parameter.parameterWithDefault(
-            "type", "Specifies return type of variable", VariableType.HTTP,
-            TwoWayConversion.convenientPartial( VariableType.fromString ) );
+    private static final Parameter<VariableType, VariableType> TYPE = Parameter.parameterWithDefault( "type", VariableType.HTTP, TwoWayConversion.convenientPartial( VariableType.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

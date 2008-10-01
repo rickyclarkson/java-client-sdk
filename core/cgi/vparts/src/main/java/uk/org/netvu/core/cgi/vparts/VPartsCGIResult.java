@@ -17,26 +17,14 @@ import uk.org.netvu.core.cgi.common.URLParameter;
  */
 public class VPartsCGIResult
 {
-    private static final Parameter<Integer, Option<Integer>> INDEX = parameter(
-            "index", "The index of this result in the results",
-            TwoWayConversion.integer );
-    private static final Parameter<String, Option<String>> DIRECTORY = parameter(
-            "directory", "The directory where this video can be found",
-            TwoWayConversion.string );
-    private static final Parameter<String, Option<String>> FILENAME = parameter(
-            "filename", "The name of the file where this video can be found",
-            TwoWayConversion.string );
-    private static final Parameter<Integer, Option<Integer>> START_TIME = notNegative( parameter(
-            "start_time", "The start time", TwoWayConversion.integer ) );
-    private static final Parameter<Integer, Option<Integer>> END_TIME = notNegative( parameter(
-            "end_time", "The end time", TwoWayConversion.integer ) );
-    private static final Parameter<Integer, Option<Integer>> EXPIRY_TIME = notNegative( parameter(
-            "expiry_time", "The expiry time", TwoWayConversion.integer ) );
-    private static final Parameter<Integer, Option<Integer>> NUMBER_OF_ENTRIES = parameter(
-            "n_entries", "The number of entries", TwoWayConversion.integer );
-    private static final Parameter<Integer, Option<Integer>> CAM_MASK = parameter(
-            "cammask", "The bitmask of cameras that this video comes from",
-            TwoWayConversion.integer );
+    private static final Parameter<Integer, Option<Integer>> INDEX = parameter( "index", TwoWayConversion.integer );
+    private static final Parameter<String, Option<String>> DIRECTORY = parameter( "directory", TwoWayConversion.string );
+    private static final Parameter<String, Option<String>> FILENAME = parameter( "filename", TwoWayConversion.string );
+    private static final Parameter<Integer, Option<Integer>> START_TIME = notNegative( parameter( "start_time", TwoWayConversion.integer ) );
+    private static final Parameter<Integer, Option<Integer>> END_TIME = notNegative( parameter( "end_time", TwoWayConversion.integer ) );
+    private static final Parameter<Integer, Option<Integer>> EXPIRY_TIME = notNegative( parameter( "expiry_time", TwoWayConversion.integer ) );
+    private static final Parameter<Integer, Option<Integer>> NUMBER_OF_ENTRIES = parameter( "n_entries", TwoWayConversion.integer );
+    private static final Parameter<Integer, Option<Integer>> CAM_MASK = parameter( "cammask", TwoWayConversion.integer );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

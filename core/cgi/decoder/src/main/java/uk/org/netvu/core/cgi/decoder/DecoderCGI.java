@@ -29,23 +29,19 @@ public final class DecoderCGI
 {
     private static final Parameter<Persistence, Persistence> PERSISTENCE = Parameter.parameterWithDefault(
             "persistence",
-            "Whether to make the changes persistent (survive reboot) or temporary",
             Persistence.TEMPORARY,
             TwoWayConversion.convenientPartial( Option.<String, Persistence> noneRef( "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name." ) ) );
 
     private static final Parameter<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = sparseArrayParam(
-            "connections",
-            "The differences to make to the connections system variable",
-            someRef( Connection.fromURL ), someRef( Connection.urlEncode ) );
+            "connections", TwoWayConversion.total( Connection.fromURL,
+                    Connection.urlEncode ) );
 
     private static final Parameter<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> LAYOUTS = sparseArrayParam(
             "layouts",
-            "The differences to make to the layouts system variable",
-            someRef( Layout.fromURL ), someRef( Layout.urlEncode ) );
+            TwoWayConversion.total( Layout.fromURL, Layout.urlEncode ) );
 
     private static final Parameter<String[], Option<String[]>> OUTPUT_TITLES = Parameter.parameter(
             "output_titles",
-            "The titles to give to each output channel",
             TwoWayConversion.partial(
                     Option.<String, String[]> noneRef( "Parsing not supported for output_titles" ),
                     someRef( new Conversion<String[], String>()
@@ -61,10 +57,8 @@ public final class DecoderCGI
                     } ) ) );
 
     private static final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = sparseArrayParam(
-            "commands",
-            "The differences to make to the commands system variable",
-            someRef( Conversion.<String> identity() ),
-            someRef( URLBuilder.encode.andThen( Strings.surroundWithQuotes ) ) );
+            "commands", TwoWayConversion.total( Conversion.<String> identity(),
+                    URLBuilder.encode.andThen( Strings.surroundWithQuotes ) ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
@@ -237,10 +231,12 @@ public final class DecoderCGI
      */
     public static DecoderCGI fromString( final String string )
     {
-        Option<ParameterMap> map = ParameterMap.fromURL( string, params );
+        final Option<ParameterMap> map = ParameterMap.fromURL( string, params );
         if ( map.isNone() )
+        {
             throw new IllegalArgumentException( "Cannot parse " + string
                     + " into a DecoderCGI, because " + map.reason() );
+        }
 
         return new DecoderCGI( map.get() ).persistence( string.contains( ".frm" ) ? Persistence.PERSISTENT
                 : Persistence.TEMPORARY );
