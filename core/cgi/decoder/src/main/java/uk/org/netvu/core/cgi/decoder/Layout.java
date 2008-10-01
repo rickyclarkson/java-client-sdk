@@ -60,11 +60,6 @@ public enum Layout
      */
     final int value;
 
-    Layout( final int value )
-    {
-        this.value = value;
-    }
-
     /**
      * Converts a Layout to its String representation for use in URL parameters.
      */
@@ -108,6 +103,11 @@ public enum Layout
 
         throw new IllegalArgumentException(
                 "There is no Layout with the value " + value + '.' );
+    }
+
+    Layout( final int value )
+    {
+        this.value = value;
     }
 
 }

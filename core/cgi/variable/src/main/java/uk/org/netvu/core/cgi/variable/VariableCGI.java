@@ -13,7 +13,45 @@ import uk.org.netvu.core.cgi.common.TwoWayConversion;
  */
 public final class VariableCGI
 {
+    /**
+     * Parses a variable.cgi request, returning a VariableCGI holding the
+     * request's values.
+     * 
+     * @param url
+     *        the request to parse.
+     * @return a VariableCGI holding the request's values.
+     */
+    public static VariableCGI fromString( final String url )
+    {
+        final Option<ParameterMap> map = ParameterMap.fromURL( url, params );
+        if ( map.isNone() )
+        {
+            throw new IllegalArgumentException( "Cannot parse " + url
+                    + " into a VariableCGI because " + map.reason() );
+        }
+
+        return new VariableCGI( map.get() );
+    }
+
     private final ParameterMap parameterMap;
+
+    private static final Parameter<Variable, Option<Variable>> VARIABLE = Parameter.parameter(
+            "variable",
+            TwoWayConversion.convenientPartial( Variable.fromString ) );
+
+    private static final Parameter<VariableType, VariableType> TYPE = Parameter.parameterWithDefault(
+            "type", VariableType.HTTP,
+            TwoWayConversion.convenientPartial( VariableType.fromString ) );
+
+    // this is an anonymous intialiser - it is creating a new ArrayList and
+    // adding values to it inline.
+    private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
+    {
+        {
+            add( VARIABLE );
+            add( TYPE );
+        }
+    };
 
     /**
      * Constructs a VariableCGI using the values from the given ParameterMap.
@@ -35,19 +73,31 @@ public final class VariableCGI
         this.parameterMap = parameterMap;
     }
 
-    private static final Parameter<Variable, Option<Variable>> VARIABLE = Parameter.parameter( "variable", TwoWayConversion.convenientPartial( Variable.fromString ) );
-
-    private static final Parameter<VariableType, VariableType> TYPE = Parameter.parameterWithDefault( "type", VariableType.HTTP, TwoWayConversion.convenientPartial( VariableType.fromString ) );
-
-    // this is an anonymous intialiser - it is creating a new ArrayList and
-    // adding values to it inline.
-    private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
+    /**
+     * Gets the stored VariableType.
+     * 
+     * @return the stored VariableType.
+     */
+    public VariableType getType()
     {
-        {
-            add( VARIABLE );
-            add( TYPE );
-        }
-    };
+        return parameterMap.get( TYPE );
+    }
+
+    /**
+     * Gets the stored Variable.
+     * 
+     * @return the stored Variable.
+     */
+    public Variable getVariable()
+    {
+        return parameterMap.get( VARIABLE ).get();
+    }
+
+    @Override
+    public String toString()
+    {
+        return "/variable.cgi?" + parameterMap.toURLParameters( params );
+    }
 
     /**
      * A Builder to create VariableCGIs.
@@ -55,33 +105,6 @@ public final class VariableCGI
     public static final class Builder
     {
         private Option<ParameterMap> parameterMap = Option.some( new ParameterMap() );
-
-        /**
-         * Sets the variable parameter to the specified Variable.
-         * 
-         * @param variable
-         *        the Variable to store.
-         * @return the Builder.
-         */
-        public Builder variable( final Variable variable )
-        {
-            parameterMap = parameterMap.map( ParameterMap.setter( VARIABLE,
-                    variable ) );
-            return this;
-        }
-
-        /**
-         * Sets the type parameter to the specified VariableType.
-         * 
-         * @param type
-         *        the VariableType to store.
-         * @return the Builder.
-         */
-        public Builder type( final VariableType type )
-        {
-            parameterMap = parameterMap.map( ParameterMap.setter( TYPE, type ) );
-            return this;
-        }
 
         /**
          * Builds a VariableCGI with the stored values.
@@ -99,49 +122,32 @@ public final class VariableCGI
                 parameterMap = Option.none( "This Builder has already been built once." );
             }
         }
-    }
 
-    /**
-     * Gets the stored Variable.
-     * 
-     * @return the stored Variable.
-     */
-    public Variable getVariable()
-    {
-        return parameterMap.get( VARIABLE ).get();
-    }
+        /**
+         * Sets the type parameter to the specified VariableType.
+         * 
+         * @param type
+         *        the VariableType to store.
+         * @return the Builder.
+         */
+        public Builder type( final VariableType type )
+        {
+            parameterMap = parameterMap.map( ParameterMap.setter( TYPE, type ) );
+            return this;
+        }
 
-    /**
-     * Gets the stored VariableType.
-     * 
-     * @return the stored VariableType.
-     */
-    public VariableType getType()
-    {
-        return parameterMap.get( TYPE );
-    }
-
-    @Override
-    public String toString()
-    {
-        return "/variable.cgi?" + parameterMap.toURLParameters( params );
-    }
-
-    /**
-     * Parses a variable.cgi request, returning a VariableCGI holding the
-     * request's values.
-     * 
-     * @param url
-     *        the request to parse.
-     * @return a VariableCGI holding the request's values.
-     */
-    public static VariableCGI fromString( final String url )
-    {
-        Option<ParameterMap> map = ParameterMap.fromURL( url, params );
-        if ( map.isNone() )
-            throw new IllegalArgumentException( "Cannot parse " + url
-                    + " into a VariableCGI because " + map.reason() );
-
-        return new VariableCGI( map.get() );
+        /**
+         * Sets the variable parameter to the specified Variable.
+         * 
+         * @param variable
+         *        the Variable to store.
+         * @return the Builder.
+         */
+        public Builder variable( final Variable variable )
+        {
+            parameterMap = parameterMap.map( ParameterMap.setter( VARIABLE,
+                    variable ) );
+            return this;
+        }
     }
 }

@@ -72,6 +72,28 @@ public final class DecoderCGI
         }
     };
 
+    /**
+     * Parses a URL, or part of a URL, into a DecoderCGI. If it cannot be
+     * determined whether it should be a persistent (.frm) or a temporary (.var)
+     * request, it will default to .var.
+     * 
+     * @param string
+     *        the URL to parse.
+     * @return a DecoderCGI.
+     */
+    public static DecoderCGI fromString( final String string )
+    {
+        final Option<ParameterMap> map = ParameterMap.fromURL( string, params );
+        if ( map.isNone() )
+        {
+            throw new IllegalArgumentException( "Cannot parse " + string
+                    + " into a DecoderCGI, because " + map.reason() );
+        }
+
+        return new DecoderCGI( map.get() ).persistence( string.contains( ".frm" ) ? Persistence.PERSISTENT
+                : Persistence.TEMPORARY );
+    }
+
     private final ParameterMap parameterMap;
 
     /**
@@ -89,15 +111,18 @@ public final class DecoderCGI
 
     /**
      * Constructs a DecoderCGI containing the current values, but with the
-     * persistence parameter to the passed-in value.
+     * indexed command set to the passed-in command.
      * 
-     * @param persistence
-     *        the value to use.
+     * @param index
+     *        the index of the new command.
+     * @param command
+     *        the command to store.
      * @return a new DecoderCGI.
      */
-    public DecoderCGI persistence( final Persistence persistence )
+    public DecoderCGI command( final int index, final String command )
     {
-        return new DecoderCGI( parameterMap.set( PERSISTENCE, persistence ) );
+        return new DecoderCGI( parameterMap.set( COMMANDS,
+                Collections.singletonList( Pair.pair( index, command ) ) ) );
     }
 
     /**
@@ -114,6 +139,54 @@ public final class DecoderCGI
     {
         return new DecoderCGI( parameterMap.set( CONNECTIONS,
                 Collections.singletonList( Pair.pair( index, connection ) ) ) );
+    }
+
+    /**
+     * Gets the commands that have been set for this DecoderCGI.
+     * 
+     * @return the commands that have been set for this DecoderCGI.
+     */
+    public Map<Integer, String> getCommands()
+    {
+        return parameterMap.get( COMMANDS );
+    }
+
+    /**
+     * Gets the connections that have been set for this DecoderCGI.
+     * 
+     * @return the connections that have been set for this DecoderCGI.
+     */
+    public TreeMap<Integer, Connection> getConnections()
+    {
+        return parameterMap.get( CONNECTIONS );
+    }
+
+    /**
+     * Gets the layouts that have been set for this DecoderCGI.
+     * 
+     * @return the layouts that have been set for this DecoderCGI.
+     */
+    public Map<Integer, Layout> getLayouts()
+    {
+        return parameterMap.get( LAYOUTS );
+    }
+
+    /**
+     * Gets the output titles that have been set for this DecoderCGI.
+     * 
+     * @return the output titles that have been set for this DecoderCGI.
+     */
+    public String[] getOutputTitles()
+    {
+        return parameterMap.get( OUTPUT_TITLES ).get();
+    }
+
+    /**
+     * @return the persistence mode for this DecoderCGI.
+     */
+    public Persistence getPersistence()
+    {
+        return parameterMap.get( PERSISTENCE );
     }
 
     /**
@@ -146,58 +219,15 @@ public final class DecoderCGI
 
     /**
      * Constructs a DecoderCGI containing the current values, but with the
-     * indexed command set to the passed-in command.
+     * persistence parameter to the passed-in value.
      * 
-     * @param index
-     *        the index of the new command.
-     * @param command
-     *        the command to store.
+     * @param persistence
+     *        the value to use.
      * @return a new DecoderCGI.
      */
-    public DecoderCGI command( final int index, final String command )
+    public DecoderCGI persistence( final Persistence persistence )
     {
-        return new DecoderCGI( parameterMap.set( COMMANDS,
-                Collections.singletonList( Pair.pair( index, command ) ) ) );
-    }
-
-    /**
-     * Gets the commands that have been set for this DecoderCGI.
-     * 
-     * @return the commands that have been set for this DecoderCGI.
-     */
-    public Map<Integer, String> getCommands()
-    {
-        return parameterMap.get( COMMANDS );
-    }
-
-    /**
-     * Gets the layouts that have been set for this DecoderCGI.
-     * 
-     * @return the layouts that have been set for this DecoderCGI.
-     */
-    public Map<Integer, Layout> getLayouts()
-    {
-        return parameterMap.get( LAYOUTS );
-    }
-
-    /**
-     * Gets the output titles that have been set for this DecoderCGI.
-     * 
-     * @return the output titles that have been set for this DecoderCGI.
-     */
-    public String[] getOutputTitles()
-    {
-        return parameterMap.get( OUTPUT_TITLES ).get();
-    }
-
-    /**
-     * Gets the connections that have been set for this DecoderCGI.
-     * 
-     * @return the connections that have been set for this DecoderCGI.
-     */
-    public TreeMap<Integer, Connection> getConnections()
-    {
-        return parameterMap.get( CONNECTIONS );
+        return new DecoderCGI( parameterMap.set( PERSISTENCE, persistence ) );
     }
 
     /**
@@ -210,35 +240,5 @@ public final class DecoderCGI
     {
         return "decoder" + getPersistence() + '?'
                 + parameterMap.toURLParameters( params );
-    }
-
-    /**
-     * @return the persistence mode for this DecoderCGI.
-     */
-    public Persistence getPersistence()
-    {
-        return parameterMap.get( PERSISTENCE );
-    }
-
-    /**
-     * Parses a URL, or part of a URL, into a DecoderCGI. If it cannot be
-     * determined whether it should be a persistent (.frm) or a temporary (.var)
-     * request, it will default to .var.
-     * 
-     * @param string
-     *        the URL to parse.
-     * @return a DecoderCGI.
-     */
-    public static DecoderCGI fromString( final String string )
-    {
-        final Option<ParameterMap> map = ParameterMap.fromURL( string, params );
-        if ( map.isNone() )
-        {
-            throw new IllegalArgumentException( "Cannot parse " + string
-                    + " into a DecoderCGI, because " + map.reason() );
-        }
-
-        return new DecoderCGI( map.get() ).persistence( string.contains( ".frm" ) ? Persistence.PERSISTENT
-                : Persistence.TEMPORARY );
     }
 }

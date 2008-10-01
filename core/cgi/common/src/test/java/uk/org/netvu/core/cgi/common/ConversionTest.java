@@ -10,15 +10,6 @@ import org.junit.Test;
  */
 public class ConversionTest
 {
-    /**
-     * Tests that Conversion.identity returns a value given to it.
-     */
-    @Test
-    public void identity()
-    {
-        assertTrue( Conversion.<Boolean> identity().convert( true ) == true );
-    }
-
     private static <T, U> Conversion<Option<T>, Option<U>> lift(
             final Conversion<T, U> conversion )
     {
@@ -33,8 +24,8 @@ public class ConversionTest
     }
 
     /**
-     * Tests that chaining 2 Conversions with andThen() yields the correct
-     * result.
+     * Tests that chaining 2 Conversions with andThen() yields the same result
+     * as if the value had been passed through each explicitly.
      */
     @Test
     public void andThen()
@@ -48,6 +39,55 @@ public class ConversionTest
                         return i * 2;
                     }
                 } ) ).convert( "FF" ).get() == 510 );
+    }
+
+    /**
+     * Tests that Conversion.hexStringToInt correctly converts hex Strings to
+     * ints.
+     */
+    @Test
+    public void hexStringToInt()
+    {
+        assertTrue( Conversion.hexStringToInt.convert( "ff" ).get() == 255 );
+    }
+
+    /**
+     * Tests that Conversion.hexStringToLong correctly converts hex Strings to
+     * longs.
+     */
+    @Test
+    public void hexStringToLong()
+    {
+        assertTrue( Conversion.hexStringToLong.convert( "ff" ).get() == 255 );
+    }
+
+    /**
+     * Tests that Conversion.identity returns the value given to it.
+     */
+    @Test
+    public void identity()
+    {
+        assertTrue( Conversion.<Boolean> identity().convert( true ) == true );
+    }
+
+    /**
+     * Tests that Conversion.intToHexString correctly converts ints to hex
+     * Strings.
+     */
+    @Test
+    public void intToHexString()
+    {
+        assertTrue( Conversion.intToHexString.convert( 255 ).equals( "ff" ) );
+    }
+
+    /**
+     * Tests that Conversion.longToHexString correctly converts longs to hex
+     * Strings.
+     */
+    @Test
+    public void longToHexString()
+    {
+        assertTrue( Conversion.longToHexString.convert( 255L ).equals( "ff" ) );
     }
 
     /**
@@ -77,45 +117,5 @@ public class ConversionTest
     public void stringToLong()
     {
         assertTrue( Conversion.stringToLong.convert( "50" ) == 50 );
-    }
-
-    /**
-     * Tests that Conversion.hexStringToInt correctly converts hex Strings to
-     * ints.
-     */
-    @Test
-    public void hexStringToInt()
-    {
-        assertTrue( Conversion.hexStringToInt.convert( "ff" ).get() == 255 );
-    }
-
-    /**
-     * Tests that Conversion.hexStringToLong correctly converts hex Strings to
-     * longs.
-     */
-    @Test
-    public void hexStringToLong()
-    {
-        assertTrue( Conversion.hexStringToLong.convert( "ff" ).get() == 255 );
-    }
-
-    /**
-     * Tests that Conversion.longToHexString correctly converts longs to hex
-     * Strings.
-     */
-    @Test
-    public void longToHexString()
-    {
-        assertTrue( Conversion.longToHexString.convert( 255L ).equals( "ff" ) );
-    }
-
-    /**
-     * Tests that Conversion.intToHexString correctly converts ints to hex
-     * Strings.
-     */
-    @Test
-    public void intToHexString()
-    {
-        assertTrue( Conversion.intToHexString.convert( 255 ).equals( "ff" ) );
     }
 }

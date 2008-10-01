@@ -13,21 +13,15 @@ import org.junit.Test;
 public class DecoderCGITest
 {
     /**
-     * Tests that a built DecoderCGI has all the values given to it.
+     * Tests that a DecoderCGI with output titles is properly converted to URL
+     * parameters.
      */
     @Test
-    public void retention()
+    public void fromCGI()
     {
-        final DecoderCGI cgi = new DecoderCGI().persistence(
-                Persistence.PERSISTENT ).command( 1, "foo" ).command( 2, "bar" ).outputTitles(
-                "one", "two", "three" ).layout( 1, Layout.FOUR_WAY ).layout( 2,
-                Layout.NINE_WAY ).connection( 5,
-                new Connection().audio( 4 ).seq( 0xF ).dwell( 40 ) );
-
-        assertTrue( cgi.getCommands().size() == 2 );
-        assertTrue( cgi.getCommands().get( 2 ).equals( "bar" ) );
-        assertTrue( cgi.getOutputTitles()[2].equals( "three" ) );
-        assertTrue( cgi.getLayouts().get( 2 ) == Layout.NINE_WAY );
+        assertTrue( new DecoderCGI().outputTitles( "foo", "bar", "baz" ).command(
+                2, "blah" ).layout( 1, Layout.FOUR_WAY ).toURLParameters().equals(
+                "decoder.var?layouts[1]=1&output_titles=\"foo\",\"bar\",\"baz\"&commands[2]=%22blah%22" ) );
     }
 
     /**
@@ -117,18 +111,6 @@ public class DecoderCGITest
     }
 
     /**
-     * Tests that a DecoderCGI with output titles is properly converted to URL
-     * parameters.
-     */
-    @Test
-    public void fromCGI()
-    {
-        assertTrue( new DecoderCGI().outputTitles( "foo", "bar", "baz" ).command(
-                2, "blah" ).layout( 1, Layout.FOUR_WAY ).toURLParameters().equals(
-                "decoder.var?layouts[1]=1&output_titles=\"foo\",\"bar\",\"baz\"&commands[2]=%22blah%22" ) );
-    }
-
-    /**
      * Tests against an example format found in Graham Martin's code.
      * 
      * @throws UnsupportedEncodingException
@@ -148,5 +130,23 @@ public class DecoderCGITest
                                 + "&commands[4]=\"display_pic.cgi?\"&layouts[4]=0" ).getConnections().get(
                         64 ) ), "UTF-8" ).equals(
                 "\"slaveip=192.168.1.10,seq=f,dwell=10\"" ) );
+    }
+
+    /**
+     * Tests that a built DecoderCGI has all the values given to it.
+     */
+    @Test
+    public void retention()
+    {
+        final DecoderCGI cgi = new DecoderCGI().persistence(
+                Persistence.PERSISTENT ).command( 1, "foo" ).command( 2, "bar" ).outputTitles(
+                "one", "two", "three" ).layout( 1, Layout.FOUR_WAY ).layout( 2,
+                Layout.NINE_WAY ).connection( 5,
+                new Connection().audio( 4 ).seq( 0xF ).dwell( 40 ) );
+
+        assertTrue( cgi.getCommands().size() == 2 );
+        assertTrue( cgi.getCommands().get( 2 ).equals( "bar" ) );
+        assertTrue( cgi.getOutputTitles()[2].equals( "three" ) );
+        assertTrue( cgi.getLayouts().get( 2 ) == Layout.NINE_WAY );
     }
 }

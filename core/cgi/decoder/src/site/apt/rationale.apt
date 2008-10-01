@@ -1,0 +1,7 @@
+ ----
+ Rationale
+ ----
+
+Sparse Arrays
+
+  The decoder.frm and decoder.var CGI requests are capable of updating parts of a number of system variables.  So they might update elements 3, 4 and 6 of the layouts array.  The array on the server is a normal array, but the elements being updated form a sparse array, which is something like a Map\<Integer, Layout\> in Java.  The DecoderCGI's layouts parameter can take a Pair\<Integer, Layout\> and add it to a TreeMap\<Integer, Layout\>.  TreeMap is chosen because it is guaranteed to be ordered by its keys.

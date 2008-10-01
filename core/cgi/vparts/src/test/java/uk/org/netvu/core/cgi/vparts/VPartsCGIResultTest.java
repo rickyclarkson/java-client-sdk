@@ -10,6 +10,17 @@ import org.junit.Test;
 public class VPartsCGIResultTest
 {
     /**
+     * Tests that parsing valid CSV then generating CSV from the resulting
+     * object results in the same CSV.
+     */
+    @Test
+    public void fromCSV()
+    {
+        final String csv = "2, C:\\VIDEO, VID02495.VID, 958038878, 958038962, 0, 519, 15";
+        assertTrue( VPartsCGIResult.fromCSV( csv ).toCSV().equals( csv ) );
+    }
+
+    /**
      * Tests that constructing an incomplete VPartsCGIResult causes an
      * IllegalStateException.
      */
@@ -46,16 +57,5 @@ public class VPartsCGIResultTest
     public void twice()
     {
         new VPartsCGIResult.Builder().camMask( 4 ).camMask( 4 );
-    }
-
-    /**
-     * Tests that parsing valid CSV then generating CSV from the resulting
-     * object results in the same CSV.
-     */
-    @Test
-    public void fromCSV()
-    {
-        final String csv = "2, C:\\VIDEO, VID02495.VID, 958038878, 958038962, 0, 519, 15";
-        assertTrue( VPartsCGIResult.fromCSV( csv ).toCSV().equals( csv ) );
     }
 }

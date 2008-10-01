@@ -17,16 +17,121 @@ import java.util.TreeMap;
 public abstract class Parameter<T, R>
 {
     /**
-     * The name of the Parameter, as it appears in URL parameters and in
-     * diagnostic messages.
+     * Constructs a Parameter that can take Integers between two inclusive
+     * bounds, and yields a U, via a specified Parameter.
+     * 
+     * @param <U>
+     *        the output type of the Parameter.
+     * @param lowerInclusive
+     *        the lower bound of the values that the Parameter can take,
+     *        inclusive.
+     * @param higherInclusive
+     *        the higher bound of the values that the Parameter can take,
+     *        inclusive.
+     * @param param
+     *        the parameter to pass values on to.
+     * @return a Parameter that can take Integers between two inclusive bounds,
+     *         and yields a U, via a specified Parameter.
      */
-    public final String name;
-    private final R defaultValue;
-
-    private Parameter( final String name, final R defaultValue )
+    public static <U> Parameter<Integer, U> bound( final int lowerInclusive,
+            final int higherInclusive, final Parameter<Integer, U> param )
     {
-        this.name = name;
-        this.defaultValue = defaultValue;
+        return new Parameter<Integer, U>( param.name, param.defaultValue )
+        {
+            @Override
+            public Option<Integer> fromURLParameter(
+                    final URLParameter nameAndValue )
+            {
+                return param.fromURLParameter( nameAndValue );
+            }
+
+            @Override
+            public U reduce( final Integer newValue, final U original )
+            {
+                if ( newValue >= lowerInclusive && newValue <= higherInclusive )
+                {
+                    return param.reduce( newValue, original );
+                }
+
+                throw new IllegalArgumentException( "The value " + newValue
+                        + " is not within the bounds for the " + param.name
+                        + " parameter (" + lowerInclusive + " to "
+                        + higherInclusive + " inclusive)." );
+            }
+
+            @Override
+            public Option<String> toURLParameter(
+                    final Pair<String, U> nameAndValue )
+            {
+                return param.toURLParameter( nameAndValue );
+            }
+
+        };
+    }
+
+    /**
+     * Constructs a Parameter with one disallowed value, passing all allowed
+     * values on to the specified Parameter.
+     * 
+     * @param <T>
+     *        the input type of the Parameter.
+     * @param <U>
+     *        the output type of the Parameter.
+     * @param banned
+     *        the value that is disallowed.
+     * @param param
+     *        the Parameter to pass values on to.
+     * @return a Parameter with one disallowed value.
+     */
+    public static <T, U> Parameter<T, U> not( final T banned,
+            final Parameter<T, U> param )
+    {
+        return new Parameter<T, U>( param.name, param.defaultValue )
+        {
+            @Override
+            public Option<T> fromURLParameter( final URLParameter nameAndValue )
+            {
+                return param.fromURLParameter( nameAndValue );
+            }
+
+            @Override
+            public U reduce( final T newValue, final U original )
+            {
+                if ( newValue.equals( banned ) )
+                {
+                    throw new IllegalArgumentException(
+                            "The "
+                                    + param.name
+                                    + " parameter is not allowed to take the supplied value, "
+                                    + newValue + '.' );
+                }
+                return param.reduce( newValue, original );
+            }
+
+            @Override
+            public Option<String> toURLParameter(
+                    final Pair<String, U> nameAndValue )
+            {
+                return param.toURLParameter( nameAndValue );
+            }
+        };
+    }
+
+    /**
+     * Constructs a Parameter that accepts non-negative Integers and yields
+     * values of type R by passing them on to the specified Parameter.
+     * 
+     * @param <R>
+     *        the output type of this Parameter.
+     * @param param
+     *        the Parameter to pass values to.
+     * @return a Parameter that accepts non-negative Integers and yields values
+     *         of type R by passing them on to the specified Parameter.
+     */
+    public static <R> Parameter<Integer, R> notNegative(
+            final Parameter<Integer, R> param )
+    {
+        return bound( 0, Integer.MAX_VALUE, param );
     }
 
     /**
@@ -52,6 +157,12 @@ public abstract class Parameter<T, R>
                         + " parameter has not been set yet" ) )
         {
             @Override
+            public Option<T> fromURLParameter( final URLParameter nameAndValue )
+            {
+                return createFromURL( conversions.a2b(), nameAndValue );
+            }
+
+            @Override
             public Option<T> reduce( final T newValue, final Option<T> original )
             {
                 if ( original.isNone() )
@@ -61,12 +172,6 @@ public abstract class Parameter<T, R>
 
                 throw new IllegalStateException( "The " + name
                         + " parameter has already been set to a value." );
-            }
-
-            @Override
-            public Option<T> fromURLParameter( final URLParameter nameAndValue )
-            {
-                return createFromURL( conversions.a2b(), nameAndValue );
             }
 
             @Override
@@ -123,6 +228,12 @@ public abstract class Parameter<T, R>
         return new Parameter<T, T>( name, defaultValue )
         {
             @Override
+            public Option<T> fromURLParameter( final URLParameter nameAndValue )
+            {
+                return createFromURL( conversions.a2b(), nameAndValue );
+            }
+
+            @Override
             public T reduce( final T newValue, final T original )
             {
                 if ( original.equals( defaultValue ) )
@@ -134,12 +245,6 @@ public abstract class Parameter<T, R>
                         "The "
                                 + name
                                 + " parameter has already been set to a value other than its default" );
-            }
-
-            @Override
-            public Option<T> fromURLParameter( final URLParameter nameAndValue )
-            {
-                return createFromURL( conversions.a2b(), nameAndValue );
             }
 
             @Override
@@ -161,107 +266,6 @@ public abstract class Parameter<T, R>
     }
 
     /**
-     * Constructs a Parameter that can take Integers between two inclusive
-     * bounds, and yields a U, via a specified Parameter.
-     * 
-     * @param <U>
-     *        the output type of the Parameter.
-     * @param lowerInclusive
-     *        the lower bound of the values that the Parameter can take,
-     *        inclusive.
-     * @param higherInclusive
-     *        the higher bound of the values that the Parameter can take,
-     *        inclusive.
-     * @param param
-     *        the parameter to pass values on to.
-     * @return a Parameter that can take Integers between two inclusive bounds,
-     *         and yields a U, via a specified Parameter.
-     */
-    public static <U> Parameter<Integer, U> bound( final int lowerInclusive,
-            final int higherInclusive, final Parameter<Integer, U> param )
-    {
-        return new Parameter<Integer, U>( param.name, param.defaultValue )
-        {
-            @Override
-            public U reduce( final Integer newValue, final U original )
-            {
-                if ( newValue >= lowerInclusive && newValue <= higherInclusive )
-                {
-                    return param.reduce( newValue, original );
-                }
-
-                throw new IllegalArgumentException( "The value " + newValue
-                        + " is not within the bounds for the " + param.name
-                        + " parameter (" + lowerInclusive + " to "
-                        + higherInclusive + " inclusive)." );
-            }
-
-            @Override
-            public Option<Integer> fromURLParameter(
-                    final URLParameter nameAndValue )
-            {
-                return param.fromURLParameter( nameAndValue );
-            }
-
-            @Override
-            public Option<String> toURLParameter(
-                    final Pair<String, U> nameAndValue )
-            {
-                return param.toURLParameter( nameAndValue );
-            }
-
-        };
-    }
-
-    /**
-     * Constructs a Parameter with one disallowed value, passing all allowed
-     * values on to the specified Parameter.
-     * 
-     * @param <T>
-     *        the input type of the Parameter.
-     * @param <U>
-     *        the output type of the Parameter.
-     * @param banned
-     *        the value that is disallowed.
-     * @param param
-     *        the Parameter to pass values on to.
-     * @return a Parameter with one disallowed value.
-     */
-    public static <T, U> Parameter<T, U> not( final T banned,
-            final Parameter<T, U> param )
-    {
-        return new Parameter<T, U>( param.name, param.defaultValue )
-        {
-            @Override
-            public U reduce( final T newValue, final U original )
-            {
-                if ( newValue.equals( banned ) )
-                {
-                    throw new IllegalArgumentException(
-                            "The "
-                                    + param.name
-                                    + " parameter is not allowed to take the supplied value, "
-                                    + newValue + '.' );
-                }
-                return param.reduce( newValue, original );
-            }
-
-            @Override
-            public Option<T> fromURLParameter( final URLParameter nameAndValue )
-            {
-                return param.fromURLParameter( nameAndValue );
-            }
-
-            @Override
-            public Option<String> toURLParameter(
-                    final Pair<String, U> nameAndValue )
-            {
-                return param.toURLParameter( nameAndValue );
-            }
-        };
-    }
-
-    /**
      * Constructs a Parameter that accepts Pairs of Integers and values of type
      * T, and yields a TreeMap of Integers to values of type T accordingly,
      * representing a sparse array.
@@ -278,28 +282,12 @@ public abstract class Parameter<T, R>
      *         and yields a TreeMap of Integers to values of type T accordingly,
      *         representing a sparse array.
      */
-    // TODO use TwoWayConversion here.
     public static <T> Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>> sparseArrayParam(
             final String name, final TwoWayConversion<String, T> conversions )
     {
         return new Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>>(
                 name, new TreeMap<Integer, T>() )
         {
-            @Override
-            public TreeMap<Integer, T> reduce(
-                    final List<Pair<Integer, T>> newValue,
-                    final TreeMap<Integer, T> original )
-            {
-                final TreeMap<Integer, T> copy = new TreeMap<Integer, T>(
-                        original );
-                for ( final Pair<Integer, T> pair : newValue )
-                {
-                    copy.put( pair.first(), pair.second() );
-                }
-
-                return copy;
-            }
-
             @Override
             public Option<List<Pair<Integer, T>>> fromURLParameter(
                     final URLParameter keyAndValue )
@@ -328,6 +316,21 @@ public abstract class Parameter<T, R>
                 }
 
                 return Option.some( results );
+            }
+
+            @Override
+            public TreeMap<Integer, T> reduce(
+                    final List<Pair<Integer, T>> newValue,
+                    final TreeMap<Integer, T> original )
+            {
+                final TreeMap<Integer, T> copy = new TreeMap<Integer, T>(
+                        original );
+                for ( final Pair<Integer, T> pair : newValue )
+                {
+                    copy.put( pair.first(), pair.second() );
+                }
+
+                return copy;
             }
 
             @Override
@@ -361,22 +364,35 @@ public abstract class Parameter<T, R>
         };
     }
 
-    /**
-     * Constructs a Parameter that accepts non-negative Integers and yields
-     * values of type R by passing them on to the specified Parameter.
-     * 
-     * @param <R>
-     *        the output type of this Parameter.
-     * @param param
-     *        the Parameter to pass values to.
-     * @return a Parameter that accepts non-negative Integers and yields values
-     *         of type R by passing them on to the specified Parameter.
-     */
-    public static <R> Parameter<Integer, R> notNegative(
-            final Parameter<Integer, R> param )
+    private static <T> Option<T> createFromURL(
+            final Conversion<String, Option<T>> conversion,
+            final URLParameter pair )
     {
-        return bound( 0, Integer.MAX_VALUE, param );
+        return conversion.convert( pair.value );
     }
+
+    /**
+     * The name of the Parameter, as it appears in URL parameters and in
+     * diagnostic messages.
+     */
+    public final String name;
+
+    private final R defaultValue;
+
+    private Parameter( final String name, final R defaultValue )
+    {
+        this.name = name;
+        this.defaultValue = defaultValue;
+    }
+
+    /**
+     * Parses the specified URLParameter into a value of type T.
+     * 
+     * @param nameAndValue
+     *        the URLParameter to parse.
+     * @return a value of type T, after parsing.
+     */
+    public abstract Option<T> fromURLParameter( final URLParameter nameAndValue );
 
     /**
      * Converts this Parameter plus the value stored for it in the specified
@@ -393,22 +409,6 @@ public abstract class Parameter<T, R>
         return parameterMap.isDefault( this ) ? Option.some( "" )
                 : toURLParameter( Pair.pair( name, parameterMap.get( this ) ) );
     }
-
-    private static <T> Option<T> createFromURL(
-            final Conversion<String, Option<T>> conversion,
-            final URLParameter pair )
-    {
-        return conversion.convert( pair.value );
-    }
-
-    /**
-     * Parses the specified URLParameter into a value of type T.
-     * 
-     * @param nameAndValue
-     *        the URLParameter to parse.
-     * @return a value of type T, after parsing.
-     */
-    public abstract Option<T> fromURLParameter( final URLParameter nameAndValue );
 
     /**
      * Gives the default value for this Parameter.

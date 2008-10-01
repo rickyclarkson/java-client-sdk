@@ -16,20 +16,6 @@ public final class URLParameter
     public final String value;
 
     /**
-     * Constructs a URLParameter with the specified name and value.
-     * 
-     * @param name
-     *        the name of this parameter.
-     * @param value
-     *        the value of this parameter.
-     */
-    public URLParameter( final String name, final String value )
-    {
-        this.name = name;
-        this.value = value;
-    }
-
-    /**
      * A Conversion that, given a Pair of Strings, produces a URLParameter where
      * the first String corresponds to the key, and the second String
      * corresponds to the value.
@@ -42,6 +28,20 @@ public final class URLParameter
             return new URLParameter( pair.first(), pair.second() );
         }
     };
+
+    /**
+     * Constructs a URLParameter with the specified name and value.
+     * 
+     * @param name
+     *        the name of this parameter.
+     * @param value
+     *        the value of this parameter.
+     */
+    public URLParameter( final String name, final String value )
+    {
+        this.name = name;
+        this.value = value;
+    }
 
     /**
      * This URLParameter is equal to another object if the other object is a

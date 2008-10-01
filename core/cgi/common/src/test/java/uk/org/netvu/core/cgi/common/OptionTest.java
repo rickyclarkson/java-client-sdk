@@ -11,6 +11,15 @@ import org.junit.Test;
 public class OptionTest
 {
     /**
+     * Tests that Option.get works for an Option.Some.
+     */
+    @Test
+    public void get()
+    {
+        assertTrue( Option.some( 5 ).get() == 5 );
+    }
+
+    /**
      * Tests that Option.getOrElse works as specified.
      */
     @Test
@@ -28,15 +37,6 @@ public class OptionTest
     {
         assertFalse( Option.some( 5 ).isNone() );
         assertTrue( Option.none( "foo" ).isNone() );
-    }
-
-    /**
-     * Tests that Option.get works for an Option.Some.
-     */
-    @Test
-    public void get()
-    {
-        assertTrue( Option.some( 5 ).get() == 5 );
     }
 
     /**

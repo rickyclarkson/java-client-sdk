@@ -9,8 +9,31 @@ import java.util.List;
  */
 public final class Lists
 {
-    private Lists()
+    /**
+     * Given a List and a predicate, constructs a List consisting of only the
+     * elements of that List that pass the predicate.
+     * 
+     * @param <T>
+     *        the type of the elements of the List.
+     * @param list
+     *        the List to filter.
+     * @param conversion
+     *        the predicate to filter by.
+     * @return a List consisting of only the elements of the passed-in List that
+     *         pass the predicate.
+     */
+    public static <T> List<T> filter( final List<T> list,
+            final Conversion<T, Boolean> conversion )
     {
+        final List<T> results = new ArrayList<T>();
+        for ( final T t : list )
+        {
+            if ( conversion.convert( t ) )
+            {
+                results.add( t );
+            }
+        }
+        return results;
     }
 
     /**
@@ -41,33 +64,12 @@ public final class Lists
     }
 
     /**
-     * Constructs a new list containing the elements from the specified list,
-     * except for the specified element toRemove. The original list is not
-     * modified.
+     * Applies a Reduction across a List, returning a single value. For example,
+     * given a List containing ints, and a Reduction that adds its two arguments
+     * together, the result is a sum of those ints.
      * 
      * @param <T>
-     *        the type of the list.
-     * @param original
-     *        the list to remove elements from.
-     * @param toRemove
-     *        the element to remove.
-     * @return a new list containing the elements from the specified list,
-     *         except for the specified element toRemove.
-     */
-    public static <T> List<T> remove( final List<T> original, final T toRemove )
-    {
-        final List<T> newOne = new ArrayList<T>( original );
-        newOne.remove( toRemove );
-        return newOne;
-    }
-
-    /**
-     * Applies a Reduction across a List, returning a single value. Given a List
-     * containing ints, and a Reduction that adds its two arguments together,
-     * the result is a sum of those ints.
-     * 
-     * @param <T>
-     *        the type of the elements of theList.
+     *        the type of the elements of the List.
      * @param ts
      *        the List to reduce.
      * @param reduction
@@ -90,58 +92,24 @@ public final class Lists
     }
 
     /**
-     * Zips two Lists together, giving a new List containing Pairs each
-     * consisting of one element from each List, in order.
+     * Constructs a new list containing the elements from the specified list,
+     * except for the specified element toRemove. The original list is not
+     * modified.
      * 
      * @param <T>
-     *        the type of the elements of the first List.
-     * @param <U>
-     *        the type of the elements of the second List.
-     * @param ts
-     *        the first List to zip.
-     * @param us
-     *        the second List to zip.
-     * @return a new List containing Paris each consisting of one element from
-     *         each List, in order.
+     *        the type of the list.
+     * @param original
+     *        the list to remove elements from.
+     * @param toRemove
+     *        the element to remove.
+     * @return a new list containing the elements from the specified list,
+     *         except for the specified element toRemove.
      */
-    static <T, U> List<Pair<T, U>> zip( final List<T> ts, final List<U> us )
+    public static <T> List<T> remove( final List<T> original, final T toRemove )
     {
-        final Iterator<T> tIterator = ts.iterator();
-        final Iterator<U> uIterator = us.iterator();
-
-        final List<Pair<T, U>> results = new ArrayList<Pair<T, U>>();
-
-        while ( tIterator.hasNext() && uIterator.hasNext() )
-        {
-            results.add( Pair.pair( tIterator.next(), uIterator.next() ) );
-        }
-
-        return results;
-    }
-
-    /**
-     * Given a list, returns a list where each element is a pair of that element
-     * and its index.
-     * 
-     * @param <T>
-     *        the type of the elements in the list.
-     * @param ts
-     *        the list to zip.
-     * @return a list where each element is a pair of that element and its
-     *         index.
-     */
-    public static <T> List<Pair<T, Integer>> zipWithIndex( final List<T> ts )
-    {
-        final List<Pair<T, Integer>> results = new ArrayList<Pair<T, Integer>>();
-
-        int a = 0;
-
-        for ( final T t : ts )
-        {
-            results.add( Pair.pair( t, a++ ) );
-        }
-
-        return results;
+        final List<T> newOne = new ArrayList<T>( original );
+        newOne.remove( toRemove );
+        return newOne;
     }
 
     /**
@@ -174,29 +142,61 @@ public final class Lists
     }
 
     /**
-     * Given a List and a predicate, constructs a List consisting of only the
-     * elements of that List that pass the predicate.
+     * Given a list, returns a list where each element is a pair of that element
+     * and its index.
      * 
      * @param <T>
-     *        the type of the elements of the List.
-     * @param list
-     *        the List to filter.
-     * @param conversion
-     *        the predicate to filter by.
-     * @return a List consisting of only the elements of the passed-in List that
-     *         pass the predicate.
+     *        the type of the elements in the list.
+     * @param ts
+     *        the list to zip.
+     * @return a list where each element is a pair of that element and its
+     *         index.
      */
-    public static <T> List<T> filter( final List<T> list,
-            final Conversion<T, Boolean> conversion )
+    public static <T> List<Pair<T, Integer>> zipWithIndex( final List<T> ts )
     {
-        final List<T> results = new ArrayList<T>();
-        for ( final T t : list )
+        final List<Pair<T, Integer>> results = new ArrayList<Pair<T, Integer>>();
+
+        int a = 0;
+
+        for ( final T t : ts )
         {
-            if ( conversion.convert( t ) )
-            {
-                results.add( t );
-            }
+            results.add( Pair.pair( t, a++ ) );
         }
+
         return results;
+    }
+
+    /**
+     * Zips two Lists together, giving a new List containing Pairs each
+     * consisting of one element from each List, in order.
+     * 
+     * @param <T>
+     *        the type of the elements of the first List.
+     * @param <U>
+     *        the type of the elements of the second List.
+     * @param ts
+     *        the first List to zip.
+     * @param us
+     *        the second List to zip.
+     * @return a new List containing Paris each consisting of one element from
+     *         each List, in order.
+     */
+    static <T, U> List<Pair<T, U>> zip( final List<T> ts, final List<U> us )
+    {
+        final Iterator<T> tIterator = ts.iterator();
+        final Iterator<U> uIterator = us.iterator();
+
+        final List<Pair<T, U>> results = new ArrayList<Pair<T, U>>();
+
+        while ( tIterator.hasNext() && uIterator.hasNext() )
+        {
+            results.add( Pair.pair( tIterator.next(), uIterator.next() ) );
+        }
+
+        return results;
+    }
+
+    private Lists()
+    {
     }
 }

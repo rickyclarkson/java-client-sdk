@@ -8,9 +8,18 @@ import java.net.URLEncoder;
  */
 public class URLBuilder
 {
-    private URLBuilder()
+    /**
+     * A Conversion that, given a String, returns a URL-encoded version of it.
+     * UTF-8 is assumed.
+     */
+    public static final Conversion<String, String> encode = new Conversion<String, String>()
     {
-    }
+        @Override
+        public String convert( final String value )
+        {
+            return encode( value );
+        }
+    };
 
     /**
      * Encodes the specified value for safe use in URLs.
@@ -31,16 +40,7 @@ public class URLBuilder
         }
     }
 
-    /**
-     * A Conversion that, given a String, returns a URL-encoded version of it.
-     * UTF-8 is assumed.
-     */
-    public static final Conversion<String, String> encode = new Conversion<String, String>()
+    private URLBuilder()
     {
-        @Override
-        public String convert( final String value )
-        {
-            return encode( value );
-        }
-    };
+    }
 }

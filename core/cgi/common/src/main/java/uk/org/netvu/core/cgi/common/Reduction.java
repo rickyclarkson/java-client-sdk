@@ -13,17 +13,6 @@ package uk.org.netvu.core.cgi.common;
 public abstract class Reduction<T, R>
 {
     /**
-     * Reduces a T and an R to an R.
-     * 
-     * @param newValue
-     *        the value of type T, the value to 'add' to the original.
-     * @param original
-     *        the value of type R, the accumulator.
-     * @return a value of type R.
-     */
-    public abstract R reduce( T newValue, R original );
-
-    /**
      * A Reduction that, given two Strings, constructs a new String containing
      * the two Strings with the given separator between them. Applied across a
      * List it can be used to comma-separate the List, etc.
@@ -45,4 +34,15 @@ public abstract class Reduction<T, R>
             }
         };
     }
+
+    /**
+     * Reduces a T and an R to an R.
+     * 
+     * @param newValue
+     *        the value of type T, the value to 'add' to the original.
+     * @param original
+     *        the value of type R, the accumulator.
+     * @return a value of type R.
+     */
+    public abstract R reduce( T newValue, R original );
 }

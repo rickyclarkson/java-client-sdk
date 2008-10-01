@@ -56,8 +56,7 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
   "cause a NullPointerException" in {
    Parameter.parameterWithDefault("foo", 3, TwoWayConversion.partial(null, to)) must throwA(new NullPointerException)
    Parameter.parameterWithDefault("foo", 3, TwoWayConversion.partial(from, null)) must throwA(new NullPointerException)
-   Parameter.parameterWithDefault("foo", 3, null) must throwA(new NullPointerException)
-} }
+   Parameter.parameterWithDefault("foo", 3, null) must throwA(new NullPointerException) } }
 
  def to[T] = new Conversion[T, Option[String]] { def convert(t: T) = Option.some("foo") }
  def from[T] = new Conversion[String, Option[T]] { def convert(s: String): Option[T] = Option.none[T]("Unsupported") }
@@ -88,13 +87,17 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
    new ParameterMap().set[Integer, Integer](bound, 140) must throwA(new IllegalArgumentException)
    new ParameterMap().set[Integer, Integer](bound, 0) must throwA(new IllegalArgumentException) } }
 
+ import Pair.pair
+
  "A 'not' Parameter" should {
-  val theNot = Parameter.not(5, Parameter.parameterWithDefault("foo", 3, TwoWayConversion.partial(from, to)))
+  val nested = Parameter.parameterWithDefault("foo", 3, TwoWayConversion.partial(from, to))
+  val theNot = Parameter.not(5, nested)
   "allow unbanned values" in { new ParameterMap set (theNot, 2) get theNot mustEqual 2 }
-  "reject banned values" in { new ParameterMap set (theNot, 5) must throwA(new IllegalArgumentException) } }
+  "reject banned values" in { new ParameterMap set (theNot, 5) must throwA(new IllegalArgumentException) }
+  "delegate toURLParameter() calls to the nested Parameter" in {
+   theNot.toURLParameter(pair("foo", 6)).get mustEqual nested.toURLParameter(pair("foo", 6)).get } }
 
  import scala.collection.jcl.Conversions.{convertList, convertMap}
- import Pair.pair
  import java.util.TreeMap
  
  "A sparse array Parameter" should {
@@ -238,3 +241,22 @@ class URLParameterSecondTest extends JUnit4(new Specification with DataTables {
 
  "hashCode" should { "be equal with equal objects" in {
   new URLParameter("foo", "bar").hashCode mustEqual new URLParameter("foo", "bar").hashCode } } })
+
+class TwoWayConversionTest extends JUnit4(new Specification {
+ import TwoWayConversion.{total, convenientTotal}
+ import Implicits.function1ToConversion
+
+ "total" should {
+  "reject null parameters" in { total[Int, Int](null, null) must throwA(new NullPointerException)
+                                total[Int, Int](null, ((_: Int) * 2)) must throwA(new NullPointerException)
+                                total[Int, Int](((_: Int) / 2), null) must throwA(new NullPointerException) }
+  "give a non-empty Option in both directions" in { val conversions = total( { x: Int => x * 2 }, { x: Int => x / 2 })
+                                                    conversions.a2b.convert(5).isNone mustEqual false
+                                                    conversions.b2a.convert(10).isNone mustEqual false } }
+ "convenientTotal" should {
+  "reject null parameters" in { convenientTotal[Int](null) must throwA(new NullPointerException) }
+  "be able to convert from a String using the specified conversion" in {
+   convenientTotal[Int]{ x: String => 5 }.a2b.convert("foo").get mustEqual 5 }
+  "be able to convert to a String using Object's toString()" in {
+   val obj = new Object
+   convenientTotal[Object]{ x: String => x }.b2a.convert(obj).get mustEqual obj.toString } } })

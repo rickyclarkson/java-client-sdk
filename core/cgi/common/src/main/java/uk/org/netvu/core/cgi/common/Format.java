@@ -12,29 +12,18 @@ public enum Format
      * array.
      */
     JS,
+
     /**
      * A HTML page containing the results in a JavaScript object array and that
      * calls a JavaScript function parent.control.ProcessEvent() when the
      * results list is complete.
      */
     HTML,
+
     /**
      * The results as a comma separated variable list.
      */
     CSV;
-
-    /**
-     * Gives a random Format. For internal use only.
-     * 
-     * @param random
-     *        the random number generator to use.
-     * @return a random Format.
-     */
-    public static Format oneOf( final Random random )
-    {
-        return random.nextInt( 3 ) == 0 ? JS : random.nextInt( 2 ) == 0 ? HTML
-                : CSV;
-    }
 
     /**
      * A conversion that converts Strings to Formats according to the String
@@ -55,6 +44,19 @@ public enum Format
             }
         }
     };
+
+    /**
+     * Gives a random Format. For internal use only.
+     * 
+     * @param random
+     *        the random number generator to use.
+     * @return a random Format.
+     */
+    public static Format oneOf( final Random random )
+    {
+        return random.nextInt( 3 ) == 0 ? JS : random.nextInt( 2 ) == 0 ? HTML
+                : CSV;
+    }
 
     /**
      * Gives the name of the Format in lowercase.

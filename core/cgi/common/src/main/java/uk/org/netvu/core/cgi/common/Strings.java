@@ -9,9 +9,12 @@ import java.util.List;
  */
 public class Strings
 {
-    private Strings()
-    {
-    }
+    /**
+     * A Conversion that will surround any String passed to it with double
+     * quotes.
+     */
+    public static final Conversion<String, String> surroundWithQuotes = prepend(
+            "\"" ).andThen( append( "\"" ) );
 
     /**
      * Gives the substring of the specified String after the specified char.
@@ -25,19 +28,6 @@ public class Strings
     public static String fromFirst( final char c, final String string )
     {
         return string.substring( string.indexOf( c ) + 1 );
-    }
-
-    /**
-     * Splits a comma-separated String into an array of Strings, ensuring that
-     * whitespace after commas is ignored.
-     * 
-     * @param line
-     *        the line to split.
-     * @return an array of Strings.
-     */
-    public static String[] split( final String line )
-    {
-        return line.replaceAll( ",([^ ])", ", $1" ).split( ", " );
     }
 
     /**
@@ -72,77 +62,45 @@ public class Strings
         return builder.toString();
     }
 
-    private static List<String> partitionLeniently( final String string,
-            final String separator )
+    /**
+     * Constructs a ReversibleReplace capable of replacing the String toReplace
+     * with the String 'with', and the reverse, in any Strings passed to it.
+     * 
+     * @param toReplace
+     *        the String to replace.
+     * @param with
+     *        the String to replace with.
+     * @return a ReversibleReplace capable of replacing the String toReplace
+     *         with the String 'with' and the reverse.
+     */
+    public static ReversibleReplace reversibleReplace( final String toReplace,
+            final String with )
     {
-        final int index = string.indexOf( separator );
-
-        if ( index == string.length() - 1 )
+        return new ReversibleReplace()
         {
-            return Arrays.asList( "" );
-        }
+            public String replace( final String s )
+            {
+                return s.replaceAll( toReplace, with );
+            }
 
-        return index >= 0 ? Arrays.asList( string.substring( 0, index ),
-                string.substring( index + 1 ) ) : Arrays.asList( string );
+            public String undo( final String s )
+            {
+                return s.replaceAll( with, toReplace );
+            }
+        };
     }
 
     /**
-     * Gives the part of the given String that is before the first instance of
-     * the given separator, or the whole string if the separator isn't found in
-     * the String.
+     * Splits a comma-separated String into an array of Strings, ensuring that
+     * whitespace after commas is ignored.
      * 
-     * @param string
-     *        the String to parse.
-     * @param separator
-     *        the separator to split on.
-     * @return the part of the given String that is before the first instance of
-     *         the given separator, or the whole string if the separator isn't
-     *         found in the String.
+     * @param line
+     *        the line to split.
+     * @return an array of Strings.
      */
-    static String beforeFirstLeniently( final String string,
-            final String separator )
+    public static String[] split( final String line )
     {
-        return partitionLeniently( string, separator ).get( 0 );
-    }
-
-    /**
-     * Gives the part of the given String that is after the last instance of the
-     * given separator, or the whole string if the separator isn't found in the
-     * String.
-     * 
-     * @param string
-     *        the String to parse.
-     * @param separator
-     *        the separator to split on.
-     * @return the part of the given String that is after the last instance of
-     *         the given separator, or the whole string if the separator isn't
-     *         found in the string.
-     */
-    static String afterLastLeniently( final String string,
-            final String separator )
-    {
-        final List<String> list = partitionLeniently( string, separator );
-        return list.get( list.size() - 1 );
-    }
-
-    /**
-     * Gives the part of the given String that is after the first instance of
-     * the given separator, or the whole String if the separator isn't found in
-     * the String.
-     * 
-     * @param string
-     *        the String to parse.
-     * @param separator
-     *        the separator to split on.
-     * @return the part of the given String that is after the first instance of
-     *         the given separator, or the whole String if the separator isn't
-     *         found in the String.
-     */
-    static String afterFirstLeniently( final String string,
-            final String separator )
-    {
-        final List<String> list = partitionLeniently( string, separator );
-        return list.get( list.size() > 1 ? 1 : 0 );
+        return line.replaceAll( ",([^ ])", ", $1" ).split( ", " );
     }
 
     /**
@@ -182,6 +140,65 @@ public class Strings
         }
 
         return results;
+    }
+
+    /**
+     * Gives the part of the given String that is after the first instance of
+     * the given separator, or the whole String if the separator isn't found in
+     * the String.
+     * 
+     * @param string
+     *        the String to parse.
+     * @param separator
+     *        the separator to split on.
+     * @return the part of the given String that is after the first instance of
+     *         the given separator, or the whole String if the separator isn't
+     *         found in the String.
+     */
+    static String afterFirstLeniently( final String string,
+            final String separator )
+    {
+        final List<String> list = partitionLeniently( string, separator );
+        return list.get( list.size() > 1 ? 1 : 0 );
+    }
+
+    /**
+     * Gives the part of the given String that is after the last instance of the
+     * given separator, or the whole string if the separator isn't found in the
+     * String.
+     * 
+     * @param string
+     *        the String to parse.
+     * @param separator
+     *        the separator to split on.
+     * @return the part of the given String that is after the last instance of
+     *         the given separator, or the whole string if the separator isn't
+     *         found in the string.
+     */
+    static String afterLastLeniently( final String string,
+            final String separator )
+    {
+        final List<String> list = partitionLeniently( string, separator );
+        return list.get( list.size() - 1 );
+    }
+
+    /**
+     * Gives the part of the given String that is before the first instance of
+     * the given separator, or the whole string if the separator isn't found in
+     * the String.
+     * 
+     * @param string
+     *        the String to parse.
+     * @param separator
+     *        the separator to split on.
+     * @return the part of the given String that is before the first instance of
+     *         the given separator, or the whole string if the separator isn't
+     *         found in the String.
+     */
+    static String beforeFirstLeniently( final String string,
+            final String separator )
+    {
+        return partitionLeniently( string, separator ).get( 0 );
     }
 
     /**
@@ -234,6 +251,20 @@ public class Strings
         };
     }
 
+    private static List<String> partitionLeniently( final String string,
+            final String separator )
+    {
+        final int index = string.indexOf( separator );
+
+        if ( index == string.length() - 1 )
+        {
+            return Arrays.asList( "" );
+        }
+
+        return index >= 0 ? Arrays.asList( string.substring( 0, index ),
+                string.substring( index + 1 ) ) : Arrays.asList( string );
+    }
+
     private static Conversion<String, String> prepend( final String toPrepend )
     {
         return new Conversion<String, String>()
@@ -246,38 +277,7 @@ public class Strings
         };
     }
 
-    /**
-     * A Conversion that will surround any String passed to it with double
-     * quotes.
-     */
-    public static final Conversion<String, String> surroundWithQuotes = prepend(
-            "\"" ).andThen( append( "\"" ) );
-
-    /**
-     * Constructs a ReversibleReplace capable of replacing the String toReplace
-     * with the String 'with', and the reverse, in any Strings passed to it.
-     * 
-     * @param toReplace
-     *        the String to replace.
-     * @param with
-     *        the String to replace with.
-     * @return a ReversibleReplace capable of replacing the String toReplace
-     *         with the String 'with' and the reverse.
-     */
-    public static ReversibleReplace reversibleReplace( final String toReplace,
-            final String with )
+    private Strings()
     {
-        return new ReversibleReplace()
-        {
-            public String replace( final String s )
-            {
-                return s.replaceAll( toReplace, with );
-            }
-
-            public String undo( final String s )
-            {
-                return s.replaceAll( with, toReplace );
-            }
-        };
     }
 }

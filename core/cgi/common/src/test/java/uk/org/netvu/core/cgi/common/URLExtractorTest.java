@@ -12,18 +12,21 @@ import org.junit.Test;
 public class URLExtractorTest
 {
     /**
-     * Tests that URLExtractor.queryName works as specified.
+     * Test that URLExtractor.nameValuePairs works as specified.
      */
     @Test
-    public void queryName()
+    public void nameValuePairs()
     {
-        assertTrue( URLExtractor.queryName( "" ).equals( "" ) );
-        assertTrue( URLExtractor.queryName( "foo" ).equals( "foo" ) );
-        assertTrue( URLExtractor.queryName( "foo/bar" ).equals( "bar" ) );
-        assertTrue( URLExtractor.queryName( "foo/bar.cgi?blah" ).equals(
-                "bar.cgi" ) );
-        assertTrue( URLExtractor.queryName( "?blah" ).equals( "" ) );
-        assertTrue( URLExtractor.queryName( "foo?bar?" ).equals( "foo" ) );
+        assertTrue( URLExtractor.nameValuePairs( "" ).isEmpty() );
+        assertTrue( URLExtractor.nameValuePairs( "foo=bar" ).equals(
+                Arrays.asList( new URLParameter( "foo", "bar" ) ) ) );
+        assertTrue( URLExtractor.nameValuePairs( "foo=bar&baz=spam" ).equals(
+                Arrays.asList( new URLParameter( "foo", "bar" ),
+                        new URLParameter( "baz", "spam" ) ) ) );
+        assertTrue( URLExtractor.nameValuePairs(
+                "foo=\"bar=baz\"&spam=\"eggs\"" ).equals(
+                Arrays.asList( new URLParameter( "foo", "\"bar=baz\"" ),
+                        new URLParameter( "spam", "\"eggs\"" ) ) ) );
     }
 
     /**
@@ -41,20 +44,17 @@ public class URLExtractorTest
     }
 
     /**
-     * Test that URLExtractor.nameValuePairs works as specified.
+     * Tests that URLExtractor.queryName works as specified.
      */
     @Test
-    public void nameValuePairs()
+    public void queryName()
     {
-        assertTrue( URLExtractor.nameValuePairs( "" ).isEmpty() );
-        assertTrue( URLExtractor.nameValuePairs( "foo=bar" ).equals(
-                Arrays.asList( new URLParameter( "foo", "bar" ) ) ) );
-        assertTrue( URLExtractor.nameValuePairs( "foo=bar&baz=spam" ).equals(
-                Arrays.asList( new URLParameter( "foo", "bar" ),
-                        new URLParameter( "baz", "spam" ) ) ) );
-        assertTrue( URLExtractor.nameValuePairs(
-                "foo=\"bar=baz\"&spam=\"eggs\"" ).equals(
-                Arrays.asList( new URLParameter( "foo", "\"bar=baz\"" ),
-                        new URLParameter( "spam", "\"eggs\"" ) ) ) );
+        assertTrue( URLExtractor.queryName( "" ).equals( "" ) );
+        assertTrue( URLExtractor.queryName( "foo" ).equals( "foo" ) );
+        assertTrue( URLExtractor.queryName( "foo/bar" ).equals( "bar" ) );
+        assertTrue( URLExtractor.queryName( "foo/bar.cgi?blah" ).equals(
+                "bar.cgi" ) );
+        assertTrue( URLExtractor.queryName( "?blah" ).equals( "" ) );
+        assertTrue( URLExtractor.queryName( "foo?bar?" ).equals( "foo" ) );
     }
 }

@@ -10,12 +10,13 @@ import org.junit.Test;
 public class StatusTest
 {
     /**
-     * Tests that a valid input to AlarmType.find completes successfully.
+     * Tests that larger powers of 2 than there are constants for cause an
+     * IllegalArgumentException.
      */
-    @Test
-    public void validFind()
+    @Test( expected = IllegalArgumentException.class )
+    public void largeFind()
     {
-        assertTrue( EventsCGIResult.Status.find( 4 ).value == 4 );
+        EventsCGIResult.Status.find( 256 );
     }
 
     /**
@@ -37,12 +38,11 @@ public class StatusTest
     }
 
     /**
-     * Tests that larger powers of 2 than there are constants for cause an
-     * IllegalArgumentException.
+     * Tests that a valid input to AlarmType.find completes successfully.
      */
-    @Test( expected = IllegalArgumentException.class )
-    public void largeFind()
+    @Test
+    public void validFind()
     {
-        EventsCGIResult.Status.find( 256 );
+        assertTrue( EventsCGIResult.Status.find( 4 ).value == 4 );
     }
 }

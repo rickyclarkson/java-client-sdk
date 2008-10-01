@@ -18,6 +18,46 @@ import uk.org.netvu.core.cgi.events.EventsCGIResult.Status;
 public class EventsCGIResultTest
 {
     /**
+     * Creates an infinite series of completed random EventsCGIResult.Builders.
+     * 
+     * @param random
+     *        the random number generator to use.
+     * @return an infinite series of completed random EventsCGIResult.Builders.
+     */
+    public static final Generator<EventsCGIResult.Builder> eventBuilderGenerator(
+            final Random random )
+    {
+        final Generator<String> strings = Generators.strings( random );
+
+        return new Generator<EventsCGIResult.Builder>()
+        {
+            public EventsCGIResult.Builder next()
+            {
+                final Generator<Integer> nonNegatives = Generators.nonNegativeInts( random );
+                final int julianTime = nonNegatives.next();
+
+                return new EventsCGIResult.Builder().alarm( strings.next() ).archive(
+                        nonNegatives.next() ).camera( random.nextInt( 65 ) ).duration(
+                        Math.max( 0, nonNegatives.next() - julianTime ) ).file(
+                        strings.next() ).julianTime( julianTime ).offset(
+                        random.nextInt( 180000 ) - 90000 ).preAlarm(
+                        nonNegatives.next() ).onDisk( random.nextBoolean() ).status(
+                        oneStatus( random ) ).alarmType( oneAlarm( random ) );
+            }
+
+            private AlarmType oneAlarm( final Random random )
+            {
+                return AlarmType.values()[random.nextInt( AlarmType.values().length )];
+            }
+
+            private Status oneStatus( final Random random )
+            {
+                return Status.values()[random.nextInt( Status.values().length )];
+            }
+        };
+    }
+
+    /**
      * Generates an infinite series of events with random values.
      * 
      * @param random
@@ -40,46 +80,6 @@ public class EventsCGIResultTest
     }
 
     /**
-     * Creates an infinite series of completed random EventsCGIResult.Builders.
-     * 
-     * @param random
-     *        the random number generator to use.
-     * @return an infinite series of completed random EventsCGIResult.Builders.
-     */
-    public static final Generator<EventsCGIResult.Builder> eventBuilderGenerator(
-            final Random random )
-    {
-        final Generator<String> strings = Generators.strings( random );
-
-        return new Generator<EventsCGIResult.Builder>()
-        {
-            private AlarmType oneAlarm( final Random random )
-            {
-                return AlarmType.values()[random.nextInt( AlarmType.values().length )];
-            }
-
-            private Status oneStatus( final Random random )
-            {
-                return Status.values()[random.nextInt( Status.values().length )];
-            }
-
-            public EventsCGIResult.Builder next()
-            {
-                final Generator<Integer> nonNegatives = Generators.nonNegativeInts( random );
-                final int julianTime = nonNegatives.next();
-
-                return new EventsCGIResult.Builder().alarm( strings.next() ).archive(
-                        nonNegatives.next() ).camera( random.nextInt( 65 ) ).duration(
-                        Math.max( 0, nonNegatives.next() - julianTime ) ).file(
-                        strings.next() ).julianTime( julianTime ).offset(
-                        random.nextInt( 180000 ) - 90000 ).preAlarm(
-                        nonNegatives.next() ).onDisk( random.nextBoolean() ).status(
-                        oneStatus( random ) ).alarmType( oneAlarm( random ) );
-            }
-        };
-    }
-
-    /**
      * Tests that a EventsCGIResult has a valid duration.
      * 
      * @param event
@@ -90,6 +90,17 @@ public class EventsCGIResultTest
     public static boolean testEvent( final EventsCGIResult event )
     {
         return event.getJulianTime() + event.getDuration() >= 0;
+    }
+
+    /**
+     * Tests that parsing an empty ("") String yields an
+     * IllegalArgumentException. The use case "Build events.cgi query" specifies
+     * this.
+     */
+    @Test( expected = IllegalArgumentException.class )
+    public void emptyString()
+    {
+        EventsCGIResult.fromString( "" );
     }
 
     /**
@@ -109,13 +120,52 @@ public class EventsCGIResultTest
     }
 
     /**
-     * Tests that parsing a valid line of CSV succeeds.
+     * Tests that parsing a String containing a camera number that is too high
+     * yields an {@link IllegalArgumentException}.
      */
-    @Test
-    public void validParse()
+    @Test( expected = IllegalArgumentException.class )
+    public void highCameraNumber()
     {
-        EventsCGIResult.fromString( "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0" );
-        EventsCGIResult.fromString( "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0, 4, 8" );
+        aBuilder().camera( 65 ).build();
+    }
+
+    /**
+     * Tests that an incomplete EventsCGIResult cannot be built.
+     */
+    @Test( expected = IllegalStateException.class )
+    public void incompleteObject()
+    {
+        new EventsCGIResult.Builder().build();
+    }
+
+    /**
+     * Tests that an offset lower than -90000 yields an
+     * {@link IllegalArgumentException}.
+     */
+    @Test( expected = IllegalArgumentException.class )
+    public void largeNegativeOffset()
+    {
+        aBuilder().offset( -90001 ).build();
+    }
+
+    /**
+     * Tests that an offset greater than 90000 yields an
+     * {@link IllegalArgumentException}.
+     */
+    @Test( expected = IllegalArgumentException.class )
+    public void largeOffset()
+    {
+        aBuilder().offset( 90001 ).build();
+    }
+
+    /**
+     * Tests that parsing a line of CSV with a negative timestamp throws an
+     * IllegalArgumentException.
+     */
+    @Test( expected = IllegalArgumentException.class )
+    public void negativeTime()
+    {
+        EventsCGIResult.fromString( "1, 1, COURTYARD, -111488075, 3600, ,overwitten, 1, 10, 2, 0" );
     }
 
     /**
@@ -130,13 +180,13 @@ public class EventsCGIResultTest
     }
 
     /**
-     * Tests that parsing a line of CSV with too many values throws an
-     * IllegalArgumentException.
+     * Tests that parsing a null String yields a NullPointerException. The use
+     * case "Build events.cgi query" specifies this.
      */
-    @Test( expected = IllegalArgumentException.class )
-    public void tooManyColumns()
+    @Test( expected = NullPointerException.class )
+    public void nullPointerException()
     {
-        EventsCGIResult.fromString( "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14" );
+        EventsCGIResult.fromString( null );
     }
 
     /**
@@ -150,13 +200,13 @@ public class EventsCGIResultTest
     }
 
     /**
-     * Tests that parsing a line of CSV with a negative timestamp throws an
-     * IllegalArgumentException.
+     * Tests that parsing a malformed String yields an IllegalArgumentException.
+     * The use case "Build events.cgi query" specifies this.
      */
     @Test( expected = IllegalArgumentException.class )
-    public void negativeTime()
+    public void parsingMalformedString()
     {
-        EventsCGIResult.fromString( "1, 1, COURTYARD, -111488075, 3600, ,overwitten, 1, 10, 2, 0" );
+        EventsCGIResult.fromString( "3, 4, 5" );
     }
 
     /**
@@ -201,77 +251,27 @@ public class EventsCGIResultTest
     }
 
     /**
-     * Tests that parsing a null String yields a NullPointerException. The use
-     * case "Build events.cgi query" specifies this.
+     * Tests that parsing a line of CSV with too many values throws an
+     * IllegalArgumentException.
      */
-    @Test( expected = NullPointerException.class )
-    public void nullPointerException()
+    @Test( expected = IllegalArgumentException.class )
+    public void tooManyColumns()
     {
-        EventsCGIResult.fromString( null );
+        EventsCGIResult.fromString( "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14" );
     }
 
     /**
-     * Tests that parsing an empty ("") String yields an
-     * IllegalArgumentException. The use case "Build events.cgi query" specifies
-     * this.
+     * Tests that parsing a valid line of CSV succeeds.
      */
-    @Test( expected = IllegalArgumentException.class )
-    public void emptyString()
+    @Test
+    public void validParse()
     {
-        EventsCGIResult.fromString( "" );
-    }
-
-    /**
-     * Tests that parsing a malformed String yields an IllegalArgumentException.
-     * The use case "Build events.cgi query" specifies this.
-     */
-    @Test( expected = IllegalArgumentException.class )
-    public void parsingMalformedString()
-    {
-        EventsCGIResult.fromString( "3, 4, 5" );
-    }
-
-    /**
-     * Tests that parsing a String containing a camera number that is too high
-     * yields an {@link IllegalArgumentException}.
-     */
-    @Test( expected = IllegalArgumentException.class )
-    public void highCameraNumber()
-    {
-        aBuilder().camera( 65 ).build();
+        EventsCGIResult.fromString( "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0" );
+        EventsCGIResult.fromString( "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0, 4, 8" );
     }
 
     private Builder aBuilder()
     {
         return eventBuilderGenerator( new Random( 0 ) ).next();
-    }
-
-    /**
-     * Tests that an offset lower than -90000 yields an
-     * {@link IllegalArgumentException}.
-     */
-    @Test( expected = IllegalArgumentException.class )
-    public void largeNegativeOffset()
-    {
-        aBuilder().offset( -90001 ).build();
-    }
-
-    /**
-     * Tests that an offset greater than 90000 yields an
-     * {@link IllegalArgumentException}.
-     */
-    @Test( expected = IllegalArgumentException.class )
-    public void largeOffset()
-    {
-        aBuilder().offset( 90001 ).build();
-    }
-
-    /**
-     * Tests that an incomplete EventsCGIResult cannot be built.
-     */
-    @Test( expected = IllegalStateException.class )
-    public void incompleteObject()
-    {
-        new EventsCGIResult.Builder().build();
     }
 }

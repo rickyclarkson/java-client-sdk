@@ -13,16 +13,6 @@ import org.junit.Test;
 public class ListsTest
 {
     /**
-     * Tests that Lists.remove works as specified.
-     */
-    @Test
-    public void remove()
-    {
-        assertTrue( Lists.remove( Arrays.asList( 1, 2, 3 ), 3 ).equals(
-                Arrays.asList( 1, 2 ) ) );
-    }
-
-    /**
      * Tests that Lists.reduceLeft works as expected.
      */
     @Test
@@ -38,6 +28,26 @@ public class ListsTest
                         return original + newValue;
                     }
                 } ) == 6 );
+    }
+
+    /**
+     * Tests that Lists.remove works as specified.
+     */
+    @Test
+    public void remove()
+    {
+        assertTrue( Lists.remove( Arrays.asList( 1, 2, 3 ), 3 ).equals(
+                Arrays.asList( 1, 2 ) ) );
+    }
+
+    /**
+     * Tests that Lists.removeIndices works as expected.
+     */
+    @Test
+    public void removeIndices()
+    {
+        assertTrue( Lists.removeIndices( Arrays.asList( 0, 1, 2, 3, 4 ), 1, 3 ).equals(
+                Arrays.asList( 0, 2, 4 ) ) );
     }
 
     /**
@@ -66,15 +76,5 @@ public class ListsTest
                 return original + newValue;
             }
         } ) == 1 * 4 + 2 * 5 + 3 * 6 );
-    }
-
-    /**
-     * Tests that Lists.removeIndices works as expected.
-     */
-    @Test
-    public void removeIndices()
-    {
-        assertTrue( Lists.removeIndices( Arrays.asList( 0, 1, 2, 3, 4 ), 1, 3 ).equals(
-                Arrays.asList( 0, 2, 4 ) ) );
     }
 }

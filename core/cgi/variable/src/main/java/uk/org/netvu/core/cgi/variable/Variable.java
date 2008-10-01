@@ -82,11 +82,6 @@ public enum Variable
 
     private final ArrayOrScalar arrayOrScalar;
 
-    Variable( final ArrayOrScalar arrayOrScalar )
-    {
-        this.arrayOrScalar = arrayOrScalar;
-    }
-
     /**
      * A Conversion that, given a String possibly ending in [], ignores the []
      * and matches it, case-insensitively, to one of the given Variables,
@@ -108,6 +103,11 @@ public enum Variable
             }
         }
     };
+
+    Variable( final ArrayOrScalar arrayOrScalar )
+    {
+        this.arrayOrScalar = arrayOrScalar;
+    }
 
     @Override
     public String toString()

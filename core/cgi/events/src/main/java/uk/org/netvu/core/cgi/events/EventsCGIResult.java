@@ -26,25 +26,36 @@ public final class EventsCGIResult
     private static final Parameter<Integer, Option<Integer>> CAMERA_PARAMETER = bound(
             0, 64, Parameter.parameter( "cam", TwoWayConversion.integer ) );
 
-    private static final Parameter<String, Option<String>> ALARM = parameter( "alarm", TwoWayConversion.string );
+    private static final Parameter<String, Option<String>> ALARM = parameter(
+            "alarm", TwoWayConversion.string );
 
-    private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = notNegative( parameter( "time", TwoWayConversion.integer ) );
+    private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = notNegative( parameter(
+            "time", TwoWayConversion.integer ) );
 
     private static final Parameter<Integer, Option<Integer>> OFFSET = bound(
             -90000, 90000, parameter( "offset", TwoWayConversion.integer ) );
 
-    private static final Parameter<String, Option<String>> FILE = parameter( "file", TwoWayConversion.string );
+    private static final Parameter<String, Option<String>> FILE = parameter(
+            "file", TwoWayConversion.string );
 
-    private static final Parameter<Boolean, Option<Boolean>> ON_DISK = parameter( "onDisk", TwoWayConversion.total( Conversion.equal( "exists" ),
-    Conversion.fromBoolean( "exists", "overwitten" ) ) );
+    private static final Parameter<Boolean, Option<Boolean>> ON_DISK = parameter(
+            "onDisk", TwoWayConversion.total( Conversion.equal( "exists" ),
+                    Conversion.fromBoolean( "exists", "overwitten" ) ) );
 
-    private static final Parameter<Integer, Option<Integer>> DURATION = notNegative( parameter( "duration", TwoWayConversion.integer ) );
+    private static final Parameter<Integer, Option<Integer>> DURATION = notNegative( parameter(
+            "duration", TwoWayConversion.integer ) );
 
-    private static final Parameter<Integer, Option<Integer>> PRE_ALARM = notNegative( parameter( "preAlarm", TwoWayConversion.integer ) );
+    private static final Parameter<Integer, Option<Integer>> PRE_ALARM = notNegative( parameter(
+            "preAlarm", TwoWayConversion.integer ) );
 
-    private static final Parameter<Integer, Option<Integer>> ARCHIVE = notNegative( parameter( "archive", TwoWayConversion.integer ) );
-    private static final Parameter<Status, Status> STATUS = parameterWithDefault( "status", Status.NONE, TwoWayConversion.convenientPartial( Status.fromString ) );
-    private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = parameterWithDefault( "alarmType", AlarmType.NONE, TwoWayConversion.convenientPartial( AlarmType.fromString ) );
+    private static final Parameter<Integer, Option<Integer>> ARCHIVE = notNegative( parameter(
+            "archive", TwoWayConversion.integer ) );
+    private static final Parameter<Status, Status> STATUS = parameterWithDefault(
+            "status", Status.NONE,
+            TwoWayConversion.convenientPartial( Status.fromString ) );
+    private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = parameterWithDefault(
+            "alarmType", AlarmType.NONE,
+            TwoWayConversion.convenientPartial( AlarmType.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
@@ -62,403 +73,6 @@ public final class EventsCGIResult
             add( ARCHIVE );
         }
     };
-
-    private final ParameterMap builtMap;
-
-    private EventsCGIResult( final ParameterMap builtMap )
-    {
-        for ( final Parameter<?, ? extends Option<?>> parameter : compulsoryParameters )
-        {
-            if ( builtMap.get( parameter ).isNone() )
-            {
-                throw new IllegalStateException( "The parameter " + parameter
-                        + " has not been given a value" );
-            }
-        }
-
-        this.builtMap = builtMap;
-    }
-
-    /**
-     * A builder that takes in all the information needed to construct an
-     * EventsCGIResult and constructs it.
-     */
-    public static final class Builder
-    {
-        private Option<ParameterMap> real = Option.some( new ParameterMap() );
-
-        /**
-         * Constructs a builder ready to take in all the information needed to
-         * construct an EventsCGIResult.
-         */
-        public Builder()
-        {
-        }
-
-        /**
-         * Adds the system camera number to the builder. Valid values are 0 to
-         * 64.
-         * 
-         * @param camera
-         *        the system camera number.
-         * @return the builder.
-         */
-        public Builder camera( final int camera )
-        {
-            real = real.map( ParameterMap.setter( CAMERA_PARAMETER, camera ) );
-            return this;
-        }
-
-        /**
-         * Adds the alarm description to the builder. Cannot be null.
-         * 
-         * @param alarm
-         *        the alarm description.
-         * @return the builder.
-         */
-        public Builder alarm( final String alarm )
-        {
-            real = real.map( ParameterMap.setter( ALARM, alarm ) );
-            return this;
-        }
-
-        /**
-         * Adds the time of the event to the builder. Cannot be negative.
-         * 
-         * @param julianTime
-         *        the time of the event.
-         * @return the builder.
-         */
-        public Builder julianTime( final int julianTime )
-        {
-            real = real.map( ParameterMap.setter( JULIAN_TIME, julianTime ) );
-            return this;
-        }
-
-        /**
-         * Adds the offset from UTC of the event to the builder. Must be between
-         * -90000 and +90000.
-         * 
-         * @param offset
-         *        the offset from UTC.
-         * @return the builder.
-         */
-        public Builder offset( final int offset )
-        {
-            real = real.map( ParameterMap.setter( OFFSET, offset ) );
-            return this;
-        }
-
-        /**
-         * Adds the name of the video file that the result was found in to the
-         * builder. Cannot be null.
-         * 
-         * @param file
-         *        the name of the video file.
-         * @return the builder.
-         */
-        public Builder file( final String file )
-        {
-            real = real.map( ParameterMap.setter( FILE, file ) );
-            return this;
-        }
-
-        /**
-         * Adds information about whether the video file is still available, to
-         * the builder.
-         * 
-         * @param onDisk
-         *        true if the video file is still available, false otherwise.
-         * @return the builder.
-         */
-        public Builder onDisk( final boolean onDisk )
-        {
-            real = real.map( ParameterMap.setter( ON_DISK, onDisk ) );
-            return this;
-        }
-
-        /**
-         * Adds the duration of the event to the builder. Cannot be negative.
-         * 
-         * @param duration
-         *        the duration of the event.
-         * @return the builder.
-         */
-        public Builder duration( final int duration )
-        {
-            real = real.map( ParameterMap.setter( DURATION, duration ) );
-            return this;
-        }
-
-        /**
-         * Specifies the number of seconds before the alarm time that are
-         * relevant. Cannot be negative.
-         * 
-         * @param preAlarm
-         *        the number of seconds before the alarm time that are relevant.
-         * @return the builder.
-         */
-        public Builder preAlarm( final int preAlarm )
-        {
-            real = real.map( ParameterMap.setter( PRE_ALARM, preAlarm ) );
-            return this;
-        }
-
-        /**
-         * Specifies the number of seconds since 1970 after which the video for
-         * this event may be overwritten. Cannot be negative.
-         * 
-         * @param archive
-         *        the number of seconds since 1970 after which the video for
-         *        this event may be overwritten.
-         * @return the builder.
-         */
-        public Builder archive( final int archive )
-        {
-            real = real.map( ParameterMap.setter( ARCHIVE, archive ) );
-            return this;
-        }
-
-        /**
-         * Specifies the status of the database record - i.e., how complete it
-         * is on disk. Cannot be null.
-         * 
-         * @param status
-         *        the status of the database record.
-         * @return the builder.
-         */
-        public Builder status( final Status status )
-        {
-            real = real.map( ParameterMap.setter( STATUS, status ) );
-            return this;
-        }
-
-        /**
-         * Specifies the type of alarm that this event represents. Cannot be
-         * null.
-         * 
-         * @param alarmType
-         *        the type of alarm that this event represents.
-         * @return the builder.
-         */
-        public Builder alarmType( final AlarmType alarmType )
-        {
-            real = real.map( ParameterMap.setter( ALARM_TYPE, alarmType ) );
-            return this;
-        }
-
-        /**
-         * Creates an EventsCGIResult containing all the values added to the
-         * builder.
-         * 
-         * @return the created event.
-         */
-        public EventsCGIResult build()
-        {
-            try
-            {
-                return new EventsCGIResult( real.get() );
-            }
-            finally
-            {
-                real = Option.none( "The Builder has already had build() called on it" );
-            }
-        }
-    }
-
-    /**
-     * An enum consisting of various states a database record can be in.
-     */
-    public enum Status
-    {
-        /**
-         * The status was not included in the data.
-         */
-        NONE( 0 ),
-        /**
-         * A handle for writing the record has been allocated, and a timestamp
-         * for it set.
-         */
-        PENDING( 1 ),
-        /**
-         * The initial data in the record has been written, but there may be
-         * more data to write.
-         */
-        NEW( 2 ),
-        /**
-         * All data has been written or updated.
-         */
-        CLOSED( 4 ),
-        /**
-         * The data for this record has been archived to FTP server.
-         */
-        ARCHIVED( 8 );
-
-        /**
-         * The numeric value associated with this state.
-         */
-        public final int value;
-
-        Status( final int value )
-        {
-            this.value = value;
-        }
-
-        /**
-         * Finds the Status whose numeric value is the same as the value
-         * parameter.
-         * 
-         * @param value
-         *        the numeric value to search for.
-         * @return the Status whose numeric value is the same as the value
-         *         parameter.
-         */
-        public static Status find( final int value )
-        {
-            for ( final Status status : Status.values() )
-            {
-                if ( status.value == value )
-                {
-                    return status;
-                }
-            }
-
-            throw new IllegalArgumentException(
-                    "There is no Status with the value " + value );
-        }
-
-        private static final Conversion<String, Option<Status>> fromString = new Conversion<String, Option<Status>>()
-        {
-            @Override
-            public Option<Status> convert( final String s )
-            {
-                try
-                {
-                    return Option.some( find( Integer.parseInt( s ) ) );
-                }
-                catch ( final IllegalArgumentException e )
-                {
-                    return Option.none( s + " is not a valid Status" );
-                }
-            }
-        };
-    }
-
-    /**
-     * The system camera number.
-     * 
-     * @return the system camera number.
-     */
-    public int getCam()
-    {
-        return builtMap.get( CAMERA_PARAMETER ).get();
-    }
-
-    /**
-     * The alarm description.
-     * 
-     * @return the alarm description.
-     */
-    public String getAlarm()
-    {
-        return builtMap.get( ALARM ).get();
-    }
-
-    /**
-     * The time in seconds since 1970 that the event occurred at.
-     * 
-     * @return the time in seconds.
-     */
-    public int getJulianTime()
-    {
-        return builtMap.get( JULIAN_TIME ).get();
-    }
-
-    /**
-     * The timezone offset from UTC, in seconds. E.g., BST is 3600.
-     * 
-     * @return the timezone offset from UTC.
-     */
-    public int getOffset()
-    {
-        return builtMap.get( OFFSET ).get();
-    }
-
-    /**
-     * Gets the name of the video file that the result was found in.
-     * 
-     * @return the name of the video file that the result was found in.
-     */
-    public String getFile()
-    {
-        return builtMap.get( FILE ).get();
-    }
-
-    /**
-     * Reports whether the video for the event is available on disk.
-     * 
-     * @return whether the video for the event is available on disk.
-     */
-    public boolean isOnDisk()
-    {
-        return builtMap.get( ON_DISK ).get();
-    }
-
-    /**
-     * The duration of the event in seconds. The duration plus the julian time
-     * will never be larger than Integer.MAX_VALUE (or negative).
-     * 
-     * @return the duration of the event in seconds.
-     */
-    public int getDuration()
-    {
-        return builtMap.get( DURATION ).get();
-    }
-
-    /**
-     * The number of seconds before the alarm time that are related to the
-     * event.
-     * 
-     * @return the number of seconds before the alarm time that are related to
-     *         the event.
-     */
-    public int getPreAlarm()
-    {
-        return builtMap.get( PRE_ALARM ).get();
-    }
-
-    /**
-     * The number of seconds since 1970 after which the video for this event may
-     * be overwritten.
-     * 
-     * @return the number of seconds since 1970 after which the video for this
-     *         event may be overwritten.
-     */
-    public int getArchive()
-    {
-        return builtMap.get( ARCHIVE ).get();
-    }
-
-    /**
-     * Gives the type of alarm that this event is.
-     * 
-     * @return the type of alarm that this event is.
-     */
-    public AlarmType getAlarmType()
-    {
-        return builtMap.get( ALARM_TYPE );
-    }
-
-    /**
-     * Gives the status of the database record - i.e., how complete it is on
-     * disk.
-     * 
-     * @return the status of the database record.
-     */
-    public Status getStatus()
-    {
-        return builtMap.get( STATUS );
-    }
 
     /**
      * Parses comma separated values in the format defined in the Video Server
@@ -511,6 +125,138 @@ public final class EventsCGIResult
         }
 
         return result.get();
+    }
+
+    private final ParameterMap builtMap;
+
+    private EventsCGIResult( final ParameterMap builtMap )
+    {
+        for ( final Parameter<?, ? extends Option<?>> parameter : compulsoryParameters )
+        {
+            if ( builtMap.get( parameter ).isNone() )
+            {
+                throw new IllegalStateException( "The parameter " + parameter
+                        + " has not been given a value" );
+            }
+        }
+
+        this.builtMap = builtMap;
+    }
+
+    /**
+     * The alarm description.
+     * 
+     * @return the alarm description.
+     */
+    public String getAlarm()
+    {
+        return builtMap.get( ALARM ).get();
+    }
+
+    /**
+     * Gives the type of alarm that this event is.
+     * 
+     * @return the type of alarm that this event is.
+     */
+    public AlarmType getAlarmType()
+    {
+        return builtMap.get( ALARM_TYPE );
+    }
+
+    /**
+     * The number of seconds since 1970 after which the video for this event may
+     * be overwritten.
+     * 
+     * @return the number of seconds since 1970 after which the video for this
+     *         event may be overwritten.
+     */
+    public int getArchive()
+    {
+        return builtMap.get( ARCHIVE ).get();
+    }
+
+    /**
+     * The system camera number.
+     * 
+     * @return the system camera number.
+     */
+    public int getCam()
+    {
+        return builtMap.get( CAMERA_PARAMETER ).get();
+    }
+
+    /**
+     * The duration of the event in seconds. The duration plus the julian time
+     * will never be larger than Integer.MAX_VALUE (or negative).
+     * 
+     * @return the duration of the event in seconds.
+     */
+    public int getDuration()
+    {
+        return builtMap.get( DURATION ).get();
+    }
+
+    /**
+     * Gets the name of the video file that the result was found in.
+     * 
+     * @return the name of the video file that the result was found in.
+     */
+    public String getFile()
+    {
+        return builtMap.get( FILE ).get();
+    }
+
+    /**
+     * The time in seconds since 1970 that the event occurred at.
+     * 
+     * @return the time in seconds.
+     */
+    public int getJulianTime()
+    {
+        return builtMap.get( JULIAN_TIME ).get();
+    }
+
+    /**
+     * The timezone offset from UTC, in seconds. E.g., BST is 3600.
+     * 
+     * @return the timezone offset from UTC.
+     */
+    public int getOffset()
+    {
+        return builtMap.get( OFFSET ).get();
+    }
+
+    /**
+     * The number of seconds before the alarm time that are related to the
+     * event.
+     * 
+     * @return the number of seconds before the alarm time that are related to
+     *         the event.
+     */
+    public int getPreAlarm()
+    {
+        return builtMap.get( PRE_ALARM ).get();
+    }
+
+    /**
+     * Gives the status of the database record - i.e., how complete it is on
+     * disk.
+     * 
+     * @return the status of the database record.
+     */
+    public Status getStatus()
+    {
+        return builtMap.get( STATUS );
+    }
+
+    /**
+     * Reports whether the video for the event is available on disk.
+     * 
+     * @return whether the video for the event is available on disk.
+     */
+    public boolean isOnDisk()
+    {
+        return builtMap.get( ON_DISK ).get();
     }
 
     /**
@@ -600,16 +346,6 @@ public final class EventsCGIResult
         KEYWORD( 64 );
 
         /**
-         * The numeric value associated with this state.
-         */
-        public final int value;
-
-        AlarmType( final int value )
-        {
-            this.value = value;
-        }
-
-        /**
          * Finds an AlarmType that has the supplied value.
          * 
          * @param value
@@ -634,6 +370,11 @@ public final class EventsCGIResult
         }
 
         /**
+         * The numeric value associated with this state.
+         */
+        public final int value;
+
+        /**
          * A Conversion that converts any String into an AlarmType if it can,
          * storing the result in an Option.
          */
@@ -652,5 +393,275 @@ public final class EventsCGIResult
                 }
             }
         };
+
+        AlarmType( final int value )
+        {
+            this.value = value;
+        }
+    }
+
+    /**
+     * A builder that takes in all the information needed to construct an
+     * EventsCGIResult and constructs it.
+     */
+    public static final class Builder
+    {
+        private Option<ParameterMap> real = Option.some( new ParameterMap() );
+
+        /**
+         * Constructs a builder ready to take in all the information needed to
+         * construct an EventsCGIResult.
+         */
+        public Builder()
+        {
+        }
+
+        /**
+         * Adds the alarm description to the builder. Cannot be null.
+         * 
+         * @param alarm
+         *        the alarm description.
+         * @return the builder.
+         */
+        public Builder alarm( final String alarm )
+        {
+            real = real.map( ParameterMap.setter( ALARM, alarm ) );
+            return this;
+        }
+
+        /**
+         * Specifies the type of alarm that this event represents. Cannot be
+         * null.
+         * 
+         * @param alarmType
+         *        the type of alarm that this event represents.
+         * @return the builder.
+         */
+        public Builder alarmType( final AlarmType alarmType )
+        {
+            real = real.map( ParameterMap.setter( ALARM_TYPE, alarmType ) );
+            return this;
+        }
+
+        /**
+         * Specifies the number of seconds since 1970 after which the video for
+         * this event may be overwritten. Cannot be negative.
+         * 
+         * @param archive
+         *        the number of seconds since 1970 after which the video for
+         *        this event may be overwritten.
+         * @return the builder.
+         */
+        public Builder archive( final int archive )
+        {
+            real = real.map( ParameterMap.setter( ARCHIVE, archive ) );
+            return this;
+        }
+
+        /**
+         * Creates an EventsCGIResult containing all the values added to the
+         * builder.
+         * 
+         * @return the created event.
+         */
+        public EventsCGIResult build()
+        {
+            try
+            {
+                return new EventsCGIResult( real.get() );
+            }
+            finally
+            {
+                real = Option.none( "The Builder has already had build() called on it" );
+            }
+        }
+
+        /**
+         * Adds the system camera number to the builder. Valid values are 0 to
+         * 64.
+         * 
+         * @param camera
+         *        the system camera number.
+         * @return the builder.
+         */
+        public Builder camera( final int camera )
+        {
+            real = real.map( ParameterMap.setter( CAMERA_PARAMETER, camera ) );
+            return this;
+        }
+
+        /**
+         * Adds the duration of the event to the builder. Cannot be negative.
+         * 
+         * @param duration
+         *        the duration of the event.
+         * @return the builder.
+         */
+        public Builder duration( final int duration )
+        {
+            real = real.map( ParameterMap.setter( DURATION, duration ) );
+            return this;
+        }
+
+        /**
+         * Adds the name of the video file that the result was found in to the
+         * builder. Cannot be null.
+         * 
+         * @param file
+         *        the name of the video file.
+         * @return the builder.
+         */
+        public Builder file( final String file )
+        {
+            real = real.map( ParameterMap.setter( FILE, file ) );
+            return this;
+        }
+
+        /**
+         * Adds the time of the event to the builder. Cannot be negative.
+         * 
+         * @param julianTime
+         *        the time of the event.
+         * @return the builder.
+         */
+        public Builder julianTime( final int julianTime )
+        {
+            real = real.map( ParameterMap.setter( JULIAN_TIME, julianTime ) );
+            return this;
+        }
+
+        /**
+         * Adds the offset from UTC of the event to the builder. Must be between
+         * -90000 and +90000.
+         * 
+         * @param offset
+         *        the offset from UTC.
+         * @return the builder.
+         */
+        public Builder offset( final int offset )
+        {
+            real = real.map( ParameterMap.setter( OFFSET, offset ) );
+            return this;
+        }
+
+        /**
+         * Adds information about whether the video file is still available, to
+         * the builder.
+         * 
+         * @param onDisk
+         *        true if the video file is still available, false otherwise.
+         * @return the builder.
+         */
+        public Builder onDisk( final boolean onDisk )
+        {
+            real = real.map( ParameterMap.setter( ON_DISK, onDisk ) );
+            return this;
+        }
+
+        /**
+         * Specifies the number of seconds before the alarm time that are
+         * relevant. Cannot be negative.
+         * 
+         * @param preAlarm
+         *        the number of seconds before the alarm time that are relevant.
+         * @return the builder.
+         */
+        public Builder preAlarm( final int preAlarm )
+        {
+            real = real.map( ParameterMap.setter( PRE_ALARM, preAlarm ) );
+            return this;
+        }
+
+        /**
+         * Specifies the status of the database record - i.e., how complete it
+         * is on disk. Cannot be null.
+         * 
+         * @param status
+         *        the status of the database record.
+         * @return the builder.
+         */
+        public Builder status( final Status status )
+        {
+            real = real.map( ParameterMap.setter( STATUS, status ) );
+            return this;
+        }
+    }
+
+    /**
+     * An enum consisting of various states a database record can be in.
+     */
+    public enum Status
+    {
+        /**
+         * The status was not included in the data.
+         */
+        NONE( 0 ),
+        /**
+         * A handle for writing the record has been allocated, and a timestamp
+         * for it set.
+         */
+        PENDING( 1 ),
+        /**
+         * The initial data in the record has been written, but there may be
+         * more data to write.
+         */
+        NEW( 2 ),
+        /**
+         * All data has been written or updated.
+         */
+        CLOSED( 4 ),
+        /**
+         * The data for this record has been archived to FTP server.
+         */
+        ARCHIVED( 8 );
+
+        /**
+         * Finds the Status whose numeric value is the same as the value
+         * parameter.
+         * 
+         * @param value
+         *        the numeric value to search for.
+         * @return the Status whose numeric value is the same as the value
+         *         parameter.
+         */
+        public static Status find( final int value )
+        {
+            for ( final Status status : Status.values() )
+            {
+                if ( status.value == value )
+                {
+                    return status;
+                }
+            }
+
+            throw new IllegalArgumentException(
+                    "There is no Status with the value " + value );
+        }
+
+        /**
+         * The numeric value associated with this state.
+         */
+        public final int value;
+
+        private static final Conversion<String, Option<Status>> fromString = new Conversion<String, Option<Status>>()
+        {
+            @Override
+            public Option<Status> convert( final String s )
+            {
+                try
+                {
+                    return Option.some( find( Integer.parseInt( s ) ) );
+                }
+                catch ( final IllegalArgumentException e )
+                {
+                    return Option.none( s + " is not a valid Status" );
+                }
+            }
+        };
+
+        Status( final int value )
+        {
+            this.value = value;
+        }
     }
 }

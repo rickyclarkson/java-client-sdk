@@ -10,15 +10,6 @@ package uk.org.netvu.core.cgi.common;
  */
 public final class Pair<T, U>
 {
-    private final T t;
-    private final U u;
-
-    private Pair( final T t, final U u )
-    {
-        this.t = t;
-        this.u = u;
-    }
-
     /**
      * Constructs a Pair with the two specified objects.
      * 
@@ -36,25 +27,14 @@ public final class Pair<T, U>
     {
         return new Pair<T, U>( t, u );
     }
+    private final T t;
 
-    /**
-     * Gives the first object in this Pair.
-     * 
-     * @return the first object in this Pair.
-     */
-    public T first()
-    {
-        return t;
-    }
+    private final U u;
 
-    /**
-     * Gives the second object in this Pair.
-     * 
-     * @return the second object in this Pair.
-     */
-    public U second()
+    private Pair( final T t, final U u )
     {
-        return u;
+        this.t = t;
+        this.u = u;
     }
 
     /**
@@ -73,11 +53,31 @@ public final class Pair<T, U>
     }
 
     /**
+     * Gives the first object in this Pair.
+     * 
+     * @return the first object in this Pair.
+     */
+    public T first()
+    {
+        return t;
+    }
+
+    /**
      * Gives a hashCode computed from the fields, for consistency with equals.
      */
     @Override
     public int hashCode()
     {
         return first().hashCode() + 13651 * second().hashCode();
+    }
+
+    /**
+     * Gives the second object in this Pair.
+     * 
+     * @return the second object in this Pair.
+     */
+    public U second()
+    {
+        return u;
     }
 }

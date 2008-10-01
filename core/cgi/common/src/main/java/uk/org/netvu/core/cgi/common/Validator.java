@@ -8,11 +8,16 @@ import java.util.List;
 public abstract class Validator
 {
     /**
-     * @param parameterMap
-     *        the ParameterMap to check.
-     * @return true if the ParameterMap is valid, false otherwise.
+     * A Validator that accepts any ParameterMap.
      */
-    public abstract boolean isValid( ParameterMap parameterMap );
+    static final Validator TRUE = new Validator()
+    {
+        @Override
+        public boolean isValid( final ParameterMap parameterMap )
+        {
+            return true;
+        }
+    };
 
     /**
      * A convenience method that produces a Validator that ensures that only one
@@ -44,14 +49,9 @@ public abstract class Validator
     }
 
     /**
-     * A Validator that accepts any ParameterMap.
+     * @param parameterMap
+     *        the ParameterMap to check.
+     * @return true if the ParameterMap is valid, false otherwise.
      */
-    static final Validator TRUE = new Validator()
-    {
-        @Override
-        public boolean isValid( final ParameterMap parameterMap )
-        {
-            return true;
-        }
-    };
+    public abstract boolean isValid( ParameterMap parameterMap );
 }

@@ -18,6 +18,12 @@ public final class ParameterMapTest
     private final static Parameter<String, Option<String>> PARAM = Parameter.parameter(
             "blah", TwoWayConversion.string );
 
+    private static final Parameter<Integer, Option<Integer>> TIME = Parameter.notNegative( Parameter.parameter(
+            "time", TwoWayConversion.integer ) );
+
+    private static final Parameter<Integer, Option<Integer>> RANGE = Parameter.parameter(
+            "range", TwoWayConversion.integer );
+
     /**
      * Tests that a value stored in a ParameterMap gets converted as per the
      * Parameter's rules.
@@ -30,64 +36,30 @@ public final class ParameterMapTest
     }
 
     /**
-     * Tests that setting the same once-only Parameter twice results in an
-     * IllegalStateException.
-     */
-    @Test( expected = IllegalStateException.class )
-    public void repeating()
-    {
-        new ParameterMap().set( PARAM, "10" ).set( PARAM, "10" );
-    }
-
-    private static final Parameter<Integer, Option<Integer>> TIME = Parameter.notNegative( Parameter.parameter(
-            "time", TwoWayConversion.integer ) );
-    private static final Parameter<Integer, Option<Integer>> RANGE = Parameter.parameter(
-            "range", TwoWayConversion.integer );
-
-    /**
-     * Tests that an IllegalStateException is thrown when invalid parameter
-     * values are given.
-     */
-    @Test( expected = IllegalStateException.class )
-    public void validatorFail()
-    {
-        new ParameterMap( new Validator()
-        {
-            @Override
-            public boolean isValid( final ParameterMap parameterMap )
-            {
-                final Option<Integer> oTime = parameterMap.get( TIME );
-                final Option<Integer> oRange = parameterMap.get( RANGE );
-
-                return oTime.fold( true, new Conversion<Integer, Boolean>()
-                {
-                    @Override
-                    public Boolean convert( final Integer time )
-                    {
-                        return oRange.fold( true,
-                                new Conversion<Integer, Boolean>()
-                                {
-                                    @Override
-                                    public Boolean convert( final Integer range )
-                                    {
-                                        return time + range >= 0;
-                                    }
-                                } );
-                    }
-
-                } );
-            }
-        } ).set( TIME, 2000000000 ).set( RANGE, 2000000000 );
-    }
-
-    /**
-     * Tests that ParameterMap.isDefault works as specified.
+     * Tests that ParameterMap.fromStrings works as specified.
      */
     @Test
-    public void isDefault()
+    public void fromStrings()
     {
-        assertTrue( new ParameterMap().isDefault( TIME ) );
-        assertFalse( new ParameterMap().set( TIME, 40 ).isDefault( TIME ) );
+        final Parameter<String, String> name = Parameter.parameterWithDefault(
+                "name", "Bob", TwoWayConversion.string );
+        final Parameter<String, String> surname = Parameter.parameterWithDefault(
+                "surname", "Hope", TwoWayConversion.string );
+
+        // this is an anonymous intialiser - it is creating a new ArrayList and
+        // adding values to it inline.
+        final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
+        {
+            {
+                add( name );
+                add( surname );
+            }
+        };
+
+        assertTrue( ParameterMap.fromStrings( params,
+                Arrays.asList( "John", "Major" ) ).get().get( surname ).equals(
+                "Major" ) );
+
     }
 
     /**
@@ -115,6 +87,26 @@ public final class ParameterMapTest
 
         assertTrue( parameterMap.toURLParameters( params ).equals(
                 "time=10&range=40" ) );
+    }
+
+    /**
+     * Tests that ParameterMap.isDefault works as specified.
+     */
+    @Test
+    public void isDefault()
+    {
+        assertTrue( new ParameterMap().isDefault( TIME ) );
+        assertFalse( new ParameterMap().set( TIME, 40 ).isDefault( TIME ) );
+    }
+
+    /**
+     * Tests that setting the same once-only Parameter twice results in an
+     * IllegalStateException.
+     */
+    @Test( expected = IllegalStateException.class )
+    public void repeating()
+    {
+        new ParameterMap().set( PARAM, "10" ).set( PARAM, "10" );
     }
 
     /**
@@ -150,29 +142,38 @@ public final class ParameterMapTest
     }
 
     /**
-     * Tests that ParameterMap.fromStrings works as specified.
+     * Tests that an IllegalStateException is thrown when invalid parameter
+     * values are given.
      */
-    @Test
-    public void fromStrings()
+    @Test( expected = IllegalStateException.class )
+    public void validatorFail()
     {
-        final Parameter<String, String> name = Parameter.parameterWithDefault(
-                "name", "Bob", TwoWayConversion.string );
-        final Parameter<String, String> surname = Parameter.parameterWithDefault(
-                "surname", "Hope", TwoWayConversion.string );
-
-        // this is an anonymous intialiser - it is creating a new ArrayList and
-        // adding values to it inline.
-        final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
+        new ParameterMap( new Validator()
         {
+            @Override
+            public boolean isValid( final ParameterMap parameterMap )
             {
-                add( name );
-                add( surname );
+                final Option<Integer> oTime = parameterMap.get( TIME );
+                final Option<Integer> oRange = parameterMap.get( RANGE );
+
+                return oTime.fold( true, new Conversion<Integer, Boolean>()
+                {
+                    @Override
+                    public Boolean convert( final Integer time )
+                    {
+                        return oRange.fold( true,
+                                new Conversion<Integer, Boolean>()
+                                {
+                                    @Override
+                                    public Boolean convert( final Integer range )
+                                    {
+                                        return time + range >= 0;
+                                    }
+                                } );
+                    }
+
+                } );
             }
-        };
-
-        assertTrue( ParameterMap.fromStrings( params,
-                Arrays.asList( "John", "Major" ) ).get().get( surname ).equals(
-                "Major" ) );
-
+        } ).set( TIME, 2000000000 ).set( RANGE, 2000000000 );
     }
 }

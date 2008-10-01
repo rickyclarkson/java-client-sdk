@@ -69,11 +69,130 @@ public final class VPartsCGI
         }
     };
 
+    /**
+     * Parses a vparts.cgi request into a VPartsCGI.
+     * 
+     * @param url
+     *        the vparts request to parse.
+     * @return a VPartsCGI containing the values from the URL.
+     */
+    public static VPartsCGI fromString( final String url )
+    {
+        final Option<ParameterMap> map = ParameterMap.fromURL( url, params );
+        if ( map.isNone() )
+        {
+            throw new IllegalArgumentException( url
+                    + " cannot be parsed into a VPartsCGI, because "
+                    + map.reason() );
+        }
+
+        return new VPartsCGI( map.get() );
+    }
+
     private final ParameterMap builtMap;
 
     private VPartsCGI( final ParameterMap builtMap )
     {
         this.builtMap = builtMap;
+    }
+
+    /**
+     * The expiry time for partitions, in Julianised GMT (only used in protect
+     * mode).
+     * 
+     * @return the expiry time for partitions.
+     */
+    public int getExpiry()
+    {
+        return builtMap.get( EXPIRY );
+    }
+
+    /**
+     * The output format.
+     * 
+     * @return the output format.
+     */
+    public Format getFormat()
+    {
+        return builtMap.get( FORMAT );
+    }
+
+    /**
+     * The maximum number of elements in the list.
+     * 
+     * @return the maximum number of elements in the list.
+     */
+    public int getListlength()
+    {
+        return builtMap.get( LIST_LENGTH );
+    }
+
+    /**
+     * The function of the cgi call.
+     * 
+     * @return the {@link Mode} that the CGI call is in.
+     */
+    public Mode getMode()
+    {
+        return builtMap.get( MODE );
+    }
+
+    /**
+     * The format of directory paths, short or long.
+     * 
+     * @return the format of directory paths, short or long.
+     */
+    public DirectoryPathFormat getPathstyle()
+    {
+        return builtMap.get( PATH_STYLE );
+    }
+
+    /**
+     * The timespan to search in seconds.
+     * 
+     * @return the timespan to search in seconds.
+     */
+    public int getRange()
+    {
+        return builtMap.get( RANGE );
+    }
+
+    /**
+     * Julianised GMT time to start the search from.
+     * 
+     * @return the Julianised GMT time to start the search from.
+     */
+    public int getTime()
+    {
+        return builtMap.get( TIME );
+    }
+
+    /**
+     * Whether or not to generate watermark codes (read mode only).
+     * 
+     * @return true if the server should generate watermark codes (read mode
+     *         only), false otherwise.
+     */
+    public boolean getWatermark()
+    {
+        return builtMap.get( WATERMARK );
+    }
+
+    /**
+     * The step size to be used in watermark code generation.
+     * 
+     * @return the step size to be used in watermark code generation.
+     */
+    public int getWatermarkStep()
+    {
+        return builtMap.get( WMARKSTEP );
+    }
+
+    @Override
+    public String toString()
+    {
+        return "/vparts.cgi?format=" + builtMap.get( FORMAT ) + "&"
+                + builtMap.toURLParameters( Lists.remove( params, FORMAT ) );
     }
 
     /**
@@ -101,6 +220,53 @@ public final class VPartsCGI
         }
 
         /**
+         * Sets the expiry time for partitions, in Julianised GMT (only used in
+         * protect mode).
+         * 
+         * @param expiry
+         *        the expiry time for partitions
+         * @return the Builder.
+         */
+        public Builder expiry( final int expiry )
+        {
+            parameterMap = parameterMap.map( ParameterMap.setter( EXPIRY,
+                    expiry ) );
+            return this;
+        }
+
+        /**
+         * Determines the output format (defaults to CSV in this API, which is
+         * different to the servers' defaults).
+         * 
+         * @param format
+         *        the output format.
+         * @return the Builder.
+         */
+        public Builder format( final Format format )
+        {
+            parameterMap = parameterMap.map( ParameterMap.setter( FORMAT,
+                    format ) );
+            return this;
+        }
+
+        /**
+         * Determines the maximum number of elements in the list.
+         * 
+         * @param listlength
+         *        the maximum number of elements in the list.
+         * @return the Builder.
+         */
+        public Builder listlength( final int listlength )
+        {
+            parameterMap = parameterMap.map( ParameterMap.setter( LIST_LENGTH,
+                    listlength ) );
+            return this;
+        }
+
+        // TODO decide whether to restrict expiry to a VPartsCGI with protect
+        // set.
+
+        /**
          * Sets the function of the cgi call.
          * 
          * @param mode
@@ -114,15 +280,16 @@ public final class VPartsCGI
         }
 
         /**
-         * Sets the Julianised GMT start time for database search.
+         * Determines the format of directory paths, short or long.
          * 
-         * @param time
-         *        the start time for database search.
+         * @param style
+         *        the format of directory paths.
          * @return the Builder.
          */
-        public Builder time( final int time )
+        public Builder pathstyle( final DirectoryPathFormat style )
         {
-            parameterMap = parameterMap.map( ParameterMap.setter( TIME, time ) );
+            parameterMap = parameterMap.map( ParameterMap.setter( PATH_STYLE,
+                    style ) );
             return this;
         }
 
@@ -139,21 +306,16 @@ public final class VPartsCGI
             return this;
         }
 
-        // TODO decide whether to restrict expiry to a VPartsCGI with protect
-        // set.
-
         /**
-         * Sets the expiry time for partitions, in Julianised GMT (only used in
-         * protect mode).
+         * Sets the Julianised GMT start time for database search.
          * 
-         * @param expiry
-         *        the expiry time for partitions
+         * @param time
+         *        the start time for database search.
          * @return the Builder.
          */
-        public Builder expiry( final int expiry )
+        public Builder time( final int time )
         {
-            parameterMap = parameterMap.map( ParameterMap.setter( EXPIRY,
-                    expiry ) );
+            parameterMap = parameterMap.map( ParameterMap.setter( TIME, time ) );
             return this;
         }
 
@@ -188,167 +350,5 @@ public final class VPartsCGI
                     step ) );
             return this;
         }
-
-        /**
-         * Determines the output format (defaults to CSV in this API, which is
-         * different to the servers' defaults).
-         * 
-         * @param format
-         *        the output format.
-         * @return the Builder.
-         */
-        public Builder format( final Format format )
-        {
-            parameterMap = parameterMap.map( ParameterMap.setter( FORMAT,
-                    format ) );
-            return this;
-        }
-
-        /**
-         * Determines the maximum number of elements in the list.
-         * 
-         * @param listlength
-         *        the maximum number of elements in the list.
-         * @return the Builder.
-         */
-        public Builder listlength( final int listlength )
-        {
-            parameterMap = parameterMap.map( ParameterMap.setter( LIST_LENGTH,
-                    listlength ) );
-            return this;
-        }
-
-        /**
-         * Determines the format of directory paths, short or long.
-         * 
-         * @param style
-         *        the format of directory paths.
-         * @return the Builder.
-         */
-        public Builder pathstyle( final DirectoryPathFormat style )
-        {
-            parameterMap = parameterMap.map( ParameterMap.setter( PATH_STYLE,
-                    style ) );
-            return this;
-        }
-    }
-
-    /**
-     * The function of the cgi call.
-     * 
-     * @return the {@link Mode} that the CGI call is in.
-     */
-    public Mode getMode()
-    {
-        return builtMap.get( MODE );
-    }
-
-    /**
-     * Julianised GMT time to start the search from.
-     * 
-     * @return the Julianised GMT time to start the search from.
-     */
-    public int getTime()
-    {
-        return builtMap.get( TIME );
-    }
-
-    /**
-     * The timespan to search in seconds.
-     * 
-     * @return the timespan to search in seconds.
-     */
-    public int getRange()
-    {
-        return builtMap.get( RANGE );
-    }
-
-    /**
-     * The expiry time for partitions, in Julianised GMT (only used in protect
-     * mode).
-     * 
-     * @return the expiry time for partitions.
-     */
-    public int getExpiry()
-    {
-        return builtMap.get( EXPIRY );
-    }
-
-    /**
-     * Whether or not to generate watermark codes (read mode only).
-     * 
-     * @return true if the server should generate watermark codes (read mode
-     *         only), false otherwise.
-     */
-    public boolean getWatermark()
-    {
-        return builtMap.get( WATERMARK );
-    }
-
-    /**
-     * The step size to be used in watermark code generation.
-     * 
-     * @return the step size to be used in watermark code generation.
-     */
-    public int getWatermarkStep()
-    {
-        return builtMap.get( WMARKSTEP );
-    }
-
-    /**
-     * The output format.
-     * 
-     * @return the output format.
-     */
-    public Format getFormat()
-    {
-        return builtMap.get( FORMAT );
-    }
-
-    /**
-     * The maximum number of elements in the list.
-     * 
-     * @return the maximum number of elements in the list.
-     */
-    public int getListlength()
-    {
-        return builtMap.get( LIST_LENGTH );
-    }
-
-    /**
-     * The format of directory paths, short or long.
-     * 
-     * @return the format of directory paths, short or long.
-     */
-    public DirectoryPathFormat getPathstyle()
-    {
-        return builtMap.get( PATH_STYLE );
-    }
-
-    @Override
-    public String toString()
-    {
-        return "/vparts.cgi?format=" + builtMap.get( FORMAT ) + "&"
-                + builtMap.toURLParameters( Lists.remove( params, FORMAT ) );
-    }
-
-    /**
-     * Parses a vparts.cgi request into a VPartsCGI.
-     * 
-     * @param url
-     *        the vparts request to parse.
-     * @return a VPartsCGI containing the values from the URL.
-     */
-    public static VPartsCGI fromString( final String url )
-    {
-        final Option<ParameterMap> map = ParameterMap.fromURL( url, params );
-        if ( map.isNone() )
-        {
-            throw new IllegalArgumentException( url
-                    + " cannot be parsed into a VPartsCGI, because "
-                    + map.reason() );
-        }
-
-        return new VPartsCGI( map.get() );
     }
 }

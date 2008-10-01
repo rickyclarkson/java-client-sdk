@@ -10,18 +10,6 @@ import org.junit.Test;
 public class VariableCGITest
 {
     /**
-     * Tests that parsing a variable.cgi query works.
-     */
-    @Test
-    public void parsing()
-    {
-        assertTrue( VariableCGI.fromString(
-                "foo/variable.cgi?variable=c_title[]" ).getVariable() == Variable.C_TITLE );
-        assertTrue( VariableCGI.fromString(
-                "foo/variable.cgi?variable=c_title[]&type=http" ).getType() == VariableType.HTTP );
-    }
-
-    /**
      * Tests that building a URL works.
      */
     @Test
@@ -57,5 +45,17 @@ public class VariableCGITest
     public void invalidBuild()
     {
         new VariableCGI.Builder().build();
+    }
+
+    /**
+     * Tests that parsing a variable.cgi query works.
+     */
+    @Test
+    public void parsing()
+    {
+        assertTrue( VariableCGI.fromString(
+                "foo/variable.cgi?variable=c_title[]" ).getVariable() == Variable.C_TITLE );
+        assertTrue( VariableCGI.fromString(
+                "foo/variable.cgi?variable=c_title[]&type=http" ).getType() == VariableType.HTTP );
     }
 }

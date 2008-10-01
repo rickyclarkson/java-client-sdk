@@ -3,14 +3,10 @@ package uk.org.netvu.core.cgi.common;
 import java.util.Random;
 
 /**
- * Random data generators for use in automated tests.
+ * Random data generators for use in automated tests. For internal use only.
  */
 public final class Generators
 {
-    private Generators()
-    {
-    }
-
     /**
      * A limit on iterations - control this to control how long tests that use
      * random data run for.
@@ -24,6 +20,29 @@ public final class Generators
     public static final int SIZE_LIMIT = 250;
 
     /**
+     * An infinite series of non-negative ints.
+     * 
+     * @param random
+     *        the random number generator to use.
+     * @return an infinite series of non-negative ints.
+     */
+    public static Generator<Integer> nonNegativeInts( final Random random )
+    {
+        if ( random == null )
+        {
+            throw new NullPointerException();
+        }
+
+        return new Generator<Integer>()
+        {
+            public Integer next()
+            {
+                return random.nextInt( Integer.MAX_VALUE );
+            }
+        };
+    }
+
+    /**
      * An infinite series of random Strings of maximum size SIZE_LIMIT.
      * 
      * @param random
@@ -32,10 +51,7 @@ public final class Generators
      */
     public static Generator<String> strings( final Random random )
     {
-        if ( random == null )
-        {
-            throw new NullPointerException();
-        }
+        Checks.notNull( random );
 
         return new Generator<String>()
         {
@@ -80,26 +96,7 @@ public final class Generators
         };
     }
 
-    /**
-     * An infinite series of non-negative ints.
-     * 
-     * @param random
-     *        the random number generator to use.
-     * @return an infinite series of non-negative ints.
-     */
-    public static Generator<Integer> nonNegativeInts( final Random random )
+    private Generators()
     {
-        if ( random == null )
-        {
-            throw new NullPointerException();
-        }
-
-        return new Generator<Integer>()
-        {
-            public Integer next()
-            {
-                return random.nextInt( Integer.MAX_VALUE );
-            }
-        };
     }
 }

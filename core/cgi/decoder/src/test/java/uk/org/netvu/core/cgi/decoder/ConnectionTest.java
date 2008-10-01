@@ -13,6 +13,24 @@ import org.junit.Test;
 public class ConnectionTest
 {
     /**
+     * Tests that cam and seq are mutually exclusive.
+     */
+    @Test( expected = IllegalStateException.class )
+    public void mutualExclusiveParameters1()
+    {
+        new Connection().cam( 2 ).seq( 4 );
+    }
+
+    /**
+     * Tests that cam and dwell are mutually exclusive.
+     */
+    @Test( expected = IllegalStateException.class )
+    public void mutualExclusiveParameters2()
+    {
+        new Connection().cam( 2 ).dwell( 10 );
+    }
+
+    /**
      * Tests that parsing a URL into a Connection gives the correct slave IP
      * address.
      */
@@ -31,24 +49,6 @@ public class ConnectionTest
     {
         assertTrue( new Connection().slaveIP( "foo" ).getSlaveIP().equals(
                 "foo" ) );
-    }
-
-    /**
-     * Tests that cam and seq are mutually exclusive.
-     */
-    @Test( expected = IllegalStateException.class )
-    public void mutualExclusiveParameters1()
-    {
-        new Connection().cam( 2 ).seq( 4 );
-    }
-
-    /**
-     * Tests that cam and dwell are mutually exclusive.
-     */
-    @Test( expected = IllegalStateException.class )
-    public void mutualExclusiveParameters2()
-    {
-        new Connection().cam( 2 ).dwell( 10 );
     }
 
     /**

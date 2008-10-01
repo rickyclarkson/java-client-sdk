@@ -5,10 +5,6 @@ package uk.org.netvu.core.cgi.common;
  */
 public final class Checks
 {
-    private Checks()
-    {
-    }
-
     /**
      * Checks that all the arguments passed are non-null.
      * 
@@ -30,5 +26,9 @@ public final class Checks
             }
             a++;
         }
+    }
+
+    private Checks()
+    {
     }
 }
