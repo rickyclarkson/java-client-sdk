@@ -1,0 +1,49 @@
+ --------------------
+ Parse URL parameters
+ --------------------
+
+Build URL parameters so that implementing client modules is easy.
+
+* Summary:
+
+ Each CGI module has to be able to build URL parameters from objects.  They should be able to use this module to do it rather than repeating the common parts in each module.
+
+* Related ticket(s):
+
+ {{{http://adwiki.ad-group.adh/ticket/2356}#2356 CGI-common library for supporting the other CGI modules}}
+
+* Goal:
+
+ To provide support for building URL parameters in the various forms that the other CGI modules require.
+
+* Actors:
+
+ The CGI modules.
+
+* Pre-conditions:
+
+ None.
+
+* Triggers:
+
+The user calls a function to build CGI requests.
+
+* Basic success path:
+
+ The user calls a function to build CGI requests.
+
+* Other success path(s):
+
+ None.
+
+* Exception paths:
+
+ null inputs to methods.
+
+* Post-conditions:
+
+ None.
+
+* Notes:
+
+ None.

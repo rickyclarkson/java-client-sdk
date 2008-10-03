@@ -2,75 +2,50 @@
  Convert events.cgi result to CSV
  --------------------------------
 
-~~ Enter the name of the use case in verb-noun format e.g. Borrow Books, Withdraw Cash. For completeness, also set the title of the document above to the same name.
 Convert events.cgi result to CSV
 
 * Summary:
 
- <Enter a few sentences or a paragraph which captures the essence of the use case. It should include the goal and principal actor and provide sufficient information to understand what the use case is about.>
-
  CSV is the most common format in which the replay server needs to return results from events.cgi queries to a user. The replay server should be able to call a function on an events.cgi result object that returns a CSV representation of that result.
 
 * Related ticket(s):
-
- <Enter links to Trac tickets that are related to this use case.>
- ~~ e.g. {{{http://adwiki.ad-group.adh/ticket/1690}#1690}}
  
  {{{http://adwiki.ad-group.adh/ticket/2183}#2183 Events.cgi builder and parser}}
  
 * Goal:
 
- <Briefly describe what the user intends to achieve with this use case.>
- 
  To provide a CSV representation of an events.cgi result object.
 
 * Actors:
 
- <An actor is someone or something outside the system that either acts on the system (a primary actor) or is acted on by the system (a secondary actor). An actor may be a person, a device, another system or sub-system, or time.>
- 
  Replay server
 
 * Pre-conditions:
 
- <Define all the conditions that must be true for it to be possible to trigger the use case.>
- 
  None.
 
 * Triggers:
 
- <Define the event that causes the use case to be initiated. This event can be external, temporal or internal. If the trigger is not a simple true "event" (e.g., the user presses a button), but instead "when a set of conditions are met", there will need to be a triggering process that continually (or periodically) runs to test whether the "trigger conditions" are met: the "triggering event" is a signal from the trigger process that the conditions are now met.>
- 
  The user calls a function to obtain the CSV representation of an events.cgi result object.
 
 * Basic success path:
 
- <Define the basic success path as a set of numbered steps or an activity diagram.>
- 
- [[1]] The user calls a function to obtain the CSV representation of an events.cgi result object.
- 
+ [[1]] The user calls a function to obtain the CSV representation of an events.cgi result object. 
 
-* Other succcess path(s):
-
- <<(Optional)>><If there are other paths that lead to a successful conclusion of the use case, define them here.>
+* Other success path(s):
 
  None.
  
 * Exception paths:
 
- <<(Optional)>><Look at each of the success paths and what good go wrong at each stage. If there is scope for error, define how each error condition will be handled.>
- 
  None.
 
 * Post-conditions:
 
- <Define what the change in state of the system will be after the use case completes. Post-conditions are guaranteed to be true when the use case ends.>
- 
  None.
  
 * Notes:
 
- <<(Optional)>><Use this section to add any additional information that does not naturally fit into any of the above sections.>
- 
  The CSV format that should be used is as follows (all fields should be on the same line):
 
 ---

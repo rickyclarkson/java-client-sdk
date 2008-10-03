@@ -1,0 +1,49 @@
+ -----------------------
+ Maintain Builder values
+ -----------------------
+
+Keep Builder values so that each client module can update and access them.
+
+* Summary:
+
+ Each CGI module has one or more Builders, which need to store and retrieve values, with various constraints.  Each should be able to use ParameterMap in this module to store and retrieve values.
+
+* Related ticket(s):
+
+ {{{http://adwiki.ad-group.adh/ticket/2536}#2356 CGI-common library for supporting the other CGI modules}}
+
+* Goal:
+
+ To provide support for constrained values for Builders for the other CGI modules.
+
+* Actors:
+
+ The CGI modules.
+
+* Pre-conditions:
+
+ None.
+
+* Triggers:
+
+ The user calls a function to build or parse CGI requests or their results.
+
+* Basic success path:
+
+ The user calls a function to build or parse CGI requests or their results.
+
+* Other success path(s):
+
+ None.
+
+* Exception paths:
+
+ null inputs to methods.
+
+* Post-conditions:
+
+ None.
+
+* Notes:
+
+ None.

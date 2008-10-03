@@ -142,8 +142,6 @@ public abstract class Parameter<T, R>
      *        the type that the Parameter can take.
      * @param name
      *        the name of the Parameter.
-     * @param description
-     *        a textual description of the Parameter.
      * @param conversions
      *        an object that can convert a String to a T and back.
      * @return a Parameter that can take 0 or 1 values of type T, yielding them
@@ -211,8 +209,6 @@ public abstract class Parameter<T, R>
      *        the type that the Parameter can take.
      * @param name
      *        the name of the Parameter.
-     * @param description
-     *        a textual description of the Parameter.
      * @param defaultValue
      *        the default value for the Parameter.
      * @param conversions
@@ -274,8 +270,6 @@ public abstract class Parameter<T, R>
      *        the input type of the sparse array.
      * @param name
      *        the name of the Parameter.
-     * @param description
-     *        a textual description of the Parameter.
      * @param conversions
      *        an object that can convert a String to a T and back.
      * @return a Parameter that accepts Pairs of Integers and values of type T,

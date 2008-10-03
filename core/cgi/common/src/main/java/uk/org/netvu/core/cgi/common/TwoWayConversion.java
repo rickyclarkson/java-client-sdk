@@ -168,7 +168,7 @@ public abstract class TwoWayConversion<A, B>
     public static <A, B> TwoWayConversion<A, B> total(
             final Conversion<A, B> a2b, final Conversion<B, A> b2a )
     {
-        Checks.notNull(a2b, b2a);
+        Checks.notNull( a2b, b2a );
 
         return new TwoWayConversion<A, B>()
         {
