@@ -36,12 +36,6 @@ public abstract class Option<T>
             }
 
             @Override
-            public T getOrElse( final T reserve )
-            {
-                return reserve;
-            }
-
-            @Override
             public boolean isNone()
             {
                 return true;
@@ -141,12 +135,6 @@ public abstract class Option<T>
             }
 
             @Override
-            public T getOrElse( final T reserve )
-            {
-                return t;
-            }
-
-            @Override
             public boolean isNone()
             {
                 return false;
@@ -226,16 +214,6 @@ public abstract class Option<T>
      * @return the element held by this Option.
      */
     public abstract T get();
-
-    /**
-     * Gets the stored element, or returns the specified reserve if there is
-     * none.
-     * 
-     * @param reserve
-     *        the reserve value.
-     * @return the stored element, or the specified reserve if there is none.
-     */
-    public abstract T getOrElse( T reserve );
 
     /**
      * Throws an UnsupportedOperationException to be consistent with equals.

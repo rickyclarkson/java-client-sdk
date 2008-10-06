@@ -20,16 +20,6 @@ public class OptionTest
     }
 
     /**
-     * Tests that Option.getOrElse works as specified.
-     */
-    @Test
-    public void getOrElse()
-    {
-        assertTrue( Option.some( 5 ).getOrElse( 0 ) == 5 );
-        assertTrue( Option.<Integer> none( "foo" ).getOrElse( 0 ) == 0 );
-    }
-
-    /**
      * Tests that Option.isNone works as specified.
      */
     @Test

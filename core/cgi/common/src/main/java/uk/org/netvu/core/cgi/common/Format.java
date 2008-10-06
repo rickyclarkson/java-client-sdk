@@ -1,6 +1,7 @@
 package uk.org.netvu.core.cgi.common;
 
 import java.util.Random;
+import java.util.Locale;
 
 /**
  * The format of the results from the events database.
@@ -36,7 +37,7 @@ public enum Format
         {
             try
             {
-                return Option.some( Format.valueOf( t.toUpperCase() ) );
+                return Option.some( Format.valueOf( t.toUpperCase( Locale.ENGLISH ) ) );
             }
             catch ( final IllegalArgumentException exception )
             {
@@ -64,6 +65,6 @@ public enum Format
     @Override
     public String toString()
     {
-        return super.toString().toLowerCase();
+        return super.toString().toLowerCase( Locale.ENGLISH );
     }
 }

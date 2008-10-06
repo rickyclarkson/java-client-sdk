@@ -11,7 +11,10 @@ import java.util.Random
 
 object Implicits {
  implicit def function1ToConversion[T, R](f: T => R) = new Conversion[T, R] { def convert(t: T) = f(t) }
- implicit def reductionToFunction2(r: Reduction[String, String]) = (o: String, n: String) => r.reduce(n, o) }
+ implicit def reductionToFunction2(r: Reduction[String, String]) = (o: String, n: String) => r.reduce(n, o)
+ implicit def conversionToFunction1[T, R](f: Conversion[T, R]): T => R = t => f.convert(t)
+ implicit def function2ToReduction[T, R](r: (T, R) => R): Reduction[T, R] =
+  new Reduction[T, R] { override def reduce(newValue: T, original: R) = r(newValue, original) } }
 
 class URLBuilderTest extends JUnit4(new Specification with Scalacheck {
  "Values encoded with URLBuilder" should {
@@ -260,3 +263,92 @@ class TwoWayConversionTest extends JUnit4(new Specification {
   "be able to convert to a String using Object's toString()" in {
    val obj = new Object
    convenientTotal[Object]{ x: String => x }.b2a.convert(obj).get mustEqual obj.toString } } })
+
+/*class NullTest extends JUnit4(new Specification {
+ import Implicits.conversionToFunction1
+ import Implicits.function2ToReduction
+
+ def fromFunction2[T, U, R](f: (T, U) => R)(implicit t: T, u: U) = List({ tt: T => f(tt, u) }, { uu: U => f(t, uu) })
+
+ def fromFunction2YieldingConversion[T, U, R1, R2](f: (T, U) => Conversion[R1, R2])(implicit t: T, u: U): List[_ => _] =
+  f(t, u) :: fromFunction2(f)
+
+ def fromFunction3[T, U, V, R](f: (T, U, V) => R)(implicit t: T, u: U, v: V) = List({ tt: T => f(tt, u, v) },
+                                                                                    { uu: U => f(t, uu, v) },
+                                                                                    { vv: V => f(t, u, vv) })
+
+ import java.util.{ArrayList, Arrays}
+ import Implicits.function1ToConversion
+ import java.lang.Boolean.{valueOf => toJavaBoolean}
+ import java.lang.{UnsupportedOperationException => Unsupported}
+
+ implicit val string = "foo"
+ implicit val integer: Integer = 5
+ implicit val twoWayConversion = TwoWayConversion.integer
+ implicit def list[T]: java.util.List[T] = java.util.Collections.emptyList[T]
+ implicit def conversion[T, U] = new Conversion[T, U] { override def convert(t: T) = throw new Unsupported }
+ implicit def reduction[T, R] = new Reduction[T, R] { override def reduce(newValue: T, original: R) = throw new Unsupported }
+ implicit val anInt = 5
+ implicit val intArray = Array(1, 2, 3)
+ implicit val aParameter = Parameter.parameter(string, twoWayConversion)
+ implicit val unit = ()
+
+ def notAcceptNull[T <: AnyRef, R] = new specs.matcher.Matcher[T => R] { def apply(f: => T => R) =
+  try { f(null.asInstanceOf[T])
+        (false, "should not be seen", "the method accepts null") } catch {
+         case e: NullPointerException => (true, "the method doesn't accept null", "should not be seen") } }
+
+ def notAcceptNulls[T <: AnyRef, R] = new specs.matcher.Matcher[Conversion[T, R]] { def apply(conversion: Conversion[T, R]) =
+  try { conversion.convert(null.asInstanceOf[T])
+        (false, "should not be seen", "the method accepts null") } catch {
+         case e: NullPointerException => (true, "the method doesn't accept null", "should not be seen") } }
+
+ "Checks.notNull" should { "not accept null" in { Checks.notNull _ must notAcceptNull[Nothing, Unit] } }
+ "Conversion.stringToBoolean" should { "not accept null" in {
+  Conversion.stringToBoolean must notAcceptNulls } }
+
+/* List[_ => _](Checks.notNull _, Conversion.stringToBoolean, Conversion.stringToInt,
+               Conversion.hexStringToInt, Conversion.hexStringToLong, Conversion.stringToLong, Conversion.longToHexString,
+               Conversion.intToHexString, Conversion.equal _, Conversion.equal("foo")) foreach { method =>
+                method must notAcceptNull }*/
+
+ val methods: List[Function1[_ <: AnyRef, _]] = 
+  List[_ => _](Checks.notNull _, Conversion.stringToBoolean, Conversion.stringToInt,
+               Conversion.hexStringToInt, Conversion.hexStringToLong, Conversion.stringToLong, Conversion.longToHexString,
+               Conversion.intToHexString, Conversion.equal _, Conversion.equal("foo")) ++
+  fromFunction2YieldingConversion(Conversion.fromBoolean[String]) ++
+  List[_ => _](Conversion.identity[Int], Conversion.objectToString[Int],
+               new Conversion[Int, Int] { def convert(i: Int) = i * i }.andThen _,
+               Format.fromString, Format.oneOf _, Generators.nonNegativeInts _,
+               Generators.strings _, Generators.stringsAndNull _) ++
+  fromFunction2(Lists.filter _) ++
+  fromFunction2(Lists.map _) ++
+  fromFunction2(Lists.reduce _) ++
+  fromFunction2(Lists.remove[Unit] _) ++
+  fromFunction2(Lists.removeIndices _) ++
+  List(Lists.zipWithIndex _) ++
+  fromFunction2(Lists.zip _) ++
+  List(Option.none _) ++
+  (List[Option[Int]](Option.none[Int]("because"), Option.some(5)) flatMap {
+   o: Option[Int] => fromFunction2(o.fold[Int] _) ++
+   List(o.map _, o.bind _, o.then _) }) ++
+  List(Option.noneRef _, Option.some.convert _, { x: Int => Option.some(x) },
+       Option.someRef _) ++
+  fromFunction2(Pair.pair[Int, Int] _) ++
+  List(Parameter.bound(3, 5, (_: Parameter[Integer, String]))) ++
+  fromFunction2(Parameter.not[Integer, Option[Integer]] _) ++
+  List(Parameter.notNegative[Option[Integer]] _) ++
+  fromFunction2(Parameter.parameter[Integer] _) ++
+  fromFunction3[String, Integer, TwoWayConversion[String, Integer], Parameter[Integer, Integer]](
+   Parameter.parameterWithDefault[Integer] _) ++
+  fromFunction2[String, TwoWayConversion[String, Integer], Parameter[java.util.List[Pair[Integer, Integer]], java.util.TreeMap[Integer, Integer]]](Parameter.sparseArrayParam[Integer] _) ++
+  List({ x: Validator => new ParameterMap(x) })
+ def ex[T <: AnyRef](method: T => _) = method(null.asInstanceOf[T])
+
+ "Calling a method with a null parameter" should {
+  "cause a NullPointerException" in {
+   for (method <- methods) ex(method) must throwA(new NullPointerException) } } })
+                               
+                            
+                            
+*/
