@@ -10,7 +10,7 @@ Parse URL parameters so that Builders in client modules to make implementing Bui
 
 * Related ticket(s):
 
- {{{http://adwiki.ad-group.adh/ticket/2356}#2356 CGI-common library for supporting the other CGI modules}}
+ {{{http://adwiki.ad-group.adh/ticket/2536}#2536 CGI-common library for supporting the other CGI modules}}
 
 * Goal:
 

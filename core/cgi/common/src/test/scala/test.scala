@@ -306,8 +306,6 @@ class NullTest extends JUnit4(new Specification {
 
  "Checks.notNull" should { "not accept null" in { Checks.notNull _ must notAcceptNull[Nothing, Unit] } }
 
-/* def noNull1[T <: AnyRef, R](c: Conversion[T, R], desc: String) =
-  "annoying" should { desc+" not accept null" in { c must notAcceptNulls[T, R] } }*/
  def noNull[T <: AnyRef, R](f: T => R, desc: String) =
   "annoying" should { desc+" not accept null" in { f must notAcceptNull[T, R] } }
 
@@ -344,8 +342,8 @@ class NullTest extends JUnit4(new Specification {
  noNull(Lists.map _, "Lists.map")
  noNull(Lists.reduce[Integer] _, "Lists.reduce")
 
-// noNull2(Lists.remove[Unit] _, "Lists.remove") -- see line below
-// noNull2(Lists.removeIndices[Integer] _, "Lists.removeIndices") -- this line produces a compiler exception, need to try a later version of Scala.
+// noNull(Lists.remove[Unit] _, "Lists.remove") -- see line below
+// noNull(Lists.removeIndices[Integer] _, "Lists.removeIndices") -- this line produces a compiler exception, need to try a later version of Scala.
 
  noNull(Lists.zipWithIndex[Integer] _, "Lists.zipWithIndex")
  noNull(Lists.zip[Integer, String] _, "Lists.zip")
