@@ -1,7 +1,5 @@
 package uk.org.netvu.core.cgi.decoder;
 
-import static uk.org.netvu.core.cgi.common.Parameter.parameter;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -23,15 +21,15 @@ import uk.org.netvu.core.cgi.common.Validator;
  */
 public final class Connection
 {
-    private static final Parameter<String, Option<String>> SLAVE_IP_PARAM = parameter(
+    private static final Parameter<String, Option<String>> SLAVE_IP_PARAM = Parameter.parameter(
             "slaveip", TwoWayConversion.string );
-    private static final Parameter<Integer, Option<Integer>> SEQ_PARAM = parameter(
+    private static final Parameter<Integer, Option<Integer>> SEQ_PARAM = Parameter.parameter(
             "seq", TwoWayConversion.hexInt );
-    private static final Parameter<Integer, Option<Integer>> DWELL_PARAM = parameter(
+    private static final Parameter<Integer, Option<Integer>> DWELL_PARAM = Parameter.parameter(
             "dwell", TwoWayConversion.integer );
-    private static final Parameter<Integer, Option<Integer>> CAM = parameter(
+    private static final Parameter<Integer, Option<Integer>> CAM = Parameter.parameter(
             "cam", TwoWayConversion.integer );
-    private static final Parameter<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = parameter(
+    private static final Parameter<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = Parameter.parameter(
             "audio", TwoWayConversion.integer );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and

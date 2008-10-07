@@ -1,8 +1,5 @@
 package uk.org.netvu.core.cgi.common;
 
-import static uk.org.netvu.core.cgi.common.Option.none;
-import static uk.org.netvu.core.cgi.common.Option.some;
-
 import java.math.BigInteger;
 
 /**
@@ -24,117 +21,146 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * A conversion from Strings to Booleans, using Boolean.valueOf(String).
+     * A conversion from Strings to Booleans, where "true" gets mapped to the Boolean value TRUE, "false"
+     * gets mapped to FALSE, and anything else gets mapped to an empty Option.
      */
-    public static final Conversion<String, Option<Boolean>> stringToBoolean = new Conversion<String, Option<Boolean>>()
+    public static Conversion<String, Option<Boolean>> stringToBoolean()
     {
-        @Override
-        public Option<Boolean> convert( final String t )
+        return new Conversion<String, Option<Boolean>>()
         {
-            return t.equals( "true" ) ? some( true )
-                    : t.equals( "false" ) ? some( false )
-                            : Option.<Boolean> none( t
-                                    + " is neither true nor false" );
-        }
-    };
+            @Override
+            public Option<Boolean> convert( final String t )
+            {
+                if (t.equals( "true" ))
+                {
+                    return Option.some( true );
+                }
+                else if (t.equals( "false" ))
+                {
+                    return Option.some( false );
+                }
+            
+                return Option.none( t + " is neither true nor false" );
+            }
+        };
+    }
 
     /**
      * A conversion from Strings to Integers, using Integer.parseInt(String).
      */
-    public static final Conversion<String, Option<Integer>> stringToInt = new Conversion<String, Option<Integer>>()
+    public static Conversion<String, Option<Integer>> stringToInt()
     {
-        @Override
-        public Option<Integer> convert( final String t )
+        return new Conversion<String, Option<Integer>>()
         {
-            Checks.notNull( t );
+            @Override
+            public Option<Integer> convert( final String t )
+            {
+                Checks.notNull( t );
 
-            try
-            {
-                return Option.some( Integer.parseInt( t ) );
+                try
+                {
+                    return Option.some( Integer.parseInt( t ) );
+                }
+                catch ( final NumberFormatException exception )
+                {
+                    return Option.none( t + " is not a valid Integer" );
+                }
             }
-            catch ( final NumberFormatException exception )
-            {
-                return Option.none( t + " is not a valid Integer" );
-            }
-        }
-    };
+        };
+    }
 
     /**
      * A conversion from Strings containing hexadecimal to ints.
      */
-    public static final Conversion<String, Option<Integer>> hexStringToInt = new Conversion<String, Option<Integer>>()
+    public static final Conversion<String, Option<Integer>> hexStringToInt()
     {
-        @Override
-        public Option<Integer> convert( final String t )
+        return new Conversion<String, Option<Integer>>()
         {
-            Checks.notNull( t );
+            @Override
+            public Option<Integer> convert( final String t )
+            {
+                Checks.notNull( t );
 
-            try
-            {
-                return some( (int) Long.parseLong( t, 16 ) );
+                try
+                {
+                    return Option.some( (int) Long.parseLong( t, 16 ) );
+                }
+                catch ( final NumberFormatException e )
+                {
+                    return Option.none( t + " is not a valid long" );
+                }
             }
-            catch ( final NumberFormatException e )
-            {
-                return none( t + " is not a valid long" );
-            }
-        }
-    };
+        };
+    }
 
     /**
      * A conversion from Strings containing hexadecimal to longs.
      */
-    public static final Conversion<String, Option<Long>> hexStringToLong = new Conversion<String, Option<Long>>()
+    public static final Conversion<String, Option<Long>> hexStringToLong()
     {
-        @Override
-        public Option<Long> convert( final String t )
+        return new Conversion<String, Option<Long>>()
         {
-            try
+            @Override
+            public Option<Long> convert( final String t )
             {
-                return some( new BigInteger( t, 16 ).longValue() );
+                try
+                {
+                    return Option.some( new BigInteger( t, 16 ).longValue() );
+                }
+                catch ( final NumberFormatException e )
+                {
+                    return Option.none( t + " is not a valid long, in hexadecimal" );
+                }
             }
-            catch ( final NumberFormatException e )
-            {
-                return none( t + " is not a valid long, in hexadecimal" );
-            }
-        }
-    };
+        };
+    }
 
     /**
      * A conversion from Strings to longs, using Long.parseLong(String).
      */
-    public static final Conversion<String, Long> stringToLong = new Conversion<String, Long>()
+    public static final Conversion<String, Long> stringToLong()
     {
-        @Override
-        public Long convert( final String t )
+        return new Conversion<String, Long>()
         {
-            Checks.notNull( t );
-            return Long.parseLong( t );
-        }
-    };
+            @Override
+            public Long convert( final String t )
+            {
+                Checks.notNull( t );
+
+                return Long.parseLong( t );
+            }
+        };
+    }
 
     /**
      * A conversion from longs to Strings containing hexadecimal.
      */
-    public static final Conversion<Long, String> longToHexString = new Conversion<Long, String>()
+    public static final Conversion<Long, String> longToHexString()
     {
-        @Override
-        public String convert( final Long value )
+        return new Conversion<Long, String>()
         {
-            return Long.toHexString( value );
-        }
-    };
+            @Override
+            public String convert( final Long value )
+            {
+                return Long.toHexString( value );
+            }
+        };
+    }
 
     /**
      * A conversion from ints to Strings containing hexadecimal.
      */
-    public static final Conversion<Integer, String> intToHexString = new Conversion<Integer, String>()
+    public static final Conversion<Integer, String> intToHexString()
     {
-        @Override
-        public String convert( final Integer value )
+        return new Conversion<Integer, String>()
         {
-            return Integer.toHexString( value );
-        }
-    };
+            @Override
+            public String convert( final Integer value )
+            {
+                return Integer.toHexString( value );
+            }
+        };
+    }
 
     /**
      * A Conversion that returns true if the value it receives is the same as

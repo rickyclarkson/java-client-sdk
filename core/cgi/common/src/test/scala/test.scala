@@ -7,69 +7,89 @@ import specs.util.DataTables
 import specs.runner.JUnit4
 import scalacheck.Prop.property
 
-import java.util.Random
+import java.util.{Arrays, Random}
 
 object Implicits {
  implicit def function1ToConversion[T, R](f: T => R) = new Conversion[T, R] { def convert(t: T) = f(t) }
  implicit def reductionToFunction2(r: Reduction[String, String]) = (o: String, n: String) => r.reduce(n, o)
  implicit def conversionToFunction1[T, R](f: Conversion[T, R]): T => R = t => f.convert(t)
  implicit def function2ToReduction[T, R](r: (T, R) => R): Reduction[T, R] =
-  new Reduction[T, R] { override def reduce(newValue: T, original: R) = r(newValue, original) } }
+  new Reduction[T, R] { override def reduce(newValue: T, original: R) = r(newValue, original) }
+}
 
 class URLBuilderTest extends JUnit4(new Specification with Scalacheck {
  "Values encoded with URLBuilder" should {
   "be unaffected when decoded with the same encoding (UTF-8)" in {
    import java.net.URLDecoder.decode
    import URLBuilder.encode.convert
-   property { x: String => decode(convert(x), "UTF-8") == x } must pass } } } )
+   property { x: String => decode(convert(x), "UTF-8") == x } must pass
+  }
+ }
+})
 
 class ReductionTest extends JUnit4(new Specification {
  import Implicits.reductionToFunction2
 
- "Interspersing 1, 2, 3, 4, 5 with ':'" should {
-  "produce 1:2:3:4:5" in {
-   List("1", "2", "3", "4", "5").reduceLeft{ Reduction.intersperseWith(":") } mustEqual "1:2:3:4:5" } } } )
+ "Interspersing 1, 2, 3, 4, 5 with ':'" should { "produce 1:2:3:4:5" in {
+   List("1", "2", "3", "4", "5").reduceLeft{ Reduction.intersperseWith(":") } mustEqual "1:2:3:4:5"
+ } }
+})
 
 class GeneratorsTest extends JUnit4(new Specification with Scalacheck {
  import Generators.{strings, stringsAndNull, nonNegativeInts}
 
  "strings" should { "give the same values on each call" in { def it = strings(new Random(0)).next
-                                                             it mustEqual it } } 
+                                                             it mustEqual it
+                                                           }
+                  }
+ 
  "stringsAndNull" should {
   "start with null then continue with non-nulls." in { val gen = stringsAndNull(new Random(0))
                                                        gen.next mustBe null
-                                                       gen.next mustNotBe null } }
+                                                       gen.next mustNotBe null
+                                                     }
+ }
+
  "nonNegativeInts" should {
   "give the same values on each call" in { def it = nonNegativeInts(new Random(0)).next
-                                           it mustEqual it }
+                                           it mustEqual it
+                                         }
   "give non-negative ints" in { implicit def integer2int(x: java.lang.Integer) = x.intValue
                                 val gen = Generators.nonNegativeInts(new Random(0))
-                                for (i <- 0 to 99) gen.next.intValue must beGreaterThan(0) } }
+                                for (i <- 0 to 99) gen.next.intValue must beGreaterThan(0)
+                              }
+ }
 
  "All the methods" should {
-  val methods = List[Random => Generator[_]](nonNegativeInts _, stringsAndNull _, strings _)
-  "throw a NullPointerException if given a null Random" in {
-   for (m <- methods) m(null).asInstanceOf[Any] must throwA(new NullPointerException) }
   "give the same values on each call" in {
+   val methods = List[Random => Generator[_]](nonNegativeInts _, stringsAndNull _, strings _)
    for (m <- methods) { def it = m(new Random(0)).next
-                        it mustEqual it } } } } )
+                        it mustEqual it
+                      }
+  }
+ }
+})
     
 class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
  "Supplying a null Conversion to a Parameter" should {
   "cause a NullPointerException" in {
-   Parameter.parameterWithDefault("foo", 3, TwoWayConversion.partial(null, to)) must throwA(new NullPointerException)
-   Parameter.parameterWithDefault("foo", 3, TwoWayConversion.partial(from, null)) must throwA(new NullPointerException)
-   Parameter.parameterWithDefault("foo", 3, null) must throwA(new NullPointerException) } }
+   import Parameter.{parameterWithDefault => paramD}
+   paramD("foo", 3, TwoWayConversion.partial(null, to)) must throwA(new NullPointerException)
+   paramD("foo", 3, TwoWayConversion.partial(from, null)) must throwA(new NullPointerException)
+   paramD("foo", 3, null) must throwA(new NullPointerException)
+  }
+ }
 
  def to[T] = new Conversion[T, Option[String]] { def convert(t: T) = Option.some("foo") }
- def from[T] = new Conversion[String, Option[T]] { def convert(s: String): Option[T] = Option.none[T]("Unsupported") }
+ def from[T] =
+  new Conversion[String, Option[T]] { def convert(s: String): Option[T] = Option.none[T]("Unsupported") }
 
- val param = Parameter.parameterWithDefault("foo", 3,
-                                            TwoWayConversion.partial(from, to))
+ val param = Parameter.parameterWithDefault("foo", 3, TwoWayConversion.partial(from, to))
  
- "Supplying a value to an ordinary Parameter twice" should {
-  "cause an IllegalStateException" in {
-   new ParameterMap set (param, 4) set (param, 5) must throwA(new IllegalStateException) } }
+ "Supplying a value to an ordinary Parameter twice" should { "cause an IllegalStateException" in {
+  new ParameterMap set (param, 4) set (param, 5) must throwA(new IllegalStateException)
+ }
+                                                           }
 
  "Converting a Parameter to a URL" should {
   "give an Option holding the name of the Parameter when the Parameter has a non-default value" in {
@@ -145,10 +165,18 @@ class OptionSecondTest extends JUnit4(new Specification with Scalacheck {
  "hashCode" should { "cause an UnsupportedOperationException" in {
   some(5).hashCode must throwA(new UnsupportedOperationException) } } })
 
-class StringsSecondTest extends JUnit4(new Specification with Scalacheck {
- import Strings.{ fromFirst, reversibleReplace, removeSurroundingQuotesLeniently, intersperse }
+class StringsTest extends JUnit4(new Specification with Scalacheck {
+ import Strings.{ fromFirst, reversibleReplace, removeSurroundingQuotesLeniently, intersperse,
+                  afterFirstLeniently, splitIgnoringQuotedSections }
 
- """fromFirst('l', "hello")""" should { "give lo" in { Strings.fromFirst('l', "hello") mustEqual("lo") } }
+ "afterfirstLeniently" should { "give the part of a String after the first instance of a separator, "+
+                                "or the whole String if there is no such instance" in {
+                                 afterFirstLeniently("hello", "-") mustEqual "hello"
+                                 afterFirstLeniently("", "-") mustEqual ""
+                                 afterFirstLeniently("hello - world", "-") mustEqual " world"
+                                 afterFirstLeniently("hello - world - spam", "-") mustEqual " world - spam" } }
+
+ """fromFirst('l', "hello")""" should { "give lo" in { Strings.fromFirst('l', "hello") mustEqual "lo" } }
  "Interspersing a list from 1 to 5 with a comma" should { "give 1,2,3,4,5" in {
   intersperse(",",
               new java.util.ArrayList[String] { for (a <- 1 to 5) add(a.toString) } ) mustEqual "1,2,3,4,5" } }
@@ -163,7 +191,16 @@ class StringsSecondTest extends JUnit4(new Specification with Scalacheck {
  "reversibleReplace" should {
   val replacer = Strings.reversibleReplace("l", "m")
   "be able to replace the 'll' in \"hello\" with 'mm'" in { replacer.replace("hello") mustEqual "hemmo" }
-  "and back" in { replacer.undo("hemmo") mustEqual "hello" } } } )
+  "and back" in { replacer.undo("hemmo") mustEqual "hello" } }
+ "split" should {
+  "split a comma-separated String into an array of Strings, ignoring whitespace after commas" in {
+   Arrays.asList(Strings.split("oh, my,word")) mustEqual Arrays.asList(Array("oh", "my", "word")) } }
+ "splitIgnoringQuotedSections with a comma separator" should {
+  "split \"one,two,three\" into 3 Strings" in {
+   splitIgnoringQuotedSections("one,two,three", ',').size mustEqual 3 }
+  "split \"one,two \\\" and a third, a fourth and perhaps, \\\",a fifth\" into 3 Strings" in {
+   splitIgnoringQuotedSections("one,two \" and a third, a fourth and perhaps, \",a fifth", ','
+                              ).size mustEqual 3 } } })
 
 class ListsSecondTest extends JUnit4(new Specification with Scalacheck {
  import java.util.ArrayList
@@ -194,11 +231,32 @@ class ListsSecondTest extends JUnit4(new Specification with Scalacheck {
                            new Conversion[Int, java.lang.Boolean] { def convert(x: Int) = x % 2 == 0 })
    list.size mustEqual 2
    list.get(0) mustEqual 2
-   list.get(1) mustEqual 4 } } })
+   list.get(1) mustEqual 4 } }
 
-class FormatSecondTest extends JUnit4(new Specification with Scalacheck {
+ import Implicits.function2ToReduction
+
+ "reduce" should { "be able to sum a List containing 1, 2 and 3 to yield 6" in {
+  Lists.reduce[Integer](Arrays.asList(Array[Integer](1, 2, 3)), ((x: Integer), (y: Integer)) => Integer.valueOf(x.intValue + y.intValue)) mustEqual 6 } }
+ 
+ "remove" should { "be able to remove 3 from the list 1, 2, 3" in {
+  Lists.remove[Integer](Arrays.asList(Array[Integer](1, 2, 3)), 3) == Arrays.asList(Array[Integer](1, 2)) } }
+
+ "removeIndices" should { "be able to remove the elements with indices 1 and 3 from 0, 1, 2, 3, 4" in {
+  Lists.removeIndices(Arrays.asList(Array[Integer](0, 1, 2, 3, 4)), Array(1, 3)) == Arrays.asList(Array[Integer](0, 2, 4)) } } })
+
+class FormatTest extends JUnit4(new Specification with Scalacheck {
+ import scalacheck.{Gen, Arbitrary}
+
+ implicit val arbFormat: Arbitrary[Format] =
+  Arbitrary(Gen.choose(1, 1000000).map(i => Format.oneOf(new Random(i))))
+
  "Format.fromString" should { "give an empty Option when supplied with 'foo'" in {
-  Format.fromString.convert("foo").isNone mustEqual true } } })
+  Format.fromString.convert("foo").isNone mustEqual true } }
+ "Formats" should {
+  "have a lowercase String representation" in {
+   property { f: Format => f.toString == f.toString.toLowerCase } }
+  "be retrievable by their String representation" in {
+   property { f: Format => Format.fromString.convert(f.toString).get == f } } } })
 
 class ConversionSecondTest extends JUnit4(new Specification with Scalacheck {
  "Conversion.stringToInt" should { "give an empty Option when supplied with 'foo'" in {
@@ -270,14 +328,11 @@ class NullTest extends JUnit4(new Specification {
 
  def fromFunction2[T, U, R](f: (T, U) => R)(implicit t: T, u: U) = List({ tt: T => f(tt, u) }, { uu: U => f(t, uu) })
 
- def fromFunction2YieldingConversion[T, U, R1, R2](f: (T, U) => Conversion[R1, R2])(implicit t: T, u: U): List[_ => _] =
-  f(t, u) :: fromFunction2(f)
+ def fromFunction2YieldingConversion
+  [T, U, R1, R2](f: (T, U) => Conversion[R1, R2])(implicit t: T, u: U): List[_ => _] =
+   f(t, u) :: fromFunction2(f)
 
- def fromFunction3[T, U, V, R](f: (T, U, V) => R)(implicit t: T, u: U, v: V) = List({ tt: T => f(tt, u, v) },
-                                                                                    { uu: U => f(t, uu, v) },
-                                                                                    { vv: V => f(t, u, vv) })
-
- import java.util.{ArrayList, Arrays}
+ import java.util.ArrayList
  import Implicits.{function1ToConversion, conversionToFunction1}
  import java.lang.Boolean.{valueOf => toJavaBoolean}
  import java.lang.{UnsupportedOperationException => Unsupported}
@@ -287,7 +342,10 @@ class NullTest extends JUnit4(new Specification {
  implicit val twoWayConversion = TwoWayConversion.integer
  implicit def list[T]: java.util.List[T] = java.util.Collections.emptyList[T]
  implicit def conversion[T, U] = new Conversion[T, U] { override def convert(t: T) = throw new Unsupported }
- implicit def reduction[T, R] = new Reduction[T, R] { override def reduce(newValue: T, original: R) = throw new Unsupported }
+
+ implicit def reduction[T, R] =
+  new Reduction[T, R] { override def reduce(newValue: T, original: R) = throw new Unsupported }
+
  implicit val anInt = 5
  implicit val intArray = Array(1, 2, 3)
  implicit val aParameter = Parameter.parameter(string, twoWayConversion)
@@ -313,27 +371,29 @@ class NullTest extends JUnit4(new Specification {
   noNull( { tt: T => f(tt, u) }, desc)
   noNull( { uu: U => f(t, uu) }, desc) }
 
- def noNull[T <: AnyRef, U <: AnyRef, V <: AnyRef, R](f: (T, U, V) => R, desc: String)(implicit t: T, u: U, v: V): Unit = {
+ def noNull[T <: AnyRef, U <: AnyRef, V <: AnyRef, R]
+ (f: (T, U, V) => R, desc: String)(implicit t: T, u: U, v: V): Unit = {
   noNull( { tt: T => f(tt, u, v) }, desc)
   noNull( { uu: U => f(t, uu, v) }, desc)
   noNull( { vv: V => f(t, u, vv) }, desc) }
 
- val conversions = Map[Conversion[_ <: AnyRef, _], String](Conversion.stringToBoolean -> "Conversion.stringToBoolean",
-                                                           Conversion.stringToInt -> "Conversion.stringtoInt",
-                                                           Conversion.hexStringToInt -> "Conversion.hexStringToInt",
-                                                           Conversion.hexStringToLong -> "Conversion.hexStringToLong",
-                                                           Conversion.stringToLong -> "Conversion.stringToLong",
-                                                           Conversion.longToHexString -> "Conversion.longToHexString",
-                                                           Conversion.intToHexString -> "Conversion.intToHexString",
-                                                           Conversion.equal("foo") -> "Conversion.equal(\"foo\")",
-                                                           Conversion.identity[Integer]() -> "Conversion.identity",
-                                                           Conversion.objectToString[Integer]() -> "Conversion.objectToString"
-                                                          )
+ val conversions = Map[Conversion[_ <: AnyRef, _], String](
+  Conversion.stringToBoolean -> "Conversion.stringToBoolean",
+  Conversion.stringToInt -> "Conversion.stringtoInt",
+  Conversion.hexStringToInt -> "Conversion.hexStringToInt",
+  Conversion.hexStringToLong -> "Conversion.hexStringToLong",
+  Conversion.stringToLong -> "Conversion.stringToLong",
+  Conversion.longToHexString -> "Conversion.longToHexString",
+  Conversion.intToHexString -> "Conversion.intToHexString",
+  Conversion.equal("foo") -> "Conversion.equal(\"foo\")",
+  Conversion.identity[Integer]() -> "Conversion.identity",
+  Conversion.objectToString[Integer]() -> "Conversion.objectToString")
 
  for ((m, name) <- conversions) {
   noNull(conversionToFunction1(m), name)
-  noNull[Integer, Integer](conversionToFunction1(new Conversion[Integer, Integer] { def convert(i: Integer) = i } andThen m),
-                           "Chained Conversions") }                                  
+  noNull[Integer, Integer](
+   conversionToFunction1(new Conversion[Integer, Integer] { def convert(i: Integer) = i } andThen m),
+   "Chained Conversions") }                                  
 
  noNull(Conversion.fromBoolean[String] _, "Conversion.fromBoolean")
  noNull(Conversion.equal[String] _, "Conversion.equal")
@@ -372,5 +432,49 @@ class NullTest extends JUnit4(new Specification {
  noNull(Parameter.sparseArrayParam[Integer] _, "Parameter.sparseArrayParam")
 
  noNull({ x: Validator => new ParameterMap(x) }, "new ParameterMap(Validator)")
+ noNull(Reduction.intersperseWith _, "Reduction.intersperseWith")
+ noNull(Reduction.intersperseWith(":").reduce _, "Reduction.intersperseWith(\":\").reduce")
+ noNull(Strings.surroundWithQuotes, "Strings.surroundWithQuotes")
+ noNull({ s: String => Strings.fromFirst('c', s)}, "Strings.fromFirst('c', x)")
+ noNull(Strings.intersperse _, "Strings.intersperse")
+ noNull(Strings.reversibleReplace _, "Strings.reversibleReplace")
+ noNull(Strings.split _, "Strings.split")
+ noNull({ s: String => Strings.splitIgnoringQuotedSections(s, 'c') }, "Strings.splitIgnoringQuotedSections")
+ noNull(Strings.afterFirstLeniently _, "Strings.afterFirstLeniently")
+ noNull(Strings.afterLastLeniently _, "Strings.afterLastLeniently")
+ noNull(Strings.beforeFirstLeniently _, "Strings.beforeFirstLeniently")
+ noNull(Strings.partition('c').convert _, "Strings.partition('c').convert")
+ noNull(Strings.removeSurroundingQuotesLeniently _, "Strings.removeSurroundingQuotesLeniently")
+
+ def twoWay[A, B](twoWay: TwoWayConversion[A, B], desc: String) = {
+  noNull(twoWay.a2b, desc+".a2b()")
+  noNull(twoWay.b2a, desc+".b2a()")
+ }
+
+ twoWay(TwoWayConversion.integer, "TwoWayConversion.integer")
+ twoWay(TwoWayConversion.string, "TwoWayConversion.string")
+ twoWay(TwoWayConversion.bool, "TwoWayConversion.bool")
+ twoWay(TwoWayConversion.hexLong, "TwoWayConversion.hexLong")
+ twoWay(TwoWayConversion.hexInt, "TwoWayConversion.hexInt")
  
+ noNull(TwoWayConversion.convenientPartial _, "TwoWayConversion.convenientPartial")
+ noNull(TwoWayConversion.convenientTotal _, "TwoWayConversion.convenientTotal")
+ noNull(TwoWayConversion.partial _, "TwoWayConversion.partial")
+ noNull(TwoWayConversion.total _, "TwoWayConversion.total")
+
+ noNull(URLBuilder.encode, "URLBuilder.encode")
+ noNull({ x: String => URLBuilder.encode(x) }, "URLBuilder.encode")
+
+ noNull(URLExtractor.nameValuePairs _, "URLExtractor.nameValuePairs")
+ noNull(URLExtractor.parameters _, "URLExtractor.parameters")
+ noNull(URLExtractor.queryName _, "URLExtractor.queryName")
+
+ noNull(URLParameter.fromPair, "URLParameter.fromPair")
+ noNull((x: String, y: String) => new URLParameter(x, y), "new URLParameter(x, y)")
+
+ noNull(Validator.TRUE.isValid _, "Validator.TRUE.isValid")
+ noNull(Validator.mutuallyExclusive _, "Validator.mutuallyExclusive")
+
+ noNull(Validator.mutuallyExclusive(new java.util.ArrayList[Parameter[_, _]]).isValid _,
+        "Validator.mutuallyExclusive(new ArrayList<Parameter<?, ?>>().isValid")
 })

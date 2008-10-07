@@ -1,8 +1,5 @@
 package uk.org.netvu.core.cgi.decoder;
 
-import static uk.org.netvu.core.cgi.common.Option.someRef;
-import static uk.org.netvu.core.cgi.common.Parameter.sparseArrayParam;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,11 +29,11 @@ public final class DecoderCGI
             Persistence.TEMPORARY,
             TwoWayConversion.convenientPartial( Option.<String, Persistence> noneRef( "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name." ) ) );
 
-    private static final Parameter<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = sparseArrayParam(
+    private static final Parameter<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = Parameter.sparseArrayParam(
             "connections", TwoWayConversion.total( Connection.fromURL,
                     Connection.urlEncode ) );
 
-    private static final Parameter<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> LAYOUTS = sparseArrayParam(
+    private static final Parameter<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> LAYOUTS = Parameter.sparseArrayParam(
             "layouts",
             TwoWayConversion.total( Layout.fromURL, Layout.urlEncode ) );
 
@@ -44,7 +41,7 @@ public final class DecoderCGI
             "output_titles",
             TwoWayConversion.partial(
                     Option.<String, String[]> noneRef( "Parsing not supported for output_titles" ),
-                    someRef( new Conversion<String[], String>()
+                    Option.someRef( new Conversion<String[], String>()
                     {
                         @Override
                         public String convert( final String[] array )
@@ -56,7 +53,7 @@ public final class DecoderCGI
                         }
                     } ) ) );
 
-    private static final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = sparseArrayParam(
+    private static final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = Parameter.sparseArrayParam(
             "commands", TwoWayConversion.total( Conversion.<String> identity(),
                     URLBuilder.encode.andThen( Strings.surroundWithQuotes ) ) );
 

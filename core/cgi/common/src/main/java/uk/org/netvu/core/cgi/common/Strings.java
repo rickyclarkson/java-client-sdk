@@ -42,6 +42,8 @@ public class Strings
     public static String intersperse( final String separator,
             final List<String> strings )
     {
+        Checks.notNull( separator );
+
         final StringBuilder builder = new StringBuilder();
         boolean first = true;
 
@@ -76,6 +78,8 @@ public class Strings
     public static ReversibleReplace reversibleReplace( final String toReplace,
             final String with )
     {
+        Checks.notNull( toReplace, with );
+
         return new ReversibleReplace()
         {
             public String replace( final String s )
@@ -272,6 +276,8 @@ public class Strings
             @Override
             public String convert( final String t )
             {
+                Checks.notNull( t );
+
                 return toPrepend + t;
             }
         };

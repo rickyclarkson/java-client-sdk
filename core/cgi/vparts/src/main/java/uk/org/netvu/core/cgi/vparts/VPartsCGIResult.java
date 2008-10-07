@@ -1,8 +1,5 @@
 package uk.org.netvu.core.cgi.vparts;
 
-import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
-import static uk.org.netvu.core.cgi.common.Parameter.parameter;
-
 import java.util.ArrayList;
 
 import uk.org.netvu.core.cgi.common.Option;
@@ -17,21 +14,21 @@ import uk.org.netvu.core.cgi.common.URLParameter;
  */
 public class VPartsCGIResult
 {
-    private static final Parameter<Integer, Option<Integer>> INDEX = parameter(
+    private static final Parameter<Integer, Option<Integer>> INDEX = Parameter.parameter(
             "index", TwoWayConversion.integer );
-    private static final Parameter<String, Option<String>> DIRECTORY = parameter(
+    private static final Parameter<String, Option<String>> DIRECTORY = Parameter.parameter(
             "directory", TwoWayConversion.string );
-    private static final Parameter<String, Option<String>> FILENAME = parameter(
+    private static final Parameter<String, Option<String>> FILENAME = Parameter.parameter(
             "filename", TwoWayConversion.string );
-    private static final Parameter<Integer, Option<Integer>> START_TIME = notNegative( parameter(
+    private static final Parameter<Integer, Option<Integer>> START_TIME = Parameter.notNegative( Parameter.parameter(
             "start_time", TwoWayConversion.integer ) );
-    private static final Parameter<Integer, Option<Integer>> END_TIME = notNegative( parameter(
+    private static final Parameter<Integer, Option<Integer>> END_TIME = Parameter.notNegative( Parameter.parameter(
             "end_time", TwoWayConversion.integer ) );
-    private static final Parameter<Integer, Option<Integer>> EXPIRY_TIME = notNegative( parameter(
+    private static final Parameter<Integer, Option<Integer>> EXPIRY_TIME = Parameter.notNegative( Parameter.parameter(
             "expiry_time", TwoWayConversion.integer ) );
-    private static final Parameter<Integer, Option<Integer>> NUMBER_OF_ENTRIES = parameter(
+    private static final Parameter<Integer, Option<Integer>> NUMBER_OF_ENTRIES = Parameter.parameter(
             "n_entries", TwoWayConversion.integer );
-    private static final Parameter<Integer, Option<Integer>> CAM_MASK = parameter(
+    private static final Parameter<Integer, Option<Integer>> CAM_MASK = Parameter.parameter(
             "cammask", TwoWayConversion.integer );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and

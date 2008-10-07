@@ -25,11 +25,15 @@ public abstract class Reduction<T, R>
     public static final Reduction<String, String> intersperseWith(
             final String separator )
     {
+        Checks.notNull( separator );
+
         return new Reduction<String, String>()
         {
             @Override
             public String reduce( final String newValue, final String original )
             {
+                Checks.notNull( newValue, original );
+
                 return original + separator + newValue;
             }
         };

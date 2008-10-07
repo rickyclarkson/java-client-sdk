@@ -1,12 +1,12 @@
 package uk.org.netvu.core.cgi.variable;
 
-import static uk.org.netvu.core.cgi.variable.ArrayOrScalar.ARRAY;
-import static uk.org.netvu.core.cgi.variable.ArrayOrScalar.SCALAR;
-
 import java.util.regex.Pattern;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Option;
+
+import static uk.org.netvu.core.cgi.variable.ArrayOrScalar.ARRAY;
+import static uk.org.netvu.core.cgi.variable.ArrayOrScalar.SCALAR;
 
 /**
  * An enumeration of supported system variables.

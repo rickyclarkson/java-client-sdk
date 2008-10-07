@@ -36,7 +36,7 @@ public class URLBuilder
         }
         catch ( final UnsupportedEncodingException e )
         {
-            throw null;
+            throw new RuntimeException("Unsupported Encoding: UTF-8");
         }
     }
 

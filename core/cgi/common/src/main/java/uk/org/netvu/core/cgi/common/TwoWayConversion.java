@@ -18,7 +18,7 @@ public abstract class TwoWayConversion<A, B>
      * A TwoWayConversion that converts between Strings containing decimal
      * integers and Java's Integer and vice-versa.
      */
-    public static final TwoWayConversion<String, Integer> integer = convenientPartial( Conversion.stringToInt );
+    public static final TwoWayConversion<String, Integer> integer = convenientPartial( Conversion.stringToInt() );
 
     /**
      * A TwoWayConversion that converts between Strings and themselves with no
@@ -30,23 +30,23 @@ public abstract class TwoWayConversion<A, B>
      * A TwoWayConversion that converts between Strings containing 'true' or
      * 'false' and Java's Boolean, and vice-versa.
      */
-    public static final TwoWayConversion<String, Boolean> bool = convenientPartial( Conversion.stringToBoolean );
+    public static final TwoWayConversion<String, Boolean> bool = convenientPartial( Conversion.stringToBoolean() );
 
     /**
      * A TwoWayConversion that converts between Strings containing hexadecimal
      * integers and Java's Long, and vice-versa.
      */
     public static final TwoWayConversion<String, Long> hexLong = partial(
-            Conversion.hexStringToLong,
-            Option.someRef( Conversion.longToHexString ) );
+                                                                         Conversion.hexStringToLong(),
+                                                                         Option.someRef( Conversion.longToHexString() ) );
 
     /**
      * A TwoWayConversion that converts between Strings containing hexadecimal
      * integers and Java's Integer, and vice-versa.
      */
     public static final TwoWayConversion<String, Integer> hexInt = partial(
-            Conversion.hexStringToInt,
-            Option.someRef( Conversion.intToHexString ) );
+                                                                           Conversion.hexStringToInt(),
+                                                                           Option.someRef( Conversion.intToHexString() ) );
 
     /**
      * A TwoWayConversion that uses the specified partial conversion to convert
@@ -62,6 +62,8 @@ public abstract class TwoWayConversion<A, B>
     public static <B> TwoWayConversion<String, B> convenientPartial(
             final Conversion<String, Option<B>> s2b )
     {
+        Checks.notNull( s2b );
+
         return new TwoWayConversion<String, B>()
         {
             @Override

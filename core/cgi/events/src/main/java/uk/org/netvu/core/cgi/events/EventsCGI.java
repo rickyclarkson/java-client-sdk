@@ -1,8 +1,5 @@
 package uk.org.netvu.core.cgi.events;
 
-import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
-import static uk.org.netvu.core.cgi.common.Parameter.parameterWithDefault;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,39 +17,39 @@ import uk.org.netvu.core.cgi.common.Validator;
  */
 public final class EventsCGI
 {
-    private static final Parameter<Integer, Integer> TIME = notNegative( parameterWithDefault(
+    private static final Parameter<Integer, Integer> TIME = Parameter.notNegative( Parameter.parameterWithDefault(
             "time", 0, TwoWayConversion.integer ) );
 
-    private static final Parameter<Integer, Integer> RANGE = notNegative( parameterWithDefault(
+    private static final Parameter<Integer, Integer> RANGE = Parameter.notNegative( Parameter.parameterWithDefault(
             "range", Integer.MAX_VALUE, TwoWayConversion.integer ) );
 
-    private static final Parameter<Format, Format> FORMAT = parameterWithDefault(
+    private static final Parameter<Format, Format> FORMAT = Parameter.parameterWithDefault(
             "format", Format.CSV,
             TwoWayConversion.convenientPartial( Format.fromString ) );
 
-    private static final Parameter<Integer, Integer> LENGTH = parameterWithDefault(
+    private static final Parameter<Integer, Integer> LENGTH = Parameter.parameterWithDefault(
             "listlength",
 
             100, TwoWayConversion.integer );
 
-    private static final Parameter<String, String> TEXT = parameterWithDefault(
+    private static final Parameter<String, String> TEXT = Parameter.parameterWithDefault(
             "text", "", TwoWayConversion.string );
 
-    private static final Parameter<Long, Long> CAMERA_MASK = parameterWithDefault(
+    private static final Parameter<Long, Long> CAMERA_MASK = Parameter.parameterWithDefault(
             "cammask", 0L, TwoWayConversion.hexLong );
 
-    private static final Parameter<Integer, Integer> ALARM_MASK = parameterWithDefault(
+    private static final Parameter<Integer, Integer> ALARM_MASK = Parameter.parameterWithDefault(
             "almmask", 0, TwoWayConversion.hexInt );
 
-    private static final Parameter<Long, Long> VIDEO_MOTION_DETECTION_MASK = parameterWithDefault(
+    private static final Parameter<Long, Long> VIDEO_MOTION_DETECTION_MASK = Parameter.parameterWithDefault(
             "vmdmask",
 
             0L, TwoWayConversion.hexLong );
 
-    private static final Parameter<Integer, Integer> GPS_MASK = parameterWithDefault(
+    private static final Parameter<Integer, Integer> GPS_MASK = Parameter.parameterWithDefault(
             "gpsmask", 0, TwoWayConversion.hexInt );
 
-    private static final Parameter<Integer, Integer> SYSTEM_MASK_PARAM = parameterWithDefault(
+    private static final Parameter<Integer, Integer> SYSTEM_MASK_PARAM = Parameter.parameterWithDefault(
             "sysmask", 0, TwoWayConversion.hexInt );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and

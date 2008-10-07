@@ -15,6 +15,8 @@ public abstract class Validator
         @Override
         public boolean isValid( final ParameterMap parameterMap )
         {
+            Checks.notNull( parameterMap );
+
             return true;
         }
     };
@@ -31,11 +33,15 @@ public abstract class Validator
     public static Validator mutuallyExclusive(
             final List<Parameter<?, ?>> exclusiveParameters )
     {
+        Checks.notNull( exclusiveParameters );
+
         return new Validator()
         {
             @Override
             public boolean isValid( final ParameterMap parameterMap )
             {
+                Checks.notNull( parameterMap );
+
                 int count = 0;
                 for ( final Parameter<?, ?> exclusiveParameter : exclusiveParameters )
                 {

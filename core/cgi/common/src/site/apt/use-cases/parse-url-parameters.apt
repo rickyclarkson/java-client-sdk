@@ -26,7 +26,7 @@ Parse URL parameters so that Builders in client modules to make implementing Bui
 
 * Triggers:
 
-The user calls a function to parse CGI requests.
+ The user calls a function to parse CGI requests.
 
 * Basic success path:
 

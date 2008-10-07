@@ -1,7 +1,5 @@
 package uk.org.netvu.core.cgi.common;
 
-import static uk.org.netvu.core.cgi.common.Option.some;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +59,7 @@ public final class ParameterMap
     public static Option<ParameterMap> fromURL( final String url,
             final List<? extends Parameter<?, ?>> params )
     {
-        Option<ParameterMap> parameterMap = some( new ParameterMap() );
+        Option<ParameterMap> parameterMap = Option.some( new ParameterMap() );
         final List<URLParameter> parts = URLExtractor.nameValuePairs( url );
 
         for ( final URLParameter part : parts )

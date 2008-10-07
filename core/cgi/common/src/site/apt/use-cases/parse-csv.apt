@@ -26,7 +26,7 @@ Parse comma-separated values (CSV) to make implementing Builders in client modul
 
 * Triggers:
 
-The user calls a function to parse CSV data.
+ The user calls a function to parse CSV data.
 
 * Basic success path:
 

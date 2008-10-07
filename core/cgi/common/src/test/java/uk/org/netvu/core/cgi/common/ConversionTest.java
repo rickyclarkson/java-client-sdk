@@ -30,7 +30,7 @@ public class ConversionTest
     @Test
     public void andThen()
     {
-        assertTrue( Conversion.hexStringToInt.andThen(
+        assertTrue( Conversion.hexStringToInt().andThen(
                 lift( new Conversion<Integer, Integer>()
                 {
                     @Override
@@ -48,7 +48,7 @@ public class ConversionTest
     @Test
     public void hexStringToInt()
     {
-        assertTrue( Conversion.hexStringToInt.convert( "ff" ).get() == 255 );
+        assertTrue( Conversion.hexStringToInt().convert( "ff" ).get() == 255 );
     }
 
     /**
@@ -58,7 +58,7 @@ public class ConversionTest
     @Test
     public void hexStringToLong()
     {
-        assertTrue( Conversion.hexStringToLong.convert( "ff" ).get() == 255 );
+        assertTrue( Conversion.hexStringToLong().convert( "ff" ).get() == 255 );
     }
 
     /**
@@ -77,7 +77,7 @@ public class ConversionTest
     @Test
     public void intToHexString()
     {
-        assertTrue( Conversion.intToHexString.convert( 255 ).equals( "ff" ) );
+        assertTrue( Conversion.intToHexString().convert( 255 ).equals( "ff" ) );
     }
 
     /**
@@ -87,7 +87,7 @@ public class ConversionTest
     @Test
     public void longToHexString()
     {
-        assertTrue( Conversion.longToHexString.convert( 255L ).equals( "ff" ) );
+        assertTrue( Conversion.longToHexString().convert( 255L ).equals( "ff" ) );
     }
 
     /**
@@ -97,8 +97,8 @@ public class ConversionTest
     @Test
     public void stringToBoolean()
     {
-        assertTrue( Conversion.stringToBoolean.convert( "true" ).get() );
-        assertFalse( Conversion.stringToBoolean.convert( "false" ).get() );
+        assertTrue( Conversion.stringToBoolean().convert( "true" ).get() );
+        assertFalse( Conversion.stringToBoolean().convert( "false" ).get() );
     }
 
     /**
@@ -107,7 +107,7 @@ public class ConversionTest
     @Test
     public void stringToInt()
     {
-        assertTrue( Conversion.stringToInt.convert( "50" ).get() == 50 );
+        assertTrue( Conversion.stringToInt().convert( "50" ).get() == 50 );
     }
 
     /**
@@ -116,6 +116,6 @@ public class ConversionTest
     @Test
     public void stringToLong()
     {
-        assertTrue( Conversion.stringToLong.convert( "50" ) == 50 );
+        assertTrue( Conversion.stringToLong().convert( "50" ) == 50 );
     }
 }

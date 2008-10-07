@@ -1,10 +1,5 @@
 package uk.org.netvu.core.cgi.events;
 
-import static uk.org.netvu.core.cgi.common.Parameter.bound;
-import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
-import static uk.org.netvu.core.cgi.common.Parameter.parameter;
-import static uk.org.netvu.core.cgi.common.Parameter.parameterWithDefault;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,37 +18,37 @@ import uk.org.netvu.core.cgi.common.TwoWayConversion;
  */
 public final class EventsCGIResult
 {
-    private static final Parameter<Integer, Option<Integer>> CAMERA_PARAMETER = bound(
+    private static final Parameter<Integer, Option<Integer>> CAMERA_PARAMETER = Parameter.bound(
             0, 64, Parameter.parameter( "cam", TwoWayConversion.integer ) );
 
-    private static final Parameter<String, Option<String>> ALARM = parameter(
+    private static final Parameter<String, Option<String>> ALARM = Parameter.parameter(
             "alarm", TwoWayConversion.string );
 
-    private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = notNegative( parameter(
+    private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = Parameter.notNegative( Parameter.parameter(
             "time", TwoWayConversion.integer ) );
 
-    private static final Parameter<Integer, Option<Integer>> OFFSET = bound(
-            -90000, 90000, parameter( "offset", TwoWayConversion.integer ) );
+    private static final Parameter<Integer, Option<Integer>> OFFSET = Parameter.bound(
+            -90000, 90000, Parameter.parameter( "offset", TwoWayConversion.integer ) );
 
-    private static final Parameter<String, Option<String>> FILE = parameter(
+    private static final Parameter<String, Option<String>> FILE = Parameter.parameter(
             "file", TwoWayConversion.string );
 
-    private static final Parameter<Boolean, Option<Boolean>> ON_DISK = parameter(
+    private static final Parameter<Boolean, Option<Boolean>> ON_DISK = Parameter.parameter(
             "onDisk", TwoWayConversion.total( Conversion.equal( "exists" ),
                     Conversion.fromBoolean( "exists", "overwitten" ) ) );
 
-    private static final Parameter<Integer, Option<Integer>> DURATION = notNegative( parameter(
+    private static final Parameter<Integer, Option<Integer>> DURATION = Parameter.notNegative( Parameter.parameter(
             "duration", TwoWayConversion.integer ) );
 
-    private static final Parameter<Integer, Option<Integer>> PRE_ALARM = notNegative( parameter(
+    private static final Parameter<Integer, Option<Integer>> PRE_ALARM = Parameter.notNegative( Parameter.parameter(
             "preAlarm", TwoWayConversion.integer ) );
 
-    private static final Parameter<Integer, Option<Integer>> ARCHIVE = notNegative( parameter(
+    private static final Parameter<Integer, Option<Integer>> ARCHIVE = Parameter.notNegative( Parameter.parameter(
             "archive", TwoWayConversion.integer ) );
-    private static final Parameter<Status, Status> STATUS = parameterWithDefault(
+    private static final Parameter<Status, Status> STATUS = Parameter.parameterWithDefault(
             "status", Status.NONE,
             TwoWayConversion.convenientPartial( Status.fromString ) );
-    private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = parameterWithDefault(
+    private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = Parameter.parameterWithDefault(
             "alarmType", AlarmType.NONE,
             TwoWayConversion.convenientPartial( AlarmType.fromString ) );
 

@@ -1,10 +1,5 @@
 package uk.org.netvu.core.cgi.vparts;
 
-import static uk.org.netvu.core.cgi.common.Parameter.bound;
-import static uk.org.netvu.core.cgi.common.Parameter.not;
-import static uk.org.netvu.core.cgi.common.Parameter.notNegative;
-import static uk.org.netvu.core.cgi.common.Parameter.parameterWithDefault;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,35 +15,35 @@ import uk.org.netvu.core.cgi.common.TwoWayConversion;
  */
 public final class VPartsCGI
 {
-    private static final Parameter<Format, Format> FORMAT = not( Format.HTML,
-            parameterWithDefault( "format", Format.CSV,
+    private static final Parameter<Format, Format> FORMAT = Parameter.not( Format.HTML,
+            Parameter.parameterWithDefault( "format", Format.CSV,
                     TwoWayConversion.convenientPartial( Format.fromString ) ) );
 
-    private static final Parameter<Mode, Mode> MODE = parameterWithDefault(
+    private static final Parameter<Mode, Mode> MODE = Parameter.parameterWithDefault(
             "mode", Mode.READ,
             TwoWayConversion.convenientPartial( Mode.fromString ) );
 
-    private static final Parameter<Integer, Integer> TIME = notNegative( parameterWithDefault(
+    private static final Parameter<Integer, Integer> TIME = Parameter.notNegative( Parameter.parameterWithDefault(
             "time", 0, TwoWayConversion.integer ) );
 
-    private static final Parameter<Integer, Integer> RANGE = notNegative( parameterWithDefault(
+    private static final Parameter<Integer, Integer> RANGE = Parameter.notNegative( Parameter.parameterWithDefault(
             "range", Integer.MAX_VALUE, TwoWayConversion.integer ) );
 
-    private static final Parameter<Integer, Integer> EXPIRY = parameterWithDefault(
+    private static final Parameter<Integer, Integer> EXPIRY = Parameter.parameterWithDefault(
             "expiry", 0, TwoWayConversion.integer );
 
-    private static final Parameter<Boolean, Boolean> WATERMARK = parameterWithDefault(
+    private static final Parameter<Boolean, Boolean> WATERMARK = Parameter.parameterWithDefault(
             "watermark", false, TwoWayConversion.bool );
 
-    private static final Parameter<Integer, Integer> WMARKSTEP = bound(
+    private static final Parameter<Integer, Integer> WMARKSTEP = Parameter.bound(
             1,
             256,
-            parameterWithDefault( "wmarkstepParam", 1, TwoWayConversion.integer ) );
+            Parameter.parameterWithDefault( "wmarkstepParam", 1, TwoWayConversion.integer ) );
 
-    private static final Parameter<Integer, Integer> LIST_LENGTH = parameterWithDefault(
+    private static final Parameter<Integer, Integer> LIST_LENGTH = Parameter.parameterWithDefault(
             "listlength", 100, TwoWayConversion.integer );
 
-    private static final Parameter<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = parameterWithDefault(
+    private static final Parameter<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = Parameter.parameterWithDefault(
             "pathstyle", DirectoryPathFormat.SHORT,
             TwoWayConversion.convenientPartial( DirectoryPathFormat.fromString ) );
 
