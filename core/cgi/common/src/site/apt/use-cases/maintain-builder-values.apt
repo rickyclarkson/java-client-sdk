@@ -6,7 +6,7 @@ Keep Builder values so that each client module can update and access them.
 
 * Summary:
 
- Each CGI module has one or more Builders, which need to store and retrieve values, with various constraints.  Each should be able to use ParameterMap in this module to store and retrieve values.
+ Each CGI module has one or more Builders, which need to store and retrieve values, with various constraints.  Each should be able to use this module to store and retrieve values.
 
 * Related ticket(s):
 
