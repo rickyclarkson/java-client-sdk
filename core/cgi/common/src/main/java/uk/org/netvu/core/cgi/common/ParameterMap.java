@@ -145,6 +145,8 @@ public final class ParameterMap
     private ParameterMap( final Map<Parameter<?, ?>, Object> values,
             final Validator validator )
     {
+        Checks.notNull( validator );
+
         this.validator = validator;
         this.values = Collections.unmodifiableMap( values );
     }

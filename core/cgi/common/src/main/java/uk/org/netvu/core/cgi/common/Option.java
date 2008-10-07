@@ -19,11 +19,15 @@ public abstract class Option<T>
      */
     public static <T> Option<T> none( final String reason )
     {
+        Checks.notNull( reason );
+
         return new Option<T>()
         {
             @Override
             public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
             {
+                Checks.notNull( conversion );
+
                 return Option.none( reason );
             }
 
@@ -44,6 +48,8 @@ public abstract class Option<T>
             @Override
             public <U> Option<U> map( final Conversion<T, U> conversion )
             {
+                Checks.notNull( conversion );
+
                 return Option.none( reason );
             }
 
@@ -56,11 +62,14 @@ public abstract class Option<T>
             @Override
             public void then( final Action<T> action )
             {
+                Checks.notNull( action );
             }
 
             @Override
             <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
             {
+                Checks.notNull( ifNone, ifSome );
+
                 return ifNone;
             }
         };
@@ -79,6 +88,8 @@ public abstract class Option<T>
      */
     public static <T, U> Conversion<T, Option<U>> noneRef( final String reason )
     {
+        Checks.notNull( reason );
+
         return new Conversion<T, Option<U>>()
         {
             @Override
@@ -120,6 +131,8 @@ public abstract class Option<T>
      */
     public static <T> Option<T> some( final T t )
     {
+        Checks.notNull( t );
+
         return new Option<T>()
         {
             @Override
@@ -161,6 +174,8 @@ public abstract class Option<T>
             @Override
             <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
             {
+                Checks.notNull( ifNone );
+
                 return ifSome.convert( t );
             }
         };
@@ -182,6 +197,8 @@ public abstract class Option<T>
     public static <T, U> Conversion<T, Option<U>> someRef(
             final Conversion<T, U> conversion )
     {
+        Checks.notNull( conversion );
+
         return new Conversion<T, Option<U>>()
         {
             @Override

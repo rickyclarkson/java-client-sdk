@@ -10,7 +10,7 @@ Build URL parameters so that implementing client modules is easy.
 
 * Related ticket(s):
 
- {{{http://adwiki.ad-group.adh/ticket/2356}#2356 CGI-common library for supporting the other CGI modules}}
+ {{{http://adwiki.ad-group.adh/ticket/2536}#2536 CGI-common library for supporting the other CGI modules}}
 
 * Goal:
 
@@ -26,7 +26,7 @@ Build URL parameters so that implementing client modules is easy.
 
 * Triggers:
 
-The user calls a function to build CGI requests.
+ The user calls a function to build CGI requests.
 
 * Basic success path:
 

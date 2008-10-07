@@ -10,7 +10,7 @@ Build comma-separated values to make implementing client modules easy.
 
 * Related ticket(s):
 
- {{{http://adwiki.ad-group.adh/ticket/2356}#2356 CGI-common library for supporting the other CGI modules}}
+ {{{http://adwiki.ad-group.adh/ticket/2536}#2536 CGI-common library for supporting the other CGI modules}}
 
 * Goal:
 
@@ -26,7 +26,7 @@ Build comma-separated values to make implementing client modules easy.
 
 * Triggers:
 
-The user calls a function to parse CGI requests.
+ The user calls a function to parse CGI requests.
 
 * Basic success path:
 

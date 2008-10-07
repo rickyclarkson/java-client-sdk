@@ -278,7 +278,7 @@ class NullTest extends JUnit4(new Specification {
                                                                                     { vv: V => f(t, u, vv) })
 
  import java.util.{ArrayList, Arrays}
- import Implicits.function1ToConversion
+ import Implicits.{function1ToConversion, conversionToFunction1}
  import java.lang.Boolean.{valueOf => toJavaBoolean}
  import java.lang.{UnsupportedOperationException => Unsupported}
 
@@ -306,8 +306,8 @@ class NullTest extends JUnit4(new Specification {
 
  "Checks.notNull" should { "not accept null" in { Checks.notNull _ must notAcceptNull[Nothing, Unit] } }
 
- def noNull[T <: AnyRef, R](c: Conversion[T, R], desc: String) =
-  "annoying" should { desc+" not accept null" in { c must notAcceptNulls[T, R] } }
+/* def noNull1[T <: AnyRef, R](c: Conversion[T, R], desc: String) =
+  "annoying" should { desc+" not accept null" in { c must notAcceptNulls[T, R] } }*/
  def noNull[T <: AnyRef, R](f: T => R, desc: String) =
   "annoying" should { desc+" not accept null" in { f must notAcceptNull[T, R] } }
 
@@ -315,51 +315,64 @@ class NullTest extends JUnit4(new Specification {
   noNull( { tt: T => f(tt, u) }, desc)
   noNull( { uu: U => f(t, uu) }, desc) }
 
- val conversions = Map(Conversion.stringToBoolean -> "Conversion.stringToBoolean",
-                       Conversion.stringToInt -> "Conversion.stringtoInt",
-                       Conversion.hexStringToInt -> "Conversion.hexStringToInt")
+ def noNull[T <: AnyRef, U <: AnyRef, V <: AnyRef, R](f: (T, U, V) => R, desc: String)(implicit t: T, u: U, v: V): Unit = {
+  noNull( { tt: T => f(tt, u, v) }, desc)
+  noNull( { uu: U => f(t, uu, v) }, desc)
+  noNull( { vv: V => f(t, u, vv) }, desc) }
 
-// for ((m, name) <- conversions) noNull(m, name)
+ val conversions = Map[Conversion[_ <: AnyRef, _], String](Conversion.stringToBoolean -> "Conversion.stringToBoolean",
+                                                           Conversion.stringToInt -> "Conversion.stringtoInt",
+                                                           Conversion.hexStringToInt -> "Conversion.hexStringToInt",
+                                                           Conversion.hexStringToLong -> "Conversion.hexStringToLong",
+                                                           Conversion.stringToLong -> "Conversion.stringToLong",
+                                                           Conversion.longToHexString -> "Conversion.longToHexString",
+                                                           Conversion.intToHexString -> "Conversion.intToHexString",
+                                                           Conversion.equal("foo") -> "Conversion.equal(\"foo\")",
+                                                           Conversion.identity[Integer]() -> "Conversion.identity",
+                                                           Conversion.objectToString[Integer]() -> "Conversion.objectToString"
+                                                          )
 
- noNull(Conversion.stringToBoolean, "Conversion.stringToBoolean")
- noNull(Conversion.stringToInt, "Conversion.stringToInt")
- noNull(Conversion.hexStringToInt, "Conversion.hexStringToInt")
- noNull(Conversion.hexStringToLong, "Conversion.hexStringToLong")
- noNull(Conversion.stringToLong, "Conversion.stringToLong")
- noNull(Conversion.longToHexString, "Conversion.longToHexString")
- noNull(Conversion.intToHexString, "Conversion.intToHexString")
- noNull(Conversion.equal[String] _, "Conversion.equal")
- noNull(Conversion.equal("foo"), "Conversion.equal('foo')")
+ for ((m, name) <- conversions) {
+  noNull(conversionToFunction1(m), name)
+  noNull[Integer, Integer](conversionToFunction1(new Conversion[Integer, Integer] { def convert(i: Integer) = i } andThen m),
+                           "Chained Conversions") }                                  
+
  noNull(Conversion.fromBoolean[String] _, "Conversion.fromBoolean")
- noNull(Conversion.identity[Int], "Conversion,identity")
- noNull(Conversion.objectToString[Int], "Conversion.objectToString")/*
- noNull(new Conversion[Int, Int] { def convert(i: Int) = i * i }.andThen _,
-               Format.fromString, Format.oneOf _, Generators.nonNegativeInts _,
-               Generators.strings _, Generators.stringsAndNull _) ++
-  fromFunction2(Lists.filter _) ++
-  fromFunction2(Lists.map _) ++
-  fromFunction2(Lists.reduce _) ++
-  fromFunction2(Lists.remove[Unit] _) ++
-  fromFunction2(Lists.removeIndices _) ++
-  List(Lists.zipWithIndex _) ++
-  fromFunction2(Lists.zip _) ++
-  List(Option.none _) ++
-  (List[Option[Int]](Option.none[Int]("because"), Option.some(5)) flatMap {
-   o: Option[Int] => fromFunction2(o.fold[Int] _) ++
-   List(o.map _, o.bind _, o.then _) }) ++
-  List(Option.noneRef _, Option.some.convert _, { x: Int => Option.some(x) },
-       Option.someRef _) ++
-  fromFunction2(Pair.pair[Int, Int] _) ++
-  List(Parameter.bound(3, 5, (_: Parameter[Integer, String]))) ++
-  fromFunction2(Parameter.not[Integer, Option[Integer]] _) ++
-  List(Parameter.notNegative[Option[Integer]] _) ++
-  fromFunction2(Parameter.parameter[Integer] _) ++
-  fromFunction3[String, Integer, TwoWayConversion[String, Integer], Parameter[Integer, Integer]](
-   Parameter.parameterWithDefault[Integer] _) ++
-  fromFunction2[String, TwoWayConversion[String, Integer], Parameter[java.util.List[Pair[Integer, Integer]], java.util.TreeMap[Integer, Integer]]](Parameter.sparseArrayParam[Integer] _) ++
-  List({ x: Validator => new ParameterMap(x) })
- def ex[T <: AnyRef](method: T => _) = method(null.asInstanceOf[T])
+ noNull(Conversion.equal[String] _, "Conversion.equal")
 
- "Calling a method with a null parameter" should {
-  "cause a NullPointerException" in {
-   for (method <- methods) ex(method) must throwA(new NullPointerException) } }*/ })
+ noNull(Lists.filter _, "Lists.filter")
+ noNull(Lists.map _, "Lists.map")
+ noNull(Lists.reduce[Integer] _, "Lists.reduce")
+
+// noNull2(Lists.remove[Unit] _, "Lists.remove") -- see line below
+// noNull2(Lists.removeIndices[Integer] _, "Lists.removeIndices") -- this line produces a compiler exception, need to try a later version of Scala.
+
+ noNull(Lists.zipWithIndex[Integer] _, "Lists.zipWithIndex")
+ noNull(Lists.zip[Integer, String] _, "Lists.zip")
+ 
+ noNull(Option.none[Integer] _, "Option.none")
+
+ for (o <- List[Option[Integer]](Option.none[Integer]("because"), Option.some(5))) {
+  noNull(o.fold[Integer] _, "Option.fold")
+  noNull(o.map[Integer] _, "Option.map")
+  noNull(o.bind[Integer] _, "Option.bind")
+  noNull[Action[Integer], Unit](o.then _, "Option.then") }
+
+ noNull(Option.noneRef _, "Option.noneRef")
+ noNull(Option.some[Integer]().convert _, "Option.some().convert")
+ noNull(Option.some[Integer], "Option.some")
+ noNull(Option.someRef[Integer, Integer] _, "Option.someRef")
+ 
+ noNull(Pair.pair[Integer, Integer] _, "Pair.pair")
+
+ noNull(Parameter.bound(3, 5, (_: Parameter[Integer, String])), "Parameter.bound")
+ noNull(Parameter.not[Integer, Option[Integer]] _, "Parameter.not")
+ noNull(Parameter.notNegative[Option[Integer]] _, "Parameter.notNegative")
+ noNull(Parameter.parameter[Integer] _, "Parameter.parameter")
+
+ noNull(Parameter.parameterWithDefault[Integer] _, "Parameter.parameterWithDefault")
+ noNull(Parameter.sparseArrayParam[Integer] _, "Parameter.sparseArrayParam")
+
+ noNull({ x: Validator => new ParameterMap(x) }, "new ParameterMap(Validator)")
+ 
+})

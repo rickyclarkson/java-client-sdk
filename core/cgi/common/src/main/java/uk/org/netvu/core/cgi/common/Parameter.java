@@ -86,6 +86,8 @@ public abstract class Parameter<T, R>
     public static <T, U> Parameter<T, U> not( final T banned,
             final Parameter<T, U> param )
     {
+        Checks.notNull( banned );
+
         return new Parameter<T, U>( param.name, param.defaultValue )
         {
             @Override
@@ -150,6 +152,8 @@ public abstract class Parameter<T, R>
     public static <T> Parameter<T, Option<T>> parameter( final String name,
             final TwoWayConversion<String, T> conversions )
     {
+        Checks.notNull( name, conversions );
+
         return new Parameter<T, Option<T>>( name,
                 Option.<T> none( "The value for the " + name
                         + " parameter has not been set yet" ) )
@@ -279,6 +283,8 @@ public abstract class Parameter<T, R>
     public static <T> Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>> sparseArrayParam(
             final String name, final TwoWayConversion<String, T> conversions )
     {
+        Checks.notNull( name, conversions );
+
         return new Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>>(
                 name, new TreeMap<Integer, T>() )
         {

@@ -10,7 +10,7 @@ Keep Builder values so that each client module can update and access them.
 
 * Related ticket(s):
 
- {{{http://adwiki.ad-group.adh/ticket/2536}#2356 CGI-common library for supporting the other CGI modules}}
+ {{{http://adwiki.ad-group.adh/ticket/2536}#2536 CGI-common library for supporting the other CGI modules}}
 
 * Goal:
 

@@ -25,8 +25,11 @@ public final class Pair<T, U>
      */
     public static <T, U> Pair<T, U> pair( final T t, final U u )
     {
+        Checks.notNull( t, u );
+
         return new Pair<T, U>( t, u );
     }
+
     private final T t;
 
     private final U u;
