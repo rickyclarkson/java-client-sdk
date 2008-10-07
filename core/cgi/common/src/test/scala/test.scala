@@ -163,7 +163,19 @@ class OptionSecondTest extends JUnit4(new Specification with Scalacheck {
   some(5) == some(5) must throwA(new UnsupportedOperationException) } }
 
  "hashCode" should { "cause an UnsupportedOperationException" in {
-  some(5).hashCode must throwA(new UnsupportedOperationException) } } })
+  some(5).hashCode must throwA(new UnsupportedOperationException)
+ } }
+
+ "get" should { "give the stored value for an Option that contains a value" in { some(5).get mustEqual 5 }
+                "throw an IllegalStateException for an empty Option" in {
+                 none[Integer]("foo").get must throwA(new IllegalStateException)
+                }
+              }
+
+ "isNone" should { "be true for an empty Option" in { none("foo").isNone mustEqual true }
+                   "be false for an Option that contains a value" in { some(5).isNone mustEqual false }
+                 }
+})
 
 class StringsTest extends JUnit4(new Specification with Scalacheck {
  import Strings.{ fromFirst, reversibleReplace, removeSurroundingQuotesLeniently, intersperse,
@@ -322,6 +334,23 @@ class TwoWayConversionTest extends JUnit4(new Specification {
    val obj = new Object
    convenientTotal[Object]{ x: String => x }.b2a.convert(obj).get mustEqual obj.toString } } })
 
+class PairTest extends JUnit4(new Specification {
+ "Pair.pair" should { "retain its values" in { Pair.pair(3, 4).first mustEqual 3
+                                               Pair.pair(3, 4).second mustEqual 4
+                                             } }
+})
+
+class ValidatorTest extends JUnit4(new Specification {
+ val nameParam = Parameter.parameter("name", TwoWayConversion.string)
+ val addressParam = Parameter.parameter("address", TwoWayConversion.string)
+ val validator = Validator.mutuallyExclusive(Arrays.asList(Array(nameParam, addressParam)))
+
+ "mutually exclusive parameters" should { "really be mutually exclusive" in {
+  val map = new ParameterMap(validator).set(nameParam, "bob")
+  map.set(addressParam, "here") must throwA(new IllegalStateException)
+ } }
+})
+  
 class NullTest extends JUnit4(new Specification {
  import Implicits.conversionToFunction1
  import Implicits.function2ToReduction
