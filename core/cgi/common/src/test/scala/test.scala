@@ -264,7 +264,7 @@ class TwoWayConversionTest extends JUnit4(new Specification {
    val obj = new Object
    convenientTotal[Object]{ x: String => x }.b2a.convert(obj).get mustEqual obj.toString } } })
 
-/*class NullTest extends JUnit4(new Specification {
+class NullTest extends JUnit4(new Specification {
  import Implicits.conversionToFunction1
  import Implicits.function2ToReduction
 
@@ -298,27 +298,42 @@ class TwoWayConversionTest extends JUnit4(new Specification {
         (false, "should not be seen", "the method accepts null") } catch {
          case e: NullPointerException => (true, "the method doesn't accept null", "should not be seen") } }
 
- def notAcceptNulls[T <: AnyRef, R] = new specs.matcher.Matcher[Conversion[T, R]] { def apply(conversion: Conversion[T, R]) =
-  try { conversion.convert(null.asInstanceOf[T])
-        (false, "should not be seen", "the method accepts null") } catch {
-         case e: NullPointerException => (true, "the method doesn't accept null", "should not be seen") } }
+ def notAcceptNulls[T <: AnyRef, R] =
+  new specs.matcher.Matcher[Conversion[T, R]] { def apply(conversion: => Conversion[T, R]) =
+   try { conversion.convert(null.asInstanceOf[T])
+         (false, "should not be seen", "the method accepts null") } catch {
+          case e: NullPointerException => (true, "the method doesn't accept null", "should not be seen") } }
 
  "Checks.notNull" should { "not accept null" in { Checks.notNull _ must notAcceptNull[Nothing, Unit] } }
- "Conversion.stringToBoolean" should { "not accept null" in {
-  Conversion.stringToBoolean must notAcceptNulls } }
 
-/* List[_ => _](Checks.notNull _, Conversion.stringToBoolean, Conversion.stringToInt,
-               Conversion.hexStringToInt, Conversion.hexStringToLong, Conversion.stringToLong, Conversion.longToHexString,
-               Conversion.intToHexString, Conversion.equal _, Conversion.equal("foo")) foreach { method =>
-                method must notAcceptNull }*/
+ def noNull[T <: AnyRef, R](c: Conversion[T, R], desc: String) =
+  "annoying" should { desc+" not accept null" in { c must notAcceptNulls[T, R] } }
+ def noNull[T <: AnyRef, R](f: T => R, desc: String) =
+  "annoying" should { desc+" not accept null" in { f must notAcceptNull[T, R] } }
 
- val methods: List[Function1[_ <: AnyRef, _]] = 
-  List[_ => _](Checks.notNull _, Conversion.stringToBoolean, Conversion.stringToInt,
-               Conversion.hexStringToInt, Conversion.hexStringToLong, Conversion.stringToLong, Conversion.longToHexString,
-               Conversion.intToHexString, Conversion.equal _, Conversion.equal("foo")) ++
-  fromFunction2YieldingConversion(Conversion.fromBoolean[String]) ++
-  List[_ => _](Conversion.identity[Int], Conversion.objectToString[Int],
-               new Conversion[Int, Int] { def convert(i: Int) = i * i }.andThen _,
+ def noNull[T <: AnyRef, U <: AnyRef, R](f: (T, U) => R, desc: String)(implicit t: T, u: U): Unit = {
+  noNull( { tt: T => f(tt, u) }, desc)
+  noNull( { uu: U => f(t, uu) }, desc) }
+
+ val conversions = Map(Conversion.stringToBoolean -> "Conversion.stringToBoolean",
+                       Conversion.stringToInt -> "Conversion.stringtoInt",
+                       Conversion.hexStringToInt -> "Conversion.hexStringToInt")
+
+// for ((m, name) <- conversions) noNull(m, name)
+
+ noNull(Conversion.stringToBoolean, "Conversion.stringToBoolean")
+ noNull(Conversion.stringToInt, "Conversion.stringToInt")
+ noNull(Conversion.hexStringToInt, "Conversion.hexStringToInt")
+ noNull(Conversion.hexStringToLong, "Conversion.hexStringToLong")
+ noNull(Conversion.stringToLong, "Conversion.stringToLong")
+ noNull(Conversion.longToHexString, "Conversion.longToHexString")
+ noNull(Conversion.intToHexString, "Conversion.intToHexString")
+ noNull(Conversion.equal[String] _, "Conversion.equal")
+ noNull(Conversion.equal("foo"), "Conversion.equal('foo')")
+ noNull(Conversion.fromBoolean[String] _, "Conversion.fromBoolean")
+ noNull(Conversion.identity[Int], "Conversion,identity")
+ noNull(Conversion.objectToString[Int], "Conversion.objectToString")/*
+ noNull(new Conversion[Int, Int] { def convert(i: Int) = i * i }.andThen _,
                Format.fromString, Format.oneOf _, Generators.nonNegativeInts _,
                Generators.strings _, Generators.stringsAndNull _) ++
   fromFunction2(Lists.filter _) ++
@@ -347,8 +362,4 @@ class TwoWayConversionTest extends JUnit4(new Specification {
 
  "Calling a method with a null parameter" should {
   "cause a NullPointerException" in {
-   for (method <- methods) ex(method) must throwA(new NullPointerException) } } })
-                               
-                            
-                            
-*/
+   for (method <- methods) ex(method) must throwA(new NullPointerException) } }*/ })
