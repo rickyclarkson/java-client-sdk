@@ -29,11 +29,11 @@ public final class DecoderCGI
             Persistence.TEMPORARY,
             TwoWayConversion.convenientPartial( Option.<String, Persistence> noneRef( "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name." ) ) );
 
-    private static final Parameter<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = Parameter.sparseArrayParam(
+    private static final Parameter<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = Parameter.sparseArrayParameter(
             "connections", TwoWayConversion.total( Connection.fromURL,
                     Connection.urlEncode ) );
 
-    private static final Parameter<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> LAYOUTS = Parameter.sparseArrayParam(
+    private static final Parameter<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> LAYOUTS = Parameter.sparseArrayParameter(
             "layouts",
             TwoWayConversion.total( Layout.fromURL, Layout.urlEncode ) );
 
@@ -53,7 +53,7 @@ public final class DecoderCGI
                         }
                     } ) ) );
 
-    private static final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = Parameter.sparseArrayParam(
+    private static final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = Parameter.sparseArrayParameter(
             "commands", TwoWayConversion.total( Conversion.<String> identity(),
                     URLBuilder.encode.andThen( Strings.surroundWithQuotes ) ) );
 

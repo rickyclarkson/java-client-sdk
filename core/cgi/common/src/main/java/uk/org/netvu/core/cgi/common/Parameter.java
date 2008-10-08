@@ -280,7 +280,7 @@ public abstract class Parameter<T, R>
      *         and yields a TreeMap of Integers to values of type T accordingly,
      *         representing a sparse array.
      */
-    public static <T> Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>> sparseArrayParam(
+    public static <T> Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>> sparseArrayParameter(
             final String name, final TwoWayConversion<String, T> conversions )
     {
         Checks.notNull( name, conversions );

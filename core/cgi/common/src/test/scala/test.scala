@@ -7,7 +7,8 @@ import specs.util.DataTables
 import specs.runner.JUnit4
 import scalacheck.Prop.property
 
-import java.util.{Arrays, Random}
+import java.util.{Arrays, Random, List => JavaList, ArrayList => JavaArrayList, TreeMap => JavaTreeMap}
+import java.lang.{Boolean => JavaBoolean}
 
 object Implicits {
  implicit def function1ToConversion[T, R](f: T => R) = new Conversion[T, R] { def convert(t: T) = f(t) }
@@ -15,7 +16,15 @@ object Implicits {
  implicit def conversionToFunction1[T, R](f: Conversion[T, R]): T => R = t => f.convert(t)
  implicit def function2ToReduction[T, R](r: (T, R) => R): Reduction[T, R] =
   new Reduction[T, R] { override def reduce(newValue: T, original: R) = r(newValue, original) }
+ implicit def listToJavaList[T](list: List[T]): JavaList[T] = new JavaArrayList[T] { for (t <- list) add(t) }
+ implicit def pairToTuple[T, U](pair: Pair[T, U]) = (pair.first, pair.second)
+ implicit def tupleToPair[T, U](tuple: (T, U)) = Pair.pair(tuple._1, tuple._2)
+ implicit def function1IntToBooleanToConversion(f: Int => Boolean): Conversion[Integer, JavaBoolean] =
+  new Conversion[Integer, JavaBoolean] { def convert(i: Integer) = JavaBoolean.valueOf(f(i.intValue)) }
+ implicit def intTupleToIntegerPair[U](tuple: (Int, U)): Pair[Integer, U] = Pair.pair(tuple._1, tuple._2)
 }
+
+import Implicits._
 
 class URLBuilderTest extends JUnit4(new Specification with Scalacheck {
  "Values encoded with URLBuilder" should {
@@ -124,7 +133,7 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
  import java.util.TreeMap
  
  "A sparse array Parameter" should {
-  val sparse = Parameter.sparseArrayParam[Integer]("foo", TwoWayConversion.integer)
+  val sparse = Parameter.sparseArrayParameter[Integer]("foo", TwoWayConversion.integer)
   "be convertible from URL parameters" in {
    convertList(sparse.fromURLParameter(new URLParameter("foo[2]", "3,6,9")).get) must {
     haveSameElementsAs(List[Pair[Integer, Integer]](pair(2,3), pair(3,6), pair(4, 9))) } }
@@ -270,20 +279,55 @@ class FormatTest extends JUnit4(new Specification with Scalacheck {
   "be retrievable by their String representation" in {
    property { f: Format => Format.fromString.convert(f.toString).get == f } } } })
 
-class ConversionSecondTest extends JUnit4(new Specification with Scalacheck {
- "Conversion.stringToInt" should { "give an empty Option when supplied with 'foo'" in {
-  Conversion.stringToInt.convert("foo").isNone mustEqual true } }
+class ConversionTest extends JUnit4(new Specification with Scalacheck {
+ "Conversion.andThen" should {
+  "result in a Conversion that behaves as if the value had been explicitly passed through each Conversion" in {
+   val doubleIt: Conversion[Integer, Integer] = { x: Integer => Integer.valueOf(x.intValue * 2) }
+   doubleIt andThen Conversion.intToHexString convert 127 mustEqual "fe"
+  }
+ }
+
+ "Conversion.stringToInt" should {
+  "give an empty Option when supplied with 'foo'" in { Conversion.stringToInt.convert("foo").isNone mustEqual true }
+  "correctly convert Strings to ints" in { Conversion.stringToInt.convert("465").get mustEqual 465 }
+ }
+
+ "Conversion.stringToLong" should {
+  "give an empty Option when supplied with \"foo\"" in { Conversion.stringToInt.convert("foo").isNone mustEqual true }
+  "correctly convert Strins to longs" in { Conversion.stringToInt.convert("465").get mustEqual 465 }
+ }
+
  "Conversion.stringToBoolean" should {
   "give true when given \"true\"" in { Conversion.stringToBoolean.convert("true").get mustEqual true }
   "give false when given \"false\"" in { Conversion.stringToBoolean.convert("false").get mustEqual false }
   "give an empty Option when given \"foo\"" in { Conversion.stringToBoolean.convert("foo").isNone mustEqual true } }
- "Conversion.hexStringToInt" should { "give an empty Option when given \"foo\"" in {
-  Conversion.hexStringToInt.convert("foo").isNone mustEqual true } }
- "Conversion.hexStringtoLong" should { "give an empty Option when given \"foo\"" in {
-  Conversion.hexStringToLong.convert("foo").isNone mustEqual true } }
+
+ "Conversion.hexStringToInt" should {
+  "give an empty Option when given \"foo\"" in { Conversion.hexStringToInt.convert("foo").isNone mustEqual true }
+  "correctly convert hex Strings to ints" in { Conversion.hexStringToInt.convert("Fe").get mustEqual 254 }
+ }
+
+ "Conversion.hexStringtoLong" should {
+  "give an empty Option when given \"foo\"" in { Conversion.hexStringToLong.convert("foo").isNone mustEqual true }
+  "correctly convert hex Strings to longs" in { Conversion.hexStringToLong.convert("Fe").get mustEqual 254 }
+ }
+
+ "Conversion.identity" should {
+  "give the value passed to it" in { Conversion.identity[Boolean].convert(true) mustEqual true }
+ }
+
+ "Conversion.intToHexString" should {
+  "correctly convert ints to hexadecimal Strings" in { Conversion.intToHexString.convert(255) mustEqual "ff" }
+ }
+
+ "Conversion.longToHexString" should {
+  "correctly convert longs to hexadecimal Strings" in { Conversion.longToHexString.convert(255L) mustEqual "ff" }
+ }
+
  "Conversion.equal(\"foo\")" should {
   "give true when given \"foo\"" in { Conversion.equal("foo").convert("foo") mustEqual true }
   "give false when given \"bar\"" in { Conversion.equal("foo").convert("bar") mustEqual false } }
+
  "Conversion.fromBoolean" should {
   "return its first parameter if the boolean is true" in { Conversion.fromBoolean(4, 10).convert(true) mustEqual 4 }
   "return its second parameter if the boolean if false" in { Conversion.fromBoolean(4, 10).convert(false) mustEqual 10 } } })
@@ -350,7 +394,104 @@ class ValidatorTest extends JUnit4(new Specification {
   map.set(addressParam, "here") must throwA(new IllegalStateException)
  } }
 })
-  
+
+class ParameterMapTest extends JUnit4(new Specification {
+ import Parameter.{parameter, notNegative, parameterWithDefault, sparseArrayParameter}
+
+ "ParameterMap.fromStrings" should { "store the passed-in values in each Parameter" in {
+  val forename = parameterWithDefault("name", "Bob", TwoWayConversion.string)
+  val surname = parameterWithDefault("surname", "Hope", TwoWayConversion.string)
+  val params: java.util.List[Parameter[_, _]] = Arrays.asList(Array(forename, surname))
+
+  ParameterMap.fromStrings(params, Arrays.asList(Array[String]("John", "Major"))).get.get(surname) mustEqual "Major" } }
+
+ val param = parameter("blah", TwoWayConversion.string)
+ val time = notNegative( parameter("time", TwoWayConversion.integer))
+ val range = parameter("range", TwoWayConversion.integer)
+
+ "A value stored in a ParameterMap" should { "get converted according to the Parameter's rules" in {
+  new ParameterMap().set(param, "10").get(param).get mustEqual "10"
+ } }
+
+ "Parsing a URL" should { "result in a ParameterMap holding the correct values" in {
+  val params: JavaList[Parameter[_, _]] = List(time, range)
+  val parameterMap = ParameterMap.fromURL("time=10&range=40", params).get
+  parameterMap.get(time).get mustEqual 10
+  parameterMap.get(range).get mustEqual 40
+  parameterMap.toURLParameters(params) mustEqual "time=10&range=40"
+ } }
+
+ "Parameter.isDefault" should { "give 'true' for a Parameter that only has its default value" in {
+  new ParameterMap().isDefault(time) mustEqual true
+  new ParameterMap().set[Integer, Option[Integer]](time, 40).isDefault(time) mustEqual false
+ } }
+
+ "Setting the same once-only Parameter twice" should { "result in an IllegalStateException" in {
+  new ParameterMap().set(param, "10").set(param, "10") must throwA(new IllegalStateException)
+ } }
+
+ "Populating a sparse array Parameter and then reading back its values" should { "yield the original values" in {
+  val p: Parameter[JavaList[Pair[Integer, String]], JavaTreeMap[Integer, String]] =
+   sparseArrayParameter[String]("foo", TwoWayConversion.partial(Option.some[String],
+                                                                Option.noneRef("Conversion not supported")))
+
+  def mung(list: List[(Int, String)]): JavaList[Pair[Integer, String]] =
+   listToJavaList(list map intTupleToIntegerPair[String])
+
+  val list1 = List(4 -> "bar", 5 -> "foo")
+  val list2 = List(2 -> "baz", 10 -> "spam")
+
+  val temp = new ParameterMap().set(p, mung(List(4 -> "bar", 5 -> "foo")))
+  temp.set(p, mung(List(2 -> "baz", 10 -> "spam"))).get(p).get(2) mustEqual "baz"
+ } }
+
+ "Giving an invalid combination of Parameter values" should { "cause an IllegalStateException" in {
+  new ParameterMap(new Validator { override def isValid(parameterMap: ParameterMap) = {
+   val oTime = parameterMap.get(time)
+   val oRange = parameterMap.get(range)
+   
+   oTime.fold(true, { time: Integer => oRange.fold(true, { range: Integer => time.intValue + range.intValue >= 0 }) })
+  } }).set[Integer, Option[Integer]](time, 2000000000).set[Integer, Option[Integer]](range, 2000000000) must throwA(new IllegalStateException)
+ } }                             
+})
+
+class URLExtractorTest extends JUnit4(new Specification {
+ import URLExtractor.{nameValuePairs, parameters, queryName}
+
+ "nameValuePairs" should {
+  "give an empty list for an empty String" in { nameValuePairs("").isEmpty mustEqual true }
+  "parse foo and bar from foo=bar" in {
+   nameValuePairs("foo=bar") mustEqual listToJavaList(List(new URLParameter("foo", "bar")))
+  }
+  "parse foo, bar, baz and spam from foo=bar&baz=spam" in {
+   nameValuePairs("foo=bar&baz=spam") mustEqual listToJavaList(List(new URLParameter("foo", "bar"),
+                                                                    new URLParameter("baz", "spam")))
+  }
+  "parse foo, \"bar=baz\", spam and \"eggs\"" in {
+   nameValuePairs("foo=\"bar=baz\"&spam=\"eggs\"") mustEqual listToJavaList(List(new URLParameter("foo", "\"bar=baz\""),
+                                                                                 new URLParameter("spam", "\"eggs\"")))
+  }
+ }
+
+ "parameters" should { "give a list of size 1 for an empty String" in { parameters("").size mustEqual 1 }
+                       "give a list of size 1 for foo=bar" in { parameters("foo=bar").size mustEqual 1 }
+                       "give a list of size 2 for foo=bar&baz=spam where the second element is baz=spam" in {
+                        parameters("foo=bar&baz=spam").size mustEqual 2
+                        parameters("foo=bar&baz=spam").get(1) mustEqual "baz=spam"
+                       }
+                       "give a list of size 2 for foo=\"bar=baz\"&spam=\"eggs\"" in {
+                        parameters("foo=\"bar=baz\"&spam=\"eggs\"").size mustEqual 2
+                       }
+                     }
+ "queryName" should { "give an empty String for an empty String" in { queryName("") mustEqual "" }
+                      "give foo for foo" in { queryName("foo") mustEqual "foo" }
+                      "give bar for foo/bar" in { queryName("foo/bar") mustEqual "bar" }
+                      "give bar.cgi for foo/bar.cgi?blah" in { queryName("foo/bar.cgi?blah") mustEqual "bar.cgi" }
+                      "give an empty String for ?blah" in { queryName("?blah") mustEqual "" }
+                      "give foo for foo?bar?" in { queryName("foo?bar?") mustEqual "foo" }
+                    }
+})
+
 class NullTest extends JUnit4(new Specification {
  import Implicits.conversionToFunction1
  import Implicits.function2ToReduction
@@ -458,7 +599,7 @@ class NullTest extends JUnit4(new Specification {
  noNull(Parameter.parameter[Integer] _, "Parameter.parameter")
 
  noNull(Parameter.parameterWithDefault[Integer] _, "Parameter.parameterWithDefault")
- noNull(Parameter.sparseArrayParam[Integer] _, "Parameter.sparseArrayParam")
+ noNull(Parameter.sparseArrayParameter[Integer] _, "Parameter.sparseArrayParam")
 
  noNull({ x: Validator => new ParameterMap(x) }, "new ParameterMap(Validator)")
  noNull(Reduction.intersperseWith _, "Reduction.intersperseWith")

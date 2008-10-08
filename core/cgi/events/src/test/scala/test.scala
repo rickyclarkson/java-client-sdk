@@ -128,4 +128,42 @@ class EventsCGISecondTest extends JUnit4(new Specification with Scalacheck {
  "EventsCGIResult.toString()" should {
   "not be supported" in {
    val string = "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 2, 4"
-   EventsCGIResult.fromString(string).toString must throwA(new UnsupportedOperationException) } } })
+   EventsCGIResult.fromString(string).toString must throwA(new UnsupportedOperationException) } }
+
+ import java.util.Random
+ private def randomEventsCGIBuilder(random: Random) = {
+  import common.Generators
+
+  val builder = new EventsCGI.Builder
+  def nonNegativeInt = random.nextInt.abs
+  def anyInt = random.nextInt
+  def anyLong = random.nextLong
+  def anyFormat = Format.oneOf(random)
+  def anyString = Generators.strings(random).next
+  
+  val methods = List(() => builder.alarmMask(anyInt),
+                     () => builder.cameraMask(anyLong),
+                     () => builder.format(anyFormat),
+                     () => builder.gpsMask(anyInt),
+                     () => builder.length(anyInt),
+                     () => builder.range(nonNegativeInt),
+                     () => builder.systemMask(anyInt),
+                     () => builder.text(anyString),
+                     () => builder.time(nonNegativeInt),
+                     () => builder.videoMotionDetectionMask(anyLong)
+                    ).map(a => () => try { a() } catch { case e: RuntimeException => })
+
+  for (i <- 0 to random.nextInt(methods.size))
+   methods(random.nextInt(methods.size))()
+
+  builder
+ }
+ import scalacheck.Arbitrary
+ import Arbitrary.arbitrary
+ import scalacheck.Gen
+
+ implicit val eventsBuilderGen: Gen[EventsCGI.Builder] = for (i <- arbitrary[Int]) yield randomEventsCGIBuilder(new Random(i))
+
+/*"A value stored" should { "be retrievable" in {
+ property((i: Int, l: Long, s: String, nonNegativeInt: Int)new EventsCGI.Builder().alarmMask(*/
+})
