@@ -116,7 +116,7 @@ public final class ParameterMapTest
     @Test
     public void sparseArray()
     {
-        final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> sparseIdentity = Parameter.sparseArrayParam(
+        final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> sparseIdentity = Parameter.sparseArrayParameter(
                 "foo",
                 TwoWayConversion.partial(
                         Option.<String> some(),
