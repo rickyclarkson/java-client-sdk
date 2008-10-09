@@ -118,16 +118,23 @@ public abstract class Conversion<T, R>
     /**
      * A conversion from Strings to longs, using Long.parseLong(String).
      */
-    public static final Conversion<String, Long> stringToLong()
+    public static final Conversion<String, Option<Long>> stringToLong()
     {
-        return new Conversion<String, Long>()
+        return new Conversion<String, Option<Long>>()
         {
             @Override
-            public Long convert( final String t )
+            public Option<Long> convert( final String t )
             {
                 Checks.notNull( t );
 
-                return Long.parseLong( t );
+                try
+                {
+                    return Option.some(Long.parseLong( t ));
+                }
+                catch (NumberFormatException e)
+                {
+                    return Option.none(t+" is not a valid long");
+                }
             }
         };
     }
