@@ -232,14 +232,10 @@ public final class ParameterMap
         final StringBuilder builder = new StringBuilder();
         for ( final Parameter<?, ?> param : params )
         {
-            param.toURLParameter( this ).then( new Action<String>()
+            for (String parameter: param.toURLParameter( this ))
             {
-                public void invoke( final String parameter )
-                {
-                    builder.append( parameter ).append( "&" );
-                }
-            } );
-
+                builder.append( parameter ).append( "&" );
+            }
         }
 
         return builder.toString().replaceAll( "[&]+$", "" ).replaceAll( "[&]+",

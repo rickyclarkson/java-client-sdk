@@ -146,19 +146,17 @@ class OptionSecondTest extends JUnit4(new Specification with Scalacheck {
  import Option.{noneRef, someRef, none, some}
 
  "noneRef" should { "give a Conversion that always produces an empty Option" in {
-  noneRef[Int, String]("foo").convert(5).isNone must beTrue } }
+  noneRef[Int, String]("foo").convert(5).isEmpty must beTrue } }
 
  "someRef" should { "give a Conversion that always produces an Option containing one element" in {
-  someRef(Conversion.objectToString[Int]).convert(5).isNone must beFalse } }
+  someRef(Conversion.objectToString[Int]).convert(5).isEmpty must beFalse } }
 
  "none" should {
   "give an empty Option when mapped over" in {
-   none[Int]("foo" ).map(new Conversion[Int, Int] { def convert(x: Int) = x * 2 } ).isNone must beTrue }
-  "do nothing on 'then'" in { { none[Int]("foo").then(new Action[Int] { def invoke(x: Int) = throw null })
-                                true } must beTrue }
+   none[Int]("foo" ).map(new Conversion[Int, Int] { def convert(x: Int) = x * 2 } ).isEmpty must beTrue }
   "give an empty Option on 'bind'" in {
    import Implicits.function1ToConversion
-   none[Int]("foo").bind{ x: Int => some(x * 2) }.isNone must beTrue } }
+   none[Int]("foo").bind{ x: Int => some(x * 2) }.isEmpty must beTrue } }
 
  "toString" should { "throw an UnsupportedOperationException" in {
   none[Int]("foo").toString must throwA(new UnsupportedOperationException)
@@ -181,8 +179,8 @@ class OptionSecondTest extends JUnit4(new Specification with Scalacheck {
                 }
               }
 
- "isNone" should { "be true for an empty Option" in { none("foo").isNone mustEqual true }
-                   "be false for an Option that contains a value" in { some(5).isNone mustEqual false }
+ "isEmpty" should { "be true for an empty Option" in { none("foo").isEmpty mustEqual true }
+                   "be false for an Option that contains a value" in { some(5).isEmpty mustEqual false }
                  }
 })
 
@@ -272,7 +270,7 @@ class FormatTest extends JUnit4(new Specification with Scalacheck {
   Arbitrary(Gen.choose(1, 1000000).map(i => Format.oneOf(new Random(i))))
 
  "Format.fromString" should { "give an empty Option when supplied with 'foo'" in {
-  Format.fromString.convert("foo").isNone mustEqual true } }
+  Format.fromString.convert("foo").isEmpty mustEqual true } }
  "Formats" should {
   "have a lowercase String representation" in {
    property { f: Format => f.toString == f.toString.toLowerCase } }
@@ -288,27 +286,27 @@ class ConversionTest extends JUnit4(new Specification with Scalacheck {
  }
 
  "Conversion.stringToInt" should {
-  "give an empty Option when supplied with 'foo'" in { Conversion.stringToInt.convert("foo").isNone mustEqual true }
+  "give an empty Option when supplied with 'foo'" in { Conversion.stringToInt.convert("foo").isEmpty mustEqual true }
   "correctly convert Strings to ints" in { Conversion.stringToInt.convert("465").get mustEqual 465 }
  }
 
  "Conversion.stringToLong" should {
-  "give an empty Option when supplied with \"foo\"" in { Conversion.stringToInt.convert("foo").isNone mustEqual true }
+  "give an empty Option when supplied with \"foo\"" in { Conversion.stringToInt.convert("foo").isEmpty mustEqual true }
   "correctly convert Strins to longs" in { Conversion.stringToInt.convert("465").get mustEqual 465 }
  }
 
  "Conversion.stringToBoolean" should {
   "give true when given \"true\"" in { Conversion.stringToBoolean.convert("true").get mustEqual true }
   "give false when given \"false\"" in { Conversion.stringToBoolean.convert("false").get mustEqual false }
-  "give an empty Option when given \"foo\"" in { Conversion.stringToBoolean.convert("foo").isNone mustEqual true } }
+  "give an empty Option when given \"foo\"" in { Conversion.stringToBoolean.convert("foo").isEmpty mustEqual true } }
 
  "Conversion.hexStringToInt" should {
-  "give an empty Option when given \"foo\"" in { Conversion.hexStringToInt.convert("foo").isNone mustEqual true }
+  "give an empty Option when given \"foo\"" in { Conversion.hexStringToInt.convert("foo").isEmpty mustEqual true }
   "correctly convert hex Strings to ints" in { Conversion.hexStringToInt.convert("Fe").get mustEqual 254 }
  }
 
  "Conversion.hexStringtoLong" should {
-  "give an empty Option when given \"foo\"" in { Conversion.hexStringToLong.convert("foo").isNone mustEqual true }
+  "give an empty Option when given \"foo\"" in { Conversion.hexStringToLong.convert("foo").isEmpty mustEqual true }
   "correctly convert hex Strings to longs" in { Conversion.hexStringToLong.convert("Fe").get mustEqual 254 }
  }
 
@@ -368,8 +366,8 @@ class TwoWayConversionTest extends JUnit4(new Specification {
                                 total[Int, Int](null, ((_: Int) * 2)) must throwA(new NullPointerException)
                                 total[Int, Int](((_: Int) / 2), null) must throwA(new NullPointerException) }
   "give a non-empty Option in both directions" in { val conversions = total( { x: Int => x * 2 }, { x: Int => x / 2 })
-                                                    conversions.a2b.convert(5).isNone mustEqual false
-                                                    conversions.b2a.convert(10).isNone mustEqual false } }
+                                                    conversions.a2b.convert(5).isEmpty mustEqual false
+                                                    conversions.b2a.convert(10).isEmpty mustEqual false } }
  "convenientTotal" should {
   "reject null parameters" in { convenientTotal[Int](null) must throwA(new NullPointerException) }
   "be able to convert from a String using the specified conversion" in {
@@ -584,7 +582,8 @@ class NullTest extends JUnit4(new Specification {
   noNull(o.fold[Integer] _, "Option.fold")
   noNull(o.map[Integer] _, "Option.map")
   noNull(o.bind[Integer] _, "Option.bind")
-  noNull[Action[Integer], Unit](o.then _, "Option.then") }
+  "hack"
+ }
 
  noNull(Option.noneRef _, "Option.noneRef")
  noNull(Option.some[Integer]().convert _, "Option.some().convert")

@@ -167,7 +167,7 @@ public abstract class Parameter<T, R>
             @Override
             public Option<T> reduce( final T newValue, final Option<T> original )
             {
-                if ( original.isNone() )
+                if ( original.isEmpty() )
                 {
                     return Option.some( newValue );
                 }
@@ -302,15 +302,11 @@ public abstract class Parameter<T, R>
                 for ( final String value : values )
                 {
                     final int hack = startIndex;
-                    conversions.a2b().convert(
-                            Strings.removeSurroundingQuotesLeniently( value ) ).then(
-                            new Action<T>()
-                            {
-                                public void invoke( final T t )
-                                {
-                                    results.add( Pair.pair( hack, t ) );
-                                }
-                            } );
+                    for (final T t: conversions.a2b().convert(
+                                                              Strings.removeSurroundingQuotesLeniently( value ) ))
+                        {
+                            results.add( Pair.pair( hack, t ) );
+                        }
 
                     startIndex++;
                 }
@@ -341,22 +337,17 @@ public abstract class Parameter<T, R>
 
                 for ( final Map.Entry<Integer, T> entry : nameAndMap.second().entrySet() )
                 {
-                    conversions.b2a().convert( entry.getValue() ).then(
-                            new Action<String>()
-                            {
-                                public void invoke( final String value )
-                                {
-                                    if ( result.length() != 0 )
-                                    {
-                                        result.append( "&" );
-                                    }
+                    for (final String value: conversions.b2a().convert( entry.getValue() ))
+                    {
+                        if ( result.length() != 0 )
+                        {
+                            result.append( "&" );
+                        }
 
-                                    result.append( name + '[' + entry.getKey()
-                                            + ']' + "="
-                                            + URLBuilder.encode( value ) );
-                                }
-                            } );
-
+                        result.append( name + '[' + entry.getKey()
+                                       + ']' + "="
+                                       + URLBuilder.encode( value ) );
+                    }
                 }
 
                 return Option.some( result.toString() );

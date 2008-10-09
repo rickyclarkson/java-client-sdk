@@ -6,7 +6,7 @@ package uk.org.netvu.core.cgi.common;
  * @param <T>
  *        The type of object that this Action requires.
  */
-public interface Action<T>
+interface ActionDELETE<T>
 {
     /**
      * Performs an operation using the supplied parameter.

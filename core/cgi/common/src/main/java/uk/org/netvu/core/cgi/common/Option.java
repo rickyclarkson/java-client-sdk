@@ -1,12 +1,15 @@
 package uk.org.netvu.core.cgi.common;
 
+import java.util.Collections;
+import java.util.Iterator;
+
 /**
  * An object that holds 0 or 1 elements. For internal use only.
  * 
  * @param <T>
  *        the type of the object.
  */
-public abstract class Option<T>
+public abstract class Option<T> implements Iterable<T>
 {
     /**
      * Creates an Option holding no elements.
@@ -40,7 +43,7 @@ public abstract class Option<T>
             }
 
             @Override
-            public boolean isNone()
+            public boolean isEmpty()
             {
                 return true;
             }
@@ -60,17 +63,17 @@ public abstract class Option<T>
             }
 
             @Override
-            public void then( final Action<T> action )
-            {
-                Checks.notNull( action );
-            }
-
-            @Override
             <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
             {
                 Checks.notNull( ifNone, ifSome );
 
                 return ifNone;
+            }
+
+            @Override
+            public Iterator<T> iterator()
+            {
+                return Collections.<T>emptyList().iterator();
             }
         };
     }
@@ -148,7 +151,7 @@ public abstract class Option<T>
             }
 
             @Override
-            public boolean isNone()
+            public boolean isEmpty()
             {
                 return false;
             }
@@ -166,9 +169,9 @@ public abstract class Option<T>
             }
 
             @Override
-            public void then( final Action<T> action )
+            public Iterator<T> iterator()
             {
-                action.invoke( t );
+                return Collections.singletonList(t).iterator();
             }
 
             @Override
@@ -243,11 +246,11 @@ public abstract class Option<T>
     }
 
     /**
-     * Identifies whether the Option has no element or not.
+     * Identifies whether the Option is empty or has an element.
      * 
      * @return true if the Option has no element, false otherwise.
      */
-    public abstract boolean isNone();
+    public abstract boolean isEmpty();
 
     /**
      * Maps the specified Conversion over this Option. If the Option is a Some,
@@ -311,13 +314,4 @@ public abstract class Option<T>
      *         parameters.
      */
     abstract <U> U fold( U ifNone, Conversion<T, U> ifSome );
-
-    /**
-     * If this Option is a Some, the specified Action is invoked with the held
-     * value. Otherwise, nothing happens.
-     * 
-     * @param action
-     *        the Action to invoke.
-     */
-    abstract void then( Action<T> action );
 }

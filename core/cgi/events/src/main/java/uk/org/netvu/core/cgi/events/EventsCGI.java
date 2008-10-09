@@ -101,7 +101,7 @@ public final class EventsCGI
 
         final Option<ParameterMap> map = ParameterMap.fromURL( string, params );
 
-        if ( map.isNone() )
+        if ( map.isEmpty() )
         {
             throw new IllegalArgumentException( map.reason() );
         }

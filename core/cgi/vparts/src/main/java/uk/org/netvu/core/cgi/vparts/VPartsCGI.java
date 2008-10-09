@@ -74,7 +74,7 @@ public final class VPartsCGI
     public static VPartsCGI fromString( final String url )
     {
         final Option<ParameterMap> map = ParameterMap.fromURL( url, params );
-        if ( map.isNone() )
+        if ( map.isEmpty() )
         {
             throw new IllegalArgumentException( url
                     + " cannot be parsed into a VPartsCGI, because "

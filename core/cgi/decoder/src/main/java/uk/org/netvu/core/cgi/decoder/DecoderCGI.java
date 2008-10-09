@@ -81,7 +81,7 @@ public final class DecoderCGI
     public static DecoderCGI fromString( final String string )
     {
         final Option<ParameterMap> map = ParameterMap.fromURL( string, params );
-        if ( map.isNone() )
+        if ( map.isEmpty() )
         {
             throw new IllegalArgumentException( "Cannot parse " + string
                     + " into a DecoderCGI, because " + map.reason() );

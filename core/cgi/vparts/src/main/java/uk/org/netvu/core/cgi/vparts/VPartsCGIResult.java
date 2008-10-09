@@ -82,7 +82,7 @@ public class VPartsCGIResult
     {
         for ( final Parameter<?, ? extends Option<?>> param : params )
         {
-            if ( parameterMap.get( param ).isNone() )
+            if ( parameterMap.get( param ).isEmpty() )
             {
                 throw new IllegalStateException( "The parameter " + param.name
                         + " has not been given a value" );

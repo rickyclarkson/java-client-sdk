@@ -24,7 +24,7 @@ public final class VariableCGI
     public static VariableCGI fromString( final String url )
     {
         final Option<ParameterMap> map = ParameterMap.fromURL( url, params );
-        if ( map.isNone() )
+        if ( map.isEmpty() )
         {
             throw new IllegalArgumentException( "Cannot parse " + url
                     + " into a VariableCGI because " + map.reason() );
@@ -64,7 +64,7 @@ public final class VariableCGI
      */
     VariableCGI( final ParameterMap parameterMap )
     {
-        if ( parameterMap.get( VARIABLE ).isNone() )
+        if ( parameterMap.get( VARIABLE ).isEmpty() )
         {
             throw new IllegalStateException( VARIABLE.name
                     + " has not been set to a value" );

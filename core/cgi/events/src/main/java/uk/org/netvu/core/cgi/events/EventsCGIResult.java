@@ -110,7 +110,7 @@ public final class EventsCGIResult
                     }
                 } );
 
-        if ( result.isNone() )
+        if ( result.isEmpty() )
         {
             throw new IllegalArgumentException(
                     "The supplied data, "
@@ -128,7 +128,7 @@ public final class EventsCGIResult
     {
         for ( final Parameter<?, ? extends Option<?>> parameter : compulsoryParameters )
         {
-            if ( builtMap.get( parameter ).isNone() )
+            if ( builtMap.get( parameter ).isEmpty() )
             {
                 throw new IllegalStateException( "The parameter " + parameter
                         + " has not been given a value" );

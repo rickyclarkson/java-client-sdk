@@ -78,7 +78,7 @@ public final class Connection
                         replacer.undo( URLDecoder.decode( urlParameters,
                                 "UTF-8" ) ), params );
 
-                if ( map.isNone() )
+                if ( map.isEmpty() )
                 {
                     throw new IllegalArgumentException( "Cannot parse "
                             + urlParameters + " into a Connection, because "
