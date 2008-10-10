@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * An object that can convert zero or more values of type T into a value or type
- * R, for use with ParameterMap. For internal use only.
+ * An object that specifies a parameter for a Builder, including conversions from Strings to the input type
+ * of the Parameter and back, and validation.  For internal use only.
  * 
  * @param <T>
  *        the input type of the Parameter.

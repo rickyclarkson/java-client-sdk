@@ -80,15 +80,6 @@ class GeneratorsTest extends JUnit4(new Specification with Scalacheck {
 })
     
 class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
- "Supplying a null Conversion to a Parameter" should {
-  "cause a NullPointerException" in {
-   import Parameter.{parameterWithDefault => paramD}
-   paramD("foo", 3, TwoWayConversion.partial(null, to)) must throwA(new NullPointerException)
-   paramD("foo", 3, TwoWayConversion.partial(from, null)) must throwA(new NullPointerException)
-   paramD("foo", 3, null) must throwA(new NullPointerException)
-  }
- }
-
  def to[T] = new Conversion[T, Option[String]] { def convert(t: T) = Option.some("foo") }
  def from[T] =
   new Conversion[String, Option[T]] { def convert(s: String): Option[T] = Option.none[T]("Unsupported") }
