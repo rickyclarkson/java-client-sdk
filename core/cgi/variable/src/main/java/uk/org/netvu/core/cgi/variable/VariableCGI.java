@@ -6,7 +6,7 @@ import java.util.List;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
-import uk.org.netvu.core.cgi.common.TwoWayConversion;
+import uk.org.netvu.core.cgi.common.StringConversion;
 
 /**
  * Builds and parses variable.cgi URLs.
@@ -37,11 +37,11 @@ public final class VariableCGI
 
     private static final Parameter<Variable, Option<Variable>> VARIABLE = Parameter.parameter(
             "variable",
-            TwoWayConversion.convenientPartial( Variable.fromString ) );
+            StringConversion.convenientPartial( Variable.fromString ) );
 
     private static final Parameter<VariableType, VariableType> TYPE = Parameter.parameterWithDefault(
             "type", VariableType.HTTP,
-            TwoWayConversion.convenientPartial( VariableType.fromString ) );
+            StringConversion.convenientPartial( VariableType.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

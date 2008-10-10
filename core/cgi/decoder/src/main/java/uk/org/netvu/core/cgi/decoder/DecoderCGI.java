@@ -15,7 +15,7 @@ import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.Reduction;
 import uk.org.netvu.core.cgi.common.Strings;
-import uk.org.netvu.core.cgi.common.TwoWayConversion;
+import uk.org.netvu.core.cgi.common.StringConversion;
 import uk.org.netvu.core.cgi.common.URLBuilder;
 
 /**
@@ -27,19 +27,19 @@ public final class DecoderCGI
     private static final Parameter<Persistence, Persistence> PERSISTENCE = Parameter.parameterWithDefault(
             "persistence",
             Persistence.TEMPORARY,
-            TwoWayConversion.convenientPartial( Option.<String, Persistence> noneRef( "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name." ) ) );
+            StringConversion.convenientPartial( Option.<String, Persistence> noneRef( "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name." ) ) );
 
     private static final Parameter<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = Parameter.sparseArrayParameter(
-            "connections", TwoWayConversion.total( Connection.fromURL,
+            "connections", StringConversion.total( Connection.fromURL,
                     Connection.urlEncode ) );
 
     private static final Parameter<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> LAYOUTS = Parameter.sparseArrayParameter(
             "layouts",
-            TwoWayConversion.total( Layout.fromURL, Layout.urlEncode ) );
+            StringConversion.total( Layout.fromURL, Layout.urlEncode ) );
 
     private static final Parameter<String[], Option<String[]>> OUTPUT_TITLES = Parameter.parameter(
             "output_titles",
-            TwoWayConversion.partial(
+            StringConversion.partial(
                     Option.<String, String[]> noneRef( "Parsing not supported for output_titles" ),
                     Option.someRef( new Conversion<String[], String>()
                     {
@@ -54,8 +54,8 @@ public final class DecoderCGI
                     } ) ) );
 
     private static final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = Parameter.sparseArrayParameter(
-            "commands", TwoWayConversion.total( Conversion.<String> identity(),
-                                                URLBuilder.encode.andThen( Strings.surroundWithQuotes() ) ) );
+            "commands", StringConversion.total( Conversion.<String> identity(),
+                                                URLBuilder.encodeConversion().andThen( Strings.surroundWithQuotes() ) ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

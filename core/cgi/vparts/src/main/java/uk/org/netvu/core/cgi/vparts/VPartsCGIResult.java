@@ -6,7 +6,7 @@ import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.Strings;
-import uk.org.netvu.core.cgi.common.TwoWayConversion;
+import uk.org.netvu.core.cgi.common.StringConversion;
 import uk.org.netvu.core.cgi.common.URLParameter;
 
 /**
@@ -15,21 +15,21 @@ import uk.org.netvu.core.cgi.common.URLParameter;
 public class VPartsCGIResult
 {
     private static final Parameter<Integer, Option<Integer>> INDEX = Parameter.parameter(
-            "index", TwoWayConversion.integer );
+            "index", StringConversion.integer );
     private static final Parameter<String, Option<String>> DIRECTORY = Parameter.parameter(
-            "directory", TwoWayConversion.string );
+            "directory", StringConversion.string );
     private static final Parameter<String, Option<String>> FILENAME = Parameter.parameter(
-            "filename", TwoWayConversion.string );
+            "filename", StringConversion.string );
     private static final Parameter<Integer, Option<Integer>> START_TIME = Parameter.notNegative( Parameter.parameter(
-            "start_time", TwoWayConversion.integer ) );
+            "start_time", StringConversion.integer ) );
     private static final Parameter<Integer, Option<Integer>> END_TIME = Parameter.notNegative( Parameter.parameter(
-            "end_time", TwoWayConversion.integer ) );
+            "end_time", StringConversion.integer ) );
     private static final Parameter<Integer, Option<Integer>> EXPIRY_TIME = Parameter.notNegative( Parameter.parameter(
-            "expiry_time", TwoWayConversion.integer ) );
+            "expiry_time", StringConversion.integer ) );
     private static final Parameter<Integer, Option<Integer>> NUMBER_OF_ENTRIES = Parameter.parameter(
-            "n_entries", TwoWayConversion.integer );
+            "n_entries", StringConversion.integer );
     private static final Parameter<Integer, Option<Integer>> CAM_MASK = Parameter.parameter(
-            "cammask", TwoWayConversion.integer );
+            "cammask", StringConversion.integer );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

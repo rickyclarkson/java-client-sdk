@@ -12,14 +12,17 @@ public class URLBuilder
      * A Conversion that, given a String, returns a URL-encoded version of it.
      * UTF-8 is assumed.
      */
-    public static final Conversion<String, String> encode = new Conversion<String, String>()
+    public static Conversion<String, String> encodeConversion()
     {
-        @Override
-        public String convert( final String value )
+        return new Conversion<String, String>()
         {
-            return encode( value );
-        }
-    };
+            @Override
+            public String convert( final String value )
+            {
+                return encode( value );
+            }
+        };
+    }
 
     /**
      * Encodes the specified value for safe use in URLs.

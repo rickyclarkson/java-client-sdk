@@ -8,7 +8,7 @@ import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
-import uk.org.netvu.core.cgi.common.TwoWayConversion;
+import uk.org.netvu.core.cgi.common.StringConversion;
 
 /**
  * Builds and parses vparts.cgi requests.
@@ -17,35 +17,35 @@ public final class VPartsCGI
 {
     private static final Parameter<Format, Format> FORMAT = Parameter.not( Format.HTML,
             Parameter.parameterWithDefault( "format", Format.CSV,
-                    TwoWayConversion.convenientPartial( Format.fromString ) ) );
+                    StringConversion.convenientPartial( Format.fromString ) ) );
 
     private static final Parameter<Mode, Mode> MODE = Parameter.parameterWithDefault(
             "mode", Mode.READ,
-            TwoWayConversion.convenientPartial( Mode.fromString ) );
+            StringConversion.convenientPartial( Mode.fromString ) );
 
     private static final Parameter<Integer, Integer> TIME = Parameter.notNegative( Parameter.parameterWithDefault(
-            "time", 0, TwoWayConversion.integer ) );
+            "time", 0, StringConversion.integer ) );
 
     private static final Parameter<Integer, Integer> RANGE = Parameter.notNegative( Parameter.parameterWithDefault(
-            "range", Integer.MAX_VALUE, TwoWayConversion.integer ) );
+            "range", Integer.MAX_VALUE, StringConversion.integer ) );
 
     private static final Parameter<Integer, Integer> EXPIRY = Parameter.parameterWithDefault(
-            "expiry", 0, TwoWayConversion.integer );
+            "expiry", 0, StringConversion.integer );
 
     private static final Parameter<Boolean, Boolean> WATERMARK = Parameter.parameterWithDefault(
-            "watermark", false, TwoWayConversion.bool );
+            "watermark", false, StringConversion.bool );
 
     private static final Parameter<Integer, Integer> WMARKSTEP = Parameter.bound(
             1,
             256,
-            Parameter.parameterWithDefault( "wmarkstepParam", 1, TwoWayConversion.integer ) );
+            Parameter.parameterWithDefault( "wmarkstepParam", 1, StringConversion.integer ) );
 
     private static final Parameter<Integer, Integer> LIST_LENGTH = Parameter.parameterWithDefault(
-            "listlength", 100, TwoWayConversion.integer );
+            "listlength", 100, StringConversion.integer );
 
     private static final Parameter<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = Parameter.parameterWithDefault(
             "pathstyle", DirectoryPathFormat.SHORT,
-            TwoWayConversion.convenientPartial( DirectoryPathFormat.fromString ) );
+            StringConversion.convenientPartial( DirectoryPathFormat.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

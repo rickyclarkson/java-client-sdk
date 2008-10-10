@@ -10,7 +10,7 @@ import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.Strings;
-import uk.org.netvu.core.cgi.common.TwoWayConversion;
+import uk.org.netvu.core.cgi.common.StringConversion;
 import uk.org.netvu.core.cgi.common.URLBuilder;
 import uk.org.netvu.core.cgi.common.Validator;
 
@@ -21,15 +21,15 @@ import uk.org.netvu.core.cgi.common.Validator;
 public final class Connection
 {
     private static final Parameter<String, Option<String>> SLAVE_IP_PARAM = Parameter.parameter(
-            "slaveip", TwoWayConversion.string );
+            "slaveip", StringConversion.string );
     private static final Parameter<Integer, Option<Integer>> SEQ_PARAM = Parameter.parameter(
-            "seq", TwoWayConversion.hexInt );
+            "seq", StringConversion.hexInt );
     private static final Parameter<Integer, Option<Integer>> DWELL_PARAM = Parameter.parameter(
-            "dwell", TwoWayConversion.integer );
+            "dwell", StringConversion.integer );
     private static final Parameter<Integer, Option<Integer>> CAM = Parameter.parameter(
-            "cam", TwoWayConversion.integer );
+            "cam", StringConversion.integer );
     private static final Parameter<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = Parameter.parameter(
-            "audio", TwoWayConversion.integer );
+            "audio", StringConversion.integer );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

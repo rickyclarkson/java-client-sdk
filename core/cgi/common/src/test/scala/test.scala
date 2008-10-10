@@ -30,8 +30,8 @@ class URLBuilderTest extends JUnit4(new Specification with Scalacheck {
  "Values encoded with URLBuilder" should {
   "be unaffected when decoded with the same encoding (UTF-8)" in {
    import java.net.URLDecoder.decode
-   import URLBuilder.encode.convert
-   property { x: String => decode(convert(x), "UTF-8") == x } must pass
+   import URLBuilder.encode
+   property { x: String => decode(encode(x), "UTF-8") == x } must pass
   }
  }
 })
@@ -84,7 +84,7 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
  def from[T] =
   new Conversion[String, Option[T]] { def convert(s: String): Option[T] = Option.none[T]("Unsupported") }
 
- val param = Parameter.parameterWithDefault("foo", 3, TwoWayConversion.partial(from, to))
+ val param = Parameter.parameterWithDefault("foo", 3, StringConversion.partial(from, to))
  
  "Supplying a value to an ordinary Parameter twice" should { "cause an IllegalStateException" in {
   new ParameterMap set (param, 4) set (param, 5) must throwA(new IllegalStateException)
@@ -99,11 +99,11 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
 
  "Converting a URL to a Parameter" should {
   "succeed" in {
-   val p = Parameter.parameterWithDefault[Integer]("foo", 3, TwoWayConversion.partial(Conversion.stringToInt, to))
+   val p = Parameter.parameterWithDefault[Integer]("foo", 3, StringConversion.partial(Conversion.stringToInt, to))
    Parameter.not[Integer, Integer](4, p).fromURLParameter(new URLParameter("foo", "8")).get mustEqual 8 } }
 
  "A bound Parameter" should {
-  val bound = Parameter.bound(1, 10, Parameter.parameterWithDefault("foo", 3, TwoWayConversion.partial(from, to)))
+  val bound = Parameter.bound(1, 10, Parameter.parameterWithDefault("foo", 3, StringConversion.partial(from, to)))
   "accept values inside its bounds" in {
    new ParameterMap().set[Integer, Integer](bound, 4) get bound mustEqual 4 }
   "reject values outside its bounds" in {
@@ -113,7 +113,7 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
  import Pair.pair
 
  "A 'not' Parameter" should {
-  val nested = Parameter.parameterWithDefault("foo", 3, TwoWayConversion.partial(from, to))
+  val nested = Parameter.parameterWithDefault("foo", 3, StringConversion.partial(from, to))
   val theNot = Parameter.not(5, nested)
   "allow unbanned values" in { new ParameterMap set (theNot, 2) get theNot mustEqual 2 }
   "reject banned values" in { new ParameterMap set (theNot, 5) must throwA(new IllegalArgumentException) }
@@ -124,7 +124,7 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
  import java.util.TreeMap
  
  "A sparse array Parameter" should {
-  val sparse = Parameter.sparseArrayParameter[Integer]("foo", TwoWayConversion.integer)
+  val sparse = Parameter.sparseArrayParameter[Integer]("foo", StringConversion.integer)
   "be convertible from URL parameters" in {
    convertList(sparse.fromURLParameter(new URLParameter("foo[2]", "3,6,9")).get) must {
     haveSameElementsAs(List[Pair[Integer, Integer]](pair(2,3), pair(3,6), pair(4, 9))) } }
@@ -320,7 +320,7 @@ class ConversionTest extends JUnit4(new Specification with Scalacheck {
 
 class ParameterMapSecondTest extends JUnit4(new Specification {
  import java.lang.Integer
- val parameter = Parameter.parameter[Integer]("foo", TwoWayConversion.integer)
+ val parameter = Parameter.parameter[Integer]("foo", StringConversion.integer)
  "ParameterMap.set" should { "give a NullPointerException when supplied with a null" in {
   new ParameterMap().set(null, 3) must throwA(new NullPointerException)
   new ParameterMap().set(parameter, null) must throwA(new NullPointerException)
@@ -345,8 +345,8 @@ class URLParameterSecondTest extends JUnit4(new Specification with DataTables {
  "hashCode" should { "be equal with equal objects" in {
   new URLParameter("foo", "bar").hashCode mustEqual new URLParameter("foo", "bar").hashCode } } })
 
-class TwoWayConversionTest extends JUnit4(new Specification {
- import TwoWayConversion.{total, convenientTotal}
+class StringConversionTest extends JUnit4(new Specification {
+ import StringConversion.{total, convenientTotal}
  import Implicits.function1ToConversion
 
  "total" should {
@@ -354,15 +354,15 @@ class TwoWayConversionTest extends JUnit4(new Specification {
                                 total[Int](null, String valueOf (_: Int)) must throwA(new NullPointerException)
                                 total[Int](Integer parseInt (_: String), null) must throwA(new NullPointerException) }
   "give a non-empty Option in both directions" in { val conversions = total( { x: String => 5 }, { x: Int => "foo" })
-                                                    conversions.conversionFromString.convert("bah").isEmpty mustEqual false
-                                                    conversions.conversionToString.convert(10).isEmpty mustEqual false } }
+                                                    conversions.fromString("bah").isEmpty mustEqual false
+                                                    conversions.toString(10).isEmpty mustEqual false } }
  "convenientTotal" should {
   "reject null parameters" in { convenientTotal[Int](null) must throwA(new NullPointerException) }
   "be able to convert from a String using the specified conversion" in {
-   convenientTotal[Int]{ x: String => 5 }.conversionFromString.convert("foo").get mustEqual 5 }
+   convenientTotal[Int]{ x: String => 5 }.fromString("foo").get mustEqual 5 }
   "be able to convert to a String using Object's toString()" in {
    val obj = new Object
-   convenientTotal[Object]{ x: String => x }.conversionToString.convert(obj).get mustEqual obj.toString } } })
+   convenientTotal[Object]{ x: String => x }.toString(obj).get mustEqual obj.toString } } })
 
 class PairTest extends JUnit4(new Specification {
  "Pair.pair" should { "retain its values" in { Pair.pair(3, 4).first mustEqual 3
@@ -371,8 +371,8 @@ class PairTest extends JUnit4(new Specification {
 })
 
 class ValidatorTest extends JUnit4(new Specification {
- val nameParam = Parameter.parameter("name", TwoWayConversion.string)
- val addressParam = Parameter.parameter("address", TwoWayConversion.string)
+ val nameParam = Parameter.parameter("name", StringConversion.string)
+ val addressParam = Parameter.parameter("address", StringConversion.string)
  val validator = Validator.mutuallyExclusive(Arrays.asList(Array(nameParam, addressParam)))
 
  "mutually exclusive parameters" should { "really be mutually exclusive" in {
@@ -385,15 +385,15 @@ class ParameterMapTest extends JUnit4(new Specification {
  import Parameter.{parameter, notNegative, parameterWithDefault, sparseArrayParameter}
 
  "ParameterMap.fromStrings" should { "store the passed-in values in each Parameter" in {
-  val forename = parameterWithDefault("name", "Bob", TwoWayConversion.string)
-  val surname = parameterWithDefault("surname", "Hope", TwoWayConversion.string)
+  val forename = parameterWithDefault("name", "Bob", StringConversion.string)
+  val surname = parameterWithDefault("surname", "Hope", StringConversion.string)
   val params: java.util.List[Parameter[_, _]] = Arrays.asList(Array(forename, surname))
 
   ParameterMap.fromStrings(params, Arrays.asList(Array[String]("John", "Major"))).get.get(surname) mustEqual "Major" } }
 
- val param = parameter("blah", TwoWayConversion.string)
- val time = notNegative( parameter("time", TwoWayConversion.integer))
- val range = parameter("range", TwoWayConversion.integer)
+ val param = parameter("blah", StringConversion.string)
+ val time = notNegative( parameter("time", StringConversion.integer))
+ val range = parameter("range", StringConversion.integer)
 
  "A value stored in a ParameterMap" should { "get converted according to the Parameter's rules" in {
   new ParameterMap().set(param, "10").get(param).get mustEqual "10"
@@ -418,7 +418,7 @@ class ParameterMapTest extends JUnit4(new Specification {
 
  "Populating a sparse array Parameter and then reading back its values" should { "yield the original values" in {
   val p: Parameter[JavaList[Pair[Integer, String]], JavaTreeMap[Integer, String]] =
-   sparseArrayParameter[String]("foo", TwoWayConversion.partial(Option.some[String],
+   sparseArrayParameter[String]("foo", StringConversion.partial(Option.some[String],
                                                                 Option.noneRef("Conversion not supported")))
 
   def mung(list: List[(Int, String)]): JavaList[Pair[Integer, String]] =
@@ -495,7 +495,7 @@ class NullTest extends JUnit4(new Specification {
 
  implicit val string = "foo"
  implicit val integer: Integer = 5
- implicit val twoWayConversion = TwoWayConversion.integer
+ implicit val twoWayConversion = StringConversion.integer
  implicit def list[T]: java.util.List[T] = java.util.Collections.emptyList[T]
  implicit def conversion[T, U] = new Conversion[T, U] { override def convert(t: T) = throw new Unsupported }
 
@@ -602,23 +602,22 @@ class NullTest extends JUnit4(new Specification {
  noNull(Strings.partition('c').convert _, "Strings.partition('c').convert")
  noNull(Strings.removeSurroundingQuotesLeniently _, "Strings.removeSurroundingQuotesLeniently")
 
- def twoWay[T](twoWay: TwoWayConversion[T], desc: String) = {
-  noNull(twoWay.conversionFromString, desc+".conversionFromString")
-  noNull(twoWay.conversionToString, desc+".conversionToString")
+ def twoWay[T](twoWay: StringConversion[T], desc: String) = {
+  noNull(twoWay.fromString _, desc+".conversionFromString")
+  noNull({ t: T => twoWay.toString(t) }, desc+".conversionToString")
  }
 
- twoWay(TwoWayConversion.integer, "TwoWayConversion.integer")
- twoWay(TwoWayConversion.string, "TwoWayConversion.string")
- twoWay(TwoWayConversion.bool, "TwoWayConversion.bool")
- twoWay(TwoWayConversion.hexLong, "TwoWayConversion.hexLong")
- twoWay(TwoWayConversion.hexInt, "TwoWayConversion.hexInt")
+ twoWay(StringConversion.integer, "StringConversion.integer")
+ twoWay(StringConversion.string, "StringConversion.string")
+ twoWay(StringConversion.bool, "StringConversion.bool")
+ twoWay(StringConversion.hexLong, "StringConversion.hexLong")
+ twoWay(StringConversion.hexInt, "StringConversion.hexInt")
  
- noNull(TwoWayConversion.convenientPartial _, "TwoWayConversion.convenientPartial")
- noNull(TwoWayConversion.convenientTotal _, "TwoWayConversion.convenientTotal")
- noNull(TwoWayConversion.partial _, "TwoWayConversion.partial")
- noNull(TwoWayConversion.total _, "TwoWayConversion.total")
+ noNull(StringConversion.convenientPartial _, "StringConversion.convenientPartial")
+ noNull(StringConversion.convenientTotal _, "StringConversion.convenientTotal")
+ noNull(StringConversion.partial _, "StringConversion.partial")
+ noNull(StringConversion.total _, "StringConversion.total")
 
- noNull(URLBuilder.encode, "URLBuilder.encode")
  noNull({ x: String => URLBuilder.encode(x) }, "URLBuilder.encode")
 
  noNull(URLExtractor.nameValuePairs _, "URLExtractor.nameValuePairs")
