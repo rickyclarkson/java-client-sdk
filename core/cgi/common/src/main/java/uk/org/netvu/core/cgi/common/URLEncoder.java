@@ -1,12 +1,11 @@
 package uk.org.netvu.core.cgi.common;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 /**
  * Utility methods for encoding URLs. For internal use only.
  */
-public class URLBuilder
+public class URLEncoder
 {
     /**
      * A Conversion that, given a String, returns a URL-encoded version of it.
@@ -35,7 +34,7 @@ public class URLBuilder
     {
         try
         {
-            return URLEncoder.encode( value, "UTF-8" );
+            return java.net.URLEncoder.encode( value, "UTF-8" );
         }
         catch ( final UnsupportedEncodingException e )
         {
@@ -43,7 +42,7 @@ public class URLBuilder
         }
     }
 
-    private URLBuilder()
+    private URLEncoder()
     {
     }
 }

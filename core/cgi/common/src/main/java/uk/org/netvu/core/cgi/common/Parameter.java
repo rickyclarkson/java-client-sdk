@@ -6,43 +6,43 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * An object that specifies a parameter for a Builder, including conversions from Strings to the input type
- * of the Parameter and back, and validation.  For internal use only.
+ * An object that describes a parameter for a Builder, including conversions from Strings to the input type
+ * of the parameter and back, and validation.  For internal use only.
  * 
  * @param <T>
- *        the input type of the Parameter.
+ *        the input type of the parameter that the ParameterDescription describes.
  * @param <R>
- *        the output type of the Parameter.
+ *        the output type of the parameter that the ParameterDescription describes.
  */
-public abstract class Parameter<T, R>
+public abstract class ParameterDescription<T, R>
 {
     /**
-     * Constructs a Parameter that can take Integers between two inclusive
-     * bounds, and yields a U, via a specified Parameter.
+     * Constructs a ParameterDescription describing parameters that can take Integers between two inclusive
+     * bounds, and yields a U, delegating everything except the validation to a specified ParameterDescription.
      * 
      * @param <U>
-     *        the output type of the Parameter.
+     *        the output type of the parameter.
      * @param lowerInclusive
-     *        the lower bound of the values that the Parameter can take,
+     *        the lower bound of the values that the parameter can take,
      *        inclusive.
      * @param higherInclusive
-     *        the higher bound of the values that the Parameter can take,
+     *        the higher bound of the values that the parameter can take,
      *        inclusive.
-     * @param param
-     *        the parameter to pass values on to.
+     * @param delegate
+     *        the ParameterDescription to pass valid values on to.
      * @return a Parameter that can take Integers between two inclusive bounds,
      *         and yields a U, via a specified Parameter.
      */
     public static <U> Parameter<Integer, U> bound( final int lowerInclusive,
-            final int higherInclusive, final Parameter<Integer, U> param )
+            final int higherInclusive, final ParameterDescription<Integer, U> delegate )
     {
-        return new Parameter<Integer, U>( param.name, param.defaultValue )
+        return new ParameterDescription<Integer, U>( param.name, param.defaultValue )
         {
             @Override
             public Option<Integer> fromURLParameter(
                     final URLParameter nameAndValue )
             {
-                return param.fromURLParameter( nameAndValue );
+                return delegate.fromURLParameter( nameAndValue );
             }
 
             @Override
@@ -50,11 +50,11 @@ public abstract class Parameter<T, R>
             {
                 if ( newValue >= lowerInclusive && newValue <= higherInclusive )
                 {
-                    return param.reduce( newValue, original );
+                    return delegate.reduce( newValue, original );
                 }
 
                 throw new IllegalArgumentException( "The value " + newValue
-                        + " is not within the bounds for the " + param.name
+                        + " is not within the bounds for the " + delegate.name
                         + " parameter (" + lowerInclusive + " to "
                         + higherInclusive + " inclusive)." );
             }
@@ -63,37 +63,37 @@ public abstract class Parameter<T, R>
             public Option<String> toURLParameter(
                     final Pair<String, U> nameAndValue )
             {
-                return param.toURLParameter( nameAndValue );
+                return delegate.toURLParameter( nameAndValue );
             }
 
         };
     }
 
     /**
-     * Constructs a Parameter with one disallowed value, passing all allowed
-     * values on to the specified Parameter.
+     * Constructs a ParameterDescription that disallows one value, passing all allowed
+     * values on to the specified ParameterDescription.
      * 
      * @param <T>
-     *        the input type of the Parameter.
+     *        the input type of the parameter.
      * @param <U>
-     *        the output type of the Parameter.
+     *        the output type of the parameter.
      * @param banned
      *        the value that is disallowed.
-     * @param param
-     *        the Parameter to pass values on to.
-     * @return a Parameter with one disallowed value.
+     * @param delegate
+     *        the ParameterDescription to pass values on to.
+     * @return a ParameterDescription that disallows a value.
      */
-    public static <T, U> Parameter<T, U> not( final T banned,
-            final Parameter<T, U> param )
+    public static <T, U> ParameterDescription<T, U> not( final T banned,
+            final ParameterDescription<T, U> delegate )
     {
         Checks.notNull( banned );
 
-        return new Parameter<T, U>( param.name, param.defaultValue )
+        return new Parameter<T, U>( delegate.name, delegate.defaultValue )
         {
             @Override
             public Option<T> fromURLParameter( final URLParameter nameAndValue )
             {
-                return param.fromURLParameter( nameAndValue );
+                return delegate.fromURLParameter( nameAndValue );
             }
 
             @Override
@@ -103,56 +103,56 @@ public abstract class Parameter<T, R>
                 {
                     throw new IllegalArgumentException(
                             "The "
-                                    + param.name
+                                    + delegate.name
                                     + " parameter is not allowed to take the supplied value, "
                                     + newValue + '.' );
                 }
-                return param.reduce( newValue, original );
+                return delegate.reduce( newValue, original );
             }
 
             @Override
             public Option<String> toURLParameter(
                     final Pair<String, U> nameAndValue )
             {
-                return param.toURLParameter( nameAndValue );
+                return delegate.toURLParameter( nameAndValue );
             }
         };
     }
 
     /**
-     * Constructs a Parameter that accepts non-negative Integers and yields
-     * values of type R by passing them on to the specified Parameter.
+     * Constructs a ParameterDescription that describes a parameter that accepts non-negative Integers and yields
+     * values of type R by passing them on to the specified ParameterDescription.
      * 
      * @param <R>
-     *        the output type of this Parameter.
+     *        the output type of the parameter.
      * @param param
-     *        the Parameter to pass values to.
-     * @return a Parameter that accepts non-negative Integers and yields values
-     *         of type R by passing them on to the specified Parameter.
+     *        the ParameterDescription to pass values on to.
+     * @return a ParameterDescription that describes a parameter that accepts non-negative Integers and yields values
+     *         of type R by passing them on to the specified ParameterDescription.
      */
-    public static <R> Parameter<Integer, R> notNegative(
-            final Parameter<Integer, R> param )
+    public static <R> ParameterDescription<Integer, R> notNegative(
+            final ParameterDescription<Integer, R> param )
     {
         return bound( 0, Integer.MAX_VALUE, param );
     }
 
     /**
-     * Constructs a Parameter that can take 0 or 1 values of type T, yielding
+     * Constructs a ParameterDescription that describes parameters that can take 0 or 1 values of type T, yielding
      * them as an Option<T>.
      * 
      * @param <T>
-     *        the type that the Parameter can take.
+     *        the input type of the parameter.
      * @param name
-     *        the name of the Parameter.
-     * @param conversions
+     *        the name of the parameter.
+     * @param conversion
      *        an object that can convert a String to a T and back.
-     * @return a Parameter that can take 0 or 1 values of type T, yielding them
+     * @return a parameter that can take 0 or 1 values of type T, yielding them
      *         as an Option<T>.
      */
-    public static <T> Parameter<T, Option<T>> parameter( final String name,
-            final StringConversion<T> conversions )
+    public static <T> ParameterDescription<T, Option<T>> parameter( final String name,
+            final StringConversion<T> conversion )
     {
-        Checks.notNull( name, conversions );
+        Checks.notNull( name, conversion );
 
         return new Parameter<T, Option<T>>( name,
                 Option.<T> none( "The value for the " + name
@@ -206,26 +206,26 @@ public abstract class Parameter<T, R>
     }
 
     /**
-     * Constructs a Parameter that can take 0 or 1 values of type T, yielding
+     * Constructs a ParameterDescription that describes parameters that can take 0 or 1 values of type T, yielding
      * that value or a default value.
      * 
      * @param <T>
-     *        the type that the Parameter can take.
+     *        the type of value that the parameter can take.
      * @param name
-     *        the name of the Parameter.
+     *        the name of the parameter.
      * @param defaultValue
-     *        the default value for the Parameter.
+     *        the default value for the parameter.
      * @param conversions
      *        an object that can convert a String to a T and back.
-     * @return a Parameter that can take 0 or 1 values of type T, yield that
+     * @return a ParameterDescription that can take 0 or 1 values of type T, yield that
      *         value or a default value.
      */
-    public static <T> Parameter<T, T> parameterWithDefault( final String name,
+    public static <T> ParameterDescription<T, T> parameterWithDefault( final String name,
             final T defaultValue, final StringConversion<T> conversions )
     {
         Checks.notNull( name, defaultValue, conversions );
 
-        return new Parameter<T, T>( name, defaultValue )
+        return new ParameterDescription<T, T>( name, defaultValue )
         {
             @Override
             public Option<T> fromURLParameter( final URLParameter nameAndValue )
@@ -258,7 +258,7 @@ public abstract class Parameter<T, R>
                             public String convert( final String t )
                             {
                                 return nameAndValue.first() + '='
-                                        + URLBuilder.encode( t );
+                                        + URLEncoder.encode( t );
                             }
                         } );
             }
@@ -266,26 +266,26 @@ public abstract class Parameter<T, R>
     }
 
     /**
-     * Constructs a Parameter that accepts Pairs of Integers and values of type
-     * T, and yields a TreeMap of Integers to values of type T accordingly,
+     * Constructs a ParameterDescription that describes parameters that accept Pairs of Integers and values of type
+     * T, and yield a TreeMap of Integers to values of type T accordingly,
      * representing a sparse array.
      * 
      * @param <T>
      *        the input type of the sparse array.
      * @param name
-     *        the name of the Parameter.
+     *        the name of the parameter.
      * @param conversions
      *        an object that can convert a String to a T and back.
-     * @return a Parameter that accepts Pairs of Integers and values of type T,
-     *         and yields a TreeMap of Integers to values of type T accordingly,
+     * @return a ParameterDescription that describes parameters that accept Pairs of Integers and values of type T,
+     *         and yield a TreeMap of Integers to values of type T accordingly,
      *         representing a sparse array.
      */
-    public static <T> Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>> sparseArrayParameter(
+    public static <T> ParameterDescription<List<Pair<Integer, T>>, TreeMap<Integer, T>> sparseArrayParameter(
             final String name, final StringConversion<T> conversions )
     {
         Checks.notNull( name, conversions );
 
-        return new Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>>(
+        return new ParameterDescription<List<Pair<Integer, T>>, TreeMap<Integer, T>>(
                 name, new TreeMap<Integer, T>() )
         {
             @Override
@@ -346,7 +346,7 @@ public abstract class Parameter<T, R>
 
                         result.append( name + '[' + entry.getKey()
                                        + ']' + "="
-                                       + URLBuilder.encode( value ) );
+                                       + URLEncoder.encode( value ) );
                     }
                 }
 
@@ -370,7 +370,7 @@ public abstract class Parameter<T, R>
 
     private final R defaultValue;
 
-    private Parameter( final String name, final R defaultValue )
+    private ParameterDescription( final String name, final R defaultValue )
     {
         this.name = name;
         this.defaultValue = defaultValue;
@@ -402,9 +402,9 @@ public abstract class Parameter<T, R>
     }
 
     /**
-     * Gives the default value for this Parameter.
+     * Gives the default value for this ParameterDescription.
      * 
-     * @return the default value for this Parameter.
+     * @return the default value for this ParameterDescription.
      */
     R getDefaultValue()
     {
@@ -413,12 +413,12 @@ public abstract class Parameter<T, R>
 
     /**
      * Takes in a new value and an original value and produces a new value from
-     * merging them. What this actually does depends on the particular Parameter
+     * merging them. What this actually does depends on the particular ParameterDescription
      * implementation.
      * 
-     * @param newValue
-     * @param original
-     * @return
+     * @param newValue the new incoming value.
+     * @param original the previously-stored value.
+     * @return the new value to store.
      */
     abstract R reduce( final T newValue, final R original );
 

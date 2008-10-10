@@ -11,7 +11,7 @@ import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.StringConversion;
-import uk.org.netvu.core.cgi.common.URLBuilder;
+import uk.org.netvu.core.cgi.common.URLEncoder;
 import uk.org.netvu.core.cgi.common.Validator;
 
 /**
@@ -55,7 +55,7 @@ public final class Connection
         @Override
         public String convert( final Connection connection )
         {
-            return URLBuilder.encode( connection.parameterMap.toURLParameters( params ).replaceAll("&", "," ) );
+            return URLEncoder.encode( connection.parameterMap.toURLParameters( params ).replaceAll("&", "," ) );
         }
     }.andThen( Strings.surroundWithQuotes() );
 

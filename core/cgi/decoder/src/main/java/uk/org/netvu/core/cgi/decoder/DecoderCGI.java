@@ -16,7 +16,7 @@ import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.Reduction;
 import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.StringConversion;
-import uk.org.netvu.core.cgi.common.URLBuilder;
+import uk.org.netvu.core.cgi.common.URLEncoder;
 
 /**
  * DecoderCGI is used for building CGI requests to send to decoders, using
@@ -55,7 +55,7 @@ public final class DecoderCGI
 
     private static final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = Parameter.sparseArrayParameter(
             "commands", StringConversion.total( Conversion.<String> identity(),
-                                                URLBuilder.encodeConversion().andThen( Strings.surroundWithQuotes() ) ) );
+                                                URLEncoder.encodeConversion().andThen( Strings.surroundWithQuotes() ) ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

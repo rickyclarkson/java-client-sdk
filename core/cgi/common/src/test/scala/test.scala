@@ -30,7 +30,7 @@ class URLBuilderTest extends JUnit4(new Specification with Scalacheck {
  "Values encoded with URLBuilder" should {
   "be unaffected when decoded with the same encoding (UTF-8)" in {
    import java.net.URLDecoder.decode
-   import URLBuilder.encode
+   import URLEncoder.encode
    property { x: String => decode(encode(x), "UTF-8") == x } must pass
   }
  }
@@ -618,7 +618,7 @@ class NullTest extends JUnit4(new Specification {
  noNull(StringConversion.partial _, "StringConversion.partial")
  noNull(StringConversion.total _, "StringConversion.total")
 
- noNull({ x: String => URLBuilder.encode(x) }, "URLBuilder.encode")
+ noNull({ x: String => URLEncoder.encode(x) }, "URLEncoder.encode")
 
  noNull(URLExtractor.nameValuePairs _, "URLExtractor.nameValuePairs")
  noNull(URLExtractor.parameters _, "URLExtractor.parameters")
