@@ -176,7 +176,7 @@ class OptionSecondTest extends JUnit4(new Specification with Scalacheck {
 })
 
 class StringsTest extends JUnit4(new Specification with Scalacheck {
- import Strings.{ fromFirst, reversibleReplace, removeSurroundingQuotesLeniently, intersperse,
+ import Strings.{ fromFirst, removeSurroundingQuotesLeniently, intersperse,
                   afterFirstLeniently, splitIgnoringQuotedSections }
 
  "afterfirstLeniently" should { "give the part of a String after the first instance of a separator, "+
@@ -198,10 +198,7 @@ class StringsTest extends JUnit4(new Specification with Scalacheck {
 
  "surroundWithQuotes" should { "surround a string with \"s" in {
   Strings.surroundWithQuotes.convert("bob") mustEqual("\"bob\"") } }
- "reversibleReplace" should {
-  val replacer = Strings.reversibleReplace("l", "m")
-  "be able to replace the 'll' in \"hello\" with 'mm'" in { replacer.replace("hello") mustEqual "hemmo" }
-  "and back" in { replacer.undo("hemmo") mustEqual "hello" } }
+
  "split" should {
   "split a comma-separated String into an array of Strings, ignoring whitespace after commas" in {
    Arrays.asList(Strings.split("oh, my,word")) mustEqual Arrays.asList(Array("oh", "my", "word")) } }
@@ -353,19 +350,19 @@ class TwoWayConversionTest extends JUnit4(new Specification {
  import Implicits.function1ToConversion
 
  "total" should {
-  "reject null parameters" in { total[Int, Int](null, null) must throwA(new NullPointerException)
-                                total[Int, Int](null, ((_: Int) * 2)) must throwA(new NullPointerException)
-                                total[Int, Int](((_: Int) / 2), null) must throwA(new NullPointerException) }
-  "give a non-empty Option in both directions" in { val conversions = total( { x: Int => x * 2 }, { x: Int => x / 2 })
-                                                    conversions.a2b.convert(5).isEmpty mustEqual false
-                                                    conversions.b2a.convert(10).isEmpty mustEqual false } }
+  "reject null parameters" in { total[Int](null, null) must throwA(new NullPointerException)
+                                total[Int](null, String valueOf (_: Int)) must throwA(new NullPointerException)
+                                total[Int](Integer parseInt (_: String), null) must throwA(new NullPointerException) }
+  "give a non-empty Option in both directions" in { val conversions = total( { x: String => 5 }, { x: Int => "foo" })
+                                                    conversions.conversionFromString.convert("bah").isEmpty mustEqual false
+                                                    conversions.conversionToString.convert(10).isEmpty mustEqual false } }
  "convenientTotal" should {
   "reject null parameters" in { convenientTotal[Int](null) must throwA(new NullPointerException) }
   "be able to convert from a String using the specified conversion" in {
-   convenientTotal[Int]{ x: String => 5 }.a2b.convert("foo").get mustEqual 5 }
+   convenientTotal[Int]{ x: String => 5 }.conversionFromString.convert("foo").get mustEqual 5 }
   "be able to convert to a String using Object's toString()" in {
    val obj = new Object
-   convenientTotal[Object]{ x: String => x }.b2a.convert(obj).get mustEqual obj.toString } } })
+   convenientTotal[Object]{ x: String => x }.conversionToString.convert(obj).get mustEqual obj.toString } } })
 
 class PairTest extends JUnit4(new Specification {
  "Pair.pair" should { "retain its values" in { Pair.pair(3, 4).first mustEqual 3
@@ -597,7 +594,6 @@ class NullTest extends JUnit4(new Specification {
  noNull(Strings.surroundWithQuotes, "Strings.surroundWithQuotes")
  noNull({ s: String => Strings.fromFirst('c', s)}, "Strings.fromFirst('c', x)")
  noNull(Strings.intersperse _, "Strings.intersperse")
- noNull(Strings.reversibleReplace _, "Strings.reversibleReplace")
  noNull(Strings.split _, "Strings.split")
  noNull({ s: String => Strings.splitIgnoringQuotedSections(s, 'c') }, "Strings.splitIgnoringQuotedSections")
  noNull(Strings.afterFirstLeniently _, "Strings.afterFirstLeniently")
@@ -606,9 +602,9 @@ class NullTest extends JUnit4(new Specification {
  noNull(Strings.partition('c').convert _, "Strings.partition('c').convert")
  noNull(Strings.removeSurroundingQuotesLeniently _, "Strings.removeSurroundingQuotesLeniently")
 
- def twoWay[A, B](twoWay: TwoWayConversion[A, B], desc: String) = {
-  noNull(twoWay.a2b, desc+".a2b()")
-  noNull(twoWay.b2a, desc+".b2a()")
+ def twoWay[T](twoWay: TwoWayConversion[T], desc: String) = {
+  noNull(twoWay.conversionFromString, desc+".conversionFromString")
+  noNull(twoWay.conversionToString, desc+".conversionToString")
  }
 
  twoWay(TwoWayConversion.integer, "TwoWayConversion.integer")

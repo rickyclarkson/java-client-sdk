@@ -150,7 +150,7 @@ public abstract class Parameter<T, R>
      *         as an Option<T>.
      */
     public static <T> Parameter<T, Option<T>> parameter( final String name,
-            final TwoWayConversion<String, T> conversions )
+            final TwoWayConversion<T> conversions )
     {
         Checks.notNull( name, conversions );
 
@@ -161,7 +161,7 @@ public abstract class Parameter<T, R>
             @Override
             public Option<T> fromURLParameter( final URLParameter nameAndValue )
             {
-                return createFromURL( conversions.a2b(), nameAndValue );
+                return createFromURL( conversions.conversionFromString, nameAndValue );
             }
 
             @Override
@@ -186,7 +186,7 @@ public abstract class Parameter<T, R>
                             @Override
                             public Option<String> convert( final T value )
                             {
-                                return conversions.b2a().convert( value ).map(
+                                return conversions.conversionToString.convert( value ).map(
                                         new Conversion<String, String>()
                                         {
                                             @Override
@@ -221,7 +221,7 @@ public abstract class Parameter<T, R>
      *         value or a default value.
      */
     public static <T> Parameter<T, T> parameterWithDefault( final String name,
-            final T defaultValue, final TwoWayConversion<String, T> conversions )
+            final T defaultValue, final TwoWayConversion<T> conversions )
     {
         Checks.notNull( name, defaultValue, conversions );
 
@@ -230,7 +230,7 @@ public abstract class Parameter<T, R>
             @Override
             public Option<T> fromURLParameter( final URLParameter nameAndValue )
             {
-                return createFromURL( conversions.a2b(), nameAndValue );
+                return createFromURL( conversions.conversionFromString, nameAndValue );
             }
 
             @Override
@@ -251,7 +251,7 @@ public abstract class Parameter<T, R>
             public Option<String> toURLParameter(
                     final Pair<String, T> nameAndValue )
             {
-                return conversions.b2a().convert( nameAndValue.second() ).map(
+                return conversions.conversionToString.convert( nameAndValue.second() ).map(
                         new Conversion<String, String>()
                         {
                             @Override
@@ -281,7 +281,7 @@ public abstract class Parameter<T, R>
      *         representing a sparse array.
      */
     public static <T> Parameter<List<Pair<Integer, T>>, TreeMap<Integer, T>> sparseArrayParameter(
-            final String name, final TwoWayConversion<String, T> conversions )
+            final String name, final TwoWayConversion<T> conversions )
     {
         Checks.notNull( name, conversions );
 
@@ -302,7 +302,7 @@ public abstract class Parameter<T, R>
                 for ( final String value : values )
                 {
                     final int hack = startIndex;
-                    for (final T t: conversions.a2b().convert(
+                    for (final T t: conversions.conversionFromString.convert(
                                                               Strings.removeSurroundingQuotesLeniently( value ) ))
                         {
                             results.add( Pair.pair( hack, t ) );
@@ -337,7 +337,7 @@ public abstract class Parameter<T, R>
 
                 for ( final Map.Entry<Integer, T> entry : nameAndMap.second().entrySet() )
                 {
-                    for (final String value: conversions.b2a().convert( entry.getValue() ))
+                    for (final String value: conversions.conversionToString.convert( entry.getValue() ))
                     {
                         if ( result.length() != 0 )
                         {

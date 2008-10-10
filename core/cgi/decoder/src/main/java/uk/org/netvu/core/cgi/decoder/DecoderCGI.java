@@ -48,14 +48,14 @@ public final class DecoderCGI
                         {
                             return Lists.reduce( Lists.map(
                                     Arrays.asList( array ),
-                                    Strings.surroundWithQuotes ),
+                                    Strings.surroundWithQuotes() ),
                                     Reduction.intersperseWith( "," ) );
                         }
                     } ) ) );
 
     private static final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = Parameter.sparseArrayParameter(
             "commands", TwoWayConversion.total( Conversion.<String> identity(),
-                    URLBuilder.encode.andThen( Strings.surroundWithQuotes ) ) );
+                                                URLBuilder.encode.andThen( Strings.surroundWithQuotes() ) ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

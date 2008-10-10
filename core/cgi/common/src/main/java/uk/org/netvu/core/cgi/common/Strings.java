@@ -13,8 +13,10 @@ public class Strings
      * A Conversion that will surround any String passed to it with double
      * quotes.
      */
-    public static final Conversion<String, String> surroundWithQuotes = prepend(
-            "\"" ).andThen( append( "\"" ) );
+    public static final Conversion<String, String> surroundWithQuotes()
+    {
+        return prepend("\"" ).andThen( append( "\"" ) );
+    }
 
     /**
      * Gives the substring of the specified String after the specified char.
@@ -62,36 +64,6 @@ public class Strings
         }
 
         return builder.toString();
-    }
-
-    /**
-     * Constructs a ReversibleReplace capable of replacing the String toReplace
-     * with the String 'with', and the reverse, in any Strings passed to it.
-     * 
-     * @param toReplace
-     *        the String to replace.
-     * @param with
-     *        the String to replace with.
-     * @return a ReversibleReplace capable of replacing the String toReplace
-     *         with the String 'with' and the reverse.
-     */
-    public static ReversibleReplace reversibleReplace( final String toReplace,
-            final String with )
-    {
-        Checks.notNull( toReplace, with );
-
-        return new ReversibleReplace()
-        {
-            public String replace( final String s )
-            {
-                return s.replaceAll( toReplace, with );
-            }
-
-            public String undo( final String s )
-            {
-                return s.replaceAll( with, toReplace );
-            }
-        };
     }
 
     /**

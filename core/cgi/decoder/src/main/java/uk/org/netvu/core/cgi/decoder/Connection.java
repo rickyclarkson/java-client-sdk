@@ -9,7 +9,6 @@ import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Parameter;
 import uk.org.netvu.core.cgi.common.ParameterMap;
-import uk.org.netvu.core.cgi.common.ReversibleReplace;
 import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.TwoWayConversion;
 import uk.org.netvu.core.cgi.common.URLBuilder;
@@ -47,9 +46,6 @@ public final class Connection
 
     private final ParameterMap parameterMap;
 
-    private static final ReversibleReplace replacer = Strings.reversibleReplace(
-            "&", "," );
-
     /**
      * A Conversion that, given a Connection, produces a URL-encoded String
      * containing a representation of it as URL parameters.
@@ -59,9 +55,9 @@ public final class Connection
         @Override
         public String convert( final Connection connection )
         {
-            return URLBuilder.encode( replacer.replace( connection.parameterMap.toURLParameters( params ) ) );
+            return URLBuilder.encode( connection.parameterMap.toURLParameters( params ).replaceAll("&", "," ) );
         }
-    }.andThen( Strings.surroundWithQuotes );
+    }.andThen( Strings.surroundWithQuotes() );
 
     /**
      * A Conversion that, given a String containing URL parameters, produces a
@@ -75,8 +71,7 @@ public final class Connection
             try
             {
                 final Option<ParameterMap> map = ParameterMap.fromURL(
-                        replacer.undo( URLDecoder.decode( urlParameters,
-                                "UTF-8" ) ), params );
+                                                                      URLDecoder.decode( urlParameters, "UTF-8" ).replaceAll(",", "&"), params );
 
                 if ( map.isEmpty() )
                 {
