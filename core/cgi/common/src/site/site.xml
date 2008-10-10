@@ -10,6 +10,9 @@
                 <item name="Parse CSV" href="use-cases/parse-csv.html"/>
             </item>
         </menu>
+        <menu name="Design">
+            <item name="Rationale" href="rationale.html"/>
+        </menu>
         <menu ref="reports"/>
     </body>
 </project>
