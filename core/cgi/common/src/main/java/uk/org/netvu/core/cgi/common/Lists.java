@@ -25,7 +25,7 @@ public final class Lists
     public static <T> List<T> filter( final List<T> list,
             final Conversion<T, Boolean> conversion )
     {
-        Checks.notNull(conversion);
+        Checks.notNull( conversion );
 
         final List<T> results = new ArrayList<T>();
         for ( final T t : list )

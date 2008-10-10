@@ -3,10 +3,10 @@ package uk.org.netvu.core.cgi.vparts;
 import java.util.ArrayList;
 
 import uk.org.netvu.core.cgi.common.Option;
-import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ParameterDescription;
 import uk.org.netvu.core.cgi.common.ParameterMap;
-import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.StringConversion;
+import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.URLParameter;
 
 /**
@@ -14,26 +14,26 @@ import uk.org.netvu.core.cgi.common.URLParameter;
  */
 public class VPartsCGIResult
 {
-    private static final Parameter<Integer, Option<Integer>> INDEX = Parameter.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> INDEX = ParameterDescription.parameter(
             "index", StringConversion.integer );
-    private static final Parameter<String, Option<String>> DIRECTORY = Parameter.parameter(
+    private static final ParameterDescription<String, Option<String>> DIRECTORY = ParameterDescription.parameter(
             "directory", StringConversion.string );
-    private static final Parameter<String, Option<String>> FILENAME = Parameter.parameter(
+    private static final ParameterDescription<String, Option<String>> FILENAME = ParameterDescription.parameter(
             "filename", StringConversion.string );
-    private static final Parameter<Integer, Option<Integer>> START_TIME = Parameter.notNegative( Parameter.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> START_TIME = ParameterDescription.notNegative( ParameterDescription.parameter(
             "start_time", StringConversion.integer ) );
-    private static final Parameter<Integer, Option<Integer>> END_TIME = Parameter.notNegative( Parameter.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> END_TIME = ParameterDescription.notNegative( ParameterDescription.parameter(
             "end_time", StringConversion.integer ) );
-    private static final Parameter<Integer, Option<Integer>> EXPIRY_TIME = Parameter.notNegative( Parameter.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> EXPIRY_TIME = ParameterDescription.notNegative( ParameterDescription.parameter(
             "expiry_time", StringConversion.integer ) );
-    private static final Parameter<Integer, Option<Integer>> NUMBER_OF_ENTRIES = Parameter.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> NUMBER_OF_ENTRIES = ParameterDescription.parameter(
             "n_entries", StringConversion.integer );
-    private static final Parameter<Integer, Option<Integer>> CAM_MASK = Parameter.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> CAM_MASK = ParameterDescription.parameter(
             "cammask", StringConversion.integer );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
-    private static final ArrayList<Parameter<?, ? extends Option<?>>> params = new ArrayList<Parameter<?, ? extends Option<?>>>()
+    private static final ArrayList<ParameterDescription<?, ? extends Option<?>>> parameterDescriptions = new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
     {
         {
             add( INDEX );
@@ -61,16 +61,17 @@ public class VPartsCGIResult
         ParameterMap parameterMap = new ParameterMap();
         final String[] elements = Strings.split( csv );
         int a = 0;
-        for ( final Parameter<?, ?> param : params )
+        for ( final ParameterDescription<?, ?> parameterDescription : parameterDescriptions )
         {
-            parameterMap = hack( parameterMap, param, elements[a] );
+            parameterMap = hack( parameterMap, parameterDescription,
+                    elements[a] );
             a++;
         }
         return new VPartsCGIResult( parameterMap );
     }
 
     private static <T, R> ParameterMap hack( final ParameterMap parameterMap,
-            final Parameter<T, R> param, final String s )
+            final ParameterDescription<T, R> param, final String s )
     {
         return parameterMap.set( param, param.fromURLParameter(
                 new URLParameter( param.name, s ) ).get() );
@@ -80,11 +81,12 @@ public class VPartsCGIResult
 
     private VPartsCGIResult( final ParameterMap parameterMap )
     {
-        for ( final Parameter<?, ? extends Option<?>> param : params )
+        for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : parameterDescriptions )
         {
-            if ( parameterMap.get( param ).isEmpty() )
+            if ( parameterMap.get( parameterDescription ).isEmpty() )
             {
-                throw new IllegalStateException( "The parameter " + param.name
+                throw new IllegalStateException( "The parameter "
+                        + parameterDescription.name
                         + " has not been given a value" );
             }
         }
@@ -184,9 +186,10 @@ public class VPartsCGIResult
     {
         final StringBuilder result = new StringBuilder();
 
-        for ( final Parameter<?, ? extends Option<?>> param : params )
+        for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : parameterDescriptions )
         {
-            result.append( builtMap.get( param ).get() ).append( ", " );
+            result.append( builtMap.get( parameterDescription ).get() ).append(
+                    ", " );
         }
 
         return result.substring( 0, result.length() - 2 );

@@ -15,21 +15,22 @@ public final class ParameterMap
      * Parses each of the specified Strings and gives it to the corresponding
      * parameter, returning a ParameterMap holding the parsed values.
      * 
-     * @param params
-     *        the parameters of interest, corresponding with the strings
+     * @param parameterDescriptions
+     *        the parameters of interest, corresponding with the 'strings'
      *        parameter by index.
      * @param strings
-     *        the Strings of interest, corresponding with the params parameter
+     *        the Strings of interest, corresponding with the parameterDescriptions parameter
      *        by index.
-     * @return a ParameterMap holding the parsed values.
+     * @return a ParameterMap holding the parsed values, wrapped in an Option, or an empty Option if any of the values don't parse.
      */
     public static Option<ParameterMap> fromStrings(
-            final List<Parameter<?, ?>> params, final List<String> strings )
+            final List<ParameterDescription<?, ?>> parameterDescriptions,
+            final List<String> strings )
     {
         Option<ParameterMap> parameterMap = Option.some( new ParameterMap() );
 
-        for ( final Pair<Parameter<?, ?>, String> pair : Lists.zip( params,
-                strings ) )
+        for ( final Pair<ParameterDescription<?, ?>, String> pair : Lists.zip(
+                parameterDescriptions, strings ) )
         {
             parameterMap = parameterMap.bind( new Conversion<ParameterMap, Option<ParameterMap>>()
             {
@@ -52,21 +53,22 @@ public final class ParameterMap
      * 
      * @param url
      *        the URL to parse.
-     * @param params
+     * @param parameterDescriptions
      *        the parameters of interest.
      * @return a ParameterMap holding the values parsed from the URL.
      */
-    public static Option<ParameterMap> fromURL( final String url,
-            final List<? extends Parameter<?, ?>> params )
+    public static Option<ParameterMap> fromURL(
+            final String url,
+            final List<? extends ParameterDescription<?, ?>> parameterDescriptions )
     {
         Option<ParameterMap> parameterMap = Option.some( new ParameterMap() );
         final List<URLParameter> parts = URLExtractor.nameValuePairs( url );
 
         for ( final URLParameter part : parts )
         {
-            for ( final Parameter<?, ?> param : params )
+            for ( final ParameterDescription<?, ?> parameterDescription : parameterDescriptions )
             {
-                if ( part.name.startsWith( param.name ) )
+                if ( part.name.startsWith( parameterDescription.name ) )
                 {
                     parameterMap = parameterMap.bind( new Conversion<ParameterMap, Option<ParameterMap>>()
                     {
@@ -74,7 +76,8 @@ public final class ParameterMap
                         public Option<ParameterMap> convert(
                                 final ParameterMap map )
                         {
-                            return map.withFromString( param, part );
+                            return map.withFromString( parameterDescription,
+                                    part );
                         }
                     } );
                 }
@@ -86,26 +89,26 @@ public final class ParameterMap
 
     /**
      * A Conversion that takes in a ParameterMap and produces a new ParameterMap
-     * containing the given Parameter and its value.
+     * containing the given value for the given ParameterDescription.
      * 
      * @param <T>
-     *        the type of the Parameter.
-     * @param parameter
+     *        the type of the parameter.
+     * @param parameterDescription
      *        the parameter to apply to ParameterMaps.
      * @param value
      *        the value to apply for that parameter.
      * @return a Conversion that takes in a ParameterMap and produces a new
-     *         ParameterMap containing the given Parameter and its value.
+     *         ParameterMap containing the given value.
      */
     public static <T> Conversion<ParameterMap, ParameterMap> setter(
-            final Parameter<T, ?> parameter, final T value )
+            final ParameterDescription<T, ?> parameterDescription, final T value )
     {
         return new Conversion<ParameterMap, ParameterMap>()
         {
             @Override
             public ParameterMap convert( final ParameterMap map )
             {
-                return map.set( parameter, value );
+                return map.set( parameterDescription, value );
             }
         };
     }
@@ -119,7 +122,7 @@ public final class ParameterMap
     /**
      * The map that stores the value for each parameter.
      */
-    public final Map<Parameter<?, ?>, Object> values;
+    public final Map<ParameterDescription<?, ?>, Object> values;
 
     /**
      * Constructs a ParameterMap that is always valid.
@@ -137,10 +140,10 @@ public final class ParameterMap
      */
     public ParameterMap( final Validator validator )
     {
-        this( new HashMap<Parameter<?, ?>, Object>(), validator );
+        this( new HashMap<ParameterDescription<?, ?>, Object>(), validator );
     }
 
-    private ParameterMap( final Map<Parameter<?, ?>, Object> values,
+    private ParameterMap( final Map<ParameterDescription<?, ?>, Object> values,
             final Validator validator )
     {
         Checks.notNull( validator );
@@ -154,29 +157,30 @@ public final class ParameterMap
      * 
      * @param <T>
      *        the output type of the parameter.
-     * @param parameter
+     * @param parameterDescription
      *        the parameter of interest.
      * @return the stored value for the specified parameter.
      */
     @SuppressWarnings( "unchecked" )
-    public <T> T get( final Parameter<?, T> parameter )
+    public <T> T get( final ParameterDescription<?, T> parameterDescription )
     {
-        return values.containsKey( parameter ) ? (T) values.get( parameter )
-                : parameter.getDefaultValue();
+        return values.containsKey( parameterDescription ) ? (T) values.get( parameterDescription )
+                : parameterDescription.getDefaultValue();
     }
 
     /**
      * Identifies whether the ParameterMap only has the parameter's default
      * value.
      * 
-     * @param parameter
+     * @param parameterDescription
      *        the parameter of interest.
      * @return true if the ParameterMap only has the parameter's default value,
      *         false otherwise.
      */
-    public boolean isDefault( final Parameter<?, ?> parameter )
+    public boolean isDefault(
+            final ParameterDescription<?, ?> parameterDescription )
     {
-        return values.get( parameter ) == null;
+        return values.get( parameterDescription ) == null;
     }
 
     /**
@@ -188,31 +192,33 @@ public final class ParameterMap
      *        the input type of the parameter.
      * @param <R>
      *        the output type of the parameter.
-     * @param parameter
+     * @param parameterDescription
      *        the parameter to store a value for.
      * @param value
      *        the value to store.
      * @return a new ParameterMap with the specified value for the specified
      *         parameter.
      */
-    public <T, R> ParameterMap set( final Parameter<T, R> parameter,
-            final T value )
+    public <T, R> ParameterMap set(
+            final ParameterDescription<T, R> parameterDescription, final T value )
     {
         if ( value == null )
         {
-            throw new NullPointerException( "Values for the " + parameter.name
-                    + " parameter cannot be null." );
+            throw new NullPointerException( "Values for the "
+                    + parameterDescription.name + " parameter cannot be null." );
         }
 
-        final Map<Parameter<?, ?>, Object> copy = new HashMap<Parameter<?, ?>, Object>(
+        final Map<ParameterDescription<?, ?>, Object> copy = new HashMap<ParameterDescription<?, ?>, Object>(
                 values );
 
-        copy.put( parameter, parameter.reduce( value, get( parameter ) ) );
+        copy.put( parameterDescription, parameterDescription.reduce( value,
+                get( parameterDescription ) ) );
 
         final ParameterMap built = new ParameterMap( copy, validator );
         if ( !validator.isValid( built ) )
         {
-            throw new IllegalStateException( value + " for " + parameter.name
+            throw new IllegalStateException( value + " for "
+                    + parameterDescription.name
                     + " violates the constraints on this parameter map" );
         }
 
@@ -223,16 +229,17 @@ public final class ParameterMap
      * Produces the parameters part of a URL with the specified parameters in
      * order.
      * 
-     * @param params
+     * @param parameterDescriptions
      *        the parameters of interest, in order.
      * @return the parameters part of a URL.
      */
-    public String toURLParameters( final List<? extends Parameter<?, ?>> params )
+    public String toURLParameters(
+            final List<? extends ParameterDescription<?, ?>> parameterDescriptions )
     {
         final StringBuilder builder = new StringBuilder();
-        for ( final Parameter<?, ?> param : params )
+        for ( final ParameterDescription<?, ?> parameterDescription : parameterDescriptions )
         {
-            for (String parameter: param.toURLParameter( this ))
+            for ( final String parameter : parameterDescription.toURLParameter( this ) )
             {
                 builder.append( parameter ).append( "&" );
             }
@@ -243,15 +250,16 @@ public final class ParameterMap
     }
 
     private <T, R> Option<ParameterMap> withFromString(
-            final Parameter<T, R> param, final URLParameter keyAndValue )
+            final ParameterDescription<T, R> parameterDescription,
+            final URLParameter keyAndValue )
     {
-        return param.fromURLParameter( keyAndValue ).map(
+        return parameterDescription.fromURLParameter( keyAndValue ).map(
                 new Conversion<T, ParameterMap>()
                 {
                     @Override
                     public ParameterMap convert( final T value )
                     {
-                        return set( param, value );
+                        return set( parameterDescription, value );
                     }
 
                 } );

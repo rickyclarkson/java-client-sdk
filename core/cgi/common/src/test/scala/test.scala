@@ -84,26 +84,26 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
  def from[T] =
   new Conversion[String, Option[T]] { def convert(s: String): Option[T] = Option.none[T]("Unsupported") }
 
- val param = Parameter.parameterWithDefault("foo", 3, StringConversion.partial(from, to))
+ val parameterDescription = ParameterDescription.parameterWithDefault("foo", 3, StringConversion.partial(from, to))
  
- "Supplying a value to an ordinary Parameter twice" should { "cause an IllegalStateException" in {
-  new ParameterMap set (param, 4) set (param, 5) must throwA(new IllegalStateException)
+ "Supplying a value to an ordinary ParameterDescription twice" should { "cause an IllegalStateException" in {
+  new ParameterMap set (parameterDescription, 4) set (parameterDescription, 5) must throwA(new IllegalStateException)
  }
                                                            }
 
  "Converting a Parameter to a URL" should {
-  "give an Option holding the name of the Parameter when the Parameter has a non-default value" in {
-   param.toURLParameter(new ParameterMap().set(param, 3)).get must include("foo") }
-  "give an Option holding an empty String when the Parameter has a default value" in {
-   param.toURLParameter(new ParameterMap).get mustEqual "" } }
+  "give an Option holding the name of the Parameter when the parameter has a non-default value" in {
+   parameterDescription.toURLParameter(new ParameterMap().set(parameterDescription, 3)).get must include("foo") }
+  "give an Option holding an empty String when the parameter has its default value" in {
+   parameterDescription.toURLParameter(new ParameterMap).get mustEqual "" } }
 
  "Converting a URL to a Parameter" should {
   "succeed" in {
-   val p = Parameter.parameterWithDefault[Integer]("foo", 3, StringConversion.partial(Conversion.stringToInt, to))
-   Parameter.not[Integer, Integer](4, p).fromURLParameter(new URLParameter("foo", "8")).get mustEqual 8 } }
+   val p = ParameterDescription.parameterWithDefault[Integer]("foo", 3, StringConversion.partial(Conversion.stringToInt, to))
+   ParameterDescription.not[Integer, Integer](4, p).fromURLParameter(new URLParameter("foo", "8")).get mustEqual 8 } }
 
  "A bound Parameter" should {
-  val bound = Parameter.bound(1, 10, Parameter.parameterWithDefault("foo", 3, StringConversion.partial(from, to)))
+  val bound = ParameterDescription.bound(1, 10, ParameterDescription.parameterWithDefault("foo", 3, StringConversion.partial(from, to)))
   "accept values inside its bounds" in {
    new ParameterMap().set[Integer, Integer](bound, 4) get bound mustEqual 4 }
   "reject values outside its bounds" in {
@@ -113,8 +113,8 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
  import Pair.pair
 
  "A 'not' Parameter" should {
-  val nested = Parameter.parameterWithDefault("foo", 3, StringConversion.partial(from, to))
-  val theNot = Parameter.not(5, nested)
+  val nested = ParameterDescription.parameterWithDefault("foo", 3, StringConversion.partial(from, to))
+  val theNot = ParameterDescription.not(5, nested)
   "allow unbanned values" in { new ParameterMap set (theNot, 2) get theNot mustEqual 2 }
   "reject banned values" in { new ParameterMap set (theNot, 5) must throwA(new IllegalArgumentException) }
   "delegate toURLParameter() calls to the nested Parameter" in {
@@ -124,7 +124,7 @@ class ParametersSecondTest extends JUnit4(new Specification with Scalacheck {
  import java.util.TreeMap
  
  "A sparse array Parameter" should {
-  val sparse = Parameter.sparseArrayParameter[Integer]("foo", StringConversion.integer)
+  val sparse = ParameterDescription.sparseArrayParameter[Integer]("foo", StringConversion.integer)
   "be convertible from URL parameters" in {
    convertList(sparse.fromURLParameter(new URLParameter("foo[2]", "3,6,9")).get) must {
     haveSameElementsAs(List[Pair[Integer, Integer]](pair(2,3), pair(3,6), pair(4, 9))) } }
@@ -320,7 +320,7 @@ class ConversionTest extends JUnit4(new Specification with Scalacheck {
 
 class ParameterMapSecondTest extends JUnit4(new Specification {
  import java.lang.Integer
- val parameter = Parameter.parameter[Integer]("foo", StringConversion.integer)
+ val parameter = ParameterDescription.parameter[Integer]("foo", StringConversion.integer)
  "ParameterMap.set" should { "give a NullPointerException when supplied with a null" in {
   new ParameterMap().set(null, 3) must throwA(new NullPointerException)
   new ParameterMap().set(parameter, null) must throwA(new NullPointerException)
@@ -371,8 +371,8 @@ class PairTest extends JUnit4(new Specification {
 })
 
 class ValidatorTest extends JUnit4(new Specification {
- val nameParam = Parameter.parameter("name", StringConversion.string)
- val addressParam = Parameter.parameter("address", StringConversion.string)
+ val nameParam = ParameterDescription.parameter("name", StringConversion.string)
+ val addressParam = ParameterDescription.parameter("address", StringConversion.string)
  val validator = Validator.mutuallyExclusive(Arrays.asList(Array(nameParam, addressParam)))
 
  "mutually exclusive parameters" should { "really be mutually exclusive" in {
@@ -382,12 +382,12 @@ class ValidatorTest extends JUnit4(new Specification {
 })
 
 class ParameterMapTest extends JUnit4(new Specification {
- import Parameter.{parameter, notNegative, parameterWithDefault, sparseArrayParameter}
+ import ParameterDescription.{parameter, notNegative, parameterWithDefault, sparseArrayParameter}
 
  "ParameterMap.fromStrings" should { "store the passed-in values in each Parameter" in {
   val forename = parameterWithDefault("name", "Bob", StringConversion.string)
   val surname = parameterWithDefault("surname", "Hope", StringConversion.string)
-  val params: java.util.List[Parameter[_, _]] = Arrays.asList(Array(forename, surname))
+  val params: java.util.List[ParameterDescription[_, _]] = Arrays.asList(Array(forename, surname))
 
   ParameterMap.fromStrings(params, Arrays.asList(Array[String]("John", "Major"))).get.get(surname) mustEqual "Major" } }
 
@@ -400,7 +400,7 @@ class ParameterMapTest extends JUnit4(new Specification {
  } }
 
  "Parsing a URL" should { "result in a ParameterMap holding the correct values" in {
-  val params: JavaList[Parameter[_, _]] = List(time, range)
+  val params: JavaList[ParameterDescription[_, _]] = List(time, range)
   val parameterMap = ParameterMap.fromURL("time=10&range=40", params).get
   parameterMap.get(time).get mustEqual 10
   parameterMap.get(range).get mustEqual 40
@@ -417,7 +417,7 @@ class ParameterMapTest extends JUnit4(new Specification {
  } }
 
  "Populating a sparse array Parameter and then reading back its values" should { "yield the original values" in {
-  val p: Parameter[JavaList[Pair[Integer, String]], JavaTreeMap[Integer, String]] =
+  val p: ParameterDescription[JavaList[Pair[Integer, String]], JavaTreeMap[Integer, String]] =
    sparseArrayParameter[String]("foo", StringConversion.partial(Option.some[String],
                                                                 Option.noneRef("Conversion not supported")))
 
@@ -504,7 +504,7 @@ class NullTest extends JUnit4(new Specification {
 
  implicit val anInt = 5
  implicit val intArray = Array(1, 2, 3)
- implicit val aParameter = Parameter.parameter(string, twoWayConversion)
+ implicit val aParameterDescription = ParameterDescription.parameter(string, twoWayConversion)
  implicit val unit = ()
 
  def notAcceptNull[T <: AnyRef, R] = new specs.matcher.Matcher[T => R] { def apply(f: => T => R) =
@@ -580,13 +580,13 @@ class NullTest extends JUnit4(new Specification {
  
  noNull(Pair.pair[Integer, Integer] _, "Pair.pair")
 
- noNull(Parameter.bound(3, 5, (_: Parameter[Integer, String])), "Parameter.bound")
- noNull(Parameter.not[Integer, Option[Integer]] _, "Parameter.not")
- noNull(Parameter.notNegative[Option[Integer]] _, "Parameter.notNegative")
- noNull(Parameter.parameter[Integer] _, "Parameter.parameter")
+ noNull(ParameterDescription.bound(3, 5, (_: ParameterDescription[Integer, String])), "ParameterDescription.bound")
+ noNull(ParameterDescription.not[Integer, Option[Integer]] _, "ParameterDescription.not")
+ noNull(ParameterDescription.notNegative[Option[Integer]] _, "ParameterDescription.notNegative")
+ noNull(ParameterDescription.parameter[Integer] _, "ParameterDescription.parameter")
 
- noNull(Parameter.parameterWithDefault[Integer] _, "Parameter.parameterWithDefault")
- noNull(Parameter.sparseArrayParameter[Integer] _, "Parameter.sparseArrayParam")
+ noNull(ParameterDescription.parameterWithDefault[Integer] _, "ParameterDescription.parameterWithDefault")
+ noNull(ParameterDescription.sparseArrayParameter[Integer] _, "ParameterDescription.sparseArrayParam")
 
  noNull({ x: Validator => new ParameterMap(x) }, "new ParameterMap(Validator)")
  noNull(Reduction.intersperseWith _, "Reduction.intersperseWith")
@@ -630,6 +630,6 @@ class NullTest extends JUnit4(new Specification {
  noNull(Validator.TRUE.isValid _, "Validator.TRUE.isValid")
  noNull(Validator.mutuallyExclusive _, "Validator.mutuallyExclusive")
 
- noNull(Validator.mutuallyExclusive(new java.util.ArrayList[Parameter[_, _]]).isValid _,
-        "Validator.mutuallyExclusive(new ArrayList<Parameter<?, ?>>().isValid")
+ noNull(Validator.mutuallyExclusive(new java.util.ArrayList[ParameterDescription[_, _]]).isValid _,
+        "Validator.mutuallyExclusive(new ArrayList<ParameterDescription<?, ?>>().isValid")
 })

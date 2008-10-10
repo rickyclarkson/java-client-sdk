@@ -14,162 +14,6 @@ import java.math.BigInteger;
 public abstract class Conversion<T, R>
 {
     /**
-     * Constructs a Conversion.  This constructor has no effect.
-     */
-    public Conversion()
-    {
-    }
-
-    /**
-     * A conversion from Strings to Booleans, where "true" gets mapped to the Boolean value TRUE, "false"
-     * gets mapped to FALSE, and anything else gets mapped to an empty Option.
-     */
-    public static Conversion<String, Option<Boolean>> stringToBoolean()
-    {
-        return new Conversion<String, Option<Boolean>>()
-        {
-            @Override
-            public Option<Boolean> convert( final String t )
-            {
-                if (t.equals( "true" ))
-                {
-                    return Option.some( true );
-                }
-                else if (t.equals( "false" ))
-                {
-                    return Option.some( false );
-                }
-            
-                return Option.none( t + " is neither true nor false" );
-            }
-        };
-    }
-
-    /**
-     * A conversion from Strings to Integers, using Integer.parseInt(String).
-     */
-    public static Conversion<String, Option<Integer>> stringToInt()
-    {
-        return new Conversion<String, Option<Integer>>()
-        {
-            @Override
-            public Option<Integer> convert( final String t )
-            {
-                Checks.notNull( t );
-
-                try
-                {
-                    return Option.some( Integer.parseInt( t ) );
-                }
-                catch ( final NumberFormatException exception )
-                {
-                    return Option.none( t + " is not a valid Integer" );
-                }
-            }
-        };
-    }
-
-    /**
-     * A conversion from Strings containing hexadecimal to ints.
-     */
-    public static final Conversion<String, Option<Integer>> hexStringToInt()
-    {
-        return new Conversion<String, Option<Integer>>()
-        {
-            @Override
-            public Option<Integer> convert( final String t )
-            {
-                Checks.notNull( t );
-
-                try
-                {
-                    return Option.some( (int) Long.parseLong( t, 16 ) );
-                }
-                catch ( final NumberFormatException e )
-                {
-                    return Option.none( t + " is not a valid long" );
-                }
-            }
-        };
-    }
-
-    /**
-     * A conversion from Strings containing hexadecimal to longs.
-     */
-    public static final Conversion<String, Option<Long>> hexStringToLong()
-    {
-        return new Conversion<String, Option<Long>>()
-        {
-            @Override
-            public Option<Long> convert( final String t )
-            {
-                try
-                {
-                    return Option.some( new BigInteger( t, 16 ).longValue() );
-                }
-                catch ( final NumberFormatException e )
-                {
-                    return Option.none( t + " is not a valid long, in hexadecimal" );
-                }
-            }
-        };
-    }
-
-    /**
-     * A conversion from Strings to longs, using Long.parseLong(String).
-     */
-    public static final Conversion<String, Option<Long>> stringToLong()
-    {
-        return new Conversion<String, Option<Long>>()
-        {
-            @Override
-            public Option<Long> convert( final String t )
-            {
-                Checks.notNull( t );
-
-                try
-                {
-                    return Option.some(Long.parseLong( t ));
-                }
-                catch (NumberFormatException e)
-                {
-                    return Option.none(t+" is not a valid long");
-                }
-            }
-        };
-    }
-
-    /**
-     * A conversion from longs to Strings containing hexadecimal.
-     */
-    public static final Conversion<Long, String> longToHexString()
-    {
-        return new Conversion<Long, String>()
-        {
-            @Override
-            public String convert( final Long value )
-            {
-                return Long.toHexString( value );
-            }
-        };
-    }
-
-    /**
-     * A conversion from ints to Strings containing hexadecimal.
-     */
-    public static final Conversion<Integer, String> intToHexString()
-    {
-        return new Conversion<Integer, String>()
-        {
-            @Override
-            public String convert( final Integer value )
-            {
-                return Integer.toHexString( value );
-            }
-        };
-    }
-
-    /**
      * A Conversion that returns true if the value it receives is the same as
      * the specified parameter.
      * 
@@ -225,6 +69,53 @@ public abstract class Conversion<T, R>
     }
 
     /**
+     * A conversion from Strings containing hexadecimal to ints.
+     */
+    public static final Conversion<String, Option<Integer>> hexStringToInt()
+    {
+        return new Conversion<String, Option<Integer>>()
+        {
+            @Override
+            public Option<Integer> convert( final String t )
+            {
+                Checks.notNull( t );
+
+                try
+                {
+                    return Option.some( (int) Long.parseLong( t, 16 ) );
+                }
+                catch ( final NumberFormatException e )
+                {
+                    return Option.none( t + " is not a valid long" );
+                }
+            }
+        };
+    }
+
+    /**
+     * A conversion from Strings containing hexadecimal to longs.
+     */
+    public static final Conversion<String, Option<Long>> hexStringToLong()
+    {
+        return new Conversion<String, Option<Long>>()
+        {
+            @Override
+            public Option<Long> convert( final String t )
+            {
+                try
+                {
+                    return Option.some( new BigInteger( t, 16 ).longValue() );
+                }
+                catch ( final NumberFormatException e )
+                {
+                    return Option.none( t
+                            + " is not a valid long, in hexadecimal" );
+                }
+            }
+        };
+    }
+
+    /**
      * The identity conversion - given an object of type T it results in the
      * same object of type T.
      * 
@@ -241,6 +132,39 @@ public abstract class Conversion<T, R>
             {
                 Checks.notNull( t );
                 return t;
+            }
+        };
+    }
+
+    /**
+     * A Conversion from an Integer to a String containing a hexadecimal
+     * representation of the Integer.
+     * 
+     * @return a Conversion from an Integer to a String containing hexadecimal.
+     */
+    public static final Conversion<Integer, String> intToHexString()
+    {
+        return new Conversion<Integer, String>()
+        {
+            @Override
+            public String convert( final Integer value )
+            {
+                return Integer.toHexString( value );
+            }
+        };
+    }
+
+    /**
+     * A conversion from longs to Strings containing hexadecimal.
+     */
+    public static final Conversion<Long, String> longToHexString()
+    {
+        return new Conversion<Long, String>()
+        {
+            @Override
+            public String convert( final Long value )
+            {
+                return Long.toHexString( value );
             }
         };
     }
@@ -264,6 +188,87 @@ public abstract class Conversion<T, R>
                 return t.toString();
             }
         };
+    }
+
+    /**
+     * A conversion from Strings to Booleans, where "true" gets mapped to the
+     * Boolean value TRUE, "false" gets mapped to FALSE, and anything else gets
+     * mapped to an empty Option.
+     */
+    public static Conversion<String, Option<Boolean>> stringToBoolean()
+    {
+        return new Conversion<String, Option<Boolean>>()
+        {
+            @Override
+            public Option<Boolean> convert( final String t )
+            {
+                if ( t.equals( "true" ) )
+                {
+                    return Option.some( true );
+                }
+                else if ( t.equals( "false" ) )
+                {
+                    return Option.some( false );
+                }
+
+                return Option.none( t + " is neither true nor false" );
+            }
+        };
+    }
+
+    /**
+     * A conversion from Strings to Integers, using Integer.parseInt(String).
+     */
+    public static Conversion<String, Option<Integer>> stringToInt()
+    {
+        return new Conversion<String, Option<Integer>>()
+        {
+            @Override
+            public Option<Integer> convert( final String t )
+            {
+                Checks.notNull( t );
+
+                try
+                {
+                    return Option.some( Integer.parseInt( t ) );
+                }
+                catch ( final NumberFormatException exception )
+                {
+                    return Option.none( t + " is not a valid Integer" );
+                }
+            }
+        };
+    }
+
+    /**
+     * A conversion from Strings to longs, using Long.parseLong(String).
+     */
+    public static final Conversion<String, Option<Long>> stringToLong()
+    {
+        return new Conversion<String, Option<Long>>()
+        {
+            @Override
+            public Option<Long> convert( final String t )
+            {
+                Checks.notNull( t );
+
+                try
+                {
+                    return Option.some( Long.parseLong( t ) );
+                }
+                catch ( final NumberFormatException e )
+                {
+                    return Option.none( t + " is not a valid long" );
+                }
+            }
+        };
+    }
+
+    /**
+     * Constructs a Conversion. This constructor has no effect.
+     */
+    public Conversion()
+    {
     }
 
     /**

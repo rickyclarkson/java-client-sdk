@@ -11,6 +11,120 @@ import java.util.Iterator;
  */
 public abstract class Option<T> implements Iterable<T>
 {
+    private static final class Some<T>
+            extends Option<T>
+    {
+        private final T t;
+
+        private Some( final T t )
+        {
+            this.t = t;
+        }
+
+        @Override
+        public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
+        {
+            return conversion.convert( t );
+        }
+
+        @Override
+        public T get()
+        {
+            return t;
+        }
+
+        @Override
+        public boolean isEmpty()
+        {
+            return false;
+        }
+
+        public Iterator<T> iterator()
+        {
+            return Collections.singletonList( t ).iterator();
+        }
+
+        @Override
+        public <U> Option<U> map( final Conversion<T, U> conversion )
+        {
+            return Option.some( conversion.convert( t ) );
+        }
+
+        @Override
+        public String reason()
+        {
+            throw null;
+        }
+
+        @Override
+        <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
+        {
+            Checks.notNull( ifNone );
+
+            return ifSome.convert( t );
+        }
+    }
+
+    private static final class None<T>
+            extends Option<T>
+    {
+        private final String reason;
+
+        private None( final String reason )
+        {
+            this.reason = reason;
+        }
+
+        @Override
+        public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
+        {
+            Checks.notNull( conversion );
+
+            return Option.none( reason );
+        }
+
+        @Override
+        public T get()
+        {
+            throw new IllegalStateException(
+                    "This Option has no element, get() cannot be called on it.  The reason it has no element: "
+                            + reason );
+        }
+
+        @Override
+        public boolean isEmpty()
+        {
+            return true;
+        }
+
+        public Iterator<T> iterator()
+        {
+            return Collections.<T> emptyList().iterator();
+        }
+
+        @Override
+        public <U> Option<U> map( final Conversion<T, U> conversion )
+        {
+            Checks.notNull( conversion );
+
+            return Option.none( reason );
+        }
+
+        @Override
+        public String reason()
+        {
+            return reason;
+        }
+
+        @Override
+        <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
+        {
+            Checks.notNull( ifNone, ifSome );
+
+            return ifNone;
+        }
+    }
+
     /**
      * Creates an Option holding no elements.
      * 
@@ -24,58 +138,7 @@ public abstract class Option<T> implements Iterable<T>
     {
         Checks.notNull( reason );
 
-        return new Option<T>()
-        {
-            @Override
-            public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
-            {
-                Checks.notNull( conversion );
-
-                return Option.none( reason );
-            }
-
-            @Override
-            public T get()
-            {
-                throw new IllegalStateException(
-                        "This Option has no element, get() cannot be called on it.  The reason it has no element: "
-                                + reason );
-            }
-
-            @Override
-            public boolean isEmpty()
-            {
-                return true;
-            }
-
-            @Override
-            public <U> Option<U> map( final Conversion<T, U> conversion )
-            {
-                Checks.notNull( conversion );
-
-                return Option.none( reason );
-            }
-
-            @Override
-            public String reason()
-            {
-                return reason;
-            }
-
-            @Override
-            <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
-            {
-                Checks.notNull( ifNone, ifSome );
-
-                return ifNone;
-            }
-
-            @Override
-            public Iterator<T> iterator()
-            {
-                return Collections.<T>emptyList().iterator();
-            }
-        };
+        return new None<T>( reason );
     }
 
     /**
@@ -104,11 +167,11 @@ public abstract class Option<T> implements Iterable<T>
     }
 
     /**
-     * A Conversion that yields a Some containing the value given to it.
+     * A Conversion that yields an Option containing the value given to it.
      * 
      * @param <T>
      *        the type of the values that this Conversion takes.
-     * @return a Conversion that yields a Some containing the value given to it.
+     * @return a Conversion that yields an Option containing the value given to it.
      */
     public static <T> Conversion<T, Option<T>> some()
     {
@@ -136,66 +199,21 @@ public abstract class Option<T> implements Iterable<T>
     {
         Checks.notNull( t );
 
-        return new Option<T>()
-        {
-            @Override
-            public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
-            {
-                return conversion.convert( t );
-            }
-
-            @Override
-            public T get()
-            {
-                return t;
-            }
-
-            @Override
-            public boolean isEmpty()
-            {
-                return false;
-            }
-
-            @Override
-            public <U> Option<U> map( final Conversion<T, U> conversion )
-            {
-                return Option.some( conversion.convert( t ) );
-            }
-
-            @Override
-            public String reason()
-            {
-                throw null;
-            }
-
-            @Override
-            public Iterator<T> iterator()
-            {
-                return Collections.singletonList(t).iterator();
-            }
-
-            @Override
-            <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
-            {
-                Checks.notNull( ifNone );
-
-                return ifSome.convert( t );
-            }
-        };
+        return new Some<T>( t );
     }
 
     /**
-     * A Conversion that takes in a T, converts it to a U, and produces a Some
+     * A Conversion that takes in a T, converts it to a U, and produces an Option
      * containing that U.
      * 
      * @param <T>
      *        the type of the value to take in.
      * @param <U>
-     *        the type of the Some to produce.
+     *        the type of the Option to produce.
      * @param conversion
      *        the Conversion to convert the T into a U.
      * @return a Conversion that takes in a T, converts it to a U, and produces
-     *         a Some containing that U.
+     *         an Option containing that U.
      */
     public static <T, U> Conversion<T, Option<U>> someRef(
             final Conversion<T, U> conversion )
@@ -253,10 +271,10 @@ public abstract class Option<T> implements Iterable<T>
     public abstract boolean isEmpty();
 
     /**
-     * Maps the specified Conversion over this Option. If the Option is a Some,
-     * then a new Some will be produced containing the value produced by running
-     * the Conversion on the value held by this Option. If the Option is a None,
-     * then None will be returned.
+     * Maps the specified Conversion over this Option. If the Option has an element,
+     * then a new Option will be produced containing the value produced by running
+     * the Conversion on the value held by this Option. If the Option is empty,
+     * an empty Option will be returned.
      * 
      * @param <U>
      *        the type to convert to.

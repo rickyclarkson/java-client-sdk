@@ -10,15 +10,6 @@ import java.util.List;
 public class Strings
 {
     /**
-     * A Conversion that will surround any String passed to it with double
-     * quotes.
-     */
-    public static final Conversion<String, String> surroundWithQuotes()
-    {
-        return prepend("\"" ).andThen( append( "\"" ) );
-    }
-
-    /**
      * Gives the substring of the specified String after the specified char.
      * 
      * @param c
@@ -116,6 +107,15 @@ public class Strings
         }
 
         return results;
+    }
+
+    /**
+     * A Conversion that will surround any String passed to it with double
+     * quotes.
+     */
+    public static final Conversion<String, String> surroundWithQuotes()
+    {
+        return prepend( "\"" ).andThen( append( "\"" ) );
     }
 
     /**

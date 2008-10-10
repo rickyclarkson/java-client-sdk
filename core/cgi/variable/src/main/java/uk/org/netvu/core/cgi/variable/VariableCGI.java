@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.netvu.core.cgi.common.Option;
-import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ParameterDescription;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.StringConversion;
 
@@ -35,17 +35,17 @@ public final class VariableCGI
 
     private final ParameterMap parameterMap;
 
-    private static final Parameter<Variable, Option<Variable>> VARIABLE = Parameter.parameter(
+    private static final ParameterDescription<Variable, Option<Variable>> VARIABLE = ParameterDescription.parameter(
             "variable",
             StringConversion.convenientPartial( Variable.fromString ) );
 
-    private static final Parameter<VariableType, VariableType> TYPE = Parameter.parameterWithDefault(
+    private static final ParameterDescription<VariableType, VariableType> TYPE = ParameterDescription.parameterWithDefault(
             "type", VariableType.HTTP,
             StringConversion.convenientPartial( VariableType.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
-    private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
+    private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>()
     {
         {
             add( VARIABLE );

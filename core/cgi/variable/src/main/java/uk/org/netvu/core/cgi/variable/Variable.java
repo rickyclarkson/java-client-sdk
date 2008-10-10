@@ -1,12 +1,12 @@
 package uk.org.netvu.core.cgi.variable;
 
+import static uk.org.netvu.core.cgi.variable.ArrayOrScalar.ARRAY;
+import static uk.org.netvu.core.cgi.variable.ArrayOrScalar.SCALAR;
+
 import java.util.regex.Pattern;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Option;
-
-import static uk.org.netvu.core.cgi.variable.ArrayOrScalar.ARRAY;
-import static uk.org.netvu.core.cgi.variable.ArrayOrScalar.SCALAR;
 
 /**
  * An enumeration of supported system variables.
@@ -85,7 +85,7 @@ public enum Variable
     /**
      * A Conversion that, given a String possibly ending in [], ignores the []
      * and matches it, case-insensitively, to one of the given Variables,
-     * returning it as a Some, or returning a None if there was no match.
+     * returning it in an Option, or returning an empty Option if there was no match.
      */
     static final Conversion<String, Option<Variable>> fromString = new Conversion<String, Option<Variable>>()
     {

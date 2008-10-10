@@ -6,7 +6,7 @@ import java.util.List;
 import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
-import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ParameterDescription;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.StringConversion;
 import uk.org.netvu.core.cgi.common.Validator;
@@ -17,44 +17,44 @@ import uk.org.netvu.core.cgi.common.Validator;
  */
 public final class EventsCGI
 {
-    private static final Parameter<Integer, Integer> TIME = Parameter.notNegative( Parameter.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> TIME = ParameterDescription.notNegative( ParameterDescription.parameterWithDefault(
             "time", 0, StringConversion.integer ) );
 
-    private static final Parameter<Integer, Integer> RANGE = Parameter.notNegative( Parameter.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> RANGE = ParameterDescription.notNegative( ParameterDescription.parameterWithDefault(
             "range", Integer.MAX_VALUE, StringConversion.integer ) );
 
-    private static final Parameter<Format, Format> FORMAT = Parameter.parameterWithDefault(
+    private static final ParameterDescription<Format, Format> FORMAT = ParameterDescription.parameterWithDefault(
             "format", Format.CSV,
             StringConversion.convenientPartial( Format.fromString ) );
 
-    private static final Parameter<Integer, Integer> LENGTH = Parameter.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> LENGTH = ParameterDescription.parameterWithDefault(
             "listlength",
 
             100, StringConversion.integer );
 
-    private static final Parameter<String, String> TEXT = Parameter.parameterWithDefault(
+    private static final ParameterDescription<String, String> TEXT = ParameterDescription.parameterWithDefault(
             "text", "", StringConversion.string );
 
-    private static final Parameter<Long, Long> CAMERA_MASK = Parameter.parameterWithDefault(
+    private static final ParameterDescription<Long, Long> CAMERA_MASK = ParameterDescription.parameterWithDefault(
             "cammask", 0L, StringConversion.hexLong );
 
-    private static final Parameter<Integer, Integer> ALARM_MASK = Parameter.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> ALARM_MASK = ParameterDescription.parameterWithDefault(
             "almmask", 0, StringConversion.hexInt );
 
-    private static final Parameter<Long, Long> VIDEO_MOTION_DETECTION_MASK = Parameter.parameterWithDefault(
+    private static final ParameterDescription<Long, Long> VIDEO_MOTION_DETECTION_MASK = ParameterDescription.parameterWithDefault(
             "vmdmask",
 
             0L, StringConversion.hexLong );
 
-    private static final Parameter<Integer, Integer> GPS_MASK = Parameter.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> GPS_MASK = ParameterDescription.parameterWithDefault(
             "gpsmask", 0, StringConversion.hexInt );
 
-    private static final Parameter<Integer, Integer> SYSTEM_MASK_PARAM = Parameter.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> SYSTEM_MASK_PARAM = ParameterDescription.parameterWithDefault(
             "sysmask", 0, StringConversion.hexInt );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
-    private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
+    private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>()
     {
         {
             add( TIME );
@@ -72,7 +72,7 @@ public final class EventsCGI
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
-    private static final List<Parameter<?, ?>> exclusiveParams = new ArrayList<Parameter<?, ?>>()
+    private static final List<ParameterDescription<?, ?>> exclusiveParams = new ArrayList<ParameterDescription<?, ?>>()
     {
         {
             add( TEXT );

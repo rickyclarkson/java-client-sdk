@@ -25,15 +25,15 @@ public abstract class Validator
      * A convenience method that produces a Validator that ensures that only one
      * of the specified exclusive parameters has been set to a value.
      * 
-     * @param exclusiveParameters
+     * @param exclusiveParameterDescriptions
      *        the parameters that are mutually exclusive.
      * @return a Validator that ensures that only one of the specified mutually
-     *         exclusive Parameters has been set to a value.
+     *         exclusive parameters has been set to a value.
      */
     public static Validator mutuallyExclusive(
-            final List<Parameter<?, ?>> exclusiveParameters )
+            final List<ParameterDescription<?, ?>> exclusiveParameterDescriptions )
     {
-        Checks.notNull( exclusiveParameters );
+        Checks.notNull( exclusiveParameterDescriptions );
 
         return new Validator()
         {
@@ -43,9 +43,9 @@ public abstract class Validator
                 Checks.notNull( parameterMap );
 
                 int count = 0;
-                for ( final Parameter<?, ?> exclusiveParameter : exclusiveParameters )
+                for ( final ParameterDescription<?, ?> exclusiveParameterDescription : exclusiveParameterDescriptions )
                 {
-                    count += parameterMap.isDefault( exclusiveParameter ) ? 0
+                    count += parameterMap.isDefault( exclusiveParameterDescription ) ? 0
                             : 1;
                 }
 

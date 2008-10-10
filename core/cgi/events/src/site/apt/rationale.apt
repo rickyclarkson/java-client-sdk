@@ -238,7 +238,7 @@ private final MaxOnce<Integer> age =
 
   This is handy because it also moves the logic from the methods in the Builder class to one place, the MaxOnce class, solving the general goal of keeping logic unrepeated.
 
-** BoundedInt and Parameter
+** BoundedInt and ParameterDescription
 
   It's easy to guess that the age of a Person should be restricted to values greater than 0 (which in turn makes the default value of 0 a bit useless, but we'll get around to that).  It's easy enough to add in such a constraint in the Builder's methods:
 
@@ -279,13 +279,13 @@ private final MaxOnce<BoundedInt> age = new MaxOnce<BoundedInt>(
 
 ----
 
-  then you would probably start to get annoyed!  Plus, it becomes difficult to make sure you call the set methods of both MaxOnce and BoundedInt properly.  It would help if MaxOnce and BoundedInt were more like filters that data gets passed through (or not, if the data is invalid).  Enter the Parameter class, or rather, the first iteration of it:
+  then you would probably start to get annoyed!  Plus, it becomes difficult to make sure you call the set methods of both MaxOnce and BoundedInt properly.  It would help if MaxOnce and BoundedInt were more like filters that data gets passed through (or not, if the data is invalid).  Enter the ParameterDescription class, or rather, the first iteration of it:
 
 ----
 
-private final Parameter<String> name = maxOnce( "name", null );
+private final ParameterDescription<String> name = maxOnce( "name", null );
 
-private final Parameter<Integer> age = bound( maxOnce( "age", 0 ),
+private final ParameterDescription<Integer> age = bound( maxOnce( "age", 0 ),
     0, Integer.MAX_VALUE );
 
 ----
@@ -294,7 +294,7 @@ private final Parameter<Integer> age = bound( maxOnce( "age", 0 ),
 
 ----
 
-Parameter<Integer> number = 
+ParameterDescription<Integer> number = 
     not ( 5,
     bound (
         maxOnce ( 0, "a number from one to ten, but not five" ),

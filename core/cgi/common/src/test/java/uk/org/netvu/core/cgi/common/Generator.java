@@ -10,7 +10,7 @@ public interface Generator<T>
 {
     /**
      * Gives the next item from this Generator.
-     *
+     * 
      * @return the next item from this Generator.
      */
     T next();

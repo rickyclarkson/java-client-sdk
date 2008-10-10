@@ -8,22 +8,6 @@ import java.io.UnsupportedEncodingException;
 public class URLEncoder
 {
     /**
-     * A Conversion that, given a String, returns a URL-encoded version of it.
-     * UTF-8 is assumed.
-     */
-    public static Conversion<String, String> encodeConversion()
-    {
-        return new Conversion<String, String>()
-        {
-            @Override
-            public String convert( final String value )
-            {
-                return encode( value );
-            }
-        };
-    }
-
-    /**
      * Encodes the specified value for safe use in URLs.
      * 
      * @param value
@@ -38,8 +22,24 @@ public class URLEncoder
         }
         catch ( final UnsupportedEncodingException e )
         {
-            throw new RuntimeException("Unsupported Encoding: UTF-8");
+            throw new RuntimeException( "Unsupported Encoding: UTF-8" );
         }
+    }
+
+    /**
+     * A Conversion that, given a String, returns a URL-encoded version of it.
+     * UTF-8 is assumed.
+     */
+    public static Conversion<String, String> encodeConversion()
+    {
+        return new Conversion<String, String>()
+        {
+            @Override
+            public String convert( final String value )
+            {
+                return encode( value );
+            }
+        };
     }
 
     private URLEncoder()

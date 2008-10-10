@@ -8,53 +8,55 @@ import java.util.List;
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
-import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ParameterDescription;
 import uk.org.netvu.core.cgi.common.ParameterMap;
-import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.StringConversion;
+import uk.org.netvu.core.cgi.common.Strings;
 
 /**
  * A single result from the events database.
  */
 public final class EventsCGIResult
 {
-    private static final Parameter<Integer, Option<Integer>> CAMERA_PARAMETER = Parameter.bound(
-            0, 64, Parameter.parameter( "cam", StringConversion.integer ) );
+    private static final ParameterDescription<Integer, Option<Integer>> CAMERA_PARAMETER = ParameterDescription.bound(
+            0, 64, ParameterDescription.parameter( "cam",
+                    StringConversion.integer ) );
 
-    private static final Parameter<String, Option<String>> ALARM = Parameter.parameter(
+    private static final ParameterDescription<String, Option<String>> ALARM = ParameterDescription.parameter(
             "alarm", StringConversion.string );
 
-    private static final Parameter<Integer, Option<Integer>> JULIAN_TIME = Parameter.notNegative( Parameter.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> JULIAN_TIME = ParameterDescription.notNegative( ParameterDescription.parameter(
             "time", StringConversion.integer ) );
 
-    private static final Parameter<Integer, Option<Integer>> OFFSET = Parameter.bound(
-            -90000, 90000, Parameter.parameter( "offset", StringConversion.integer ) );
+    private static final ParameterDescription<Integer, Option<Integer>> OFFSET = ParameterDescription.bound(
+            -90000, 90000, ParameterDescription.parameter( "offset",
+                    StringConversion.integer ) );
 
-    private static final Parameter<String, Option<String>> FILE = Parameter.parameter(
+    private static final ParameterDescription<String, Option<String>> FILE = ParameterDescription.parameter(
             "file", StringConversion.string );
 
-    private static final Parameter<Boolean, Option<Boolean>> ON_DISK = Parameter.parameter(
+    private static final ParameterDescription<Boolean, Option<Boolean>> ON_DISK = ParameterDescription.parameter(
             "onDisk", StringConversion.total( Conversion.equal( "exists" ),
                     Conversion.fromBoolean( "exists", "overwitten" ) ) );
 
-    private static final Parameter<Integer, Option<Integer>> DURATION = Parameter.notNegative( Parameter.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> DURATION = ParameterDescription.notNegative( ParameterDescription.parameter(
             "duration", StringConversion.integer ) );
 
-    private static final Parameter<Integer, Option<Integer>> PRE_ALARM = Parameter.notNegative( Parameter.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> PRE_ALARM = ParameterDescription.notNegative( ParameterDescription.parameter(
             "preAlarm", StringConversion.integer ) );
 
-    private static final Parameter<Integer, Option<Integer>> ARCHIVE = Parameter.notNegative( Parameter.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> ARCHIVE = ParameterDescription.notNegative( ParameterDescription.parameter(
             "archive", StringConversion.integer ) );
-    private static final Parameter<Status, Status> STATUS = Parameter.parameterWithDefault(
+    private static final ParameterDescription<Status, Status> STATUS = ParameterDescription.parameterWithDefault(
             "status", Status.NONE,
             StringConversion.convenientPartial( Status.fromString ) );
-    private static final Parameter<AlarmType, AlarmType> ALARM_TYPE = Parameter.parameterWithDefault(
+    private static final ParameterDescription<AlarmType, AlarmType> ALARM_TYPE = ParameterDescription.parameterWithDefault(
             "alarmType", AlarmType.NONE,
             StringConversion.convenientPartial( AlarmType.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
-    private static final ArrayList<Parameter<?, ? extends Option<?>>> compulsoryParameters = new ArrayList<Parameter<?, ? extends Option<?>>>()
+    private static final ArrayList<ParameterDescription<?, ? extends Option<?>>> compulsoryParameterDescriptions = new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
     {
         {
             add( CAMERA_PARAMETER );
@@ -88,19 +90,20 @@ public final class EventsCGIResult
                     + values.length );
         }
 
-        final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>(
-                compulsoryParameters );
+        final List<ParameterDescription<?, ?>> parameterDescriptions = new ArrayList<ParameterDescription<?, ?>>(
+                compulsoryParameterDescriptions );
         if ( values.length > 11 )
         {
-            params.add( STATUS );
+            parameterDescriptions.add( STATUS );
         }
         if ( values.length > 12 )
         {
-            params.add( ALARM_TYPE );
+            parameterDescriptions.add( ALARM_TYPE );
         }
 
         final Option<EventsCGIResult> result = ParameterMap.fromStrings(
-                params, Lists.removeIndices( Arrays.asList( values ), 0, 7 ) ).map(
+                parameterDescriptions,
+                Lists.removeIndices( Arrays.asList( values ), 0, 7 ) ).map(
                 new Conversion<ParameterMap, EventsCGIResult>()
                 {
                     @Override
@@ -126,12 +129,12 @@ public final class EventsCGIResult
 
     private EventsCGIResult( final ParameterMap builtMap )
     {
-        for ( final Parameter<?, ? extends Option<?>> parameter : compulsoryParameters )
+        for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : compulsoryParameterDescriptions )
         {
-            if ( builtMap.get( parameter ).isEmpty() )
+            if ( builtMap.get( parameterDescription ).isEmpty() )
             {
-                throw new IllegalStateException( "The parameter " + parameter
-                        + " has not been given a value" );
+                throw new IllegalStateException( "The parameter "
+                        + parameterDescription + " has not been given a value" );
             }
         }
 
@@ -272,10 +275,16 @@ public final class EventsCGIResult
                 getFile(), isOnDisk() ? "exists" : "overwitten", index,
                 getDuration(), getPreAlarm(), getArchive() ) );
 
-        final List<Object> alarmAndStatus = getAlarmType() == AlarmType.NONE
-                && getStatus() == Status.NONE ? Collections.emptyList()
-                : Arrays.<Object> asList( getStatus().value,
-                        getAlarmType().value );
+        final List<Object> alarmAndStatus;
+        if ( getAlarmType() == AlarmType.NONE && getStatus() == Status.NONE )
+        {
+            alarmAndStatus = Collections.emptyList();
+        }
+        else
+        {
+            alarmAndStatus = Arrays.<Object> asList( getStatus().value,
+                getAlarmType().value );
+        }
 
         all.addAll( alarmAndStatus );
 

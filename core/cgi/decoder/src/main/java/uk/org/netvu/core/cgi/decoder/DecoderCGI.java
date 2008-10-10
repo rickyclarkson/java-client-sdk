@@ -11,11 +11,11 @@ import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Pair;
-import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ParameterDescription;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.Reduction;
-import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.StringConversion;
+import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.URLEncoder;
 
 /**
@@ -24,20 +24,20 @@ import uk.org.netvu.core.cgi.common.URLEncoder;
  */
 public final class DecoderCGI
 {
-    private static final Parameter<Persistence, Persistence> PERSISTENCE = Parameter.parameterWithDefault(
+    private static final ParameterDescription<Persistence, Persistence> PERSISTENCE = ParameterDescription.parameterWithDefault(
             "persistence",
             Persistence.TEMPORARY,
             StringConversion.convenientPartial( Option.<String, Persistence> noneRef( "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name." ) ) );
 
-    private static final Parameter<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = Parameter.sparseArrayParameter(
+    private static final ParameterDescription<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = ParameterDescription.sparseArrayParameter(
             "connections", StringConversion.total( Connection.fromURL,
                     Connection.urlEncode ) );
 
-    private static final Parameter<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> LAYOUTS = Parameter.sparseArrayParameter(
+    private static final ParameterDescription<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> LAYOUTS = ParameterDescription.sparseArrayParameter(
             "layouts",
             StringConversion.total( Layout.fromURL, Layout.urlEncode ) );
 
-    private static final Parameter<String[], Option<String[]>> OUTPUT_TITLES = Parameter.parameter(
+    private static final ParameterDescription<String[], Option<String[]>> OUTPUT_TITLES = ParameterDescription.parameter(
             "output_titles",
             StringConversion.partial(
                     Option.<String, String[]> noneRef( "Parsing not supported for output_titles" ),
@@ -53,13 +53,14 @@ public final class DecoderCGI
                         }
                     } ) ) );
 
-    private static final Parameter<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = Parameter.sparseArrayParameter(
+    private static final ParameterDescription<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = ParameterDescription.sparseArrayParameter(
             "commands", StringConversion.total( Conversion.<String> identity(),
-                                                URLEncoder.encodeConversion().andThen( Strings.surroundWithQuotes() ) ) );
+                    URLEncoder.encodeConversion().andThen(
+                            Strings.surroundWithQuotes() ) ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
-    private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
+    private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>()
     {
         {
             add( CONNECTIONS );

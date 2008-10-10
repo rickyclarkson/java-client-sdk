@@ -6,7 +6,7 @@ import java.util.List;
 import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
-import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ParameterDescription;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.StringConversion;
 
@@ -15,41 +15,41 @@ import uk.org.netvu.core.cgi.common.StringConversion;
  */
 public final class VPartsCGI
 {
-    private static final Parameter<Format, Format> FORMAT = Parameter.not( Format.HTML,
-            Parameter.parameterWithDefault( "format", Format.CSV,
+    private static final ParameterDescription<Format, Format> FORMAT = ParameterDescription.not(
+            Format.HTML, ParameterDescription.parameterWithDefault( "format",
+                    Format.CSV,
                     StringConversion.convenientPartial( Format.fromString ) ) );
 
-    private static final Parameter<Mode, Mode> MODE = Parameter.parameterWithDefault(
+    private static final ParameterDescription<Mode, Mode> MODE = ParameterDescription.parameterWithDefault(
             "mode", Mode.READ,
             StringConversion.convenientPartial( Mode.fromString ) );
 
-    private static final Parameter<Integer, Integer> TIME = Parameter.notNegative( Parameter.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> TIME = ParameterDescription.notNegative( ParameterDescription.parameterWithDefault(
             "time", 0, StringConversion.integer ) );
 
-    private static final Parameter<Integer, Integer> RANGE = Parameter.notNegative( Parameter.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> RANGE = ParameterDescription.notNegative( ParameterDescription.parameterWithDefault(
             "range", Integer.MAX_VALUE, StringConversion.integer ) );
 
-    private static final Parameter<Integer, Integer> EXPIRY = Parameter.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> EXPIRY = ParameterDescription.parameterWithDefault(
             "expiry", 0, StringConversion.integer );
 
-    private static final Parameter<Boolean, Boolean> WATERMARK = Parameter.parameterWithDefault(
+    private static final ParameterDescription<Boolean, Boolean> WATERMARK = ParameterDescription.parameterWithDefault(
             "watermark", false, StringConversion.bool );
 
-    private static final Parameter<Integer, Integer> WMARKSTEP = Parameter.bound(
-            1,
-            256,
-            Parameter.parameterWithDefault( "wmarkstepParam", 1, StringConversion.integer ) );
+    private static final ParameterDescription<Integer, Integer> WMARKSTEP = ParameterDescription.bound(
+            1, 256, ParameterDescription.parameterWithDefault(
+                    "wmarkstepParam", 1, StringConversion.integer ) );
 
-    private static final Parameter<Integer, Integer> LIST_LENGTH = Parameter.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> LIST_LENGTH = ParameterDescription.parameterWithDefault(
             "listlength", 100, StringConversion.integer );
 
-    private static final Parameter<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = Parameter.parameterWithDefault(
+    private static final ParameterDescription<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = ParameterDescription.parameterWithDefault(
             "pathstyle", DirectoryPathFormat.SHORT,
             StringConversion.convenientPartial( DirectoryPathFormat.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
-    private static final List<Parameter<?, ?>> params = new ArrayList<Parameter<?, ?>>()
+    private static final List<ParameterDescription<?, ?>> parameterDescriptions = new ArrayList<ParameterDescription<?, ?>>()
     {
         {
             add( FORMAT );
@@ -73,7 +73,8 @@ public final class VPartsCGI
      */
     public static VPartsCGI fromString( final String url )
     {
-        final Option<ParameterMap> map = ParameterMap.fromURL( url, params );
+        final Option<ParameterMap> map = ParameterMap.fromURL( url,
+                parameterDescriptions );
         if ( map.isEmpty() )
         {
             throw new IllegalArgumentException( url
@@ -186,8 +187,11 @@ public final class VPartsCGI
     @Override
     public String toString()
     {
-        return "/vparts.cgi?format=" + builtMap.get( FORMAT ) + "&"
-                + builtMap.toURLParameters( Lists.remove( params, FORMAT ) );
+        return "/vparts.cgi?format="
+                + builtMap.get( FORMAT )
+                + "&"
+                + builtMap.toURLParameters( Lists.remove(
+                        parameterDescriptions, FORMAT ) );
     }
 
     /**

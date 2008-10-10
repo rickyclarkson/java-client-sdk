@@ -7,10 +7,10 @@ import java.util.List;
 
 import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Option;
-import uk.org.netvu.core.cgi.common.Parameter;
+import uk.org.netvu.core.cgi.common.ParameterDescription;
 import uk.org.netvu.core.cgi.common.ParameterMap;
-import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.StringConversion;
+import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.URLEncoder;
 import uk.org.netvu.core.cgi.common.Validator;
 
@@ -20,20 +20,20 @@ import uk.org.netvu.core.cgi.common.Validator;
  */
 public final class Connection
 {
-    private static final Parameter<String, Option<String>> SLAVE_IP_PARAM = Parameter.parameter(
+    private static final ParameterDescription<String, Option<String>> SLAVE_IP_PARAM = ParameterDescription.parameter(
             "slaveip", StringConversion.string );
-    private static final Parameter<Integer, Option<Integer>> SEQ_PARAM = Parameter.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> SEQ_PARAM = ParameterDescription.parameter(
             "seq", StringConversion.hexInt );
-    private static final Parameter<Integer, Option<Integer>> DWELL_PARAM = Parameter.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> DWELL_PARAM = ParameterDescription.parameter(
             "dwell", StringConversion.integer );
-    private static final Parameter<Integer, Option<Integer>> CAM = Parameter.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> CAM = ParameterDescription.parameter(
             "cam", StringConversion.integer );
-    private static final Parameter<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = Parameter.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = ParameterDescription.parameter(
             "audio", StringConversion.integer );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
-    private static final List<Parameter<?, ? extends Option<?>>> params = new ArrayList<Parameter<?, ? extends Option<?>>>()
+    private static final List<ParameterDescription<?, ? extends Option<?>>> params = new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
     {
         {
             add( SLAVE_IP_PARAM );
@@ -55,7 +55,8 @@ public final class Connection
         @Override
         public String convert( final Connection connection )
         {
-            return URLEncoder.encode( connection.parameterMap.toURLParameters( params ).replaceAll("&", "," ) );
+            return URLEncoder.encode( connection.parameterMap.toURLParameters(
+                    params ).replaceAll( "&", "," ) );
         }
     }.andThen( Strings.surroundWithQuotes() );
 
@@ -71,7 +72,8 @@ public final class Connection
             try
             {
                 final Option<ParameterMap> map = ParameterMap.fromURL(
-                                                                      URLDecoder.decode( urlParameters, "UTF-8" ).replaceAll(",", "&"), params );
+                        URLDecoder.decode( urlParameters, "UTF-8" ).replaceAll(
+                                ",", "&" ), params );
 
                 if ( map.isEmpty() )
                 {

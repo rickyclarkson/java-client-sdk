@@ -1,7 +1,7 @@
 package uk.org.netvu.core.cgi.common;
 
-import java.util.Random;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * The format of the results from the events database.

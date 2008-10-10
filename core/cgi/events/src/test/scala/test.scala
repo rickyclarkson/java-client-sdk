@@ -208,14 +208,25 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
 })
 
 class EventsCGIResultTest extends JUnit4(new Specification with Scalacheck { 
- import EventsCGIResult.{Status, AlarmType}
+ import EventsCGIResult.{Status, AlarmType, Builder}
 
  def randomEventsCGIResultBuilder(random: Random) = {
   val strings = common.Generators.strings(random)
   val nonNegatives = common.Generators.nonNegativeInts(random)
   val julianTime = nonNegatives.next
 
-  new EventsCGIResult.Builder() alarm strings.next archive nonNegatives.next.intValue camera random.nextInt(65) duration Math.max(0, nonNegatives.next.intValue - julianTime.intValue) file strings.next julianTime julianTime.intValue offset random.nextInt(180000)-90000 preAlarm nonNegatives.next.intValue onDisk random.nextBoolean status oneStatus(random) alarmType oneAlarm(random)
+  val setAlarmType = random.nextBoolean
+  val setStatus = random.nextBoolean
+
+  var b = new EventsCGIResult.Builder() alarm strings.next archive nonNegatives.next.intValue camera random.nextInt(65)
+  b = b duration Math.max(0, nonNegatives.next.intValue - julianTime.intValue) file strings.next
+  b = b julianTime julianTime.intValue offset random.nextInt(180000)-90000 preAlarm nonNegatives.next.intValue
+  b = b onDisk random.nextBoolean
+
+  if (setStatus) b = b status oneStatus(random)
+  if (setAlarmType) b = b alarmType oneAlarm(random)
+
+  b
  }
 
  private def oneAlarm(random: Random) = AlarmType.values()(random.nextInt(AlarmType.values.length))
@@ -293,7 +304,10 @@ class EventsCGIResultTest extends JUnit4(new Specification with Scalacheck {
   result.getAlarmType mustEqual EventsCGIResult.AlarmType.CAMERA
  } }
 
- "toCSV" should { "give a non-empty String" in { property { e: EventsCGIResult => e.toCSV(0).length>0 } must pass } }
+ "toCSV" should { "give a non-empty String" in {
+  property { e: EventsCGIResult => e.toCSV(0).length>0 } must pass
+ } }
+
  "Parsing a line of CSV with too many columns" should { "cause an IllegalArgumentException" in {
   EventsCGIResult.fromString("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14") must throwA(new IAE)
  } }
