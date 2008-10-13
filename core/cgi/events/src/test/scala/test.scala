@@ -135,6 +135,8 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
  implicit val arbFormat: Arbitrary[Format] =
   Arbitrary { arbitrary[Int] map (x => Format.oneOf(new Random(x))) }
 
+ implicit val arbString: Arbitrary[String] = Arbitrary { Gen.identifier }
+
  private def randomEventsCGIBuilder = {
   val builder = new EventsCGI.Builder
   def nonNegativeInt = arbitrary[Int] map (_.abs) sample
@@ -168,12 +170,11 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
  implicit val events: Arbitrary[EventsCGI] = Arbitrary { arbitrary[EventsCGI.Builder] map { b => b.build } }
 
  "Converting an EventsCGI to a String and back" should { "not be lossy" in {
-  val cgi = randomEventsCGIBuilder.build 
-  EventsCGI.fromString(cgi.toString).toString mustEqual cgi.toString
-/*  property { e: EventsCGI.Builder => {
-   val cgi = e.build
-   EventsCGI.fromString(cgi.toString).toString == cgi.toString
-  } } must pass  */
+//  val cgi = randomEventsCGIBuilder.build 
+//  EventsCGI.fromString(cgi.toString).toString mustEqual cgi.toString
+  property { e: EventsCGI => {
+   EventsCGI.fromString(e.toString).toString == e.toString
+  } } must pass
  } }
 
  "Parsing an invalid URL parameter" should { "cause an IllegalArgumentException" in {

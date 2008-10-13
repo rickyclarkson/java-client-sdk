@@ -1,0 +1,61 @@
+ ---------
+ Rationale
+ ---------
+
+Rationale
+
+* Checks
+
+ Every public method in the CGI modules disallows null parameters to methods, and rather than write:
+
+ if (x == null || y == null || z == null) throw new NullPointerException(); in each method, it's a little more flexible to write:
+
+ Checks.notNull(x, y, z);
+
+ The NullPointerException that notNull can throw contains the index of the null parameter, so if y was null above, the exception message would mention the 2nd parameter.
+
+* Conversion
+
+ A Conversion represents a mapping from one type to another.  The Functional Java library calls it F (short for Function), Google Collections calls it Function, Jakarta Commons calls it Transformer.
+
+ They are useful in that because they are objects and not just methods, they can be passed around as values, and chained to produce new Conversions that are no more complex to use than the unchained versions.
+
+ The Conversion class contains a number of useful Conversions between Java's built-in types.
+
+* Format
+
+ Most of the CGI requests need to specify what format the results return in.  Rather than repeat the Format enum in each module that uses it, we keep it in core/cgi/common.
+
+* Option
+
+ Option is a container that can contain either one or zero elements.  It is used to allow a ParameterDescription to work for compulsory parameters, by allowing the ParameterMap to distinguish between an unset parameter and a parameter that has a value, without resorting to sentinel values, and it's used throughout the API to represent failure, e.g., Conversion.stringToLong gives an empty option for "foo", and an option containing the Long 5 for "5".
+
+* Pair
+
+ Pair is useful for passing two values where an API only expects one.  It's used by ParameterDescription so that sparse array parameters don't have to be a special case.  ParameterDescription's type parameters are T and R, where T means the input type.  For sparse arrays, the input type needs to have two values; the index into the sparse array and the value to place there, which doesn't fit in ParameterDescription's type parameters.  A Pair is one value, so that works well.
+
+* ParameterDescription
+
+ A ParameterDescription is a specification of a parameter for a Builder.  It doesn't contain any mutable data, it only works as a specification, leaving ParameterMap to store the data.
+
+ It has an input type and an output type, and knows how to convert the former to the latter, so that it can store values flexibly.  For example, an ordinary parameter with no default has type ParameterDescription<T, Option<T>>, so that the stored value can be an empty Option until a value has been passed in.  This avoids error-prone sentinel values.
+
+* ParameterMap
+
+ A ParameterMap stores the values associated with ParameterDescriptions, and includes a Validator, to make writing Builders that have constraints easy.  Storing a new value produces a new ParameterMap rather than changing the original ParameterMap, which helps in flexibility for the caller.
+
+* Reduction
+
+ A Reduction is quite like a Conversion<Pair<T, R>, R> - it can take a T and an R and produce an R.  This is used as a general way of taking a Parameter's stored value and a new value to use, and deciding what value to store next, which is important in particular for sparse array Parameters, taking a new Pair<Integer, T> and storing it into a TreeMap.  Doing without it would mean writing sparse array Parameters as a separate implementation, rather than benefitting from the single flexible implementation.
+
+* Strings
+
+ Strings contains utility methods and Conversions that help in parsing and generating URL parameters and CSV.
+
+* StringConversion
+
+ This is roughly a Pair<Conversion<String, Option<T>>, Conversion<T, Option<String>>> - i.e., it provides partial conversions between a Parameter's input type and Strings, which is used in parsing and building URL parameters and CSV.  I joined the two Conversions together because I found Parameter's static factory methods hard to read and quite repetitive - making the composite class plus convenience static methods allowed the removal of some boilerplate from the Builder implementations.
+
+* URLEncoder
+
+ This wraps java.net.URLEncoder to provide an interface that doesn't involve checked exceptions.  It also includes a Conversion, which is composed with other Conversions by various other modules.
