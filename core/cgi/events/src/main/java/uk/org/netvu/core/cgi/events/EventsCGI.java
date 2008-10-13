@@ -10,6 +10,7 @@ import uk.org.netvu.core.cgi.common.ParameterDescription;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.StringConversion;
 import uk.org.netvu.core.cgi.common.ParameterMap.Validator;
+import uk.org.netvu.core.cgi.common.Conversion;
 
 /**
  * A parameter list for an events.cgi query. Use {@link EventsCGI.Builder} to
@@ -251,6 +252,23 @@ public final class EventsCGI
         {
         }
 
+        private <T> Builder set(final ParameterDescription<T, ?> parameter, final T value)
+        {
+            if (real.isEmpty())
+            {
+                throw new IllegalStateException("The Builder has already been built (build() has been called on it).");
+            }
+
+            real = real.map(new Conversion<ParameterMap, ParameterMap>()
+                            {
+                                public ParameterMap convert(ParameterMap map)
+                                {
+                                    return map.set( parameter, value );
+                                }
+                            });
+            return this;
+        }
+
         /**
          * The 32-bit mask of the alarms that we are interested in.
          * 
@@ -260,8 +278,7 @@ public final class EventsCGI
          */
         public Builder alarmMask( final int alarmMask )
         {
-            real = real.map( ParameterMap.setter( ALARM_MASK, alarmMask ) );
-            return this;
+            return set( ALARM_MASK, alarmMask );
         }
 
         /**
@@ -290,8 +307,7 @@ public final class EventsCGI
          */
         public Builder cameraMask( final long camMask )
         {
-            real = real.map( ParameterMap.setter( CAMERA_MASK, camMask ) );
-            return this;
+            return set( CAMERA_MASK, camMask );
         }
 
         /**
@@ -305,8 +321,7 @@ public final class EventsCGI
          */
         public Builder format( final Format format )
         {
-            real = real.map( ParameterMap.setter( FORMAT, format ) );
-            return this;
+            return set( FORMAT, format );
         }
 
         /**
@@ -318,8 +333,7 @@ public final class EventsCGI
          */
         public Builder gpsMask( final int gpsMask )
         {
-            real = real.map( ParameterMap.setter( GPS_MASK, gpsMask ) );
-            return this;
+            return set( GPS_MASK, gpsMask );
         }
 
         /**
@@ -332,8 +346,7 @@ public final class EventsCGI
          */
         public Builder length( final int maxLength )
         {
-            real = real.map( ParameterMap.setter( LENGTH, maxLength ) );
-            return this;
+            return set( LENGTH, maxLength );
         }
 
         /**
@@ -344,8 +357,7 @@ public final class EventsCGI
          */
         public Builder range( final int range )
         {
-            real = real.map( ParameterMap.setter( RANGE, range ) );
-            return this;
+            return set( RANGE, range );
         }
 
         /**
@@ -357,8 +369,7 @@ public final class EventsCGI
          */
         public Builder systemMask( final int sysMask )
         {
-            real = real.map( ParameterMap.setter( SYSTEM_MASK_PARAM, sysMask ) );
-            return this;
+            return set( SYSTEM_MASK_PARAM, sysMask );
         }
 
         /**
@@ -375,8 +386,7 @@ public final class EventsCGI
          */
         public Builder text( final String text )
         {
-            real = real.map( ParameterMap.setter( TEXT, text ) );
-            return this;
+            return set( TEXT, text );
         }
 
         /**
@@ -389,8 +399,7 @@ public final class EventsCGI
          */
         public Builder time( final int time )
         {
-            real = real.map( ParameterMap.setter( TIME, time ) );
-            return this;
+            return set( TIME, time );
         }
 
         /**
@@ -403,9 +412,8 @@ public final class EventsCGI
         public Builder videoMotionDetectionMask(
                 final long videoMotionDetectionMask )
         {
-            real = real.map( ParameterMap.setter( VIDEO_MOTION_DETECTION_MASK,
-                    videoMotionDetectionMask ) );
-            return this;
+            return set( VIDEO_MOTION_DETECTION_MASK,
+                    videoMotionDetectionMask );
         }
     }
 }

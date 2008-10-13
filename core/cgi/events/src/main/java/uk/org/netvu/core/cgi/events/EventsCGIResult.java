@@ -18,7 +18,7 @@ import uk.org.netvu.core.cgi.common.Strings;
  */
 public final class EventsCGIResult
 {
-    private static final ParameterDescription<Integer, Option<Integer>> CAMERA_PARAMETER = ParameterDescription.bound(
+    private static final ParameterDescription<Integer, Option<Integer>> CAMERA = ParameterDescription.bound(
             0, 64, ParameterDescription.parameter( "cam",
                                                    StringConversion.integer() ) );
 
@@ -59,7 +59,7 @@ public final class EventsCGIResult
     private static final ArrayList<ParameterDescription<?, ? extends Option<?>>> compulsoryParameterDescriptions = new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
     {
         {
-            add( CAMERA_PARAMETER );
+            add( CAMERA );
             add( ALARM );
             add( JULIAN_TIME );
             add( OFFSET );
@@ -180,7 +180,7 @@ public final class EventsCGIResult
      */
     public int getCam()
     {
-        return builtMap.get( CAMERA_PARAMETER ).get();
+        return builtMap.get( CAMERA ).get();
     }
 
     /**
@@ -420,6 +420,23 @@ public final class EventsCGIResult
         {
         }
 
+        private <T> Builder set(final ParameterDescription<T, ?> parameter, final T value)
+        {
+            if (real.isEmpty())
+            {
+                throw new IllegalStateException("The Builder has already been built (build() has been called on it).");
+            }
+
+            real = real.map(new Conversion<ParameterMap, ParameterMap>()
+                            {
+                                public ParameterMap convert(ParameterMap map)
+                                {
+                                    return map.set( parameter, value );
+                                }
+                            });
+            return this;
+        }
+
         /**
          * Adds the alarm description to the builder. Cannot be null.
          * 
@@ -429,8 +446,7 @@ public final class EventsCGIResult
          */
         public Builder alarm( final String alarm )
         {
-            real = real.map( ParameterMap.setter( ALARM, alarm ) );
-            return this;
+            return set( ALARM, alarm );
         }
 
         /**
@@ -443,8 +459,7 @@ public final class EventsCGIResult
          */
         public Builder alarmType( final AlarmType alarmType )
         {
-            real = real.map( ParameterMap.setter( ALARM_TYPE, alarmType ) );
-            return this;
+            return set( ALARM_TYPE, alarmType );
         }
 
         /**
@@ -458,8 +473,7 @@ public final class EventsCGIResult
          */
         public Builder archive( final int archive )
         {
-            real = real.map( ParameterMap.setter( ARCHIVE, archive ) );
-            return this;
+            return set( ARCHIVE, archive );
         }
 
         /**
@@ -490,8 +504,7 @@ public final class EventsCGIResult
          */
         public Builder camera( final int camera )
         {
-            real = real.map( ParameterMap.setter( CAMERA_PARAMETER, camera ) );
-            return this;
+            return set( CAMERA, camera );
         }
 
         /**
@@ -503,8 +516,7 @@ public final class EventsCGIResult
          */
         public Builder duration( final int duration )
         {
-            real = real.map( ParameterMap.setter( DURATION, duration ) );
-            return this;
+            return set( DURATION, duration );
         }
 
         /**
@@ -517,8 +529,7 @@ public final class EventsCGIResult
          */
         public Builder file( final String file )
         {
-            real = real.map( ParameterMap.setter( FILE, file ) );
-            return this;
+            return set( FILE, file );
         }
 
         /**
@@ -530,8 +541,7 @@ public final class EventsCGIResult
          */
         public Builder julianTime( final int julianTime )
         {
-            real = real.map( ParameterMap.setter( JULIAN_TIME, julianTime ) );
-            return this;
+            return set( JULIAN_TIME, julianTime );
         }
 
         /**
@@ -544,8 +554,7 @@ public final class EventsCGIResult
          */
         public Builder offset( final int offset )
         {
-            real = real.map( ParameterMap.setter( OFFSET, offset ) );
-            return this;
+            return set( OFFSET, offset );
         }
 
         /**
@@ -558,8 +567,7 @@ public final class EventsCGIResult
          */
         public Builder onDisk( final boolean onDisk )
         {
-            real = real.map( ParameterMap.setter( ON_DISK, onDisk ) );
-            return this;
+            return set( ON_DISK, onDisk );
         }
 
         /**
@@ -572,8 +580,7 @@ public final class EventsCGIResult
          */
         public Builder preAlarm( final int preAlarm )
         {
-            real = real.map( ParameterMap.setter( PRE_ALARM, preAlarm ) );
-            return this;
+            return set( PRE_ALARM, preAlarm );
         }
 
         /**
@@ -586,8 +593,7 @@ public final class EventsCGIResult
          */
         public Builder status( final Status status )
         {
-            real = real.map( ParameterMap.setter( STATUS, status ) );
-            return this;
+            return set( STATUS, status );
         }
     }
 

@@ -513,11 +513,11 @@ class ParameterMapTest extends JUnit4(new Specification {
 
  import java.lang.Integer
  val param2 = ParameterDescription.parameter[Integer]("foo", StringConversion.integer)
- "setter" should {
+/* "setter" should {
   "be able to convert a ParameterMap into another with the supplied Parameter and value" in {
    ParameterMap.setter[Integer](param2, 3).convert(new ParameterMap).get(param2).get mustEqual 3
   }
- }
+ }*/
 })
 
 class URLExtractorTest extends JUnit4(new Specification {

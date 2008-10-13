@@ -100,7 +100,7 @@ public final class ParameterMap
      * @return a Conversion that takes in a ParameterMap and produces a new
      *         ParameterMap containing the given value.
      */
-    public static <T> Conversion<ParameterMap, ParameterMap> setter(
+    /*    public static <T> Conversion<ParameterMap, ParameterMap> setter(
             final ParameterDescription<T, ?> parameterDescription, final T value )
     {
         return new Conversion<ParameterMap, ParameterMap>()
@@ -111,7 +111,7 @@ public final class ParameterMap
                 return map.set( parameterDescription, value );
             }
         };
-    }
+	}*/
 
     /**
      * The validator that is executed against a ParameterMap that has new
