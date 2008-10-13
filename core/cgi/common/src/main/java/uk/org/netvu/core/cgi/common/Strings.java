@@ -9,6 +9,8 @@ import java.util.List;
  */
 public class Strings
 {
+    private static final String DOUBLE_QUOTES = "\"";
+
     /**
      * Gives the substring of the specified String after the specified char.
      * 
@@ -115,7 +117,7 @@ public class Strings
      */
     public static final Conversion<String, String> surroundWithQuotes()
     {
-        return prepend( "\"" ).andThen( append( "\"" ) );
+        return prepend( DOUBLE_QUOTES ).andThen( append( DOUBLE_QUOTES ) );
     }
 
     /**
@@ -210,7 +212,7 @@ public class Strings
      */
     static String removeSurroundingQuotesLeniently( final String value )
     {
-        return value.startsWith( "\"" ) && value.endsWith( "\"" ) ? value.substring(
+        return value.startsWith( DOUBLE_QUOTES ) && value.endsWith( DOUBLE_QUOTES ) ? value.substring(
                 1, value.length() - 1 )
                 : value;
     }
