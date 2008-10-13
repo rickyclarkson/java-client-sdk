@@ -14,8 +14,10 @@ object Implicits {
  implicit def function1ToConversion[T, R](f: T => R) = new Conversion[T, R] { def convert(t: T) = f(t) }
  implicit def reductionToFunction2(r: Reduction[String, String]) = (o: String, n: String) => r.reduce(n, o)
  implicit def conversionToFunction1[T, R](f: Conversion[T, R]): T => R = t => f.convert(t)
+
  implicit def function2ToReduction[T, R](r: (T, R) => R): Reduction[T, R] =
   new Reduction[T, R] { override def reduce(newValue: T, original: R) = r(newValue, original) }
+
  implicit def listToJavaList[T](list: List[T]): JavaList[T] = new JavaArrayList[T] { for (t <- list) add(t) }
  implicit def pairToTuple[T, U](pair: Pair[T, U]) = (pair.first, pair.second)
  implicit def tupleToPair[T, U](tuple: (T, U)) = Pair.pair(tuple._1, tuple._2)
