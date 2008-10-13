@@ -46,7 +46,7 @@ Rationale
 
 * Reduction
 
- A Reduction is quite like a Conversion<Pair<T, R>, R> - it can take a T and an R and produce an R.  This is used as a general way of taking a Parameter's stored value and a new value to use, and deciding what value to store next, which is important in particular for sparse array Parameters, taking a new Pair<Integer, T> and storing it into a TreeMap.  Doing without it would mean writing sparse array Parameters as a separate implementation, rather than benefitting from the single flexible implementation.
+ As in Google's Map/Reduce framework, a Reduction is a general transformation from 2 values to 1 value, that can be used across many values in turn to 'reduce' n values to 1.  For example, a Reduction that takes two Integers and returns their sum can be used to sum a collection of Integers.  In this codebase, it is used as a general way of allowing a Parameter to take in n values, one by one, and have some mechanism for deciding what value to store after each is received.  This is important in particular for sparse array Parameters, which take in values of type Pair<Integer, T> and store them in a TreeMap.  Doing without it would mean writing sparse array Parameters as a separate implementation, rather than benefitting from the single flexible implementation.
 
 * Strings
 
