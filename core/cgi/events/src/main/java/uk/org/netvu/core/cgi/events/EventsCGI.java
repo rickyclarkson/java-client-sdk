@@ -9,7 +9,7 @@ import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.ParameterDescription;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.StringConversion;
-import uk.org.netvu.core.cgi.common.Validator;
+import uk.org.netvu.core.cgi.common.ParameterMap.Validator;
 
 /**
  * A parameter list for an events.cgi query. Use {@link EventsCGI.Builder} to

@@ -10,6 +10,8 @@ import scalacheck.Prop.property
 import java.util.{Arrays, Random, List => JavaList, ArrayList => JavaArrayList, TreeMap => JavaTreeMap}
 import java.lang.{Boolean => JavaBoolean}
 
+import ParameterMap.Validator
+
 object Implicits {
  implicit def function1ToConversion[T, R](f: T => R) = new Conversion[T, R] { def convert(t: T) = f(t) }
  implicit def reductionToFunction2(r: Reduction[String, String]) = (o: String, n: String) => r.reduce(n, o)

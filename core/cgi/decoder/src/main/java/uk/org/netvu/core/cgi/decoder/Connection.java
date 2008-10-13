@@ -12,7 +12,7 @@ import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.StringConversion;
 import uk.org.netvu.core.cgi.common.Strings;
 import uk.org.netvu.core.cgi.common.URLEncoder;
-import uk.org.netvu.core.cgi.common.Validator;
+import uk.org.netvu.core.cgi.common.ParameterMap.Validator;
 
 /**
  * A Connection tells the decoder which camera to use, and what parameter values
