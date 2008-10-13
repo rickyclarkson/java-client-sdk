@@ -20,33 +20,33 @@ public final class EventsCGIResult
 {
     private static final ParameterDescription<Integer, Option<Integer>> CAMERA_PARAMETER = ParameterDescription.bound(
             0, 64, ParameterDescription.parameter( "cam",
-                    StringConversion.integer ) );
+                                                   StringConversion.integer() ) );
 
     private static final ParameterDescription<String, Option<String>> ALARM = ParameterDescription.parameter(
-            "alarm", StringConversion.string );
+                                                                                                             "alarm", StringConversion.string() );
 
     private static final ParameterDescription<Integer, Option<Integer>> JULIAN_TIME = ParameterDescription.notNegative( ParameterDescription.parameter(
-            "time", StringConversion.integer ) );
+                                                                                                                                                       "time", StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Option<Integer>> OFFSET = ParameterDescription.bound(
             -90000, 90000, ParameterDescription.parameter( "offset",
-                    StringConversion.integer ) );
+                                                           StringConversion.integer() ) );
 
     private static final ParameterDescription<String, Option<String>> FILE = ParameterDescription.parameter(
-            "file", StringConversion.string );
+                                                                                                            "file", StringConversion.string() );
 
     private static final ParameterDescription<Boolean, Option<Boolean>> ON_DISK = ParameterDescription.parameter(
             "onDisk", StringConversion.total( Conversion.equal( "exists" ),
                     Conversion.fromBoolean( "exists", "overwitten" ) ) );
 
     private static final ParameterDescription<Integer, Option<Integer>> DURATION = ParameterDescription.notNegative( ParameterDescription.parameter(
-            "duration", StringConversion.integer ) );
+                                                                                                                                                    "duration", StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Option<Integer>> PRE_ALARM = ParameterDescription.notNegative( ParameterDescription.parameter(
-            "preAlarm", StringConversion.integer ) );
+                                                                                                                                                     "preAlarm", StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Option<Integer>> ARCHIVE = ParameterDescription.notNegative( ParameterDescription.parameter(
-            "archive", StringConversion.integer ) );
+                                                                                                                                                   "archive", StringConversion.integer() ) );
     private static final ParameterDescription<Status, Status> STATUS = ParameterDescription.parameterWithDefault(
             "status", Status.NONE,
             StringConversion.convenientPartial( Status.fromString ) );

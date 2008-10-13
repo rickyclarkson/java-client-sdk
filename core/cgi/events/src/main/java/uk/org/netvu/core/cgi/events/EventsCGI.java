@@ -18,10 +18,10 @@ import uk.org.netvu.core.cgi.common.ParameterMap.Validator;
 public final class EventsCGI
 {
     private static final ParameterDescription<Integer, Integer> TIME = ParameterDescription.notNegative( ParameterDescription.parameterWithDefault(
-            "time", 0, StringConversion.integer ) );
+                                                                                                                                                   "time", 0, StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Integer> RANGE = ParameterDescription.notNegative( ParameterDescription.parameterWithDefault(
-            "range", Integer.MAX_VALUE, StringConversion.integer ) );
+                                                                                                                                                    "range", Integer.MAX_VALUE, StringConversion.integer() ) );
 
     private static final ParameterDescription<Format, Format> FORMAT = ParameterDescription.parameterWithDefault(
             "format", Format.CSV,
@@ -30,29 +30,29 @@ public final class EventsCGI
     private static final ParameterDescription<Integer, Integer> LENGTH = ParameterDescription.parameterWithDefault(
             "listlength",
 
-            100, StringConversion.integer );
+            100, StringConversion.integer() );
 
     private static final ParameterDescription<String, String> TEXT = ParameterDescription.parameterWithDefault(
-            "text", "", StringConversion.string );
+                                                                                                               "text", "", StringConversion.string() );
 
     private static final ParameterDescription<Long, Long> CAMERA_MASK = ParameterDescription.parameterWithDefault(
-            "cammask", 0L, StringConversion.hexLong );
+                                                                                                                  "cammask", 0L, StringConversion.hexLong() );
 
     private static final ParameterDescription<Integer, Integer> ALARM_MASK = ParameterDescription.parameterWithDefault(
-            "almmask", 0, StringConversion.hexInt );
+                                                                                                                       "almmask", 0, StringConversion.hexInt() );
 
     private static final ParameterDescription<Long, Long> VIDEO_MOTION_DETECTION_MASK = ParameterDescription.parameterWithDefault(
             "vmdmask",
 
-            0L, StringConversion.hexLong );
+            0L, StringConversion.hexLong() );
 
     private static final ParameterDescription<Integer, Integer> GPS_MASK = ParameterDescription.parameterWithDefault(
-            "gpsmask", 0, StringConversion.hexInt );
+                                                                                                                     "gpsmask", 0, StringConversion.hexInt() );
 
     private static final ParameterDescription<Integer, Integer> SYSTEM_MASK_PARAM = ParameterDescription.parameterWithDefault(
-            "sysmask", 0, StringConversion.hexInt );
+                                                                                                                              "sysmask", 0, StringConversion.hexInt() );
 
-    // this is an anonymous intialiser - it is creating a new ArrayList and
+    // this is an anonymous initialiser - it is creating a new ArrayList and
     // adding values to it inline.
     private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>()
     {

@@ -25,23 +25,23 @@ public final class VPartsCGI
             StringConversion.convenientPartial( Mode.fromString ) );
 
     private static final ParameterDescription<Integer, Integer> TIME = ParameterDescription.notNegative( ParameterDescription.parameterWithDefault(
-            "time", 0, StringConversion.integer ) );
+                                                                                                                                                   "time", 0, StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Integer> RANGE = ParameterDescription.notNegative( ParameterDescription.parameterWithDefault(
-            "range", Integer.MAX_VALUE, StringConversion.integer ) );
+                                                                                                                                                    "range", Integer.MAX_VALUE, StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Integer> EXPIRY = ParameterDescription.parameterWithDefault(
-            "expiry", 0, StringConversion.integer );
+                                                                                                                   "expiry", 0, StringConversion.integer() );
 
     private static final ParameterDescription<Boolean, Boolean> WATERMARK = ParameterDescription.parameterWithDefault(
-            "watermark", false, StringConversion.bool );
+                                                                                                                      "watermark", false, StringConversion.bool() );
 
     private static final ParameterDescription<Integer, Integer> WMARKSTEP = ParameterDescription.bound(
             1, 256, ParameterDescription.parameterWithDefault(
-                    "wmarkstepParam", 1, StringConversion.integer ) );
+                                                              "wmarkstepParam", 1, StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Integer> LIST_LENGTH = ParameterDescription.parameterWithDefault(
-            "listlength", 100, StringConversion.integer );
+                                                                                                                        "listlength", 100, StringConversion.integer() );
 
     private static final ParameterDescription<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = ParameterDescription.parameterWithDefault(
             "pathstyle", DirectoryPathFormat.SHORT,

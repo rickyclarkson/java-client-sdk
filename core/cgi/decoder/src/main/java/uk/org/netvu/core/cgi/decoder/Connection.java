@@ -21,15 +21,15 @@ import uk.org.netvu.core.cgi.common.ParameterMap.Validator;
 public final class Connection
 {
     private static final ParameterDescription<String, Option<String>> SLAVE_IP_PARAM = ParameterDescription.parameter(
-            "slaveip", StringConversion.string );
+                                                                                                                      "slaveip", StringConversion.string() );
     private static final ParameterDescription<Integer, Option<Integer>> SEQ_PARAM = ParameterDescription.parameter(
-            "seq", StringConversion.hexInt );
+                                                                                                                   "seq", StringConversion.hexInt() );
     private static final ParameterDescription<Integer, Option<Integer>> DWELL_PARAM = ParameterDescription.parameter(
-            "dwell", StringConversion.integer );
+                                                                                                                     "dwell", StringConversion.integer() );
     private static final ParameterDescription<Integer, Option<Integer>> CAM = ParameterDescription.parameter(
-            "cam", StringConversion.integer );
+                                                                                                             "cam", StringConversion.integer() );
     private static final ParameterDescription<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = ParameterDescription.parameter(
-            "audio", StringConversion.integer );
+                                                                                                                             "audio", StringConversion.integer() );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

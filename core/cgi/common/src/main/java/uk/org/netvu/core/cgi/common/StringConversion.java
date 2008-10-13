@@ -16,34 +16,48 @@ public final class StringConversion<T>
      * A StringConversion that converts between Strings containing decimal
      * integers and Java's Integer and vice-versa.
      */
-    public static final StringConversion<Integer> integer = convenientPartial( Conversion.getStringToIntConversion() );
+    public static StringConversion<Integer> integer()
+    {
+        return convenientPartial( Conversion.getStringToIntConversion() );
+    }
+
     /**
      * A StringConversion that converts between Strings and themselves with no
      * extra processing.
      */
-    public static final StringConversion<String> string = convenientTotal( Conversion.<String> getIdentityConversion() );
+    public static StringConversion<String> string()
+    {
+        return convenientTotal( Conversion.<String> getIdentityConversion() );
+    }
 
     /**
      * A StringConversion that converts between Strings containing 'true' or
      * 'false' and Java's Boolean, and vice-versa.
      */
-    public static final StringConversion<Boolean> bool = convenientPartial( Conversion.getStringToBooleanConversion() );
+    public static StringConversion<Boolean> bool()
+    {
+        return convenientPartial( Conversion.getStringToBooleanConversion() );
+    }
 
     /**
      * A StringConversion that converts between Strings containing hexadecimal
      * integers and Java's Long, and vice-versa.
      */
-    public static final StringConversion<Long> hexLong = partial(
-            Conversion.getHexStringToLongConversion(),
-            Option.someRef( Conversion.getLongToHexStringConversion() ) );
+    public static StringConversion<Long> hexLong()
+    {
+        return partial(Conversion.getHexStringToLongConversion(),
+                       Option.someRef( Conversion.getLongToHexStringConversion() ) );
+    }
 
     /**
      * A StringConversion that converts between Strings containing hexadecimal
      * integers and Java's Integer, and vice-versa.
      */
-    public static final StringConversion<Integer> hexInt = partial(
-            Conversion.getHexStringToIntConversion(),
-            Option.someRef( Conversion.getIntToHexStringConversion() ) );
+    public static StringConversion<Integer> hexInt()
+    {
+        return partial(Conversion.getHexStringToIntConversion(),
+                       Option.someRef( Conversion.getIntToHexStringConversion() ) );
+    }
 
     /**
      * Constructs a StringConversion from a partial Conversion from Strings to
