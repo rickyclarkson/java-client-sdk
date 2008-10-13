@@ -49,6 +49,7 @@ import cgi.common.Format
 import scalacheck.Arbitrary
 import Arbitrary.arbitrary
 import scalacheck.Prop.{property, extendedBoolean}
+import scalacheck.Gen
 
 class EventsCGITest extends JUnit4(new Specification with Scalacheck {
  import EventsCGI.Builder
@@ -131,41 +132,48 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
    val string = "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 2, 4"
    EventsCGIResult.fromString(string).toString must throwA(new UnsupportedOperationException) } }
 
- private def randomEventsCGIBuilder(random: Random) = {
-  import common.Generators
+ implicit val arbFormat: Arbitrary[Format] =
+  Arbitrary { arbitrary[Int] map (x => Format.oneOf(new Random(x))) }
 
+ private def randomEventsCGIBuilder = {
   val builder = new EventsCGI.Builder
-  def nonNegativeInt = random.nextInt.abs
-  def anyInt = random.nextInt
-  def anyLong = random.nextLong
-  def anyFormat = Format.oneOf(random)
-  def anyString = Generators.strings(random).next
+  def nonNegativeInt = arbitrary[Int] map (_.abs) sample
+  def anyInt = arbitrary[Int] sample
+  def anyLong = arbitrary[Long] sample
+  def anyFormat = arbitrary[Format] sample
+  def anyString = arbitrary[String] sample
   
-  val methods = List(() => builder.alarmMask(anyInt),
-                     () => builder.cameraMask(anyLong),
-                     () => builder.format(anyFormat),
-                     () => builder.gpsMask(anyInt),
-                     () => builder.length(anyInt),
-                     () => builder.range(nonNegativeInt),
-                     () => builder.systemMask(anyInt),
-                     () => builder.text(anyString),
-                     () => builder.time(nonNegativeInt),
-                     () => builder.videoMotionDetectionMask(anyLong)
+  val methods = List(() => builder.alarmMask(anyInt.get),
+                     () => builder.cameraMask(anyLong.get),
+                     () => builder.format(anyFormat.get),
+                     () => builder.gpsMask(anyInt.get),
+                     () => builder.length(anyInt.get),
+                     () => builder.range(nonNegativeInt.get),
+                     () => builder.systemMask(anyInt.get),
+                     () => builder.text(anyString.get),
+                     () => builder.time(nonNegativeInt.get),
+                     () => builder.videoMotionDetectionMask(anyLong.get)
                     ).map(a => () => try { a() } catch { case e: RuntimeException => })
 
-  for (i <- 0 to random.nextInt(methods.size))
-   methods(random.nextInt(methods.size))()
+  for (i <- 0 to arbitrary[Int].sample.get.abs % 200)
+   methods(Gen.choose(0, methods.size-1).sample.get)()
 
   builder
  }
 
- import scalacheck.Gen
+ implicit val eventsBuilderGen: Arbitrary[EventsCGI.Builder] = Arbitrary { for (i <- arbitrary[Int]) yield {
+  println("Building an EventsCGI.Builder")
+  randomEventsCGIBuilder } }
 
- implicit val eventsBuilderGen: Arbitrary[EventsCGI.Builder] = Arbitrary { for (i <- arbitrary[Int]) yield randomEventsCGIBuilder(new Random(i)) }
- implicit val events: Arbitrary[EventsCGI] = Arbitrary { for (b <- arbitrary[EventsCGI.Builder]) yield b.build }
+ implicit val events: Arbitrary[EventsCGI] = Arbitrary { arbitrary[EventsCGI.Builder] map { b => b.build } }
 
  "Converting an EventsCGI to a String and back" should { "not be lossy" in {
-  property { e: EventsCGI => EventsCGI.fromString(e.toString).toString == e.toString } must pass
+  val cgi = randomEventsCGIBuilder.build 
+  EventsCGI.fromString(cgi.toString).toString mustEqual cgi.toString
+/*  property { e: EventsCGI.Builder => {
+   val cgi = e.build
+   EventsCGI.fromString(cgi.toString).toString == cgi.toString
+  } } must pass  */
  } }
 
  "Parsing an invalid URL parameter" should { "cause an IllegalArgumentException" in {
@@ -202,25 +210,23 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
  } }
 
  "toString" should {
-  "give a valid URL" in { property { e: EventsCGI => new java.net.URL("http://none" + e.toString) != null } must pass }
+  "give a valid URL" in { new java.net.URL("http://none" + randomEventsCGIBuilder.build.toString)!=null mustEqual true }/* property { e: EventsCGI.Builder => new java.net.URL("http://none" + e.build.toString) != null } must pass }*/
   "not give a URL containing spaces" in { new EventsCGI.Builder().text("hello world").build.toString must notInclude(" ") }
  }
 })
-
+                                  
 class EventsCGIResultTest extends JUnit4(new Specification with Scalacheck { 
  import EventsCGIResult.{Status, AlarmType, Builder}
 
- def randomEventsCGIResultBuilder(random: Random) = {
-  val strings = common.Generators.strings(random)
-  val nonNegatives = common.Generators.nonNegativeInts(random)
-  val julianTime = nonNegatives.next
-
+ def randomEventsCGIResultBuilder(random: Random, alarm: String, file: String) = {
+  def nonNegative = random.nextInt.abs
+  val julianTime = nonNegative
   val setAlarmType = random.nextBoolean
   val setStatus = random.nextBoolean
 
-  var b = new EventsCGIResult.Builder() alarm strings.next archive nonNegatives.next.intValue camera random.nextInt(65)
-  b = b duration Math.max(0, nonNegatives.next.intValue - julianTime.intValue) file strings.next
-  b = b julianTime julianTime.intValue offset random.nextInt(180000)-90000 preAlarm nonNegatives.next.intValue
+  var b = new EventsCGIResult.Builder() alarm alarm archive nonNegative camera random.nextInt(65)
+  b = b duration Math.max(0, nonNegative - julianTime.intValue) file file
+  b = b julianTime julianTime.intValue offset random.nextInt(180000)-90000 preAlarm nonNegative
   b = b onDisk random.nextBoolean
 
   if (setStatus) b = b status oneStatus(random)
@@ -233,7 +239,11 @@ class EventsCGIResultTest extends JUnit4(new Specification with Scalacheck {
  private def oneStatus(random: Random) = Status.values()(random.nextInt(Status.values.length))
 
  implicit val eventsCGIResultBuilders: Arbitrary[EventsCGIResult.Builder] =
-  Arbitrary { for (i <- arbitrary[Int]) yield randomEventsCGIResultBuilder(new Random(i)) }
+  Arbitrary { for { i <- arbitrary[Int]
+                    alarm <- arbitrary[String]
+                    file <- arbitrary[String] }
+               yield randomEventsCGIResultBuilder(new Random(i), alarm, file) }
+
  implicit val eventsCGIResults: Arbitrary[EventsCGIResult] =
   Arbitrary { for (b <- arbitrary[EventsCGIResult.Builder]) yield b.build }
 
