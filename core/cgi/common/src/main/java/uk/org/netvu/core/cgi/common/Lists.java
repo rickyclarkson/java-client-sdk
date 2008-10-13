@@ -147,31 +147,6 @@ public final class Lists
     }
 
     /**
-     * Given a list, returns a list where each element is a pair of that element
-     * and its index.
-     * 
-     * @param <T>
-     *        the type of the elements in the list.
-     * @param ts
-     *        the list to zip.
-     * @return a list where each element is a pair of that element and its
-     *         index.
-     */
-    public static <T> List<Pair<T, Integer>> zipWithIndex( final List<T> ts )
-    {
-        final List<Pair<T, Integer>> results = new ArrayList<Pair<T, Integer>>();
-
-        int a = 0;
-
-        for ( final T t : ts )
-        {
-            results.add( Pair.pair( t, a++ ) );
-        }
-
-        return results;
-    }
-
-    /**
      * Zips two Lists together, giving a new List containing Pairs each
      * consisting of one element from each List, in order.
      * 

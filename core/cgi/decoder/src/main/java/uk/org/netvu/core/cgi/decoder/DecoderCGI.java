@@ -54,8 +54,8 @@ public final class DecoderCGI
                     } ) ) );
 
     private static final ParameterDescription<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = ParameterDescription.sparseArrayParameter(
-            "commands", StringConversion.total( Conversion.<String> identity(),
-                    URLEncoder.encodeConversion().andThen(
+            "commands", StringConversion.total( Conversion.<String> getIdentityConversion(),
+                                                new URLEncoder().andThen(
                             Strings.surroundWithQuotes() ) ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and

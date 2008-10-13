@@ -16,34 +16,34 @@ public final class StringConversion<T>
      * A StringConversion that converts between Strings containing decimal
      * integers and Java's Integer and vice-versa.
      */
-    public static final StringConversion<Integer> integer = convenientPartial( Conversion.stringToInt() );
+    public static final StringConversion<Integer> integer = convenientPartial( Conversion.getStringToIntConversion() );
     /**
      * A StringConversion that converts between Strings and themselves with no
      * extra processing.
      */
-    public static final StringConversion<String> string = convenientTotal( Conversion.<String> identity() );
+    public static final StringConversion<String> string = convenientTotal( Conversion.<String> getIdentityConversion() );
 
     /**
      * A StringConversion that converts between Strings containing 'true' or
      * 'false' and Java's Boolean, and vice-versa.
      */
-    public static final StringConversion<Boolean> bool = convenientPartial( Conversion.stringToBoolean() );
+    public static final StringConversion<Boolean> bool = convenientPartial( Conversion.getStringToBooleanConversion() );
 
     /**
      * A StringConversion that converts between Strings containing hexadecimal
      * integers and Java's Long, and vice-versa.
      */
     public static final StringConversion<Long> hexLong = partial(
-            Conversion.hexStringToLong(),
-            Option.someRef( Conversion.longToHexString() ) );
+            Conversion.getHexStringToLongConversion(),
+            Option.someRef( Conversion.getLongToHexStringConversion() ) );
 
     /**
      * A StringConversion that converts between Strings containing hexadecimal
      * integers and Java's Integer, and vice-versa.
      */
     public static final StringConversion<Integer> hexInt = partial(
-            Conversion.hexStringToInt(),
-            Option.someRef( Conversion.intToHexString() ) );
+            Conversion.getHexStringToIntConversion(),
+            Option.someRef( Conversion.getIntToHexStringConversion() ) );
 
     /**
      * Constructs a StringConversion from a partial Conversion from Strings to
@@ -61,7 +61,7 @@ public final class StringConversion<T>
             final Conversion<String, Option<T>> conversionFromString )
     {
         return partial( conversionFromString,
-                andThenSome( Conversion.<T> objectToString() ) );
+                andThenSome( Conversion.<T> getObjectToStringConversion() ) );
     }
 
     /**
@@ -80,7 +80,7 @@ public final class StringConversion<T>
             final Conversion<String, T> conversionFromString )
     {
         return partial( andThenSome( conversionFromString ),
-                andThenSome( Conversion.<T> objectToString() ) );
+                andThenSome( Conversion.<T> getObjectToStringConversion() ) );
     }
 
     /**

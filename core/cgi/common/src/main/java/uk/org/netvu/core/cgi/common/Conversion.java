@@ -71,7 +71,7 @@ public abstract class Conversion<T, R>
     /**
      * A conversion from Strings containing hexadecimal to ints.
      */
-    public static final Conversion<String, Option<Integer>> hexStringToInt()
+    public static final Conversion<String, Option<Integer>> getHexStringToIntConversion()
     {
         return new Conversion<String, Option<Integer>>()
         {
@@ -95,7 +95,7 @@ public abstract class Conversion<T, R>
     /**
      * A conversion from Strings containing hexadecimal to longs.
      */
-    public static final Conversion<String, Option<Long>> hexStringToLong()
+    public static final Conversion<String, Option<Long>> getHexStringToLongConversion()
     {
         return new Conversion<String, Option<Long>>()
         {
@@ -123,7 +123,7 @@ public abstract class Conversion<T, R>
      *        the input and output type of this conversion.
      * @return the identity conversion for type T.
      */
-    public static <T> Conversion<T, T> identity()
+    public static <T> Conversion<T, T> getIdentityConversion()
     {
         return new Conversion<T, T>()
         {
@@ -142,7 +142,7 @@ public abstract class Conversion<T, R>
      * 
      * @return a Conversion from an Integer to a String containing hexadecimal.
      */
-    public static final Conversion<Integer, String> intToHexString()
+    public static final Conversion<Integer, String> getIntToHexStringConversion()
     {
         return new Conversion<Integer, String>()
         {
@@ -157,7 +157,7 @@ public abstract class Conversion<T, R>
     /**
      * A conversion from longs to Strings containing hexadecimal.
      */
-    public static final Conversion<Long, String> longToHexString()
+    public static final Conversion<Long, String> getLongToHexStringConversion()
     {
         return new Conversion<Long, String>()
         {
@@ -178,7 +178,7 @@ public abstract class Conversion<T, R>
      * @return a conversion that uses Object's toString() to convert objects of
      *         type T into Strings.
      */
-    public static <T> Conversion<T, String> objectToString()
+    public static <T> Conversion<T, String> getObjectToStringConversion()
     {
         return new Conversion<T, String>()
         {
@@ -195,7 +195,7 @@ public abstract class Conversion<T, R>
      * Boolean value TRUE, "false" gets mapped to FALSE, and anything else gets
      * mapped to an empty Option.
      */
-    public static Conversion<String, Option<Boolean>> stringToBoolean()
+    public static Conversion<String, Option<Boolean>> getStringToBooleanConversion()
     {
         return new Conversion<String, Option<Boolean>>()
         {
@@ -219,7 +219,7 @@ public abstract class Conversion<T, R>
     /**
      * A conversion from Strings to Integers, using Integer.parseInt(String).
      */
-    public static Conversion<String, Option<Integer>> stringToInt()
+    public static Conversion<String, Option<Integer>> getStringToIntConversion()
     {
         return new Conversion<String, Option<Integer>>()
         {
@@ -243,7 +243,7 @@ public abstract class Conversion<T, R>
     /**
      * A conversion from Strings to longs, using Long.parseLong(String).
      */
-    public static final Conversion<String, Option<Long>> stringToLong()
+    public static final Conversion<String, Option<Long>> getStringToLongConversion()
     {
         return new Conversion<String, Option<Long>>()
         {
@@ -267,7 +267,7 @@ public abstract class Conversion<T, R>
     /**
      * Constructs a Conversion. This constructor has no effect.
      */
-    public Conversion()
+    protected Conversion()
     {
     }
 

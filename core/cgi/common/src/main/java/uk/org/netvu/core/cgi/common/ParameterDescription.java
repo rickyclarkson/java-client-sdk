@@ -88,7 +88,7 @@ public abstract class ParameterDescription<T, R>
                     }
 
                     result.append( name + '[' + entry.getKey() + ']' + "="
-                            + URLEncoder.encode( value ) );
+                                   + new URLEncoder().convert( value ) );
                 }
             }
 
@@ -141,7 +141,7 @@ public abstract class ParameterDescription<T, R>
                         public String convert( final String t )
                         {
                             return nameAndValue.first() + '='
-                                    + URLEncoder.encode( t );
+                                + new URLEncoder().convert( t );
                         }
                     } );
         }

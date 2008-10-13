@@ -30,7 +30,7 @@ import Implicits._
 class URLEncoderTest extends JUnit4(new Specification with Scalacheck {
  "Values encoded with URLBuilder" should {
   "be unaffected when decoded with the same encoding (UTF-8)" in {
-   property { x: String => java.net.URLDecoder.decode(URLEncoder.encode(x), "UTF-8") == x } must pass
+   property { x: String => java.net.URLDecoder.decode(new URLEncoder().convert(x), "UTF-8") == x } must pass
   }
  }
 })
@@ -68,7 +68,7 @@ class ParameterDescriptionTest extends JUnit4(new Specification with Scalacheck 
 
  "Converting a URL to a Parameter" should {
   "succeed" in {
-   val p = parameterWithDefault[Integer]("foo", 3, StringConversion.partial(Conversion.stringToInt, to))
+   val p = parameterWithDefault[Integer]("foo", 3, StringConversion.partial(Conversion.getStringToIntConversion, to))
    ParameterDescription.not[Integer, Integer](4, p).fromURLParameter(new URLParameter("foo", "8")).get mustEqual 8
   }
  }
@@ -127,7 +127,7 @@ class OptionTest extends JUnit4(new Specification with Scalacheck {
 
  "someRef" should {
   "give a Conversion that always produces an Option containing one element" in {
-   someRef(Conversion.objectToString[Int]).convert(5).isEmpty must beFalse
+   someRef(Conversion.getObjectToStringConversion[Int]).convert(5).isEmpty must beFalse
   }
  }
 
@@ -149,7 +149,7 @@ class OptionTest extends JUnit4(new Specification with Scalacheck {
  }
 
  "reason" should {
-  "throw a NullPointerException" in { some(5).reason must throwA(new NullPointerException) }
+  "throw an IllegalStateException" in { some(5).reason must throwA(new IllegalStateException) }
   "give a String" in { none("foo").reason mustEqual "foo" }
  }
 
@@ -242,22 +242,6 @@ class ListsTest extends JUnit4(new Specification with Scalacheck {
   }
  }
 
- "zipWithIndex" should {
-  "work for an empty list" in { Lists.zipWithIndex(new ArrayList[Int]).size mustEqual 0 }
-  "work for a single-element list" in {
-   val list = Lists.zipWithIndex(new ArrayList[Int] { add(3) })
-   list.size mustEqual 1
-   list.get(0) mustEqual Pair.pair(3, 0)
-  }
-  "work for a 2-element list" in {
-   val list = Lists.zipWithIndex(new ArrayList[Int] {
-    add(3)
-    add(4)
-   })
-
-   list.size mustEqual 2
-   list.get(0) mustEqual Pair.pair(3, 0)
-   list.get(1) mustEqual Pair.pair(4, 1) } }
  "filter" should {
   "return an empty list when given an empty list" in {
    import Implicits.function1ToConversion
@@ -320,46 +304,54 @@ class ConversionTest extends JUnit4(new Specification with Scalacheck {
  "Conversion.andThen" should {
   "result in a Conversion that behaves as if the value had been explicitly passed through each Conversion" in {
    val doubleIt: Conversion[Integer, Integer] = { x: Integer => Integer.valueOf(x.intValue * 2) }
-   doubleIt andThen Conversion.intToHexString convert 127 mustEqual "fe"
+   doubleIt andThen Conversion.getIntToHexStringConversion convert 127 mustEqual "fe"
   }
  }
 
- "Conversion.stringToInt" should {
-  "give an empty Option when supplied with 'foo'" in { Conversion.stringToInt.convert("foo").isEmpty mustEqual true }
-  "correctly convert Strings to ints" in { Conversion.stringToInt.convert("465").get mustEqual 465 }
+ "Conversion.getStringToIntConversion" should {
+  "give an empty Option when supplied with 'foo'" in {
+   Conversion.getStringToIntConversion.convert("foo").isEmpty mustEqual true
+  }
+  "correctly convert Strings to ints" in { Conversion.getStringToIntConversion.convert("465").get mustEqual 465 }
  }
 
- "Conversion.stringToLong" should {
-  "give an empty Option when supplied with \"foo\"" in { Conversion.stringToInt.convert("foo").isEmpty mustEqual true }
-  "correctly convert Strings to longs" in { Conversion.stringToInt.convert("465").get mustEqual 465 }
+ "Conversion.getStringToLongConversion" should {
+  "give an empty Option when supplied with \"foo\"" in {
+   Conversion.getStringToIntConversion.convert("foo").isEmpty mustEqual true
+  }
+  "correctly convert Strings to longs" in { Conversion.getStringToIntConversion.convert("465").get mustEqual 465 }
  }
 
- "Conversion.stringToBoolean" should {
-  "give true when given \"true\"" in { Conversion.stringToBoolean.convert("true").get mustEqual true }
-  "give false when given \"false\"" in { Conversion.stringToBoolean.convert("false").get mustEqual false }
-  "give an empty Option when given \"foo\"" in { Conversion.stringToBoolean.convert("foo").isEmpty mustEqual true }
+ "Conversion.getStringToBooleanConversion" should {
+  "give true when given \"true\"" in { Conversion.getStringToBooleanConversion.convert("true").get mustEqual true }
+  "give false when given \"false\"" in { Conversion.getStringToBooleanConversion.convert("false").get mustEqual false }
+  "give an empty Option when given \"foo\"" in {
+   Conversion.getStringToBooleanConversion.convert("foo").isEmpty mustEqual true
+  }
  }
 
- "Conversion.hexStringToInt" should {
-  "give an empty Option when given \"foo\"" in { Conversion.hexStringToInt.convert("foo").isEmpty mustEqual true }
-  "correctly convert hex Strings to ints" in { Conversion.hexStringToInt.convert("Fe").get mustEqual 254 }
+ "Conversion.getHexStringToIntConversion" should {
+  "give an empty Option when given \"foo\"" in { Conversion.getHexStringToIntConversion.convert("foo").isEmpty mustEqual true }
+  "correctly convert hex Strings to ints" in { Conversion.getHexStringToIntConversion.convert("Fe").get mustEqual 254 }
  }
 
- "Conversion.hexStringtoLong" should {
-  "give an empty Option when given \"foo\"" in { Conversion.hexStringToLong.convert("foo").isEmpty mustEqual true }
-  "correctly convert hex Strings to longs" in { Conversion.hexStringToLong.convert("Fe").get mustEqual 254 }
+ "Conversion.getHexStringtoLongConversion" should {
+  "give an empty Option when given \"foo\"" in {
+   Conversion.getHexStringToLongConversion.convert("foo").isEmpty mustEqual true
+  }
+  "correctly convert hex Strings to longs" in { Conversion.getHexStringToLongConversion.convert("Fe").get mustEqual 254 }
  }
 
- "Conversion.identity" should {
-  "give the value passed to it" in { Conversion.identity[Boolean].convert(true) mustEqual true }
+ "Conversion.getIdentityConversion" should {
+  "give the value passed to it" in { Conversion.getIdentityConversion[Boolean].convert(true) mustEqual true }
  }
 
- "Conversion.intToHexString" should {
-  "correctly convert ints to hexadecimal Strings" in { Conversion.intToHexString.convert(255) mustEqual "ff" }
+ "Conversion.getIntToHexStringConversion" should {
+  "correctly convert ints to hexadecimal Strings" in { Conversion.getIntToHexStringConversion.convert(255) mustEqual "ff" }
  }
 
- "Conversion.longToHexString" should {
-  "correctly convert longs to hexadecimal Strings" in { Conversion.longToHexString.convert(255L) mustEqual "ff" }
+ "Conversion.getLongToHexStringConversion" should {
+  "correctly convert longs to hexadecimal Strings" in { Conversion.getLongToHexStringConversion.convert(255L) mustEqual "ff" }
  }
 
  "Conversion.equal(\"foo\")" should {
@@ -626,16 +618,16 @@ class NullTest extends JUnit4(new Specification {
   noNull( { vv: V => f(t, u, vv) }, desc) }
 
  val conversions = Map[Conversion[_ <: AnyRef, _], String](
-  Conversion.stringToBoolean -> "Conversion.stringToBoolean",
-  Conversion.stringToInt -> "Conversion.stringtoInt",
-  Conversion.hexStringToInt -> "Conversion.hexStringToInt",
-  Conversion.hexStringToLong -> "Conversion.hexStringToLong",
-  Conversion.stringToLong -> "Conversion.stringToLong",
-  Conversion.longToHexString -> "Conversion.longToHexString",
-  Conversion.intToHexString -> "Conversion.intToHexString",
+  Conversion.getStringToBooleanConversion -> "Conversion.getStringToBooleanConversion",
+  Conversion.getStringToIntConversion -> "Conversion.getStringtoIntConversion",
+  Conversion.getHexStringToIntConversion -> "Conversion.getHexStringToIntConversion",
+  Conversion.getHexStringToLongConversion -> "Conversion.getHexStringToLongConversion",
+  Conversion.getStringToLongConversion -> "Conversion.getStringToLongConversion",
+  Conversion.getLongToHexStringConversion -> "Conversion.getLongToHexStringConversion",
+  Conversion.getIntToHexStringConversion -> "Conversion.getIntToHexStringConversion",
   Conversion.equal("foo") -> "Conversion.equal(\"foo\")",
-  Conversion.identity[Integer]() -> "Conversion.identity",
-  Conversion.objectToString[Integer]() -> "Conversion.objectToString")
+  Conversion.getIdentityConversion[Integer]() -> "Conversion.getIdentityConversion",
+  Conversion.getObjectToStringConversion[Integer]() -> "Conversion.getObjectToStringConversion")
 
  for ((m, name) <- conversions) {
   noNull(conversionToFunction1(m), name)
@@ -655,7 +647,6 @@ class NullTest extends JUnit4(new Specification {
 // noNull(Lists.remove[Unit] _, "Lists.remove") -- see line below
 // noNull(Lists.removeIndices[Integer] _, "Lists.removeIndices") -- this line produces a compiler exception, need to try a later version of Scala.
 
- noNull(Lists.zipWithIndex[Integer] _, "Lists.zipWithIndex")
  noNull(Lists.zip[Integer, String] _, "Lists.zip")
  
  noNull(Option.none[Integer] _, "Option.none")
@@ -712,7 +703,7 @@ class NullTest extends JUnit4(new Specification {
  noNull(StringConversion.partial _, "StringConversion.partial")
  noNull(StringConversion.total _, "StringConversion.total")
 
- noNull({ x: String => URLEncoder.encode(x) }, "URLEncoder.encode")
+ noNull({ x: String => new URLEncoder().convert(x) }, "URLEncoder")
 
  noNull(URLExtractor.nameValuePairs _, "URLExtractor.nameValuePairs")
  noNull(URLExtractor.parameters _, "URLExtractor.parameters")
@@ -721,7 +712,7 @@ class NullTest extends JUnit4(new Specification {
  noNull(URLParameter.fromPair, "URLParameter.fromPair")
  noNull((x: String, y: String) => new URLParameter(x, y), "new URLParameter(x, y)")
 
- noNull(Validator.TRUE.isValid _, "Validator.TRUE.isValid")
+ noNull(Validator.ACCEPT_ALL.isValid _, "Validator.ACCEPT_ALL.isValid")
  noNull(Validator.mutuallyExclusive _, "Validator.mutuallyExclusive")
 
  noNull(Validator.mutuallyExclusive(new java.util.ArrayList[ParameterDescription[_, _]]).isValid _,

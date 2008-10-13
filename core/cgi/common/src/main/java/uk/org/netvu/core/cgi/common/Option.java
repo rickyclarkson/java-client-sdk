@@ -53,7 +53,7 @@ public abstract class Option<T> implements Iterable<T>
         @Override
         public String reason()
         {
-            throw null;
+            throw new IllegalStateException("This Option has a value; reason() is only valid on an empty Option");
         }
 
         @Override

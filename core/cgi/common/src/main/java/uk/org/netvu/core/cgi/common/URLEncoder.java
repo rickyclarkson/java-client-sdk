@@ -3,9 +3,9 @@ package uk.org.netvu.core.cgi.common;
 import java.io.UnsupportedEncodingException;
 
 /**
- * Utility methods for encoding URLs. For internal use only.
+ * A Conversion for encoding text for safe use in URLs.  For internal use only.
  */
-public class URLEncoder
+public class URLEncoder extends Conversion<String, String>
 {
     /**
      * Encodes the specified value for safe use in URLs.
@@ -14,7 +14,7 @@ public class URLEncoder
      *        the value to encode.
      * @return the encoded value.
      */
-    public static String encode( final String value )
+    public String convert( final String value )
     {
         try
         {
@@ -26,23 +26,7 @@ public class URLEncoder
         }
     }
 
-    /**
-     * A Conversion that, given a String, returns a URL-encoded version of it.
-     * UTF-8 is assumed.
-     */
-    public static Conversion<String, String> encodeConversion()
-    {
-        return new Conversion<String, String>()
-        {
-            @Override
-            public String convert( final String value )
-            {
-                return encode( value );
-            }
-        };
-    }
-
-    private URLEncoder()
+    public URLEncoder()
     {
     }
 }

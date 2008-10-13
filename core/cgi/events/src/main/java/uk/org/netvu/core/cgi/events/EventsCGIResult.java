@@ -289,7 +289,7 @@ public final class EventsCGIResult
         all.addAll( alarmAndStatus );
 
         return Strings.intersperse( ", ", Lists.map( all,
-                Conversion.objectToString() ) );
+                Conversion.getObjectToStringConversion() ) );
     }
 
     /**

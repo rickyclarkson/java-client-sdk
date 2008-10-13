@@ -55,7 +55,7 @@ public final class Connection
         @Override
         public String convert( final Connection connection )
         {
-            return URLEncoder.encode( connection.parameterMap.toURLParameters(
+            return new URLEncoder().convert( connection.parameterMap.toURLParameters(
                     params ).replaceAll( "&", "," ) );
         }
     }.andThen( Strings.surroundWithQuotes() );

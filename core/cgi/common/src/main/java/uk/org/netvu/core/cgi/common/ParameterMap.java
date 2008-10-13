@@ -129,7 +129,7 @@ public final class ParameterMap
      */
     public ParameterMap()
     {
-        this( Validator.TRUE );
+        this( Validator.ACCEPT_ALL );
     }
 
     /**
@@ -273,7 +273,7 @@ public final class ParameterMap
         /**
          * A Validator that accepts any ParameterMap.
          */
-        static final Validator TRUE = new Validator()
+        static final Validator ACCEPT_ALL = new Validator()
 	{
             @Override
             public boolean isValid( final ParameterMap parameterMap )
