@@ -163,9 +163,8 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
   builder
  }
 
- implicit val eventsBuilderGen: Arbitrary[EventsCGI.Builder] = Arbitrary { for (i <- arbitrary[Int]) yield {
-  println("Building an EventsCGI.Builder")
-  randomEventsCGIBuilder } }
+ implicit val eventsBuilderGen: Arbitrary[EventsCGI.Builder] =
+  Arbitrary { for (i <- arbitrary[Int]) yield randomEventsCGIBuilder }
 
  implicit val events: Arbitrary[EventsCGI] = Arbitrary { arbitrary[EventsCGI.Builder] map { b => b.build } }
 
