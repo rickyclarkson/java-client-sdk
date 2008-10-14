@@ -26,10 +26,9 @@ public abstract class ParameterDescription<T, R>
         private final StringConversion<T> conversions;
 
         private SparseArrayParameterDescription( final String name,
-                final TreeMap<Integer, T> defaultValue,
                 final StringConversion<T> conversions )
         {
-            super( name, defaultValue );
+            super( name, new TreeMap<Integer, T>() );
             this.conversions = conversions;
         }
 
@@ -98,15 +97,13 @@ public abstract class ParameterDescription<T, R>
     private static final class ParameterDescriptionWithDefault<T>
             extends ParameterDescription<T, T>
     {
-        private final T defaultValue;
         private final StringConversion<T> conversions;
 
         private ParameterDescriptionWithDefault( final String name,
-                final T defaultValue, final T defaultValue2,
+                                                 final T defaultValue,
                 final StringConversion<T> conversions )
         {
             super( name, defaultValue );
-            this.defaultValue = defaultValue2;
             this.conversions = conversions;
         }
 
@@ -209,11 +206,9 @@ public abstract class ParameterDescription<T, R>
         private final T banned;
         private final ParameterDescription<T, U> delegate;
 
-        private NotParameterDescription( final String name,
-                final U defaultValue, final T banned,
-                final ParameterDescription<T, U> delegate )
+        private NotParameterDescription( final T banned, final ParameterDescription<T, U> delegate )
         {
-            super( name, defaultValue );
+            super( delegate.name, delegate.defaultValue );
             this.banned = banned;
             this.delegate = delegate;
         }
@@ -252,12 +247,12 @@ public abstract class ParameterDescription<T, R>
         private final int lowerInclusive;
         private final ParameterDescription<Integer, U> delegate;
 
-        private BoundParameterDescription( final String name,
-                final U defaultValue, final int higherInclusive,
+        private BoundParameterDescription(
                 final int lowerInclusive,
+                final int higherInclusive,
                 final ParameterDescription<Integer, U> delegate )
         {
-            super( name, defaultValue );
+            super( delegate.name, delegate.defaultValue );
             this.higherInclusive = higherInclusive;
             this.lowerInclusive = lowerInclusive;
             this.delegate = delegate;
@@ -314,8 +309,7 @@ public abstract class ParameterDescription<T, R>
             final int lowerInclusive, final int higherInclusive,
             final ParameterDescription<Integer, U> delegate )
     {
-        return new BoundParameterDescription<U>( delegate.name,
-                delegate.defaultValue, higherInclusive, lowerInclusive,
+        return new BoundParameterDescription<U>( lowerInclusive, higherInclusive,
                 delegate );
     }
 
@@ -338,8 +332,7 @@ public abstract class ParameterDescription<T, R>
     {
         Checks.notNull( banned );
 
-        return new NotParameterDescription<T, U>( delegate.name,
-                delegate.defaultValue, banned, delegate );
+        return new NotParameterDescription<T, U>( banned, delegate );
     }
 
     /**
@@ -407,7 +400,7 @@ public abstract class ParameterDescription<T, R>
         Checks.notNull( name, defaultValue, conversions );
 
         return new ParameterDescriptionWithDefault<T>( name, defaultValue,
-                defaultValue, conversions );
+                conversions );
     }
 
     /**
@@ -432,7 +425,7 @@ public abstract class ParameterDescription<T, R>
         Checks.notNull( name, conversions );
 
         return new SparseArrayParameterDescription<T>( name,
-                new TreeMap<Integer, T>(), conversions );
+                conversions );
     }
 
     /**
@@ -441,7 +434,7 @@ public abstract class ParameterDescription<T, R>
      */
     public final String name;
 
-    private final R defaultValue;
+    final R defaultValue;
 
     private ParameterDescription( final String name, final R defaultValue )
     {
