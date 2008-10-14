@@ -18,10 +18,15 @@ final class URLExtractor
      */
     static List<URLParameter> nameValuePairs( final String url )
     {
-        return url.indexOf( '=' ) < 0 ? new ArrayList<URLParameter>()
-                : Lists.map(
-                        parameters( url ),
-                        Strings.partition( '=' ).andThen( URLParameter.fromPair ) );
+        if (url.indexOf( '=' ) < 0)
+        {
+            return new ArrayList<URLParameter>();
+        }
+        
+        List<String> parameters = parameters( url );
+        Conversion<String, Pair<String, String>> partitionByEqualsSign = Strings.partition( '=' );
+        Conversion<String, URLParameter> partitionByEqualsSignThenConstructAURLParameterFromThePair = partitionByEqualsSign.andThen( URLParameter.fromPair );
+        return Lists.map( parameters, partitionByEqualsSignThenConstructAURLParameterFromThePair );
     }
 
     /**
@@ -35,8 +40,9 @@ final class URLExtractor
      */
     static List<String> parameters( final String url )
     {
+        String afterFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists = Strings.afterFirstLeniently( url, "?" );
         return Strings.splitIgnoringQuotedSections(
-                Strings.afterFirstLeniently( url, "?" ), '&' );
+                afterFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists, '&' );
     }
 
     /**
@@ -51,8 +57,8 @@ final class URLExtractor
      */
     static String queryName( final String url )
     {
-        return Strings.afterLastLeniently( Strings.beforeFirstLeniently( url,
-                "?" ), "/" );
+        String beforeFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists = Strings.beforeFirstLeniently( url, "?" );
+        return Strings.afterLastLeniently( beforeFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists, "/" );
     }
 
     private URLExtractor()
