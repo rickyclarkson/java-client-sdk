@@ -111,10 +111,15 @@ public final class Lists
      * @return a new list containing the elements from the specified list,
      *         except for the specified element toRemove.
      */
-    public static <T> List<T> remove( final List<T> original, final T toRemove )
+    public static <T> List<T> remove( final List<T> original, final T... toRemove )
     {
         final List<T> newOne = new ArrayList<T>( original );
-        newOne.remove( toRemove );
+
+        for ( final T t: toRemove )
+        {
+            newOne.remove( t );
+        }
+
         return newOne;
     }
 

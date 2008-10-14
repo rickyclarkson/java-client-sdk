@@ -277,7 +277,7 @@ class ListsTest extends JUnit4(new Specification with Scalacheck {
  
  "remove" should {
   "be able to remove 3 from the list 1, 2, 3" in {
-   Lists.remove[Integer](Arrays.asList(Array[Integer](1, 2, 3)), 3) == Arrays.asList(Array[Integer](1, 2))
+   Lists.remove[Integer](Arrays.asList(Array[Integer](1, 2, 3)), Array(3)) == Arrays.asList(Array[Integer](1, 2))
   }
  }
 
