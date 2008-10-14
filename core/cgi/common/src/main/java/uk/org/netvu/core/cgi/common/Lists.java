@@ -3,6 +3,8 @@ package uk.org.netvu.core.cgi.common;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Arrays;
+import java.util.TreeSet;
 
 /**
  * A set of utility methods for operating on Lists. For internal use only.
@@ -134,11 +136,17 @@ public final class Lists
     public static <T> List<T> removeByIndices( final List<T> values,
             final int... indices )
     {
+        TreeSet<Integer> uniqueIndices = new TreeSet<Integer>();
+        for (final int index: indices)
+        {
+            uniqueIndices.add(index);
+        }
+
         final List<T> results = new ArrayList<T>( values );
 
         int offset = 0;
 
-        for ( final int index : indices )
+        for ( final Integer index : uniqueIndices )
         {
             results.remove( index - offset++ );
         }

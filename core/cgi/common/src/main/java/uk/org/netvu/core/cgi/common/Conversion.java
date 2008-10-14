@@ -208,7 +208,7 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * A conversion from Strings to Booleans, where "true" gets mapped to the
+     * A case-insensitive conversion from Strings to Booleans, where "true" gets mapped to the
      * Boolean value TRUE, "false" gets mapped to FALSE, and anything else gets
      * mapped to an empty Option.
      */
@@ -219,11 +219,11 @@ public abstract class Conversion<T, R>
             @Override
             public Option<Boolean> convert( final String t )
             {
-                if ( t.equals( "true" ) )
+                if ( t.equalsIgnoreCase( "true" ) )
                 {
                     return Option.getFullOption( true );
                 }
-                else if ( t.equals( "false" ) )
+                else if ( t.equalsIgnoreCase( "false" ) )
                 {
                     return Option.getFullOption( false );
                 }
