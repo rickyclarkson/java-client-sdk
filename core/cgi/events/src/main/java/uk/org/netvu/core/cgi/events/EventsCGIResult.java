@@ -81,7 +81,7 @@ public final class EventsCGIResult
      */
     public static EventsCGIResult fromString( final String line )
     {
-        final String[] values = Strings.split( line );
+        final String[] values = Strings.splitCSV( line );
 
         if ( values.length < 11 || values.length > 13 )
         {

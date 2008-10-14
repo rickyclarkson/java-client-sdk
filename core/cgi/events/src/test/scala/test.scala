@@ -200,8 +200,8 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
 
   def compare(input: String, output: EventsCGIResult) = {
    import common.Strings
-   val fields = Strings.split(input)
-   val others = Strings.split(output.toCSV(0))
+   val fields = Strings.splitCSV(input)
+   val others = Strings.splitCSV(output.toCSV(0))
 
    fields.zip(others).zipWithIndex forall { case ((f, o), i) => i == 0 || i == 7 || f == o }
   }
@@ -210,7 +210,8 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
  } }
 
  "toString" should {
-  "give a valid URL" in { new java.net.URL("http://none" + randomEventsCGIBuilder.build.toString)!=null mustEqual true }/* property { e: EventsCGI.Builder => new java.net.URL("http://none" + e.build.toString) != null } must pass }*/
+  "give a valid URL" in /*{ new java.net.URL("http://none" + randomEventsCGIBuilder.build.toString)!=null mustEqual true }*/{
+   property { e: EventsCGI.Builder => new java.net.URL("http://none" + e.build.toString) != null } must pass }
   "not give a URL containing spaces" in { new EventsCGI.Builder().text("hello world").build.toString must notInclude(" ") }
  }
 })

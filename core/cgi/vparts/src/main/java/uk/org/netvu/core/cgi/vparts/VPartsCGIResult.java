@@ -59,7 +59,7 @@ public class VPartsCGIResult
     public static VPartsCGIResult fromCSV( final String csv )
     {
         ParameterMap parameterMap = new ParameterMap();
-        final String[] elements = Strings.split( csv );
+        final String[] elements = Strings.splitCSV( csv );
         int a = 0;
         for ( final ParameterDescription<?, ?> parameterDescription : parameterDescriptions )
         {

@@ -217,7 +217,7 @@ class StringsTest extends JUnit4(new Specification with Scalacheck {
 
  "split" should {
   "split a comma-separated String into an array of Strings, ignoring whitespace after commas" in {
-   Arrays.asList(Strings.split("oh, my,word")) mustEqual Arrays.asList(Array("oh", "my", "word"))
+   Arrays.asList(Strings.splitCSV("oh, my,word")) mustEqual Arrays.asList(Array("oh", "my", "word"))
   }
  }
  "splitIgnoringQuotedSections with a comma separator" should {
@@ -678,7 +678,7 @@ class NullTest extends JUnit4(new Specification {
  noNull(Strings.surroundWithQuotes, "Strings.surroundWithQuotes")
  noNull({ s: String => Strings.fromFirst('c', s)}, "Strings.fromFirst('c', x)")
  noNull(Strings.intersperse _, "Strings.intersperse")
- noNull(Strings.split _, "Strings.split")
+ noNull(Strings.splitCSV _, "Strings.splitCSV")
  noNull({ s: String => Strings.splitIgnoringQuotedSections(s, 'c') }, "Strings.splitIgnoringQuotedSections")
  noNull(Strings.afterFirstLeniently _, "Strings.afterFirstLeniently")
  noNull(Strings.afterLastLeniently _, "Strings.afterLastLeniently")

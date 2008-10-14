@@ -67,7 +67,7 @@ public class Strings
      *        the line to split.
      * @return an array of Strings.
      */
-    public static String[] split( final String line )
+    public static String[] splitCSV( final String line )
     {
         return line.replaceAll( ",([^ ])", ", $1" ).split( ", " );
     }
