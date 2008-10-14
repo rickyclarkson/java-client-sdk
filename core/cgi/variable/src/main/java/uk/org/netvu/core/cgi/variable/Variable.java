@@ -85,7 +85,8 @@ public enum Variable
     /**
      * A Conversion that, given a String possibly ending in [], ignores the []
      * and matches it, case-insensitively, to one of the given Variables,
-     * returning it in an Option, or returning an empty Option if there was no match.
+     * returning it in an Option, or returning an empty Option if there was no
+     * match.
      */
     static final Conversion<String, Option<Variable>> fromString = new Conversion<String, Option<Variable>>()
     {
@@ -99,7 +100,8 @@ public enum Variable
             }
             catch ( final IllegalArgumentException exception )
             {
-                return Option.getEmptyOption( "Cannot parse " + s + " into a Variable" );
+                return Option.getEmptyOption( "Cannot parse " + s
+                        + " into a Variable" );
             }
         }
     };

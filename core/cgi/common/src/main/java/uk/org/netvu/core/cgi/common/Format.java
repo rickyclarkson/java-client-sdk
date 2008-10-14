@@ -55,10 +55,14 @@ public enum Format
      */
     public static Format oneOf( final Random random )
     {
-        if (random.nextInt(3) == 0)
+        if ( random.nextInt( 3 ) == 0 )
+        {
             return JS;
-        if (random.nextInt(2) == 0)
+        }
+        if ( random.nextInt( 2 ) == 0 )
+        {
             return HTML;
+        }
         return CSV;
     }
 

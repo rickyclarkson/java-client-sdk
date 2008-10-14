@@ -19,9 +19,9 @@ public enum VariableType
     INCLUDE;
 
     /**
-     * A Conversion that, given a String, will return an Option containing HTTP or
-     * INCLUDE if the String case-insensitively matches one of those, and an empty Option
-     * otherwise.
+     * A Conversion that, given a String, will return an Option containing HTTP
+     * or INCLUDE if the String case-insensitively matches one of those, and an
+     * empty Option otherwise.
      */
     static final Conversion<String, Option<VariableType>> fromString = new Conversion<String, Option<VariableType>>()
     {

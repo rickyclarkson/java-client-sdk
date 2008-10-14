@@ -1,8 +1,7 @@
 package uk.org.netvu.core.cgi.common;
 
 /**
- * For internal use only!
- * An object containing two objects.
+ * For internal use only! An object containing two objects.
  * 
  * @param <T>
  *        the type of the first object.
@@ -11,6 +10,10 @@ package uk.org.netvu.core.cgi.common;
  */
 public final class Pair<T, U>
 {
+    private final T t;
+
+    private final U u;
+
     /**
      * Constructs a Pair with the two specified objects.
      * 
@@ -28,10 +31,6 @@ public final class Pair<T, U>
         this.u = u;
     }
 
-    private final T t;
-
-    private final U u;
-
     /**
      * Compares this object and another for equality.
      * 
@@ -43,8 +42,10 @@ public final class Pair<T, U>
     public boolean equals( final Object other )
     {
         return other instanceof Pair
-                && ( (Pair) other ).getFirstComponent().equals( getFirstComponent() )
-                && ( (Pair) other ).getSecondComponent().equals( getSecondComponent() );
+                && ( (Pair) other ).getFirstComponent().equals(
+                        getFirstComponent() )
+                && ( (Pair) other ).getSecondComponent().equals(
+                        getSecondComponent() );
     }
 
     /**
@@ -58,15 +59,6 @@ public final class Pair<T, U>
     }
 
     /**
-     * Gives a hashCode computed from the fields, for consistency with equals.
-     */
-    @Override
-    public int hashCode()
-    {
-        return getFirstComponent().hashCode() + 13651 * getSecondComponent().hashCode();
-    }
-
-    /**
      * Gives the second object in this Pair.
      * 
      * @return the second object in this Pair.
@@ -74,5 +66,15 @@ public final class Pair<T, U>
     public U getSecondComponent()
     {
         return u;
+    }
+
+    /**
+     * Gives a hashCode computed from the fields, for consistency with equals.
+     */
+    @Override
+    public int hashCode()
+    {
+        return getFirstComponent().hashCode() + 13651
+                * getSecondComponent().hashCode();
     }
 }

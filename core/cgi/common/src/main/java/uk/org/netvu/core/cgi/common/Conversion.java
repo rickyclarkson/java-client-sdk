@@ -3,8 +3,8 @@ package uk.org.netvu.core.cgi.common;
 import java.math.BigInteger;
 
 /**
- * For internal use only!
- * A conversion from objects of type T to those of type R.
+ * For internal use only! A conversion from objects of type T to those of type
+ * R.
  * 
  * @param <T>
  *        the type of object to convert from.
@@ -70,7 +70,7 @@ public abstract class Conversion<T, R>
 
     /**
      * A conversion from Strings containing hexadecimal to ints.
-     *
+     * 
      * @return a conversion from Strings containing hexadecimal to ints.
      */
     public static Conversion<String, Option<Integer>> getHexStringToIntConversion()
@@ -84,18 +84,20 @@ public abstract class Conversion<T, R>
 
                 try
                 {
-                    long result = Long.parseLong( t, 16 );
+                    final long result = Long.parseLong( t, 16 );
 
                     if ( ( result & 0xFFFFFFFFL ) == result )
                     {
-                        return Option.getFullOption( (int)result );
+                        return Option.getFullOption( (int) result );
                     }
 
-                    return Option.getEmptyOption( t + " is outside the bounds of an int, in hexadecimal" );
+                    return Option.getEmptyOption( t
+                            + " is outside the bounds of an int, in hexadecimal" );
                 }
                 catch ( final NumberFormatException e )
                 {
-                    return Option.getEmptyOption( t + " is not a valid int, in hexadecimal" );
+                    return Option.getEmptyOption( t
+                            + " is not a valid int, in hexadecimal" );
                 }
             }
         };
@@ -103,7 +105,7 @@ public abstract class Conversion<T, R>
 
     /**
      * A conversion from Strings containing hexadecimal to longs.
-     *
+     * 
      * @return a conversion from Strings containing hexadecimal to longs.
      */
     public static Conversion<String, Option<Long>> getHexStringToLongConversion()
@@ -113,16 +115,17 @@ public abstract class Conversion<T, R>
             @Override
             public Option<Long> convert( final String string )
             {
-                if ( string.startsWith("-"))
+                if ( string.startsWith( "-" ) )
                 {
-                    return Option.getEmptyOption("getHexStringToLongConversion does not support negative hexadecimal");
+                    return Option.getEmptyOption( "getHexStringToLongConversion does not support negative hexadecimal" );
                 }
 
                 if ( string.length() > 16 )
                 {
-                    return Option.getEmptyOption(string + " is not a valid long value in hexadecimal");
+                    return Option.getEmptyOption( string
+                            + " is not a valid long value in hexadecimal" );
                 }
-                    
+
                 try
                 {
                     return Option.getFullOption( new BigInteger( string, 16 ).longValue() );
@@ -177,7 +180,7 @@ public abstract class Conversion<T, R>
 
     /**
      * A conversion from longs to Strings containing hexadecimal.
-     *
+     * 
      * @return a conversion from longs to Strings containing hexadecimal.
      */
     public static Conversion<Long, String> getLongToHexStringConversion()
@@ -214,9 +217,10 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * A case-insensitive conversion from Strings to Booleans, where "true" gets mapped to the
-     * Boolean value TRUE, "false" gets mapped to FALSE, and anything else gets
-     * mapped to an empty Option.
+     * A case-insensitive conversion from Strings to Booleans, where "true" gets
+     * mapped to the Boolean value TRUE, "false" gets mapped to FALSE, and
+     * anything else gets mapped to an empty Option.
+     * 
      * @return a case-insensitive conversion from Strings to Booleans.
      */
     public static Conversion<String, Option<Boolean>> getStringToBooleanConversion()
@@ -242,8 +246,9 @@ public abstract class Conversion<T, R>
 
     /**
      * A conversion from Strings to Integers, using Integer.parseInt(String).
-     *
-     * @return a conversion from Strings to Integers, using Integer.parseInt(String).
+     * 
+     * @return a conversion from Strings to Integers, using
+     *         Integer.parseInt(String).
      */
     public static Conversion<String, Option<Integer>> getStringToIntConversion()
     {
@@ -268,7 +273,7 @@ public abstract class Conversion<T, R>
 
     /**
      * A conversion from Strings to longs, using Long.parseLong(String).
-     *
+     * 
      * @return a conversion from Strings to longs, using Long.parseLong(String).
      */
     public static Conversion<String, Option<Long>> getStringToLongConversion()
@@ -319,7 +324,7 @@ public abstract class Conversion<T, R>
             @Override
             public V convert( final T t )
             {
-                R intermediate = Conversion.this.convert( t );
+                final R intermediate = Conversion.this.convert( t );
                 return conversion.convert( intermediate );
             }
         };

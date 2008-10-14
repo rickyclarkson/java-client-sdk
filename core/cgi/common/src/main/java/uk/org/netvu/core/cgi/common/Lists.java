@@ -3,12 +3,10 @@ package uk.org.netvu.core.cgi.common;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Arrays;
 import java.util.TreeSet;
 
 /**
- * For internal use only!
- * A set of utility methods for operating on Lists.
+ * For internal use only! A set of utility methods for operating on Lists.
  */
 public final class Lists
 {
@@ -137,10 +135,10 @@ public final class Lists
     public static <T> List<T> removeByIndices( final List<T> values,
             final int... indices )
     {
-        TreeSet<Integer> uniqueIndices = new TreeSet<Integer>();
-        for (final int index: indices)
+        final TreeSet<Integer> uniqueIndices = new TreeSet<Integer>();
+        for ( final int index : indices )
         {
-            uniqueIndices.add(index);
+            uniqueIndices.add( index );
         }
 
         final List<T> results = new ArrayList<T>( values );

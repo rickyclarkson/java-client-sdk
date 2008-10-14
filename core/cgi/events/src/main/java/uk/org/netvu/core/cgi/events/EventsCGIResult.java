@@ -20,33 +20,33 @@ public final class EventsCGIResult
 {
     private static final ParameterDescription<Integer, Option<Integer>> CAMERA = ParameterDescription.parameterWithBounds(
             0, 64, ParameterDescription.parameterWithoutDefault( "cam",
-                                                   StringConversion.integer() ) );
+                    StringConversion.integer() ) );
 
     private static final ParameterDescription<String, Option<String>> ALARM = ParameterDescription.parameterWithoutDefault(
-                                                                                                             "alarm", StringConversion.string() );
+            "alarm", StringConversion.string() );
 
     private static final ParameterDescription<Integer, Option<Integer>> JULIAN_TIME = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
-                                                                                                                                                       "time", StringConversion.integer() ) );
+            "time", StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Option<Integer>> OFFSET = ParameterDescription.parameterWithBounds(
-            -90000, 90000, ParameterDescription.parameterWithoutDefault( "offset",
-                                                           StringConversion.integer() ) );
+            -90000, 90000, ParameterDescription.parameterWithoutDefault(
+                    "offset", StringConversion.integer() ) );
 
     private static final ParameterDescription<String, Option<String>> FILE = ParameterDescription.parameterWithoutDefault(
-                                                                                                            "file", StringConversion.string() );
+            "file", StringConversion.string() );
 
     private static final ParameterDescription<Boolean, Option<Boolean>> ON_DISK = ParameterDescription.parameterWithoutDefault(
             "onDisk", StringConversion.total( Conversion.equal( "exists" ),
                     Conversion.fromBoolean( "exists", "overwitten" ) ) );
 
     private static final ParameterDescription<Integer, Option<Integer>> DURATION = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
-                                                                                                                                                    "duration", StringConversion.integer() ) );
+            "duration", StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Option<Integer>> PRE_ALARM = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
-                                                                                                                                                     "preAlarm", StringConversion.integer() ) );
+            "preAlarm", StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Option<Integer>> ARCHIVE = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
-                                                                                                                                                   "archive", StringConversion.integer() ) );
+            "archive", StringConversion.integer() ) );
     private static final ParameterDescription<Status, Status> STATUS = ParameterDescription.parameterWithDefault(
             "status", Status.NONE,
             StringConversion.convenientPartial( Status.fromString ) );
@@ -283,7 +283,7 @@ public final class EventsCGIResult
         else
         {
             alarmAndStatus = Arrays.<Object> asList( getStatus().value,
-                getAlarmType().value );
+                    getAlarmType().value );
         }
 
         all.addAll( alarmAndStatus );
@@ -393,7 +393,8 @@ public final class EventsCGIResult
                 }
                 catch ( final IllegalArgumentException e )
                 {
-                    return Option.getEmptyOption( t + " is not a valid AlarmType" );
+                    return Option.getEmptyOption( t
+                            + " is not a valid AlarmType" );
                 }
             }
         };
@@ -418,23 +419,6 @@ public final class EventsCGIResult
          */
         public Builder()
         {
-        }
-
-        private <T> Builder set(final ParameterDescription<T, ?> parameter, final T value)
-        {
-            if (real.isEmpty())
-            {
-                throw new IllegalStateException("The Builder has already been built (build() has been called on it).");
-            }
-
-            real = real.map(new Conversion<ParameterMap, ParameterMap>()
-                            {
-                                public ParameterMap convert(ParameterMap map)
-                                {
-                                    return map.set( parameter, value );
-                                }
-                            });
-            return this;
         }
 
         /**
@@ -594,6 +578,26 @@ public final class EventsCGIResult
         public Builder status( final Status status )
         {
             return set( STATUS, status );
+        }
+
+        private <T> Builder set( final ParameterDescription<T, ?> parameter,
+                final T value )
+        {
+            if ( real.isEmpty() )
+            {
+                throw new IllegalStateException(
+                        "The Builder has already been built (build() has been called on it)." );
+            }
+
+            real = real.map( new Conversion<ParameterMap, ParameterMap>()
+            {
+                @Override
+                public ParameterMap convert( final ParameterMap map )
+                {
+                    return map.set( parameter, value );
+                }
+            } );
+            return this;
         }
     }
 

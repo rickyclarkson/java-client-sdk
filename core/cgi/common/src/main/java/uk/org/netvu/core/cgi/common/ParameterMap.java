@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * For internal use only!
- *
- * An immutable object that stores the values associated with parameters and
- * provides an interface to retrieving those values.
+ * For internal use only! An immutable object that stores the values associated
+ * with parameters and provides an interface to retrieving those values.
  */
 public final class ParameterMap
 {
@@ -21,9 +19,10 @@ public final class ParameterMap
      *        the parameters of interest, corresponding with the 'strings'
      *        parameter by index.
      * @param strings
-     *        the Strings of interest, corresponding with the parameterDescriptions parameter
-     *        by index.
-     * @return a ParameterMap holding the parsed values, wrapped in an Option, or an empty Option if any of the values don't parse.
+     *        the Strings of interest, corresponding with the
+     *        parameterDescriptions parameter by index.
+     * @return a ParameterMap holding the parsed values, wrapped in an Option,
+     *         or an empty Option if any of the values don't parse.
      */
     public static Option<ParameterMap> fromStrings(
             final List<ParameterDescription<?, ?>> parameterDescriptions,
@@ -39,8 +38,9 @@ public final class ParameterMap
                 @Override
                 public Option<ParameterMap> convert( final ParameterMap map )
                 {
-                    return map.withFromString( pair.getFirstComponent(), new URLParameter(
-                            pair.getFirstComponent().name, pair.getSecondComponent() ) );
+                    return map.withFromString( pair.getFirstComponent(),
+                            new URLParameter( pair.getFirstComponent().name,
+                                    pair.getSecondComponent() ) );
                 }
             } );
         }
@@ -214,7 +214,7 @@ public final class ParameterMap
     {
         final StringBuilder builder = new StringBuilder();
         for ( final ParameterDescription<?, ?> parameterDescription : parameterDescriptions )
-	{
+        {
             for ( final String parameter : parameterDescription.toURLParameter( this ) )
             {
                 builder.append( parameter ).append( "&" );
@@ -250,55 +250,55 @@ public final class ParameterMap
          * A Validator that accepts any ParameterMap.
          */
         static final Validator ACCEPT_ALL = new Validator()
-	{
-            @Override
-            public boolean isValid( final ParameterMap parameterMap )
-            {
-		CheckParameters.areNotNull( parameterMap );
-                return true;
-            }
-	    
-        };
-
-        /**
-         * A convenience method that produces a Validator that ensures that only one
-         * of the specified exclusive parameters has been set to a value.
-         * 
-         * @param exclusiveParameterDescriptions
-         *        the parameters that are mutually exclusive.
-         * @return a Validator that ensures that only one of the specified mutually
-         *         exclusive parameters has been set to a value.
-         */
-        public static Validator mutuallyExclusive(
-            final List<ParameterDescription<?, ?>> exclusiveParameterDescriptions )
-        {
-            CheckParameters.areNotNull( exclusiveParameterDescriptions );
-
-            return new Validator()
         {
             @Override
             public boolean isValid( final ParameterMap parameterMap )
             {
                 CheckParameters.areNotNull( parameterMap );
-
-                int count = 0;
-                for ( final ParameterDescription<?, ?> exclusiveParameterDescription : exclusiveParameterDescriptions )
-                {
-                    count += parameterMap.isDefault( exclusiveParameterDescription ) ? 0
-                            : 1;
-                }
-
-                return count < 2;
+                return true;
             }
-        };
-    }
 
-    /**
-     * @param parameterMap
-     *        the ParameterMap to check.
-     * @return true if the ParameterMap is valid, false otherwise.
-     */
-    public abstract boolean isValid( ParameterMap parameterMap );
-}
+        };
+
+        /**
+         * A convenience method that produces a Validator that ensures that only
+         * one of the specified exclusive parameters has been set to a value.
+         * 
+         * @param exclusiveParameterDescriptions
+         *        the parameters that are mutually exclusive.
+         * @return a Validator that ensures that only one of the specified
+         *         mutually exclusive parameters has been set to a value.
+         */
+        public static Validator mutuallyExclusive(
+                final List<ParameterDescription<?, ?>> exclusiveParameterDescriptions )
+        {
+            CheckParameters.areNotNull( exclusiveParameterDescriptions );
+
+            return new Validator()
+            {
+                @Override
+                public boolean isValid( final ParameterMap parameterMap )
+                {
+                    CheckParameters.areNotNull( parameterMap );
+
+                    int count = 0;
+                    for ( final ParameterDescription<?, ?> exclusiveParameterDescription : exclusiveParameterDescriptions )
+                    {
+                        count += parameterMap.isDefault( exclusiveParameterDescription ) ? 0
+                                : 1;
+                    }
+
+                    return count < 2;
+                }
+            };
+        }
+
+        /**
+         * @param parameterMap
+         *        the ParameterMap to check.
+         * @return true if the ParameterMap is valid, false otherwise.
+         */
+        public abstract boolean isValid( ParameterMap parameterMap );
+    }
 
 }

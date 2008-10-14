@@ -54,9 +54,9 @@ public final class DecoderCGI
                     } ) ) );
 
     private static final ParameterDescription<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = ParameterDescription.sparseArrayParameter(
-            "commands", StringConversion.total( Conversion.<String> getIdentityConversion(),
-                                                new URLEncoder().andThen(
-                            Strings.surroundWithQuotes() ) ) );
+            "commands", StringConversion.total(
+                    Conversion.<String> getIdentityConversion(),
+                    new URLEncoder().andThen( Strings.surroundWithQuotes() ) ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
@@ -120,7 +120,8 @@ public final class DecoderCGI
     public DecoderCGI command( final int index, final String command )
     {
         return new DecoderCGI( parameterMap.set( COMMANDS,
-                                                 Collections.singletonList( new Pair<Integer, String>( index, command ) ) ) );
+                Collections.singletonList( new Pair<Integer, String>( index,
+                        command ) ) ) );
     }
 
     /**
@@ -136,7 +137,8 @@ public final class DecoderCGI
     public DecoderCGI connection( final int index, final Connection connection )
     {
         return new DecoderCGI( parameterMap.set( CONNECTIONS,
-                                                 Collections.singletonList( new Pair<Integer, Connection>( index, connection ) ) ) );
+                Collections.singletonList( new Pair<Integer, Connection>(
+                        index, connection ) ) ) );
     }
 
     /**
@@ -200,7 +202,8 @@ public final class DecoderCGI
     public DecoderCGI layout( final int index, final Layout layout )
     {
         return new DecoderCGI( parameterMap.set( LAYOUTS,
-                                                 Collections.singletonList( new Pair<Integer, Layout>( index, layout ) ) ) );
+                Collections.singletonList( new Pair<Integer, Layout>( index,
+                        layout ) ) ) );
     }
 
     /**

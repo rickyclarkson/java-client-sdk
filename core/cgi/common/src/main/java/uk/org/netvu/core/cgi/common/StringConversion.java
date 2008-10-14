@@ -1,19 +1,16 @@
 package uk.org.netvu.core.cgi.common;
 
 /**
- * For internal use only!
- * A StringConversion can convert between Strings and a given type, T, though
- * the conversion can be partial, which is represented by an Option in the
- * results. A partial mapping means that the conversion might fail, though to
- * have control over how we treat that failure, we represent it as an Option.
- *
- * The terms 'partial' and 'total' as used in this class come from their use
- * in mathematics, where a partial function is one that does not compute for
- * all values in the domain.  Ignoring imaginary numbers, one partial function
- * is the square root of a number - it is only valid for non-negative numbers.
- *
- * A total function is one that is valid for all values in its domain (usually
- * this is just called a function).
+ * For internal use only! A StringConversion can convert between Strings and a
+ * given type, T, though the conversion can be partial, which is represented by
+ * an Option in the results. A partial mapping means that the conversion might
+ * fail, though to have control over how we treat that failure, we represent it
+ * as an Option. The terms 'partial' and 'total' as used in this class come from
+ * their use in mathematics, where a partial function is one that does not
+ * compute for all values in the domain. Ignoring imaginary numbers, one partial
+ * function is the square root of a number - it is only valid for non-negative
+ * numbers. A total function is one that is valid for all values in its domain
+ * (usually this is just called a function).
  * 
  * @param <T>
  *        the type that this StringConversion can convert Strings to and from.
@@ -21,50 +18,12 @@ package uk.org.netvu.core.cgi.common;
 public final class StringConversion<T>
 {
     /**
-     * A StringConversion that converts between Strings containing decimal
-     * integers and Java's Integer and vice-versa.
-     */
-    public static StringConversion<Integer> integer()
-    {
-        return convenientPartial( Conversion.getStringToIntConversion() );
-    }
-
-    /**
-     * A StringConversion that converts between Strings and themselves with no
-     * extra processing.
-     */
-    public static StringConversion<String> string()
-    {
-        return convenientTotal( Conversion.<String> getIdentityConversion() );
-    }
-
-    /**
      * A StringConversion that converts between Strings containing 'true' or
      * 'false' and Java's Boolean, and vice-versa.
      */
     public static StringConversion<Boolean> bool()
     {
         return convenientPartial( Conversion.getStringToBooleanConversion() );
-    }
-
-    /**
-     * A StringConversion that converts between Strings containing hexadecimal
-     * integers and Java's Long, and vice-versa.
-     */
-    public static StringConversion<Long> hexLong()
-    {
-        return partial(Conversion.getHexStringToLongConversion(),
-                       Option.toPartialConversion( Conversion.getLongToHexStringConversion() ) );
-    }
-
-    /**
-     * A StringConversion that converts between Strings containing hexadecimal
-     * integers and Java's Integer, and vice-versa.
-     */
-    public static StringConversion<Integer> hexInt()
-    {
-        return partial(Conversion.getHexStringToIntConversion(),
-                       Option.toPartialConversion( Conversion.getIntToHexStringConversion() ) );
     }
 
     /**
@@ -82,7 +41,8 @@ public final class StringConversion<T>
     public static <T> StringConversion<T> convenientPartial(
             final Conversion<String, Option<T>> conversionFromString )
     {
-        return partial( conversionFromString,
+        return partial(
+                conversionFromString,
                 andThenToFullOption( Conversion.<T> getObjectToStringConversion() ) );
     }
 
@@ -101,8 +61,40 @@ public final class StringConversion<T>
     public static <T> StringConversion<T> convenientTotal(
             final Conversion<String, T> conversionFromString )
     {
-        return partial( andThenToFullOption( conversionFromString ),
+        return partial(
+                andThenToFullOption( conversionFromString ),
                 andThenToFullOption( Conversion.<T> getObjectToStringConversion() ) );
+    }
+
+    /**
+     * A StringConversion that converts between Strings containing hexadecimal
+     * integers and Java's Integer, and vice-versa.
+     */
+    public static StringConversion<Integer> hexInt()
+    {
+        return partial(
+                Conversion.getHexStringToIntConversion(),
+                Option.toPartialConversion( Conversion.getIntToHexStringConversion() ) );
+    }
+
+    /**
+     * A StringConversion that converts between Strings containing hexadecimal
+     * integers and Java's Long, and vice-versa.
+     */
+    public static StringConversion<Long> hexLong()
+    {
+        return partial(
+                Conversion.getHexStringToLongConversion(),
+                Option.toPartialConversion( Conversion.getLongToHexStringConversion() ) );
+    }
+
+    /**
+     * A StringConversion that converts between Strings containing decimal
+     * integers and Java's Integer and vice-versa.
+     */
+    public static StringConversion<Integer> integer()
+    {
+        return convenientPartial( Conversion.getStringToIntConversion() );
     }
 
     /**
@@ -125,6 +117,15 @@ public final class StringConversion<T>
     {
         return new StringConversion<T>( conversionFromString,
                 conversionToString );
+    }
+
+    /**
+     * A StringConversion that converts between Strings and themselves with no
+     * extra processing.
+     */
+    public static StringConversion<String> string()
+    {
+        return convenientTotal( Conversion.<String> getIdentityConversion() );
     }
 
     /**

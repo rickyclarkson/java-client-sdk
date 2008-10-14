@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * For internal use only!
- * A utility class for parsing Strings into URL parts.
+ * For internal use only! A utility class for parsing Strings into URL parts.
  */
 final class URLExtractor
 {
@@ -19,15 +18,16 @@ final class URLExtractor
      */
     static List<URLParameter> nameValuePairs( final String url )
     {
-        if (url.indexOf( '=' ) < 0)
+        if ( url.indexOf( '=' ) < 0 )
         {
             return new ArrayList<URLParameter>();
         }
-        
-        List<String> parameters = parameters( url );
-        Conversion<String, Pair<String, String>> partitionByEqualsSign = Strings.partition( '=' );
-        Conversion<String, URLParameter> partitionByEqualsSignThenConstructAURLParameterFromThePair = partitionByEqualsSign.andThen( URLParameter.fromPair );
-        return Lists.map( parameters, partitionByEqualsSignThenConstructAURLParameterFromThePair );
+
+        final List<String> parameters = parameters( url );
+        final Conversion<String, Pair<String, String>> partitionByEqualsSign = Strings.partition( '=' );
+        final Conversion<String, URLParameter> partitionByEqualsSignThenConstructAURLParameterFromThePair = partitionByEqualsSign.andThen( URLParameter.fromPair );
+        return Lists.map( parameters,
+                partitionByEqualsSignThenConstructAURLParameterFromThePair );
     }
 
     /**
@@ -41,9 +41,11 @@ final class URLExtractor
      */
     static List<String> parameters( final String url )
     {
-        String afterFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists = Strings.afterFirstLeniently( url, "?" );
+        final String afterFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists = Strings.afterFirstLeniently(
+                url, "?" );
         return Strings.splitIgnoringQuotedSections(
-                afterFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists, '&' );
+                afterFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists,
+                '&' );
     }
 
     /**
@@ -58,8 +60,11 @@ final class URLExtractor
      */
     static String queryName( final String url )
     {
-        String beforeFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists = Strings.beforeFirstLeniently( url, "?" );
-        return Strings.afterLastLeniently( beforeFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists, "/" );
+        final String beforeFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists = Strings.beforeFirstLeniently(
+                url, "?" );
+        return Strings.afterLastLeniently(
+                beforeFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists,
+                "/" );
     }
 
     private URLExtractor()

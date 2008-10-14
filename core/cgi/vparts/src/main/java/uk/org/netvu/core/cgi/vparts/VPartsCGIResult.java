@@ -15,21 +15,21 @@ import uk.org.netvu.core.cgi.common.URLParameter;
 public class VPartsCGIResult
 {
     private static final ParameterDescription<Integer, Option<Integer>> INDEX = ParameterDescription.parameterWithoutDefault(
-                                                                                                               "index", StringConversion.integer() );
+            "index", StringConversion.integer() );
     private static final ParameterDescription<String, Option<String>> DIRECTORY = ParameterDescription.parameterWithoutDefault(
-                                                                                                                 "directory", StringConversion.string() );
+            "directory", StringConversion.string() );
     private static final ParameterDescription<String, Option<String>> FILENAME = ParameterDescription.parameterWithoutDefault(
-                                                                                                                "filename", StringConversion.string() );
+            "filename", StringConversion.string() );
     private static final ParameterDescription<Integer, Option<Integer>> START_TIME = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
-                                                                                                                                                      "start_time", StringConversion.integer() ) );
+            "start_time", StringConversion.integer() ) );
     private static final ParameterDescription<Integer, Option<Integer>> END_TIME = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
-                                                                                                                                                    "end_time", StringConversion.integer() ) );
+            "end_time", StringConversion.integer() ) );
     private static final ParameterDescription<Integer, Option<Integer>> EXPIRY_TIME = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
-                                                                                                                                                       "expiry_time", StringConversion.integer() ) );
+            "expiry_time", StringConversion.integer() ) );
     private static final ParameterDescription<Integer, Option<Integer>> NUMBER_OF_ENTRIES = ParameterDescription.parameterWithoutDefault(
-                                                                                                                           "n_entries", StringConversion.integer() );
+            "n_entries", StringConversion.integer() );
     private static final ParameterDescription<Integer, Option<Integer>> CAM_MASK = ParameterDescription.parameterWithoutDefault(
-                                                                                                                  "cammask", StringConversion.integer() );
+            "cammask", StringConversion.integer() );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.

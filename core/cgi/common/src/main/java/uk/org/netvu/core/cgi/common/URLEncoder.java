@@ -3,11 +3,15 @@ package uk.org.netvu.core.cgi.common;
 import java.io.UnsupportedEncodingException;
 
 /**
- * For internal use only!
- * A Conversion for encoding text for safe use in URLs.
+ * For internal use only! A Conversion for encoding text for safe use in URLs.
  */
-public class URLEncoder extends Conversion<String, String>
+public class URLEncoder
+        extends Conversion<String, String>
 {
+    public URLEncoder()
+    {
+    }
+
     /**
      * Encodes the specified value for safe use in URLs.
      * 
@@ -15,6 +19,7 @@ public class URLEncoder extends Conversion<String, String>
      *        the value to encode.
      * @return the encoded value.
      */
+    @Override
     public String convert( final String value )
     {
         try
@@ -25,9 +30,5 @@ public class URLEncoder extends Conversion<String, String>
         {
             throw new RuntimeException( "Unsupported Encoding: UTF-8" );
         }
-    }
-
-    public URLEncoder()
-    {
     }
 }

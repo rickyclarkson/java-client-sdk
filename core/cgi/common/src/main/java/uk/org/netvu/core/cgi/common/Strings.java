@@ -5,8 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * For internal use only!
- * Utility methods for dealing with Strings.
+ * For internal use only! Utility methods for dealing with Strings.
  */
 public class Strings
 {
@@ -115,9 +114,9 @@ public class Strings
     /**
      * A Conversion that will surround any String passed to it with double
      * quotes.
-     *
-     * @return a Conversion that will surround any String passed to it with double
-     * quotes.
+     * 
+     * @return a Conversion that will surround any String passed to it with
+     *         double quotes.
      */
     public static final Conversion<String, String> surroundWithQuotes()
     {
@@ -199,8 +198,8 @@ public class Strings
             @Override
             public Pair<String, String> convert( final String param )
             {
-                return new Pair<String, String>(
-                        param.substring( 0, param.indexOf( separator ) ),
+                return new Pair<String, String>( param.substring( 0,
+                        param.indexOf( separator ) ),
                         param.substring( param.indexOf( separator ) + 1 ) );
             }
         };
@@ -216,9 +215,9 @@ public class Strings
      */
     static String removeSurroundingQuotesLeniently( final String value )
     {
-        return value.startsWith( DOUBLE_QUOTES ) && value.endsWith( DOUBLE_QUOTES ) ? value.substring(
-                1, value.length() - 1 )
-                : value;
+        return value.startsWith( DOUBLE_QUOTES )
+                && value.endsWith( DOUBLE_QUOTES ) ? value.substring( 1,
+                value.length() - 1 ) : value;
     }
 
     private static Conversion<String, String> append( final String toAppend )

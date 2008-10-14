@@ -3,11 +3,12 @@ package uk.org.netvu.core.cgi.variable;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.ParameterDescription;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.StringConversion;
-import uk.org.netvu.core.cgi.common.Conversion;
+
 /**
  * Builds and parses variable.cgi URLs.
  */
@@ -106,22 +107,6 @@ public final class VariableCGI
     {
         private Option<ParameterMap> real = Option.getFullOption( new ParameterMap() );
 
-        private <T> Builder set(final ParameterDescription<T, ?> parameter, final T value)
-        {
-            if (real.isEmpty())
-            {
-                throw new IllegalStateException("The Builder has already been built (build() has been called on it).");
-            }
-
-            real = real.map(new Conversion<ParameterMap, ParameterMap>()
-                            {
-                                public ParameterMap convert(ParameterMap map)
-                                {
-                                    return map.set( parameter, value );
-                                }
-                            });
-            return this;
-        }
         /**
          * Builds a VariableCGI with the stored values.
          * 
@@ -161,6 +146,26 @@ public final class VariableCGI
         public Builder variable( final Variable variable )
         {
             return set( VARIABLE, variable );
+        }
+
+        private <T> Builder set( final ParameterDescription<T, ?> parameter,
+                final T value )
+        {
+            if ( real.isEmpty() )
+            {
+                throw new IllegalStateException(
+                        "The Builder has already been built (build() has been called on it)." );
+            }
+
+            real = real.map( new Conversion<ParameterMap, ParameterMap>()
+            {
+                @Override
+                public ParameterMap convert( final ParameterMap map )
+                {
+                    return map.set( parameter, value );
+                }
+            } );
+            return this;
         }
     }
 }

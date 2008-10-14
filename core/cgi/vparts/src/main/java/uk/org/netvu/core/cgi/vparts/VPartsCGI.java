@@ -3,13 +3,13 @@ package uk.org.netvu.core.cgi.vparts;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.org.netvu.core.cgi.common.Conversion;
 import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.ParameterDescription;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.StringConversion;
-import uk.org.netvu.core.cgi.common.Conversion;
 
 /**
  * Builds and parses vparts.cgi requests.
@@ -26,23 +26,23 @@ public final class VPartsCGI
             StringConversion.convenientPartial( Mode.fromString ) );
 
     private static final ParameterDescription<Integer, Integer> TIME = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault(
-                                                                                                                                                   "time", 0, StringConversion.integer() ) );
+            "time", 0, StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Integer> RANGE = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault(
-                                                                                                                                                    "range", Integer.MAX_VALUE, StringConversion.integer() ) );
+            "range", Integer.MAX_VALUE, StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Integer> EXPIRY = ParameterDescription.parameterWithDefault(
-                                                                                                                   "expiry", 0, StringConversion.integer() );
+            "expiry", 0, StringConversion.integer() );
 
     private static final ParameterDescription<Boolean, Boolean> WATERMARK = ParameterDescription.parameterWithDefault(
-                                                                                                                      "watermark", false, StringConversion.bool() );
+            "watermark", false, StringConversion.bool() );
 
     private static final ParameterDescription<Integer, Integer> WMARKSTEP = ParameterDescription.parameterWithBounds(
             1, 256, ParameterDescription.parameterWithDefault(
-                                                              "wmarkstepParam", 1, StringConversion.integer() ) );
+                    "wmarkstepParam", 1, StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Integer> LIST_LENGTH = ParameterDescription.parameterWithDefault(
-                                                                                                                        "listlength", 100, StringConversion.integer() );
+            "listlength", 100, StringConversion.integer() );
 
     private static final ParameterDescription<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = ParameterDescription.parameterWithDefault(
             "pathstyle", DirectoryPathFormat.SHORT,
@@ -202,23 +202,6 @@ public final class VPartsCGI
     {
         private Option<ParameterMap> real = Option.getFullOption( new ParameterMap() );
 
-        private <T> Builder set(final ParameterDescription<T, ?> parameter, final T value)
-        {
-            if (real.isEmpty())
-            {
-                throw new IllegalStateException("The Builder has already been built (build() has been called on it).");
-            }
-
-            real = real.map(new Conversion<ParameterMap, ParameterMap>()
-                            {
-                                public ParameterMap convert(ParameterMap map)
-                                {
-                                    return map.set( parameter, value );
-                                }
-                            });
-            return this;
-        }
-
         /**
          * Constructs a VPartsCGI containing the stored parameters.
          * 
@@ -274,9 +257,6 @@ public final class VPartsCGI
             return set( LIST_LENGTH, listlength );
         }
 
-        // TODO decide whether to restrict expiry to a VPartsCGI with protect
-        // set.
-
         /**
          * Sets the function of the cgi call.
          * 
@@ -288,6 +268,9 @@ public final class VPartsCGI
         {
             return set( MODE, mode );
         }
+
+        // TODO decide whether to restrict expiry to a VPartsCGI with protect
+        // set.
 
         /**
          * Determines the format of directory paths, short or long.
@@ -351,6 +334,26 @@ public final class VPartsCGI
         public Builder watermarkStep( final int step )
         {
             return set( WMARKSTEP, step );
+        }
+
+        private <T> Builder set( final ParameterDescription<T, ?> parameter,
+                final T value )
+        {
+            if ( real.isEmpty() )
+            {
+                throw new IllegalStateException(
+                        "The Builder has already been built (build() has been called on it)." );
+            }
+
+            real = real.map( new Conversion<ParameterMap, ParameterMap>()
+            {
+                @Override
+                public ParameterMap convert( final ParameterMap map )
+                {
+                    return map.set( parameter, value );
+                }
+            } );
+            return this;
         }
     }
 }
