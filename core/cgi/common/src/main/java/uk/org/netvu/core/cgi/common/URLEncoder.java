@@ -3,7 +3,8 @@ package uk.org.netvu.core.cgi.common;
 import java.io.UnsupportedEncodingException;
 
 /**
- * A Conversion for encoding text for safe use in URLs.  For internal use only.
+ * For internal use only!
+ * A Conversion for encoding text for safe use in URLs.
  */
 public class URLEncoder extends Conversion<String, String>
 {

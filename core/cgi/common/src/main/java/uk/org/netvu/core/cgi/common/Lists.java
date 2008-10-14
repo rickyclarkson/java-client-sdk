@@ -7,7 +7,8 @@ import java.util.Arrays;
 import java.util.TreeSet;
 
 /**
- * A set of utility methods for operating on Lists. For internal use only.
+ * For internal use only!
+ * A set of utility methods for operating on Lists.
  */
 public final class Lists
 {

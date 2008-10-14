@@ -1,6 +1,7 @@
 package uk.org.netvu.core.cgi.common;
 
 /**
+ * For internal use only!
  * A utility class for checking constraints about method parameters.
  */
 public final class CheckParameters

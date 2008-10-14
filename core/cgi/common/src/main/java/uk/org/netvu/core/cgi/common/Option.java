@@ -4,7 +4,8 @@ import java.util.Collections;
 import java.util.Iterator;
 
 /**
- * An object that holds 0 or 1 elements. For internal use only.
+ * For internal use only.
+ * An object that holds 0 or 1 elements.
  * 
  * @param <T>
  *        the type of the object.
@@ -236,6 +237,8 @@ public abstract class Option<T> implements Iterable<T>
     /**
      * Throws an UnsupportedOperationException to catch any accidental
      * badly-typed equals comparisons early.
+     *
+     * @throws an UnsupportedOperationException in all cases.
      */
     @Override
     public final boolean equals( final Object o )
@@ -254,6 +257,8 @@ public abstract class Option<T> implements Iterable<T>
 
     /**
      * Throws an UnsupportedOperationException to be consistent with equals.
+     *
+     * @throws an UnsupportedOperationException in all cases.
      */
     @Override
     public final int hashCode()
@@ -279,7 +284,7 @@ public abstract class Option<T> implements Iterable<T>
      *        the type to convert to.
      * @param conversion
      *        the Conversion to map over this Option.
-     * @return an Option containing the mapped value, or None.
+     * @return an Option containing the mapped value, or nothing.
      */
     public abstract <U> Option<U> map( Conversion<T, U> conversion );
 
@@ -295,6 +300,8 @@ public abstract class Option<T> implements Iterable<T>
     /**
      * Throws an UnsupportedOperationException to catch any accidental
      * toString() calls early.
+     *
+     * @throws an UnsupportedOperationException in all cases.
      */
     @Override
     public final String toString()
@@ -305,8 +312,8 @@ public abstract class Option<T> implements Iterable<T>
 
     /**
      * Applies the specified Conversion to a value held by this Option.
-     * Specifically, if this Option is a None, the Conversion is not invoked - a
-     * None is returned. If this Option is full, the Conversion is invoked,
+     * Specifically, if this Option is empty, the Conversion is not invoked - an
+     * empty Option is returned. If this Option is full, the Conversion is invoked,
      * and its result is returned.
      * 
      * @param <U>

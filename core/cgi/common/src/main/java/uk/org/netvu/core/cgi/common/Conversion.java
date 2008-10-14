@@ -3,8 +3,8 @@ package uk.org.netvu.core.cgi.common;
 import java.math.BigInteger;
 
 /**
- * A conversion from objects of type T to those of type R. For internal use
- * only.
+ * For internal use only!
+ * A conversion from objects of type T to those of type R.
  * 
  * @param <T>
  *        the type of object to convert from.
@@ -20,7 +20,7 @@ public abstract class Conversion<T, R>
      * @param <T>
      *        the type of the values that this Conversion can receive.
      * @param other
-     *        the parameter to test values again.
+     *        the parameter to test values against.
      * @return a Conversion that returns true if the value it receives is the
      *         same as the specified parameter.
      */
@@ -70,6 +70,8 @@ public abstract class Conversion<T, R>
 
     /**
      * A conversion from Strings containing hexadecimal to ints.
+     *
+     * @return a conversion from Strings containing hexadecimal to ints.
      */
     public static Conversion<String, Option<Integer>> getHexStringToIntConversion()
     {
@@ -101,6 +103,8 @@ public abstract class Conversion<T, R>
 
     /**
      * A conversion from Strings containing hexadecimal to longs.
+     *
+     * @return a conversion from Strings containing hexadecimal to longs.
      */
     public static Conversion<String, Option<Long>> getHexStringToLongConversion()
     {
@@ -173,6 +177,8 @@ public abstract class Conversion<T, R>
 
     /**
      * A conversion from longs to Strings containing hexadecimal.
+     *
+     * @return a conversion from longs to Strings containing hexadecimal.
      */
     public static Conversion<Long, String> getLongToHexStringConversion()
     {
@@ -211,6 +217,7 @@ public abstract class Conversion<T, R>
      * A case-insensitive conversion from Strings to Booleans, where "true" gets mapped to the
      * Boolean value TRUE, "false" gets mapped to FALSE, and anything else gets
      * mapped to an empty Option.
+     * @return a case-insensitive conversion from Strings to Booleans.
      */
     public static Conversion<String, Option<Boolean>> getStringToBooleanConversion()
     {
@@ -235,6 +242,8 @@ public abstract class Conversion<T, R>
 
     /**
      * A conversion from Strings to Integers, using Integer.parseInt(String).
+     *
+     * @return a conversion from Strings to Integers, using Integer.parseInt(String).
      */
     public static Conversion<String, Option<Integer>> getStringToIntConversion()
     {
@@ -259,6 +268,8 @@ public abstract class Conversion<T, R>
 
     /**
      * A conversion from Strings to longs, using Long.parseLong(String).
+     *
+     * @return a conversion from Strings to longs, using Long.parseLong(String).
      */
     public static Conversion<String, Option<Long>> getStringToLongConversion()
     {

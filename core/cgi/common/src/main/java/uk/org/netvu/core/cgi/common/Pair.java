@@ -1,7 +1,8 @@
 package uk.org.netvu.core.cgi.common;
 
 /**
- * An object containing two objects. For internal use only.
+ * For internal use only!
+ * An object containing two objects.
  * 
  * @param <T>
  *        the type of the first object.

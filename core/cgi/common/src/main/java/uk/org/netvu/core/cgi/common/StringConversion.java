@@ -1,11 +1,11 @@
 package uk.org.netvu.core.cgi.common;
 
 /**
+ * For internal use only!
  * A StringConversion can convert between Strings and a given type, T, though
  * the conversion can be partial, which is represented by an Option in the
  * results. A partial mapping means that the conversion might fail, though to
  * have control over how we treat that failure, we represent it as an Option.
- * For internal use only.
  * 
  * @param <T>
  *        the type that this StringConversion can convert Strings to and from.
@@ -75,7 +75,7 @@ public final class StringConversion<T>
             final Conversion<String, Option<T>> conversionFromString )
     {
         return partial( conversionFromString,
-                andThenSome( Conversion.<T> getObjectToStringConversion() ) );
+                andThenToFullOption( Conversion.<T> getObjectToStringConversion() ) );
     }
 
     /**
@@ -93,8 +93,8 @@ public final class StringConversion<T>
     public static <T> StringConversion<T> convenientTotal(
             final Conversion<String, T> conversionFromString )
     {
-        return partial( andThenSome( conversionFromString ),
-                andThenSome( Conversion.<T> getObjectToStringConversion() ) );
+        return partial( andThenToFullOption( conversionFromString ),
+                andThenToFullOption( Conversion.<T> getObjectToStringConversion() ) );
     }
 
     /**
@@ -137,11 +137,11 @@ public final class StringConversion<T>
             final Conversion<String, T> conversionFromString,
             final Conversion<T, String> conversionToString )
     {
-        return partial( andThenSome( conversionFromString ),
-                andThenSome( conversionToString ) );
+        return partial( andThenToFullOption( conversionFromString ),
+                andThenToFullOption( conversionToString ) );
     }
 
-    private static <T, R> Conversion<T, Option<R>> andThenSome(
+    private static <T, R> Conversion<T, Option<R>> andThenToFullOption(
             final Conversion<T, R> conversion )
     {
         return conversion.andThen( Option.<R> getConversionToFullOption() );

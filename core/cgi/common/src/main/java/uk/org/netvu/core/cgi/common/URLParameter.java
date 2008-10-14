@@ -1,6 +1,7 @@
 package uk.org.netvu.core.cgi.common;
 
 /**
+ * For internal use only!
  * A representation of a URL Parameter (foo=bar).
  */
 public final class URLParameter
@@ -47,6 +48,9 @@ public final class URLParameter
     /**
      * This URLParameter is equal to another object if the other object is a
      * URLParameter holding an equal name and value.
+     *
+     * @param other the object to compare this URLParameter to.
+     * @return true if the specified object is a URLParameter holding an equal name and value, false otherwise.
      */
     @Override
     public boolean equals( final Object other )
@@ -58,6 +62,7 @@ public final class URLParameter
 
     /**
      * Computes a hashcode using the name and value.
+     * @return a hashcode computed using the name and value.
      */
     @Override
     public int hashCode()

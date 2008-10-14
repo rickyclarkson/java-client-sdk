@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * For internal use only!
+ *
  * An immutable object that stores the values associated with parameters and
- * provides an interface to retrieving those values. For internal use only.
+ * provides an interface to retrieving those values.
  */
 public final class ParameterMap
 {

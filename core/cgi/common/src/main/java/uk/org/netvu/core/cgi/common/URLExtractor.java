@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A utility class for parsing Strings into URL parts. For internal use only.
+ * For internal use only!
+ * A utility class for parsing Strings into URL parts.
  */
 final class URLExtractor
 {

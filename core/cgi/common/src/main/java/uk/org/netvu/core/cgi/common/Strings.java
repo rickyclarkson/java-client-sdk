@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Utility methods for dealing with Strings. For internal use only.
+ * For internal use only!
+ * Utility methods for dealing with Strings.
  */
 public class Strings
 {
@@ -113,6 +114,9 @@ public class Strings
 
     /**
      * A Conversion that will surround any String passed to it with double
+     * quotes.
+     *
+     * @return a Conversion that will surround any String passed to it with double
      * quotes.
      */
     public static final Conversion<String, String> surroundWithQuotes()

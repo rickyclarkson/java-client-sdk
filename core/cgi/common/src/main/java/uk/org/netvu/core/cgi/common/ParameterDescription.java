@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
+ * For internal use only!
  * An object that describes a parameter for a Builder, including conversions
- * from Strings to the input type of the parameter and back, and validation. For
- * internal use only.
+ * from Strings to the input type of the parameter and back, and validation.
  * 
  * @param <T>
  *        the input type of the parameter that the ParameterDescription
