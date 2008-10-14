@@ -35,7 +35,7 @@ public final class VariableCGI
 
     private final ParameterMap parameterMap;
 
-    private static final ParameterDescription<Variable, Option<Variable>> VARIABLE = ParameterDescription.parameter(
+    private static final ParameterDescription<Variable, Option<Variable>> VARIABLE = ParameterDescription.parameterWithoutDefault(
             "variable",
             StringConversion.convenientPartial( Variable.fromString ) );
 

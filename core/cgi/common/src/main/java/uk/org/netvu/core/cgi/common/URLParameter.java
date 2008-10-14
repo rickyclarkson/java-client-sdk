@@ -25,7 +25,7 @@ public final class URLParameter
         @Override
         public URLParameter convert( final Pair<String, String> pair )
         {
-            return new URLParameter( pair.first(), pair.second() );
+            return new URLParameter( pair.getFirstComponent(), pair.getSecondComponent() );
         }
     };
 

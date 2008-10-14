@@ -18,10 +18,10 @@ import uk.org.netvu.core.cgi.common.Conversion;
  */
 public final class EventsCGI
 {
-    private static final ParameterDescription<Integer, Integer> TIME = ParameterDescription.notNegative( ParameterDescription.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> TIME = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault(
                                                                                                                                                    "time", 0, StringConversion.integer() ) );
 
-    private static final ParameterDescription<Integer, Integer> RANGE = ParameterDescription.notNegative( ParameterDescription.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> RANGE = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault(
                                                                                                                                                     "range", Integer.MAX_VALUE, StringConversion.integer() ) );
 
     private static final ParameterDescription<Format, Format> FORMAT = ParameterDescription.parameterWithDefault(

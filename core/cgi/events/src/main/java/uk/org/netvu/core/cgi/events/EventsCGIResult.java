@@ -18,34 +18,34 @@ import uk.org.netvu.core.cgi.common.Strings;
  */
 public final class EventsCGIResult
 {
-    private static final ParameterDescription<Integer, Option<Integer>> CAMERA = ParameterDescription.bound(
-            0, 64, ParameterDescription.parameter( "cam",
+    private static final ParameterDescription<Integer, Option<Integer>> CAMERA = ParameterDescription.parameterWithBounds(
+            0, 64, ParameterDescription.parameterWithoutDefault( "cam",
                                                    StringConversion.integer() ) );
 
-    private static final ParameterDescription<String, Option<String>> ALARM = ParameterDescription.parameter(
+    private static final ParameterDescription<String, Option<String>> ALARM = ParameterDescription.parameterWithoutDefault(
                                                                                                              "alarm", StringConversion.string() );
 
-    private static final ParameterDescription<Integer, Option<Integer>> JULIAN_TIME = ParameterDescription.notNegative( ParameterDescription.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> JULIAN_TIME = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
                                                                                                                                                        "time", StringConversion.integer() ) );
 
-    private static final ParameterDescription<Integer, Option<Integer>> OFFSET = ParameterDescription.bound(
-            -90000, 90000, ParameterDescription.parameter( "offset",
+    private static final ParameterDescription<Integer, Option<Integer>> OFFSET = ParameterDescription.parameterWithBounds(
+            -90000, 90000, ParameterDescription.parameterWithoutDefault( "offset",
                                                            StringConversion.integer() ) );
 
-    private static final ParameterDescription<String, Option<String>> FILE = ParameterDescription.parameter(
+    private static final ParameterDescription<String, Option<String>> FILE = ParameterDescription.parameterWithoutDefault(
                                                                                                             "file", StringConversion.string() );
 
-    private static final ParameterDescription<Boolean, Option<Boolean>> ON_DISK = ParameterDescription.parameter(
+    private static final ParameterDescription<Boolean, Option<Boolean>> ON_DISK = ParameterDescription.parameterWithoutDefault(
             "onDisk", StringConversion.total( Conversion.equal( "exists" ),
                     Conversion.fromBoolean( "exists", "overwitten" ) ) );
 
-    private static final ParameterDescription<Integer, Option<Integer>> DURATION = ParameterDescription.notNegative( ParameterDescription.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> DURATION = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
                                                                                                                                                     "duration", StringConversion.integer() ) );
 
-    private static final ParameterDescription<Integer, Option<Integer>> PRE_ALARM = ParameterDescription.notNegative( ParameterDescription.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> PRE_ALARM = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
                                                                                                                                                      "preAlarm", StringConversion.integer() ) );
 
-    private static final ParameterDescription<Integer, Option<Integer>> ARCHIVE = ParameterDescription.notNegative( ParameterDescription.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> ARCHIVE = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
                                                                                                                                                    "archive", StringConversion.integer() ) );
     private static final ParameterDescription<Status, Status> STATUS = ParameterDescription.parameterWithDefault(
             "status", Status.NONE,

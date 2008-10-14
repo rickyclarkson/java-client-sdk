@@ -37,8 +37,8 @@ public final class ParameterMap
                 @Override
                 public Option<ParameterMap> convert( final ParameterMap map )
                 {
-                    return map.withFromString( pair.first(), new URLParameter(
-                            pair.first().name, pair.second() ) );
+                    return map.withFromString( pair.getFirstComponent(), new URLParameter(
+                            pair.getFirstComponent().name, pair.getSecondComponent() ) );
                 }
             } );
         }

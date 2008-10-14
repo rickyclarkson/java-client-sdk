@@ -20,15 +20,15 @@ import uk.org.netvu.core.cgi.common.ParameterMap.Validator;
  */
 public final class Connection
 {
-    private static final ParameterDescription<String, Option<String>> SLAVE_IP_PARAM = ParameterDescription.parameter(
+    private static final ParameterDescription<String, Option<String>> SLAVE_IP_PARAM = ParameterDescription.parameterWithoutDefault(
                                                                                                                       "slaveip", StringConversion.string() );
-    private static final ParameterDescription<Integer, Option<Integer>> SEQ_PARAM = ParameterDescription.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> SEQ_PARAM = ParameterDescription.parameterWithoutDefault(
                                                                                                                    "seq", StringConversion.hexInt() );
-    private static final ParameterDescription<Integer, Option<Integer>> DWELL_PARAM = ParameterDescription.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> DWELL_PARAM = ParameterDescription.parameterWithoutDefault(
                                                                                                                      "dwell", StringConversion.integer() );
-    private static final ParameterDescription<Integer, Option<Integer>> CAM = ParameterDescription.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> CAM = ParameterDescription.parameterWithoutDefault(
                                                                                                              "cam", StringConversion.integer() );
-    private static final ParameterDescription<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = ParameterDescription.parameter(
+    private static final ParameterDescription<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = ParameterDescription.parameterWithoutDefault(
                                                                                                                              "audio", StringConversion.integer() );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and

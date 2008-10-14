@@ -37,7 +37,7 @@ public final class DecoderCGI
             "layouts",
             StringConversion.total( Layout.fromURL, Layout.urlEncode ) );
 
-    private static final ParameterDescription<String[], Option<String[]>> OUTPUT_TITLES = ParameterDescription.parameter(
+    private static final ParameterDescription<String[], Option<String[]>> OUTPUT_TITLES = ParameterDescription.parameterWithoutDefault(
             "output_titles",
             StringConversion.partial(
                     Option.<String, String[]> getConversionToEmptyOption( "Parsing not supported for output_titles" ),
@@ -120,7 +120,7 @@ public final class DecoderCGI
     public DecoderCGI command( final int index, final String command )
     {
         return new DecoderCGI( parameterMap.set( COMMANDS,
-                Collections.singletonList( Pair.pair( index, command ) ) ) );
+                                                 Collections.singletonList( new Pair<Integer, String>( index, command ) ) ) );
     }
 
     /**
@@ -136,7 +136,7 @@ public final class DecoderCGI
     public DecoderCGI connection( final int index, final Connection connection )
     {
         return new DecoderCGI( parameterMap.set( CONNECTIONS,
-                Collections.singletonList( Pair.pair( index, connection ) ) ) );
+                                                 Collections.singletonList( new Pair<Integer, Connection>( index, connection ) ) ) );
     }
 
     /**
@@ -200,7 +200,7 @@ public final class DecoderCGI
     public DecoderCGI layout( final int index, final Layout layout )
     {
         return new DecoderCGI( parameterMap.set( LAYOUTS,
-                Collections.singletonList( Pair.pair( index, layout ) ) ) );
+                                                 Collections.singletonList( new Pair<Integer, Layout>( index, layout ) ) ) );
     }
 
     /**

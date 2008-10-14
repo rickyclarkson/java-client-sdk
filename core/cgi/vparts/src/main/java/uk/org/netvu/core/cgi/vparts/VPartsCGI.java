@@ -16,7 +16,7 @@ import uk.org.netvu.core.cgi.common.Conversion;
  */
 public final class VPartsCGI
 {
-    private static final ParameterDescription<Format, Format> FORMAT = ParameterDescription.not(
+    private static final ParameterDescription<Format, Format> FORMAT = ParameterDescription.parameterDisallowing(
             Format.HTML, ParameterDescription.parameterWithDefault( "format",
                     Format.CSV,
                     StringConversion.convenientPartial( Format.fromString ) ) );
@@ -25,10 +25,10 @@ public final class VPartsCGI
             "mode", Mode.READ,
             StringConversion.convenientPartial( Mode.fromString ) );
 
-    private static final ParameterDescription<Integer, Integer> TIME = ParameterDescription.notNegative( ParameterDescription.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> TIME = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault(
                                                                                                                                                    "time", 0, StringConversion.integer() ) );
 
-    private static final ParameterDescription<Integer, Integer> RANGE = ParameterDescription.notNegative( ParameterDescription.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> RANGE = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault(
                                                                                                                                                     "range", Integer.MAX_VALUE, StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Integer> EXPIRY = ParameterDescription.parameterWithDefault(
@@ -37,7 +37,7 @@ public final class VPartsCGI
     private static final ParameterDescription<Boolean, Boolean> WATERMARK = ParameterDescription.parameterWithDefault(
                                                                                                                       "watermark", false, StringConversion.bool() );
 
-    private static final ParameterDescription<Integer, Integer> WMARKSTEP = ParameterDescription.bound(
+    private static final ParameterDescription<Integer, Integer> WMARKSTEP = ParameterDescription.parameterWithBounds(
             1, 256, ParameterDescription.parameterWithDefault(
                                                               "wmarkstepParam", 1, StringConversion.integer() ) );
 

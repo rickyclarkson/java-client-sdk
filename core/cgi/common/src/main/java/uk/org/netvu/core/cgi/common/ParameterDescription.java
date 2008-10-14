@@ -49,7 +49,7 @@ public abstract class ParameterDescription<T, R>
                 final int hack = startIndex;
                 for ( final T t : conversions.fromString( Strings.removeSurroundingQuotesLeniently( value ) ) )
                 {
-                    results.add( Pair.pair( hack, t ) );
+                    results.add( new Pair<Integer, T>( hack, t ) );
                 }
 
                 startIndex++;
@@ -66,7 +66,7 @@ public abstract class ParameterDescription<T, R>
             final TreeMap<Integer, T> copy = new TreeMap<Integer, T>( original );
             for ( final Pair<Integer, T> pair : newValue )
             {
-                copy.put( pair.first(), pair.second() );
+                copy.put( pair.getFirstComponent(), pair.getSecondComponent() );
             }
 
             return copy;
@@ -78,7 +78,7 @@ public abstract class ParameterDescription<T, R>
         {
             final StringBuilder result = new StringBuilder();
 
-            for ( final Map.Entry<Integer, T> entry : nameAndMap.second().entrySet() )
+            for ( final Map.Entry<Integer, T> entry : nameAndMap.getSecondComponent().entrySet() )
             {
                 for ( final String value : conversions.toString( entry.getValue() ) )
                 {
@@ -134,13 +134,13 @@ public abstract class ParameterDescription<T, R>
         @Override
         public Option<String> toURLParameter( final Pair<String, T> nameAndValue )
         {
-            return conversions.toString( nameAndValue.second() ).map(
+            return conversions.toString( nameAndValue.getSecondComponent() ).map(
                     new Conversion<String, String>()
                     {
                         @Override
                         public String convert( final String t )
                         {
-                            return nameAndValue.first() + '='
+                            return nameAndValue.getFirstComponent() + '='
                                 + new URLEncoder().convert( t );
                         }
                     } );
@@ -182,7 +182,7 @@ public abstract class ParameterDescription<T, R>
         public Option<String> toURLParameter(
                 final Pair<String, Option<T>> nameAndValue )
         {
-            return nameAndValue.second().bind(
+            return nameAndValue.getSecondComponent().bind(
                     new Conversion<T, Option<String>>()
                     {
                         @Override
@@ -195,7 +195,7 @@ public abstract class ParameterDescription<T, R>
                                         public String convert(
                                                 final String valuePart )
                                         {
-                                            return nameAndValue.first() + '='
+                                            return nameAndValue.getFirstComponent() + '='
                                                     + valuePart;
                                         }
 
@@ -312,7 +312,7 @@ public abstract class ParameterDescription<T, R>
      *         everything except the validation to a specified
      *         ParameterDescription.
      */
-    public static <U> ParameterDescription<Integer, U> bound(
+    public static <U> ParameterDescription<Integer, U> parameterWithBounds(
             final int lowerInclusive, final int higherInclusive,
             final ParameterDescription<Integer, U> delegate )
     {
@@ -335,7 +335,7 @@ public abstract class ParameterDescription<T, R>
      *        the ParameterDescription to pass values on to.
      * @return a ParameterDescription that disallows a value.
      */
-    public static <T, U> ParameterDescription<T, U> not( final T banned,
+    public static <T, U> ParameterDescription<T, U> parameterDisallowing( final T banned,
             final ParameterDescription<T, U> delegate )
     {
         Checks.notNull( banned );
@@ -357,10 +357,10 @@ public abstract class ParameterDescription<T, R>
      *         non-negative Integers and yields values of type R by passing them
      *         on to the specified ParameterDescription.
      */
-    public static <R> ParameterDescription<Integer, R> notNegative(
+    public static <R> ParameterDescription<Integer, R> nonNegativeParameter(
             final ParameterDescription<Integer, R> param )
     {
-        return bound( 0, Integer.MAX_VALUE, param );
+        return parameterWithBounds( 0, Integer.MAX_VALUE, param );
     }
 
     /**
@@ -376,7 +376,7 @@ public abstract class ParameterDescription<T, R>
      * @return a parameter that can take 0 or 1 values of type T, yielding them
      *         as an Option<T>.
      */
-    public static <T> ParameterDescription<T, Option<T>> parameter(
+    public static <T> ParameterDescription<T, Option<T>> parameterWithoutDefault(
             final String name, final StringConversion<T> conversion )
     {
         Checks.notNull( name, conversion );
@@ -474,7 +474,7 @@ public abstract class ParameterDescription<T, R>
     public Option<String> toURLParameter( final ParameterMap parameterMap )
     {
         return parameterMap.isDefault( this ) ? Option.getFullOption( "" )
-                : toURLParameter( Pair.pair( name, parameterMap.get( this ) ) );
+            : toURLParameter( new Pair<String, R>( name, parameterMap.get( this ) ) );
     }
 
     /**

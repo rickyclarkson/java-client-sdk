@@ -170,7 +170,7 @@ public final class Lists
 
         while ( tIterator.hasNext() && uIterator.hasNext() )
         {
-            results.add( Pair.pair( tIterator.next(), uIterator.next() ) );
+            results.add( new Pair<T, U>( tIterator.next(), uIterator.next() ) );
         }
 
         return results;

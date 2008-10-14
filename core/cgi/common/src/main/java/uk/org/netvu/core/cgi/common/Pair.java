@@ -13,32 +13,23 @@ public final class Pair<T, U>
     /**
      * Constructs a Pair with the two specified objects.
      * 
-     * @param <T>
-     *        the type of the first object.
-     * @param <U>
-     *        the type of the second object.
      * @param t
      *        the first object.
      * @param u
      *        the second object.
      * @return a Pair containing the two specified objects.
      */
-    public static <T, U> Pair<T, U> pair( final T t, final U u )
+    public Pair( final T t, final U u )
     {
         Checks.notNull( t, u );
 
-        return new Pair<T, U>( t, u );
+        this.t = t;
+        this.u = u;
     }
 
     private final T t;
 
     private final U u;
-
-    private Pair( final T t, final U u )
-    {
-        this.t = t;
-        this.u = u;
-    }
 
     /**
      * Compares this object and another for equality.
@@ -51,8 +42,8 @@ public final class Pair<T, U>
     public boolean equals( final Object other )
     {
         return other instanceof Pair
-                && ( (Pair) other ).first().equals( first() )
-                && ( (Pair) other ).second().equals( second() );
+                && ( (Pair) other ).getFirstComponent().equals( getFirstComponent() )
+                && ( (Pair) other ).getSecondComponent().equals( getSecondComponent() );
     }
 
     /**
@@ -60,7 +51,7 @@ public final class Pair<T, U>
      * 
      * @return the first object in this Pair.
      */
-    public T first()
+    public T getFirstComponent()
     {
         return t;
     }
@@ -71,7 +62,7 @@ public final class Pair<T, U>
     @Override
     public int hashCode()
     {
-        return first().hashCode() + 13651 * second().hashCode();
+        return getFirstComponent().hashCode() + 13651 * getSecondComponent().hashCode();
     }
 
     /**
@@ -79,7 +70,7 @@ public final class Pair<T, U>
      * 
      * @return the second object in this Pair.
      */
-    public U second()
+    public U getSecondComponent()
     {
         return u;
     }

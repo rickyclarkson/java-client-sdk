@@ -195,7 +195,7 @@ public class Strings
             @Override
             public Pair<String, String> convert( final String param )
             {
-                return Pair.pair(
+                return new Pair<String, String>(
                         param.substring( 0, param.indexOf( separator ) ),
                         param.substring( param.indexOf( separator ) + 1 ) );
             }
