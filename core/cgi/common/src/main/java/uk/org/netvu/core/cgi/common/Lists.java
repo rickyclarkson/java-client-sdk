@@ -74,7 +74,7 @@ public final class Lists
      * 
      * @param <T>
      *        the type of the elements of the List.
-     * @param ts
+     * @param list
      *        the List to reduce.
      * @param reduction
      *        the operation to carry out between each pair of elements.

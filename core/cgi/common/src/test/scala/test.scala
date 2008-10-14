@@ -139,7 +139,17 @@ class OptionTest extends JUnit4(new Specification with Scalacheck {
    import Implicits.function1ToConversion
    getEmptyOption[Int]("foo").bind{ x: Int => getFullOption(x * 2) }.isEmpty must beTrue
   }
+  "give an empty Iterator on 'iterator'" in { getEmptyOption[Int]("foo").iterator.hasNext must beFalse }
  }
+
+ "getFullOption" should {
+  "give an Iterator with one element on 'iterator'" in {
+   val iterator = getFullOption(5).iterator 
+   iterator.hasNext must beTrue
+   iterator.next mustEqual 5
+   iterator.hasNext must beFalse
+  }
+ }                                                      
 
  "toString" should {
   "throw an UnsupportedOperationException" in {
@@ -292,10 +302,10 @@ class FormatTest extends JUnit4(new Specification with Scalacheck {
 
  "Formats" should {
   "have a lowercase String representation" in {
-   property { f: Format => f.toString == f.toString.toLowerCase }
+   property { f: Format => f.toString == f.toString.toLowerCase } must pass
   }
   "be retrievable by their String representation" in {
-   property { f: Format => Format.fromString.convert(f.toString).get == f }
+   property { f: Format => Format.fromString.convert(f.toString).get == f } must pass
   }
  }
 })
@@ -342,6 +352,9 @@ class ConversionTest extends JUnit4(new Specification with Scalacheck {
  "Conversion.getHexStringtoLongConversion" should {
   "give an empty Option when given \"foo\"" in {
    Conversion.getHexStringToLongConversion.convert("foo").isEmpty mustEqual true
+  }
+  "reject negative hexadecimal" in {
+   Conversion.getHexStringToLongConversion.convert("-ff").isEmpty mustEqual true
   }
   "correctly convert hex Strings to longs" in {
    Conversion.getHexStringToLongConversion.convert("Fe").get mustEqual 254
@@ -462,6 +475,13 @@ class ParameterMapTest extends JUnit4(new Specification {
   }
  }
 
+ "A null input" should {
+  "be rejected" in {
+   new ParameterMap().set(null, "foo") must throwA(new NullPointerException)
+   new ParameterMap().set(param, null) must throwA(new NullPointerException)
+  }
+ }
+                    
  "Parsing a URL" should {
   "result in a ParameterMap holding the correct values" in {
    val params: JavaList[ParameterDescription[_, _]] = List(time, range)
@@ -518,14 +538,6 @@ class ParameterMapTest extends JUnit4(new Specification {
    }
   }
  }
-
- import java.lang.Integer
- val param2 = ParameterDescription.parameterWithoutDefault[Integer]("foo", StringConversion.integer)
-/* "setter" should {
-  "be able to convert a ParameterMap into another with the supplied Parameter and value" in {
-   ParameterMap.setter[Integer](param2, 3).convert(new ParameterMap).get(param2).get mustEqual 3
-  }
- }*/
 })
 
 class URLExtractorTest extends JUnit4(new Specification {
@@ -613,17 +625,19 @@ class NullTest extends JUnit4(new Specification {
  "CheckParameters.areNotNull" should { "not accept null" in { CheckParameters.areNotNull _ must notAcceptNull[Nothing, Unit] } }
 
  def noNull[T <: AnyRef, R](f: T => R, desc: String) =
-  "desc" should { "not accept null" in { f must notAcceptNull[T, R] } }
+  "annoying" should { desc + " should not accept null" in { f must notAcceptNull[T, R] } }
 
  def noNull[T <: AnyRef, U <: AnyRef, R](f: (T, U) => R, desc: String)(implicit t: T, u: U): Unit = {
-  noNull( { tt: T => f(tt, u) }, desc)
-  noNull( { uu: U => f(t, uu) }, desc) }
+  noNull( { tt: T => f(tt, u) }, desc+" ( 1st parameter )")
+  noNull( { uu: U => f(t, uu) }, desc+" ( 2nd parameter )")
+ }
 
  def noNull[T <: AnyRef, U <: AnyRef, V <: AnyRef, R]
  (f: (T, U, V) => R, desc: String)(implicit t: T, u: U, v: V): Unit = {
-  noNull( { tt: T => f(tt, u, v) }, desc)
-  noNull( { uu: U => f(t, uu, v) }, desc)
-  noNull( { vv: V => f(t, u, vv) }, desc) }
+  noNull( { tt: T => f(tt, u, v) }, desc+" ( 1st parameter )")
+  noNull( { uu: U => f(t, uu, v) }, desc+" ( 2nd parameter )")
+  noNull( { vv: V => f(t, u, vv) }, desc+" ( 3rd parameter )")
+ }
 
  val conversions = Map[Conversion[_ <: AnyRef, _], String](
   Conversion.getStringToBooleanConversion -> "Conversion.getStringToBooleanConversion",
@@ -680,7 +694,6 @@ class NullTest extends JUnit4(new Specification {
  noNull(ParameterDescription.parameterWithDefault[Integer] _, "ParameterDescription.parameterWithDefault")
  noNull(ParameterDescription.sparseArrayParameter[Integer] _, "ParameterDescription.sparseArrayParam")
 
- noNull({ x: Validator => new ParameterMap(x) }, "new ParameterMap(Validator)")
  noNull(Reduction.intersperseWith _, "Reduction.intersperseWith")
  noNull(Reduction.intersperseWith(":").reduce _, "Reduction.intersperseWith(\":\").reduce")
  noNull(Strings.surroundWithQuotes, "Strings.surroundWithQuotes")

@@ -178,6 +178,8 @@ public final class ParameterMap
     public <T, R> ParameterMap set(
             final ParameterDescription<T, R> parameterDescription, final T value )
     {
+        CheckParameters.areNotNull( parameterDescription );
+
         if ( value == null )
         {
             throw new NullPointerException( "Values for the "
@@ -244,7 +246,7 @@ public final class ParameterMap
     /**
      * An object that can identify whether a ParameterMap is valid.
      */
-    public static abstract class Validator
+    public abstract static class Validator
     {
         /**
          * A Validator that accepts any ParameterMap.

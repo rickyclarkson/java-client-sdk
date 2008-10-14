@@ -125,8 +125,7 @@ public abstract class Option<T> implements Iterable<T>
      * Throws an UnsupportedOperationException to catch any accidental
      * badly-typed equals comparisons early.
      * 
-     * @throws an
-     *         UnsupportedOperationException in all cases.
+     * @throws UnsupportedOperationException in all cases.
      */
     @Override
     public final boolean equals( final Object o )
@@ -146,8 +145,7 @@ public abstract class Option<T> implements Iterable<T>
     /**
      * Throws an UnsupportedOperationException to be consistent with equals.
      * 
-     * @throws an
-     *         UnsupportedOperationException in all cases.
+     * @throws UnsupportedOperationException in all cases.
      */
     @Override
     public final int hashCode()
@@ -190,8 +188,7 @@ public abstract class Option<T> implements Iterable<T>
      * Throws an UnsupportedOperationException to catch any accidental
      * toString() calls early.
      * 
-     * @throws an
-     *         UnsupportedOperationException in all cases.
+     * @throws UnsupportedOperationException in all cases.
      */
     @Override
     public final String toString()

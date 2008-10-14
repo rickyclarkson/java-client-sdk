@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * For internal use only! A Conversion for encoding text for safe use in URLs.
  */
-public class URLEncoder
+public final class URLEncoder
         extends Conversion<String, String>
 {
     public URLEncoder()

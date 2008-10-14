@@ -21,7 +21,6 @@ public final class Pair<T, U>
      *        the first object.
      * @param u
      *        the second object.
-     * @return a Pair containing the two specified objects.
      */
     public Pair( final T t, final U u )
     {
