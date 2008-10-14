@@ -6,6 +6,14 @@ package uk.org.netvu.core.cgi.common;
  * the conversion can be partial, which is represented by an Option in the
  * results. A partial mapping means that the conversion might fail, though to
  * have control over how we treat that failure, we represent it as an Option.
+ *
+ * The terms 'partial' and 'total' as used in this class come from their use
+ * in mathematics, where a partial function is one that does not compute for
+ * all values in the domain.  Ignoring imaginary numbers, one partial function
+ * is the square root of a number - it is only valid for non-negative numbers.
+ *
+ * A total function is one that is valid for all values in its domain (usually
+ * this is just called a function).
  * 
  * @param <T>
  *        the type that this StringConversion can convert Strings to and from.
