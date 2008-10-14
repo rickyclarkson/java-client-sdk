@@ -92,7 +92,7 @@ class ParameterDescriptionTest extends JUnit4(new Specification with Scalacheck 
   "allow unbanned values" in { new ParameterMap set (theNot, 2) get theNot mustEqual 2 }
   "reject banned values" in { new ParameterMap set (theNot, 5) must throwA(new IllegalArgumentException) }
   "delegate toURLParameter() calls to the nested Parameter" in {
-   theNot.toURLParameter(new Pair("foo", 6)).get mustEqual nested.toURLParameter(new Pair("foo", 6)).get
+   theNot.toURLParameter(6).get mustEqual nested.toURLParameter(6).get
   }
  }
 
@@ -111,7 +111,7 @@ class ParameterDescriptionTest extends JUnit4(new Specification with Scalacheck 
     put(2, 3)
     put(3, 4)
    }
-   sparse.toURLParameter(new Pair("foo", map)).get mustEqual "foo[2]=3&foo[3]=4"
+   sparse.toURLParameter(map).get mustEqual "foo[2]=3&foo[3]=4"
   }
  }
 })

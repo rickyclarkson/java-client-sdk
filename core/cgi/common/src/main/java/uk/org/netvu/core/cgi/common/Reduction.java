@@ -1,9 +1,9 @@
 package uk.org.netvu.core.cgi.common;
 
 /**
- * An operation that takes a value of type T, a value of type R, and produces a
- * value of type R. It can be used in general algorithms to 'reduce' a list to
- * one value. For internal use only.
+ * A transformation from 2 values to 1 value, that can be used across many values to 'reduce' n values to 1.  For example,
+ * a Reduction that takes two Integers and returns their sum can be used to sum a collection of Integers.
+ * For internal use only.
  * 
  * @param <T>
  *        the type of the new value to 'add' to the original.

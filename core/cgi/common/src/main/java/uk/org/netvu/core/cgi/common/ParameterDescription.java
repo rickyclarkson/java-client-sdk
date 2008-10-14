@@ -73,12 +73,11 @@ public abstract class ParameterDescription<T, R>
         }
 
         @Override
-        public Option<String> toURLParameter(
-                final Pair<String, TreeMap<Integer, T>> nameAndMap )
+        Option<String> toURLParameter(TreeMap<Integer, T> map )
         {
             final StringBuilder result = new StringBuilder();
 
-            for ( final Map.Entry<Integer, T> entry : nameAndMap.getSecondComponent().entrySet() )
+            for ( final Map.Entry<Integer, T> entry : map.entrySet() )
             {
                 for ( final String value : conversions.toString( entry.getValue() ) )
                 {
@@ -132,15 +131,15 @@ public abstract class ParameterDescription<T, R>
         }
 
         @Override
-        public Option<String> toURLParameter( final Pair<String, T> nameAndValue )
+        Option<String> toURLParameter( final T value )
         {
-            return conversions.toString( nameAndValue.getSecondComponent() ).map(
+            return conversions.toString( value ).map(
                     new Conversion<String, String>()
                     {
                         @Override
                         public String convert( final String t )
                         {
-                            return nameAndValue.getFirstComponent() + '='
+                            return name + '='
                                 + new URLEncoder().convert( t );
                         }
                     } );
@@ -179,10 +178,9 @@ public abstract class ParameterDescription<T, R>
         }
 
         @Override
-        public Option<String> toURLParameter(
-                final Pair<String, Option<T>> nameAndValue )
+        Option<String> toURLParameter( final Option<T> value)
         {
-            return nameAndValue.getSecondComponent().bind(
+            return value.bind(
                     new Conversion<T, Option<String>>()
                     {
                         @Override
@@ -195,7 +193,7 @@ public abstract class ParameterDescription<T, R>
                                         public String convert(
                                                 final String valuePart )
                                         {
-                                            return nameAndValue.getFirstComponent() + '='
+                                            return name + '='
                                                     + valuePart;
                                         }
 
@@ -241,9 +239,9 @@ public abstract class ParameterDescription<T, R>
         }
 
         @Override
-        public Option<String> toURLParameter( final Pair<String, U> nameAndValue )
+        Option<String> toURLParameter( final U valuePair )
         {
-            return delegate.toURLParameter( nameAndValue );
+            return delegate.toURLParameter( valuePair );
         }
     }
 
@@ -286,9 +284,9 @@ public abstract class ParameterDescription<T, R>
         }
 
         @Override
-        public Option<String> toURLParameter( final Pair<String, U> nameAndValue )
+        Option<String> toURLParameter( final U value )
         {
-            return delegate.toURLParameter( nameAndValue );
+            return delegate.toURLParameter( value );
         }
     }
 
@@ -474,7 +472,7 @@ public abstract class ParameterDescription<T, R>
     public Option<String> toURLParameter( final ParameterMap parameterMap )
     {
         return parameterMap.isDefault( this ) ? Option.getFullOption( "" )
-            : toURLParameter( new Pair<String, R>( name, parameterMap.get( this ) ) );
+            : toURLParameter( parameterMap.get( this ) );
     }
 
     /**
@@ -508,5 +506,5 @@ public abstract class ParameterDescription<T, R>
      * @param nameAndValue
      * @return
      */
-    abstract Option<String> toURLParameter( final Pair<String, R> nameAndValue );
+    abstract Option<String> toURLParameter( R value );
 }

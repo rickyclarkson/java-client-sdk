@@ -88,32 +88,6 @@ public final class ParameterMap
     }
 
     /**
-     * A Conversion that takes in a ParameterMap and produces a new ParameterMap
-     * containing the given value for the given ParameterDescription.
-     * 
-     * @param <T>
-     *        the type of the parameter.
-     * @param parameterDescription
-     *        the parameter to apply to ParameterMaps.
-     * @param value
-     *        the value to apply for that parameter.
-     * @return a Conversion that takes in a ParameterMap and produces a new
-     *         ParameterMap containing the given value.
-     */
-    /*    public static <T> Conversion<ParameterMap, ParameterMap> setter(
-            final ParameterDescription<T, ?> parameterDescription, final T value )
-    {
-        return new Conversion<ParameterMap, ParameterMap>()
-        {
-            @Override
-            public ParameterMap convert( final ParameterMap map )
-            {
-                return map.set( parameterDescription, value );
-            }
-        };
-	}*/
-
-    /**
      * The validator that is executed against a ParameterMap that has new
      * values. An invalid ParameterMap is never returned to callers.
      */

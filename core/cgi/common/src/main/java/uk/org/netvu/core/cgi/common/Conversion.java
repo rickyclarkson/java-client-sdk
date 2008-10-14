@@ -291,7 +291,8 @@ public abstract class Conversion<T, R>
             @Override
             public V convert( final T t )
             {
-                return conversion.convert( Conversion.this.convert( t ) );
+                R intermediate = Conversion.this.convert( t );
+                return conversion.convert( intermediate );
             }
         };
     }
