@@ -317,9 +317,9 @@ class ConversionTest extends JUnit4(new Specification with Scalacheck {
 
  "Conversion.getStringToLongConversion" should {
   "give an empty Option when supplied with \"foo\"" in {
-   Conversion.getStringToIntConversion.convert("foo").isEmpty mustEqual true
+   Conversion.getStringToLongConversion.convert("foo").isEmpty mustEqual true
   }
-  "correctly convert Strings to longs" in { Conversion.getStringToIntConversion.convert("465").get mustEqual 465 }
+  "correctly convert Strings to longs" in { Conversion.getStringToLongConversion.convert("465").get mustEqual 465 }
  }
 
  "Conversion.getStringToBooleanConversion" should {
