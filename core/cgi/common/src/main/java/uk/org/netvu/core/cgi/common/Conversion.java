@@ -71,7 +71,7 @@ public abstract class Conversion<T, R>
     /**
      * A conversion from Strings containing hexadecimal to ints.
      */
-    public static final Conversion<String, Option<Integer>> getHexStringToIntConversion()
+    public static Conversion<String, Option<Integer>> getHexStringToIntConversion()
     {
         return new Conversion<String, Option<Integer>>()
         {
@@ -82,11 +82,11 @@ public abstract class Conversion<T, R>
 
                 try
                 {
-                    return Option.some( (int) Long.parseLong( t, 16 ) );
+                    return Option.getFullOption( (int) Long.parseLong( t, 16 ) );
                 }
                 catch ( final NumberFormatException e )
                 {
-                    return Option.none( t + " is not a valid long" );
+                    return Option.getEmptyOption( t + " is not a valid long" );
                 }
             }
         };
@@ -95,7 +95,7 @@ public abstract class Conversion<T, R>
     /**
      * A conversion from Strings containing hexadecimal to longs.
      */
-    public static final Conversion<String, Option<Long>> getHexStringToLongConversion()
+    public static Conversion<String, Option<Long>> getHexStringToLongConversion()
     {
         return new Conversion<String, Option<Long>>()
         {
@@ -104,11 +104,11 @@ public abstract class Conversion<T, R>
             {
                 try
                 {
-                    return Option.some( new BigInteger( t, 16 ).longValue() );
+                    return Option.getFullOption( new BigInteger( t, 16 ).longValue() );
                 }
                 catch ( final NumberFormatException e )
                 {
-                    return Option.none( t
+                    return Option.getEmptyOption( t
                             + " is not a valid long, in hexadecimal" );
                 }
             }
@@ -142,7 +142,7 @@ public abstract class Conversion<T, R>
      * 
      * @return a Conversion from an Integer to a String containing hexadecimal.
      */
-    public static final Conversion<Integer, String> getIntToHexStringConversion()
+    public static Conversion<Integer, String> getIntToHexStringConversion()
     {
         return new Conversion<Integer, String>()
         {
@@ -157,7 +157,7 @@ public abstract class Conversion<T, R>
     /**
      * A conversion from longs to Strings containing hexadecimal.
      */
-    public static final Conversion<Long, String> getLongToHexStringConversion()
+    public static Conversion<Long, String> getLongToHexStringConversion()
     {
         return new Conversion<Long, String>()
         {
@@ -204,14 +204,14 @@ public abstract class Conversion<T, R>
             {
                 if ( t.equals( "true" ) )
                 {
-                    return Option.some( true );
+                    return Option.getFullOption( true );
                 }
                 else if ( t.equals( "false" ) )
                 {
-                    return Option.some( false );
+                    return Option.getFullOption( false );
                 }
 
-                return Option.none( t + " is neither true nor false" );
+                return Option.getEmptyOption( t + " is neither true nor false" );
             }
         };
     }
@@ -230,11 +230,11 @@ public abstract class Conversion<T, R>
 
                 try
                 {
-                    return Option.some( Integer.parseInt( t ) );
+                    return Option.getFullOption( Integer.parseInt( t ) );
                 }
                 catch ( final NumberFormatException exception )
                 {
-                    return Option.none( t + " is not a valid Integer" );
+                    return Option.getEmptyOption( t + " is not a valid Integer" );
                 }
             }
         };
@@ -243,7 +243,7 @@ public abstract class Conversion<T, R>
     /**
      * A conversion from Strings to longs, using Long.parseLong(String).
      */
-    public static final Conversion<String, Option<Long>> getStringToLongConversion()
+    public static Conversion<String, Option<Long>> getStringToLongConversion()
     {
         return new Conversion<String, Option<Long>>()
         {
@@ -254,11 +254,11 @@ public abstract class Conversion<T, R>
 
                 try
                 {
-                    return Option.some( Long.parseLong( t ) );
+                    return Option.getFullOption( Long.parseLong( t ) );
                 }
                 catch ( final NumberFormatException e )
                 {
-                    return Option.none( t + " is not a valid long" );
+                    return Option.getEmptyOption( t + " is not a valid long" );
                 }
             }
         };
@@ -284,7 +284,7 @@ public abstract class Conversion<T, R>
      *        the second conversion to run.
      * @return a composed conversion.
      */
-    public final <V> Conversion<T, V> andThen( final Conversion<R, V> conversion )
+    public <V> Conversion<T, V> andThen( final Conversion<R, V> conversion )
     {
         return new Conversion<T, V>()
         {

@@ -9,6 +9,7 @@ import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.ParameterDescription;
 import uk.org.netvu.core.cgi.common.ParameterMap;
 import uk.org.netvu.core.cgi.common.StringConversion;
+import uk.org.netvu.core.cgi.common.Conversion;
 
 /**
  * Builds and parses vparts.cgi requests.
@@ -199,7 +200,24 @@ public final class VPartsCGI
      */
     public static final class Builder
     {
-        private Option<ParameterMap> parameterMap = Option.some( new ParameterMap() );
+        private Option<ParameterMap> real = Option.some( new ParameterMap() );
+
+        private <T> Builder set(final ParameterDescription<T, ?> parameter, final T value)
+        {
+            if (real.isEmpty())
+            {
+                throw new IllegalStateException("The Builder has already been built (build() has been called on it).");
+            }
+
+            real = real.map(new Conversion<ParameterMap, ParameterMap>()
+                            {
+                                public ParameterMap convert(ParameterMap map)
+                                {
+                                    return map.set( parameter, value );
+                                }
+                            });
+            return this;
+        }
 
         /**
          * Constructs a VPartsCGI containing the stored parameters.
@@ -210,11 +228,11 @@ public final class VPartsCGI
         {
             try
             {
-                return new VPartsCGI( parameterMap.get() );
+                return new VPartsCGI( real.get() );
             }
             finally
             {
-                parameterMap = Option.none( "This Builder has already had build() called on it" );
+                real = Option.none( "This Builder has already had build() called on it" );
             }
         }
 
@@ -228,9 +246,7 @@ public final class VPartsCGI
          */
         public Builder expiry( final int expiry )
         {
-            parameterMap = parameterMap.map( ParameterMap.setter( EXPIRY,
-                    expiry ) );
-            return this;
+            return set( EXPIRY, expiry );
         }
 
         /**
@@ -243,9 +259,7 @@ public final class VPartsCGI
          */
         public Builder format( final Format format )
         {
-            parameterMap = parameterMap.map( ParameterMap.setter( FORMAT,
-                    format ) );
-            return this;
+            return set( FORMAT, format );
         }
 
         /**
@@ -257,9 +271,7 @@ public final class VPartsCGI
          */
         public Builder listlength( final int listlength )
         {
-            parameterMap = parameterMap.map( ParameterMap.setter( LIST_LENGTH,
-                    listlength ) );
-            return this;
+            return set( LIST_LENGTH, listlength );
         }
 
         // TODO decide whether to restrict expiry to a VPartsCGI with protect
@@ -274,8 +286,7 @@ public final class VPartsCGI
          */
         public Builder mode( final Mode mode )
         {
-            parameterMap = parameterMap.map( ParameterMap.setter( MODE, mode ) );
-            return this;
+            return set( MODE, mode );
         }
 
         /**
@@ -287,9 +298,7 @@ public final class VPartsCGI
          */
         public Builder pathstyle( final DirectoryPathFormat style )
         {
-            parameterMap = parameterMap.map( ParameterMap.setter( PATH_STYLE,
-                    style ) );
-            return this;
+            return set( PATH_STYLE, style );
         }
 
         /**
@@ -301,8 +310,7 @@ public final class VPartsCGI
          */
         public Builder range( final int range )
         {
-            parameterMap = parameterMap.map( ParameterMap.setter( RANGE, range ) );
-            return this;
+            return set( RANGE, range );
         }
 
         /**
@@ -314,8 +322,7 @@ public final class VPartsCGI
          */
         public Builder time( final int time )
         {
-            parameterMap = parameterMap.map( ParameterMap.setter( TIME, time ) );
-            return this;
+            return set( TIME, time );
         }
 
         // TODO decide whether to restrict watermark to read mode.
@@ -329,9 +336,7 @@ public final class VPartsCGI
          */
         public Builder watermark( final boolean watermark )
         {
-            parameterMap = parameterMap.map( ParameterMap.setter( WATERMARK,
-                    watermark ) );
-            return this;
+            return set( WATERMARK, watermark );
         }
 
         // TODO make this and the watermark parameter be mutually 'inclusive'.
@@ -345,9 +350,7 @@ public final class VPartsCGI
          */
         public Builder watermarkStep( final int step )
         {
-            parameterMap = parameterMap.map( ParameterMap.setter( WMARKSTEP,
-                    step ) );
-            return this;
+            return set( WMARKSTEP, step );
         }
     }
 }

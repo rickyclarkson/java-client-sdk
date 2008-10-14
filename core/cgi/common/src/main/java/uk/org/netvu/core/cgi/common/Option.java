@@ -11,12 +11,12 @@ import java.util.Iterator;
  */
 public abstract class Option<T> implements Iterable<T>
 {
-    private static final class Some<T>
+    private static final class Full<T>
             extends Option<T>
     {
         private final T t;
 
-        private Some( final T t )
+        private Full( final T t )
         {
             this.t = t;
         }
@@ -47,7 +47,7 @@ public abstract class Option<T> implements Iterable<T>
         @Override
         public <U> Option<U> map( final Conversion<T, U> conversion )
         {
-            return Option.some( conversion.convert( t ) );
+            return Option.getFullOption( conversion.convert( t ) );
         }
 
         @Override
@@ -57,20 +57,20 @@ public abstract class Option<T> implements Iterable<T>
         }
 
         @Override
-        <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
+        <U> U fold( final U ifEmpty, final Conversion<T, U> ifFull )
         {
-            Checks.notNull( ifNone );
+            Checks.notNull( ifEmpty );
 
-            return ifSome.convert( t );
+            return ifFull.convert( t );
         }
     }
 
-    private static final class None<T>
+    private static final class Empty<T>
             extends Option<T>
     {
         private final String reason;
 
-        private None( final String reason )
+        private Empty( final String reason )
         {
             this.reason = reason;
         }
@@ -80,7 +80,7 @@ public abstract class Option<T> implements Iterable<T>
         {
             Checks.notNull( conversion );
 
-            return Option.none( reason );
+            return Option.getEmptyOption( reason );
         }
 
         @Override
@@ -107,7 +107,7 @@ public abstract class Option<T> implements Iterable<T>
         {
             Checks.notNull( conversion );
 
-            return Option.none( reason );
+            return Option.getEmptyOption( reason );
         }
 
         @Override
@@ -117,11 +117,11 @@ public abstract class Option<T> implements Iterable<T>
         }
 
         @Override
-        <U> U fold( final U ifNone, final Conversion<T, U> ifSome )
+        <U> U fold( final U ifEmpty, final Conversion<T, U> ifFull )
         {
-            Checks.notNull( ifNone, ifSome );
+            Checks.notNull( ifEmpty, ifFull );
 
-            return ifNone;
+            return ifEmpty;
         }
     }
 
@@ -134,25 +134,25 @@ public abstract class Option<T> implements Iterable<T>
      *        the reason that the Option has no elements.
      * @return an Option holding no elements.
      */
-    public static <T> Option<T> none( final String reason )
+    public static <T> Option<T> getEmptyOption( final String reason )
     {
         Checks.notNull( reason );
 
-        return new None<T>( reason );
+        return new Empty<T>( reason );
     }
 
     /**
-     * A Conversion that always yields a None.
+     * A Conversion that always yields an empty Option.
      * 
      * @param <T>
      *        the type of the ignored value to convert.
      * @param <U>
-     *        the type of the None to produce.
+     *        the type of the Option to produce.
      * @param reason
      *        the reason that the Option has no element.
-     * @return a Conversion that always yields a None.
+     * @return a Conversion that always yields an empty Option.
      */
-    public static <T, U> Conversion<T, Option<U>> noneRef( final String reason )
+    public static <T, U> Conversion<T, Option<U>> getConversionToEmptyOption( final String reason )
     {
         Checks.notNull( reason );
 
@@ -161,7 +161,7 @@ public abstract class Option<T> implements Iterable<T>
             @Override
             public Option<U> convert( final T t )
             {
-                return none( reason );
+                return getEmptyOption( reason );
             }
         };
     }
@@ -173,16 +173,15 @@ public abstract class Option<T> implements Iterable<T>
      *        the type of the values that this Conversion takes.
      * @return a Conversion that yields an Option containing the value given to it.
      */
-    public static <T> Conversion<T, Option<T>> some()
+    public static <T> Conversion<T, Option<T>> getConversionToFullOption()
     {
         return new Conversion<T, Option<T>>()
         {
             @Override
             public Option<T> convert( final T t )
             {
-                return some( t );
+                return getFullOption( t );
             }
-
         };
     }
 
@@ -195,11 +194,11 @@ public abstract class Option<T> implements Iterable<T>
      *        the element.
      * @return an Option holding one element.
      */
-    public static <T> Option<T> some( final T t )
+    public static <T> Option<T> getFullOption( final T t )
     {
         Checks.notNull( t );
 
-        return new Some<T>( t );
+        return new Full<T>( t );
     }
 
     /**
@@ -215,7 +214,7 @@ public abstract class Option<T> implements Iterable<T>
      * @return a Conversion that takes in a T, converts it to a U, and produces
      *         an Option containing that U.
      */
-    public static <T, U> Conversion<T, Option<U>> someRef(
+    public static <T, U> Conversion<T, Option<U>> toPartialConversion(
             final Conversion<T, U> conversion )
     {
         Checks.notNull( conversion );
@@ -225,7 +224,7 @@ public abstract class Option<T> implements Iterable<T>
             @Override
             public Option<U> convert( final T t )
             {
-                return some( conversion.convert( t ) );
+                return getFullOption( conversion.convert( t ) );
             }
         };
     }
@@ -307,7 +306,7 @@ public abstract class Option<T> implements Iterable<T>
     /**
      * Applies the specified Conversion to a value held by this Option.
      * Specifically, if this Option is a None, the Conversion is not invoked - a
-     * None is returned. If this Option is a Some, the Conversion is invoked,
+     * None is returned. If this Option is full, the Conversion is invoked,
      * and its result is returned.
      * 
      * @param <U>
@@ -324,12 +323,12 @@ public abstract class Option<T> implements Iterable<T>
      * 
      * @param <U>
      *        the type of the value to return.
-     * @param ifNone
-     *        the U to return if the Option is a None.
-     * @param ifSome
-     *        the Conversion to apply if the Option is a Some.
+     * @param ifEmpty
+     *        the U to return if the Option holds no value.
+     * @param ifFull
+     *        the Conversion to apply if the Option has a value.
      * @return a folded version of this Option according to the specified
      *         parameters.
      */
-    abstract <U> U fold( U ifNone, Conversion<T, U> ifSome );
+    abstract <U> U fold( U ifEmpty, Conversion<T, U> ifFull );
 }

@@ -131,7 +131,7 @@ public final class Lists
      * @return a List containing all the elements from the specified List, but
      *         without the items at the specified indices.
      */
-    public static <T> List<T> removeIndices( final List<T> values,
+    public static <T> List<T> removeByIndices( final List<T> values,
             final int... indices )
     {
         final List<T> results = new ArrayList<T>( values );

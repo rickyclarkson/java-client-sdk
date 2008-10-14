@@ -55,7 +55,7 @@ public abstract class ParameterDescription<T, R>
                 startIndex++;
             }
 
-            return Option.some( results );
+            return Option.getFullOption( results );
         }
 
         @Override
@@ -92,7 +92,7 @@ public abstract class ParameterDescription<T, R>
                 }
             }
 
-            return Option.some( result.toString() );
+            return Option.getFullOption( result.toString() );
         }
     }
 
@@ -171,7 +171,7 @@ public abstract class ParameterDescription<T, R>
         {
             if ( original.isEmpty() )
             {
-                return Option.some( newValue );
+                return Option.getFullOption( newValue );
             }
 
             throw new IllegalStateException( "The " + name
@@ -382,7 +382,7 @@ public abstract class ParameterDescription<T, R>
         Checks.notNull( name, conversion );
 
         return new ParameterDescriptionWithoutDefault<T>( name,
-                Option.<T> none( "The value for the " + name
+                Option.<T> getEmptyOption( "The value for the " + name
                         + " parameter has not been set yet" ), conversion );
 
     }
@@ -473,7 +473,7 @@ public abstract class ParameterDescription<T, R>
      */
     public Option<String> toURLParameter( final ParameterMap parameterMap )
     {
-        return parameterMap.isDefault( this ) ? Option.some( "" )
+        return parameterMap.isDefault( this ) ? Option.getFullOption( "" )
                 : toURLParameter( Pair.pair( name, parameterMap.get( this ) ) );
     }
 

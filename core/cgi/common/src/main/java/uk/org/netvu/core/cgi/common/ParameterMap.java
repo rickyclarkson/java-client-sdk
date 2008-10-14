@@ -27,7 +27,7 @@ public final class ParameterMap
             final List<ParameterDescription<?, ?>> parameterDescriptions,
             final List<String> strings )
     {
-        Option<ParameterMap> parameterMap = Option.some( new ParameterMap() );
+        Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
 
         for ( final Pair<ParameterDescription<?, ?>, String> pair : Lists.zip(
                 parameterDescriptions, strings ) )
@@ -61,7 +61,7 @@ public final class ParameterMap
             final String url,
             final List<? extends ParameterDescription<?, ?>> parameterDescriptions )
     {
-        Option<ParameterMap> parameterMap = Option.some( new ParameterMap() );
+        Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
         final List<URLParameter> parts = URLExtractor.nameValuePairs( url );
 
         for ( final URLParameter part : parts )
