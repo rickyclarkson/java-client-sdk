@@ -80,12 +80,12 @@ public final class Lists
      * @return the value produced by reducing the List with the specified
      *         Reduction.
      */
-    public static <T> T reduce( final List<T> ts,
+    public static <T> T reduce( final List<T> list,
             final Reduction<T, T> reduction )
     {
-        Checks.notNull( ts, reduction );
+        Checks.notNull( list, reduction );
 
-        final Iterator<T> iterator = ts.iterator();
+        final Iterator<T> iterator = list.iterator();
         T accumulator = iterator.next();
 
         while ( iterator.hasNext() )

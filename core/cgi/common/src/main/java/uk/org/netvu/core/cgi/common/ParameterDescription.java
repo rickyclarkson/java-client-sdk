@@ -200,13 +200,13 @@ public abstract class ParameterDescription<T, R>
         }
     }
 
-    private static final class NotParameterDescription<T, U>
+    private static final class BannedParameterDescription<T, U>
             extends ParameterDescription<T, U>
     {
         private final T banned;
         private final ParameterDescription<T, U> delegate;
 
-        private NotParameterDescription( final T banned, final ParameterDescription<T, U> delegate )
+        private BannedParameterDescription( final T banned, final ParameterDescription<T, U> delegate )
         {
             super( delegate.name, delegate.defaultValue );
             this.banned = banned;
@@ -332,7 +332,7 @@ public abstract class ParameterDescription<T, R>
     {
         Checks.notNull( banned );
 
-        return new NotParameterDescription<T, U>( banned, delegate );
+        return new BannedParameterDescription<T, U>( banned, delegate );
     }
 
     /**
