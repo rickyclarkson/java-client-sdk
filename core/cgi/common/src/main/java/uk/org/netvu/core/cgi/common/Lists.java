@@ -25,7 +25,7 @@ public final class Lists
     public static <T> List<T> filter( final List<T> list,
             final Conversion<T, Boolean> conversion )
     {
-        Checks.notNull( conversion );
+        CheckParameters.areNotNull( conversion );
 
         final List<T> results = new ArrayList<T>();
         for ( final T t : list )
@@ -55,7 +55,7 @@ public final class Lists
     public static <T, R> List<R> map( final List<T> list,
             final Conversion<T, R> conversion )
     {
-        Checks.notNull( conversion );
+        CheckParameters.areNotNull( conversion );
         final List<R> result = new ArrayList<R>();
 
         for ( final T t : list )
@@ -83,7 +83,7 @@ public final class Lists
     public static <T> T reduce( final List<T> list,
             final Reduction<T, T> reduction )
     {
-        Checks.notNull( list, reduction );
+        CheckParameters.areNotNull( list, reduction );
 
         final Iterator<T> iterator = list.iterator();
         T accumulator = iterator.next();

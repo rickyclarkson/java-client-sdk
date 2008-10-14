@@ -120,7 +120,7 @@ public final class ParameterMap
     private ParameterMap( final Map<ParameterDescription<?, ?>, Object> values,
             final Validator validator )
     {
-        Checks.notNull( validator );
+        CheckParameters.areNotNull( validator );
 
         this.validator = validator;
         this.values = Collections.unmodifiableMap( values );
@@ -252,7 +252,7 @@ public final class ParameterMap
             @Override
             public boolean isValid( final ParameterMap parameterMap )
             {
-		Checks.notNull( parameterMap );
+		CheckParameters.areNotNull( parameterMap );
                 return true;
             }
 	    
@@ -270,14 +270,14 @@ public final class ParameterMap
         public static Validator mutuallyExclusive(
             final List<ParameterDescription<?, ?>> exclusiveParameterDescriptions )
         {
-            Checks.notNull( exclusiveParameterDescriptions );
+            CheckParameters.areNotNull( exclusiveParameterDescriptions );
 
             return new Validator()
         {
             @Override
             public boolean isValid( final ParameterMap parameterMap )
             {
-                Checks.notNull( parameterMap );
+                CheckParameters.areNotNull( parameterMap );
 
                 int count = 0;
                 for ( final ParameterDescription<?, ?> exclusiveParameterDescription : exclusiveParameterDescriptions )

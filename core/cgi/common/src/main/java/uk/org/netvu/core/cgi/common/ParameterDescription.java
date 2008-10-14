@@ -330,7 +330,7 @@ public abstract class ParameterDescription<T, R>
     public static <T, U> ParameterDescription<T, U> parameterDisallowing( final T banned,
             final ParameterDescription<T, U> delegate )
     {
-        Checks.notNull( banned );
+        CheckParameters.areNotNull( banned );
 
         return new BannedParameterDescription<T, U>( banned, delegate );
     }
@@ -370,7 +370,7 @@ public abstract class ParameterDescription<T, R>
     public static <T> ParameterDescription<T, Option<T>> parameterWithoutDefault(
             final String name, final StringConversion<T> conversion )
     {
-        Checks.notNull( name, conversion );
+        CheckParameters.areNotNull( name, conversion );
 
         return new ParameterDescriptionWithoutDefault<T>( name,
                 Option.<T> getEmptyOption( "The value for the " + name
@@ -397,7 +397,7 @@ public abstract class ParameterDescription<T, R>
             final String name, final T defaultValue,
             final StringConversion<T> conversions )
     {
-        Checks.notNull( name, defaultValue, conversions );
+        CheckParameters.areNotNull( name, defaultValue, conversions );
 
         return new ParameterDescriptionWithDefault<T>( name, defaultValue,
                 conversions );
@@ -422,7 +422,7 @@ public abstract class ParameterDescription<T, R>
     public static <T> ParameterDescription<List<Pair<Integer, T>>, TreeMap<Integer, T>> sparseArrayParameter(
             final String name, final StringConversion<T> conversions )
     {
-        Checks.notNull( name, conversions );
+        CheckParameters.areNotNull( name, conversions );
 
         return new SparseArrayParameterDescription<T>( name,
                 conversions );

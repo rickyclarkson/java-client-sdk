@@ -21,7 +21,7 @@ public final class Pair<T, U>
      */
     public Pair( final T t, final U u )
     {
-        Checks.notNull( t, u );
+        CheckParameters.areNotNull( t, u );
 
         this.t = t;
         this.u = u;

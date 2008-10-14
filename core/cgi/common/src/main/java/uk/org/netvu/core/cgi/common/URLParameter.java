@@ -39,7 +39,7 @@ public final class URLParameter
      */
     public URLParameter( final String name, final String value )
     {
-        Checks.notNull( name, value );
+        CheckParameters.areNotNull( name, value );
         this.name = name;
         this.value = value;
     }

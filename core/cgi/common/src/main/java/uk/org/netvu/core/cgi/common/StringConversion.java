@@ -155,7 +155,7 @@ public final class StringConversion<T>
             final Conversion<String, Option<T>> conversionFromString,
             final Conversion<T, Option<String>> conversionToString )
     {
-        Checks.notNull( conversionFromString, conversionToString );
+        CheckParameters.areNotNull( conversionFromString, conversionToString );
         this.conversionFromString = conversionFromString;
         this.conversionToString = conversionToString;
     }

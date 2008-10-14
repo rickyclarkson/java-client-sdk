@@ -3,7 +3,7 @@ package uk.org.netvu.core.cgi.common;
 /**
  * A utility class for checking constraints about method parameters.
  */
-public final class Checks
+public final class CheckParameters
 {
     /**
      * Checks that all the arguments passed are non-null.
@@ -13,7 +13,7 @@ public final class Checks
      * @throws NullPointerException
      *         if any of the arguments passed are null.
      */
-    public static void notNull( final Object... args )
+    public static void areNotNull( final Object... args )
             throws NullPointerException
     {
         int a = 0;
@@ -28,7 +28,7 @@ public final class Checks
         }
     }
 
-    private Checks()
+    private CheckParameters()
     {
     }
 }

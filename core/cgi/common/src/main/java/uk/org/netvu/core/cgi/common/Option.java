@@ -59,7 +59,7 @@ public abstract class Option<T> implements Iterable<T>
         @Override
         <U> U fold( final U ifEmpty, final Conversion<T, U> ifFull )
         {
-            Checks.notNull( ifEmpty );
+            CheckParameters.areNotNull( ifEmpty );
 
             return ifFull.convert( t );
         }
@@ -78,7 +78,7 @@ public abstract class Option<T> implements Iterable<T>
         @Override
         public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
         {
-            Checks.notNull( conversion );
+            CheckParameters.areNotNull( conversion );
 
             return Option.getEmptyOption( reason );
         }
@@ -105,7 +105,7 @@ public abstract class Option<T> implements Iterable<T>
         @Override
         public <U> Option<U> map( final Conversion<T, U> conversion )
         {
-            Checks.notNull( conversion );
+            CheckParameters.areNotNull( conversion );
 
             return Option.getEmptyOption( reason );
         }
@@ -119,7 +119,7 @@ public abstract class Option<T> implements Iterable<T>
         @Override
         <U> U fold( final U ifEmpty, final Conversion<T, U> ifFull )
         {
-            Checks.notNull( ifEmpty, ifFull );
+            CheckParameters.areNotNull( ifEmpty, ifFull );
 
             return ifEmpty;
         }
@@ -136,7 +136,7 @@ public abstract class Option<T> implements Iterable<T>
      */
     public static <T> Option<T> getEmptyOption( final String reason )
     {
-        Checks.notNull( reason );
+        CheckParameters.areNotNull( reason );
 
         return new Empty<T>( reason );
     }
@@ -154,7 +154,7 @@ public abstract class Option<T> implements Iterable<T>
      */
     public static <T, U> Conversion<T, Option<U>> getConversionToEmptyOption( final String reason )
     {
-        Checks.notNull( reason );
+        CheckParameters.areNotNull( reason );
 
         return new Conversion<T, Option<U>>()
         {
@@ -196,7 +196,7 @@ public abstract class Option<T> implements Iterable<T>
      */
     public static <T> Option<T> getFullOption( final T t )
     {
-        Checks.notNull( t );
+        CheckParameters.areNotNull( t );
 
         return new Full<T>( t );
     }
@@ -217,7 +217,7 @@ public abstract class Option<T> implements Iterable<T>
     public static <T, U> Conversion<T, Option<U>> toPartialConversion(
             final Conversion<T, U> conversion )
     {
-        Checks.notNull( conversion );
+        CheckParameters.areNotNull( conversion );
 
         return new Conversion<T, Option<U>>()
         {

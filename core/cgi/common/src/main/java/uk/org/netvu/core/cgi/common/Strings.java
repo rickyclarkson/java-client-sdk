@@ -37,7 +37,7 @@ public class Strings
     public static String intersperse( final String separator,
             final List<String> strings )
     {
-        Checks.notNull( separator );
+        CheckParameters.areNotNull( separator );
 
         final StringBuilder builder = new StringBuilder();
         boolean first = true;
@@ -250,7 +250,7 @@ public class Strings
             @Override
             public String convert( final String t )
             {
-                Checks.notNull( t );
+                CheckParameters.areNotNull( t );
 
                 return toPrepend + t;
             }

@@ -26,14 +26,14 @@ public abstract class Conversion<T, R>
      */
     public static <T> Conversion<T, Boolean> equal( final T other )
     {
-        Checks.notNull( other );
+        CheckParameters.areNotNull( other );
 
         return new Conversion<T, Boolean>()
         {
             @Override
             public Boolean convert( final T t )
             {
-                Checks.notNull( t );
+                CheckParameters.areNotNull( t );
                 return other.equals( t );
             }
         };
@@ -56,7 +56,7 @@ public abstract class Conversion<T, R>
     public static <T> Conversion<Boolean, T> fromBoolean( final T ifTrue,
             final T ifFalse )
     {
-        Checks.notNull( ifTrue, ifFalse );
+        CheckParameters.areNotNull( ifTrue, ifFalse );
 
         return new Conversion<Boolean, T>()
         {
@@ -78,7 +78,7 @@ public abstract class Conversion<T, R>
             @Override
             public Option<Integer> convert( final String t )
             {
-                Checks.notNull( t );
+                CheckParameters.areNotNull( t );
 
                 try
                 {
@@ -130,7 +130,7 @@ public abstract class Conversion<T, R>
             @Override
             public T convert( final T t )
             {
-                Checks.notNull( t );
+                CheckParameters.areNotNull( t );
                 return t;
             }
         };
@@ -226,7 +226,7 @@ public abstract class Conversion<T, R>
             @Override
             public Option<Integer> convert( final String t )
             {
-                Checks.notNull( t );
+                CheckParameters.areNotNull( t );
 
                 try
                 {
@@ -250,7 +250,7 @@ public abstract class Conversion<T, R>
             @Override
             public Option<Long> convert( final String t )
             {
-                Checks.notNull( t );
+                CheckParameters.areNotNull( t );
 
                 try
                 {
