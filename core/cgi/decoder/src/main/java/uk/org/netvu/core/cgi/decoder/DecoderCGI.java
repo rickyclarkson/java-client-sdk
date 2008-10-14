@@ -27,7 +27,7 @@ public final class DecoderCGI
     private static final ParameterDescription<Persistence, Persistence> PERSISTENCE = ParameterDescription.parameterWithDefault(
             "persistence",
             Persistence.TEMPORARY,
-            StringConversion.convenientPartial( Option.<String, Persistence> noneRef( "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name." ) ) );
+            StringConversion.convenientPartial( Option.<String, Persistence> getConversionToEmptyOption( "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name." ) ) );
 
     private static final ParameterDescription<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = ParameterDescription.sparseArrayParameter(
             "connections", StringConversion.total( Connection.fromURL,
@@ -40,8 +40,8 @@ public final class DecoderCGI
     private static final ParameterDescription<String[], Option<String[]>> OUTPUT_TITLES = ParameterDescription.parameter(
             "output_titles",
             StringConversion.partial(
-                    Option.<String, String[]> noneRef( "Parsing not supported for output_titles" ),
-                    Option.someRef( new Conversion<String[], String>()
+                    Option.<String, String[]> getConversionToEmptyOption( "Parsing not supported for output_titles" ),
+                    Option.toPartialConversion( new Conversion<String[], String>()
                     {
                         @Override
                         public String convert( final String[] array )

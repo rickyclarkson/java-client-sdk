@@ -46,8 +46,10 @@ class ReductionTest extends JUnit4(new Specification {
 class ParameterDescriptionTest extends JUnit4(new Specification with Scalacheck {
  import ParameterDescription.{bound, parameterWithDefault, sparseArrayParameter}
 
- def to[T] = new Conversion[T, Option[String]] { def convert(t: T) = Option.some("foo") }
- def from[T] = new Conversion[String, Option[T]] { def convert(s: String): Option[T] = Option.none[T]("Unsupported") }
+ def to[T] = new Conversion[T, Option[String]] { def convert(t: T) = Option.getFullOption("foo") }
+ def from[T] = new Conversion[String, Option[T]] {
+  def convert(s: String): Option[T] = Option.getEmptyOption[T]("Unsupported")
+ }
 
  val parameterDescription = parameterWithDefault("foo", 3, StringConversion.partial(from, to))
  
@@ -117,64 +119,64 @@ class ParameterDescriptionTest extends JUnit4(new Specification with Scalacheck 
 })
 
 class OptionTest extends JUnit4(new Specification with Scalacheck {
- import Option.{noneRef, someRef, none, some}
+ import Option.{getConversionToEmptyOption, getConversionToFullOption, getEmptyOption, getFullOption, toPartialConversion}
 
- "noneRef" should {
+ "getConversionToEmptyOption" should {
   "give a Conversion that always produces an empty Option" in {
-   noneRef[Int, String]("foo").convert(5).isEmpty must beTrue
+   getConversionToEmptyOption[Int, String]("foo").convert(5).isEmpty must beTrue
   }
  }
 
- "someRef" should {
+ "toPartialConversion" should {
   "give a Conversion that always produces an Option containing one element" in {
-   someRef(Conversion.getObjectToStringConversion[Int]).convert(5).isEmpty must beFalse
+   toPartialConversion(Conversion.getObjectToStringConversion[Int]).convert(5).isEmpty must beFalse
   }
  }
 
- "none" should {
+ "getEmptyOption" should {
   "give an empty Option when mapped over" in {
-   none[Int]("foo" ).map(new Conversion[Int, Int] { def convert(x: Int) = x * 2 } ).isEmpty must beTrue
+   getEmptyOption[Int]("foo" ).map(new Conversion[Int, Int] { def convert(x: Int) = x * 2 } ).isEmpty must beTrue
   }
   "give an empty Option on 'bind'" in {
    import Implicits.function1ToConversion
-   none[Int]("foo").bind{ x: Int => some(x * 2) }.isEmpty must beTrue
+   getEmptyOption[Int]("foo").bind{ x: Int => getFullOption(x * 2) }.isEmpty must beTrue
   }
  }
 
  "toString" should {
   "throw an UnsupportedOperationException" in {
-   none[Int]("foo").toString must throwA(new UnsupportedOperationException)
-   some(5).toString must throwA(new UnsupportedOperationException)
+   getEmptyOption[Int]("foo").toString must throwA(new UnsupportedOperationException)
+   getFullOption(5).toString must throwA(new UnsupportedOperationException)
   }
  }
 
  "reason" should {
-  "throw an IllegalStateException" in { some(5).reason must throwA(new IllegalStateException) }
-  "give a String" in { none("foo").reason mustEqual "foo" }
+  "throw an IllegalStateException" in { getFullOption(5).reason must throwA(new IllegalStateException) }
+  "give a String" in { getEmptyOption("foo").reason mustEqual "foo" }
  }
 
  "equals" should {
   "cause an UnsupportedOperationException" in {
-   some(5) == some(5) must throwA(new UnsupportedOperationException)
+   getFullOption(5) == getFullOption(5) must throwA(new UnsupportedOperationException)
   }
  }
 
  "hashCode" should {
   "cause an UnsupportedOperationException" in {
-   some(5).hashCode must throwA(new UnsupportedOperationException)
+   getFullOption(5).hashCode must throwA(new UnsupportedOperationException)
   }
  }
 
  "get" should {
-  "give the stored value for an Option that contains a value" in { some(5).get mustEqual 5 }
+  "give the stored value for an Option that contains a value" in { getFullOption(5).get mustEqual 5 }
   "throw an IllegalStateException for an empty Option" in {
-   none[Integer]("foo").get must throwA(new IllegalStateException)
+   getEmptyOption[Integer]("foo").get must throwA(new IllegalStateException)
   }
  }
 
  "isEmpty" should {
-  "be true for an empty Option" in { none("foo").isEmpty mustEqual true }
-  "be false for an Option that contains a value" in { some(5).isEmpty mustEqual false }
+  "be true for an empty Option" in { getEmptyOption("foo").isEmpty mustEqual true }
+  "be false for an Option that contains a value" in { getFullOption(5).isEmpty mustEqual false }
  }
 })
 
@@ -273,7 +275,7 @@ class ListsTest extends JUnit4(new Specification with Scalacheck {
 
  "removeIndices" should {
   "be able to remove the elements with indices 1 and 3 from 0, 1, 2, 3, 4" in {
-   Lists.removeIndices(Arrays.asList(Array[Integer](0, 1, 2, 3, 4)), Array(1, 3)) == Arrays.asList(Array[Integer](0, 2, 4))
+   Lists.removeByIndices(Arrays.asList(Array[Integer](0, 1, 2, 3, 4)), Array(1, 3)) == Arrays.asList(Array[Integer](0, 2, 4))
   }
  }
 })
@@ -480,8 +482,8 @@ class ParameterMapTest extends JUnit4(new Specification {
  "Populating a sparse array Parameter and then reading back its values" should {
   "yield the original values" in {
    val p: ParameterDescription[JavaList[Pair[Integer, String]], JavaTreeMap[Integer, String]] =
-    sparseArrayParameter[String]("foo", StringConversion.partial(Option.some[String],
-                                                                 Option.noneRef("Conversion not supported")))
+    sparseArrayParameter[String]("foo", StringConversion.partial(Option.getConversionToFullOption[String],
+                                                                 Option.getConversionToEmptyOption("Conversion not supported")))
 
    def convert(list: List[(Int, String)]): JavaList[Pair[Integer, String]] =
     listToJavaList(list map (tuple => Pair.pair(tuple._1, tuple._2)))
@@ -649,19 +651,18 @@ class NullTest extends JUnit4(new Specification {
 
  noNull(Lists.zip[Integer, String] _, "Lists.zip")
  
- noNull(Option.none[Integer] _, "Option.none")
+ noNull(Option.getEmptyOption[Integer] _, "Option.getEmptyOption")
 
- for (o <- List[Option[Integer]](Option.none[Integer]("because"), Option.some(5))) {
+ for (o <- List[Option[Integer]](Option.getEmptyOption[Integer]("because"), Option.getFullOption(5))) {
   noNull(o.fold[Integer] _, "Option.fold")
   noNull(o.map[Integer] _, "Option.map")
   noNull(o.bind[Integer] _, "Option.bind")
   "hack"
  }
 
- noNull(Option.noneRef _, "Option.noneRef")
- noNull(Option.some[Integer]().convert _, "Option.some().convert")
- noNull(Option.some[Integer], "Option.some")
- noNull(Option.someRef[Integer, Integer] _, "Option.someRef")
+ noNull(Option.getConversionToEmptyOption _, "Option.getConversionToEmptyOption")
+ noNull(Option.getFullOption[Integer] _, "Option.getFullOption")
+ noNull(Option.getConversionToFullOption[Integer](), "Option.getConversionToFullOption")
  
  noNull(Pair.pair[Integer, Integer] _, "Pair.pair")
 

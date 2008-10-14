@@ -94,12 +94,12 @@ public enum Variable
         {
             try
             {
-                return Option.some( valueOf( s.replaceAll(
+                return Option.getFullOption( valueOf( s.replaceAll(
                         Pattern.quote( "[]" ), "" ).toUpperCase() ) );
             }
             catch ( final IllegalArgumentException exception )
             {
-                return Option.none( "Cannot parse " + s + " into a Variable" );
+                return Option.getEmptyOption( "Cannot parse " + s + " into a Variable" );
             }
         }
     };

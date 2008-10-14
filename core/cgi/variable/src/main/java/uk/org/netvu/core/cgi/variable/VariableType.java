@@ -30,11 +30,11 @@ public enum VariableType
         {
             try
             {
-                return Option.some( VariableType.valueOf( t.toUpperCase() ) );
+                return Option.getFullOption( VariableType.valueOf( t.toUpperCase() ) );
             }
             catch ( final IllegalArgumentException exception )
             {
-                return Option.none( "Cannot parse " + t
+                return Option.getEmptyOption( "Cannot parse " + t
                         + " into a VariableType" );
             }
         }

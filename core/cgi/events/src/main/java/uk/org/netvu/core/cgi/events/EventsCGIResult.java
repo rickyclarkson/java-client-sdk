@@ -103,7 +103,7 @@ public final class EventsCGIResult
 
         final Option<EventsCGIResult> result = ParameterMap.fromStrings(
                 parameterDescriptions,
-                Lists.removeIndices( Arrays.asList( values ), 0, 7 ) ).map(
+                Lists.removeByIndices( Arrays.asList( values ), 0, 7 ) ).map(
                 new Conversion<ParameterMap, EventsCGIResult>()
                 {
                     @Override
@@ -389,11 +389,11 @@ public final class EventsCGIResult
             {
                 try
                 {
-                    return Option.some( find( Integer.parseInt( t ) ) );
+                    return Option.getFullOption( find( Integer.parseInt( t ) ) );
                 }
                 catch ( final IllegalArgumentException e )
                 {
-                    return Option.none( t + " is not a valid AlarmType" );
+                    return Option.getEmptyOption( t + " is not a valid AlarmType" );
                 }
             }
         };
@@ -410,7 +410,7 @@ public final class EventsCGIResult
      */
     public static final class Builder
     {
-        private Option<ParameterMap> real = Option.some( new ParameterMap() );
+        private Option<ParameterMap> real = Option.getFullOption( new ParameterMap() );
 
         /**
          * Constructs a builder ready to take in all the information needed to
@@ -490,7 +490,7 @@ public final class EventsCGIResult
             }
             finally
             {
-                real = Option.none( "The Builder has already had build() called on it" );
+                real = Option.getEmptyOption( "The Builder has already had build() called on it" );
             }
         }
 
@@ -660,11 +660,11 @@ public final class EventsCGIResult
             {
                 try
                 {
-                    return Option.some( find( Integer.parseInt( s ) ) );
+                    return Option.getFullOption( find( Integer.parseInt( s ) ) );
                 }
                 catch ( final IllegalArgumentException e )
                 {
-                    return Option.none( s + " is not a valid Status" );
+                    return Option.getEmptyOption( s + " is not a valid Status" );
                 }
             }
         };

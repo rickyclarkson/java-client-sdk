@@ -37,11 +37,11 @@ public enum Format
         {
             try
             {
-                return Option.some( Format.valueOf( t.toUpperCase( Locale.ENGLISH ) ) );
+                return Option.getFullOption( Format.valueOf( t.toUpperCase( Locale.ENGLISH ) ) );
             }
             catch ( final IllegalArgumentException exception )
             {
-                return Option.none( t + " is not a valid Format" );
+                return Option.getEmptyOption( t + " is not a valid Format" );
             }
         }
     };

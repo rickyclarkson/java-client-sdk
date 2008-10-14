@@ -200,7 +200,7 @@ public final class VPartsCGI
      */
     public static final class Builder
     {
-        private Option<ParameterMap> real = Option.some( new ParameterMap() );
+        private Option<ParameterMap> real = Option.getFullOption( new ParameterMap() );
 
         private <T> Builder set(final ParameterDescription<T, ?> parameter, final T value)
         {
@@ -232,7 +232,7 @@ public final class VPartsCGI
             }
             finally
             {
-                real = Option.none( "This Builder has already had build() called on it" );
+                real = Option.getEmptyOption( "This Builder has already had build() called on it" );
             }
         }
 

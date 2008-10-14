@@ -38,11 +38,11 @@ public enum Mode
         {
             try
             {
-                return Option.some( Mode.valueOf( s.toUpperCase() ) );
+                return Option.getFullOption( Mode.valueOf( s.toUpperCase() ) );
             }
             catch ( final IllegalArgumentException exception )
             {
-                return Option.none( s + " is not a valid Mode" );
+                return Option.getEmptyOption( s + " is not a valid Mode" );
             }
         }
     };

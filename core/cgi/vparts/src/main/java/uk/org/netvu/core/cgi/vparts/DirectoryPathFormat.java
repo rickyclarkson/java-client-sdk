@@ -29,11 +29,11 @@ public enum DirectoryPathFormat
         {
             try
             {
-                return Option.some( DirectoryPathFormat.valueOf( t.toUpperCase() ) );
+                return Option.getFullOption( DirectoryPathFormat.valueOf( t.toUpperCase() ) );
             }
             catch ( final IllegalArgumentException exception )
             {
-                return Option.none( t + " is not a valid DirectoryPathFormat" );
+                return Option.getEmptyOption( t + " is not a valid DirectoryPathFormat" );
             }
         }
     };

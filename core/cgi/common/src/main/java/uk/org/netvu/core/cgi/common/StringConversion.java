@@ -46,7 +46,7 @@ public final class StringConversion<T>
     public static StringConversion<Long> hexLong()
     {
         return partial(Conversion.getHexStringToLongConversion(),
-                       Option.getConversionToFullOption( Conversion.getLongToHexStringConversion() ) );
+                       Option.toPartialConversion( Conversion.getLongToHexStringConversion() ) );
     }
 
     /**
@@ -56,7 +56,7 @@ public final class StringConversion<T>
     public static StringConversion<Integer> hexInt()
     {
         return partial(Conversion.getHexStringToIntConversion(),
-                       Option.getConversionToFullOption( Conversion.getIntToHexStringConversion() ) );
+                       Option.toPartialConversion( Conversion.getIntToHexStringConversion() ) );
     }
 
     /**
@@ -144,7 +144,7 @@ public final class StringConversion<T>
     private static <T, R> Conversion<T, Option<R>> andThenSome(
             final Conversion<T, R> conversion )
     {
-        return conversion.andThen( Option.<R> some() );
+        return conversion.andThen( Option.<R> getConversionToFullOption() );
     }
 
     private final Conversion<String, Option<T>> conversionFromString;

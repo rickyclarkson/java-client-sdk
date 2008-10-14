@@ -241,7 +241,7 @@ public final class EventsCGI
      */
     public static final class Builder
     {
-        private Option<ParameterMap> real = Option.some( new ParameterMap(
+        private Option<ParameterMap> real = Option.getFullOption( new ParameterMap(
                 Validator.mutuallyExclusive( exclusiveParams ) ) );
 
         /**
@@ -294,7 +294,7 @@ public final class EventsCGI
             }
             finally
             {
-                real = Option.none( "This Builder has already been built once." );
+                real = Option.getEmptyOption( "This Builder has already been built once." );
             }
         }
 
