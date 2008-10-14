@@ -331,15 +331,23 @@ class ConversionTest extends JUnit4(new Specification with Scalacheck {
  }
 
  "Conversion.getHexStringToIntConversion" should {
-  "give an empty Option when given \"foo\"" in { Conversion.getHexStringToIntConversion.convert("foo").isEmpty mustEqual true }
+  "give an empty Option when given \"foo\"" in {
+   Conversion.getHexStringToIntConversion.convert("foo").isEmpty mustEqual true
+  }
   "correctly convert hex Strings to ints" in { Conversion.getHexStringToIntConversion.convert("Fe").get mustEqual 254 }
+  "reject FFFFFFFFFF" in { Conversion.getHexStringToIntConversion.convert("FFFFFFFFFF").isEmpty mustEqual true }
+  "accept FFFFFFFF" in { Conversion.getHexStringToIntConversion.convert("FFFFFFFF").isEmpty mustEqual false }
  }
 
  "Conversion.getHexStringtoLongConversion" should {
   "give an empty Option when given \"foo\"" in {
    Conversion.getHexStringToLongConversion.convert("foo").isEmpty mustEqual true
   }
-  "correctly convert hex Strings to longs" in { Conversion.getHexStringToLongConversion.convert("Fe").get mustEqual 254 }
+  "correctly convert hex Strings to longs" in {
+   Conversion.getHexStringToLongConversion.convert("Fe").get mustEqual 254
+   Conversion.getHexStringToLongConversion.convert("FFFFFFFFFFFFFFFF").isEmpty mustEqual false
+   Conversion.getHexStringToLongConversion.convert("FFFFFFFFFFFFFFFFFF").isEmpty mustEqual true
+  }
  }
 
  "Conversion.getIdentityConversion" should {

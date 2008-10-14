@@ -82,11 +82,18 @@ public abstract class Conversion<T, R>
 
                 try
                 {
-                    return Option.getFullOption( (int) Long.parseLong( t, 16 ) );
+                    long result = Long.parseLong( t, 16 );
+
+                    if ( ( result & 0xFFFFFFFFL ) == result )
+                    {
+                        return Option.getFullOption( (int)result );
+                    }
+
+                    return Option.getEmptyOption( t + " is outside the bounds of an int, in hexadecimal" );
                 }
                 catch ( final NumberFormatException e )
                 {
-                    return Option.getEmptyOption( t + " is not a valid long" );
+                    return Option.getEmptyOption( t + " is not a valid int, in hexadecimal" );
                 }
             }
         };
@@ -100,15 +107,25 @@ public abstract class Conversion<T, R>
         return new Conversion<String, Option<Long>>()
         {
             @Override
-            public Option<Long> convert( final String t )
+            public Option<Long> convert( final String string )
             {
+                if ( string.startsWith("-"))
+                {
+                    return Option.getEmptyOption("getHexStringToLongConversion does not support negative hexadecimal");
+                }
+
+                if ( string.length() > 16 )
+                {
+                    return Option.getEmptyOption(string + " is not a valid long value in hexadecimal");
+                }
+                    
                 try
                 {
-                    return Option.getFullOption( new BigInteger( t, 16 ).longValue() );
+                    return Option.getFullOption( new BigInteger( string, 16 ).longValue() );
                 }
                 catch ( final NumberFormatException e )
                 {
-                    return Option.getEmptyOption( t
+                    return Option.getEmptyOption( string
                             + " is not a valid long, in hexadecimal" );
                 }
             }

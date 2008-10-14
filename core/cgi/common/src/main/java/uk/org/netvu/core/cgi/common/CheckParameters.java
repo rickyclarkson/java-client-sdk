@@ -21,7 +21,7 @@ public final class CheckParameters
         {
             if ( o == null )
             {
-                throw new NullPointerException( "Value number " + a
+                throw new NullPointerException( "Argument number " + a
                         + " was null." );
             }
             a++;
