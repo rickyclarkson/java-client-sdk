@@ -38,7 +38,7 @@ public final class ParameterMap
                 @Override
                 public Option<ParameterMap> convert( final ParameterMap map )
                 {
-                    return map.withFromString( pair.getFirstComponent(),
+                    return map.parseAndSet( pair.getFirstComponent(),
                             new URLParameter( pair.getFirstComponent().name,
                                     pair.getSecondComponent() ) );
                 }
@@ -78,7 +78,7 @@ public final class ParameterMap
                         public Option<ParameterMap> convert(
                                 final ParameterMap map )
                         {
-                            return map.withFromString( parameterDescription,
+                            return map.parseAndSet( parameterDescription,
                                     part );
                         }
                     } );
@@ -119,6 +119,13 @@ public final class ParameterMap
         this( new HashMap<ParameterDescription<?, ?>, Object>(), validator );
     }
 
+    /**
+     * Constructs a ParameterMap using the specified Map for storing values, and
+     * with the specified Validator.
+     *
+     * @param values the Map to use for storing values.
+     * @param validator a test against a ParameterMap for validity.
+     */
     private ParameterMap( final Map<ParameterDescription<?, ?>, Object> values,
             final Validator validator )
     {
@@ -141,7 +148,7 @@ public final class ParameterMap
     public <T> T get( final ParameterDescription<?, T> parameterDescription )
     {
         return values.containsKey( parameterDescription ) ? (T) values.get( parameterDescription )
-                : parameterDescription.getDefaultValue();
+                : parameterDescription.defaultValue;
     }
 
     /**
@@ -227,7 +234,7 @@ public final class ParameterMap
                 "&" ).replaceAll( "^&", "" );
     }
 
-    private <T, R> Option<ParameterMap> withFromString(
+    private <T, R> Option<ParameterMap> parseAndSet(
             final ParameterDescription<T, R> parameterDescription,
             final URLParameter keyAndValue )
     {

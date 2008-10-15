@@ -30,6 +30,9 @@ public final class CheckParameters
         }
     }
 
+    /**
+     * This is private to prevent instantiation.
+     */
     private CheckParameters()
     {
     }

@@ -188,6 +188,9 @@ public final class Lists
         return results;
     }
 
+    /**
+     * This is private to prevent instantiation.
+     */
     private Lists()
     {
     }

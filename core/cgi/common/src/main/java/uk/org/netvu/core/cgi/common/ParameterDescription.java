@@ -132,8 +132,7 @@ public abstract class ParameterDescription<T, R>
         CheckParameters.areNotNull( name, conversion );
 
         return new ParameterDescriptionWithoutDefault<T>( name,
-                Option.<T> getEmptyOption( "The value for the " + name
-                        + " parameter has not been set yet" ), conversion );
+                conversion );
 
     }
 
@@ -167,8 +166,15 @@ public abstract class ParameterDescription<T, R>
      */
     public final String name;
 
-    final R defaultValue;
+    /**
+     * The default, or initial, value of the Parameter.  This is never null.
+     */
+    public final R defaultValue;
 
+    /**
+     * Constructs a ParameterDescription with the specified name and default value.
+     * name and defaultValue are never null.
+     */
     private ParameterDescription( final String name, final R defaultValue )
     {
         this.name = name;
@@ -180,6 +186,7 @@ public abstract class ParameterDescription<T, R>
      * 
      * @param nameAndValue
      *        the URLParameter to parse.
+     * @throws NullPointerException if nameAndValue is null.
      * @return a value of type T, after parsing.
      */
     public abstract Option<T> fromURLParameter( final URLParameter nameAndValue );
@@ -191,6 +198,7 @@ public abstract class ParameterDescription<T, R>
      * 
      * @param parameterMap
      *        the ParameterMap to get the value from.
+     * @throws NullPointerException if parameterMap is null.
      * @return this ParameterDescription as a URL parameter, or an empty String
      *         if the value of the parameter is the ParameterDescription's
      *         default value.
@@ -202,16 +210,6 @@ public abstract class ParameterDescription<T, R>
     }
 
     /**
-     * Gives the default value for this ParameterDescription.
-     * 
-     * @return the default value for this ParameterDescription.
-     */
-    R getDefaultValue()
-    {
-        return defaultValue;
-    }
-
-    /**
      * Takes in a new value and an original value and produces a new value from
      * merging them. What this actually does depends on the particular
      * ParameterDescription implementation.
@@ -220,20 +218,25 @@ public abstract class ParameterDescription<T, R>
      *        the new incoming value.
      * @param original
      *        the previously-stored value.
+     * @throws NullPointerException if newValue or original are null.
      * @return the new value to store.
      */
     abstract R reduce( final T newValue, final R original );
 
     /**
-     * Converts a name and value into a URLParameter, placing it in an Option if
+     * Converts a value into a URLParameter, placing it in an Option if
      * that succeeds, or giving an empty Option if that is an unsupported
      * operation for this ParameterDescription.
      * 
-     * @param nameAndValue
-     * @return
+     * @param value the value to store in the URLParameter.
+     * @throws NullPointerException is value is null.
+     * @return a URLParameter representing the specified value for this ParameterDescription.
      */
     abstract Option<String> toURLParameter( R value );
 
+    /**
+     * A ParameterDescription that disallows a certain value.
+     */
     private static final class BannedParameterDescription<T, U>
             extends ParameterDescription<T, U>
     {
@@ -275,13 +278,34 @@ public abstract class ParameterDescription<T, R>
         }
     }
 
+    /**
+     * A ParameterDescription for a parameter that accepts Integers in a certain range.
+     */
     private static final class BoundParameterDescription<U>
             extends ParameterDescription<Integer, U>
     {
+        /**
+         * The upper bound of acceptable values.
+         */
         private final int higherInclusive;
+
+        /**
+         * The lower bound of acceptable values.
+         */
         private final int lowerInclusive;
+
+        /**
+         * The ParameterDescription to delegate to, including passing on all accepted values.
+         */
         private final ParameterDescription<Integer, U> delegate;
 
+        /**
+         * Constructs a BoundParameterDescription.
+         * @param lowerInclusive the lower bound of acceptable values.
+         * @param higherInclusive the upper bound of acceptable values.
+         * @param delegate the ParameterDescription to delegate to, including passing on all accepted values.
+         * delegate is never null.
+         */
         private BoundParameterDescription( final int lowerInclusive,
                 final int higherInclusive,
                 final ParameterDescription<Integer, U> delegate )
@@ -319,11 +343,25 @@ public abstract class ParameterDescription<T, R>
         }
     }
 
+    /**
+     * A ParameterDescription for parameters that have a default, or initial, value.
+     */
     private static final class ParameterDescriptionWithDefault<T>
             extends ParameterDescription<T, T>
     {
+        /**
+         * The conversions between values of type T and String.
+         */
         private final StringConversion<T> conversions;
 
+        /**
+         * Constructs a ParameterDescriptionWithDefault.
+         *
+         * @param name the name of the parameter.
+         * @param defaultValue the default value of the parameter.
+         * @param conversions the conversions between values of type T and String.
+         * @throws NullPointerException if name, defaultValue or conversions are null.
+         */
         private ParameterDescriptionWithDefault( final String name,
                 final T defaultValue, final StringConversion<T> conversions )
         {
@@ -366,16 +404,29 @@ public abstract class ParameterDescription<T, R>
         }
     }
 
+    /**
+     * A ParameterDescription for parameters that do not have a default, or
+     * initial, value.
+     */
     private static final class ParameterDescriptionWithoutDefault<T>
             extends ParameterDescription<T, Option<T>>
     {
+        /**
+         * The conversions between values of type T and Strings.
+         */
         private final StringConversion<T> conversion;
 
+        /**
+         * Constructs a ParameterDescriptionWithoutDefault.
+         *
+         * @param name the name of the parameter.
+         * @param conversion the conversions between values of type T and Strings.
+         */
         private ParameterDescriptionWithoutDefault( final String name,
-                final Option<T> defaultValue,
                 final StringConversion<T> conversion )
         {
-            super( name, defaultValue );
+            super( name, Option.<T> getEmptyOption( "The value for the " + name
+                        + " parameter has not been set yet" ) );
             this.conversion = conversion;
         }
 
@@ -420,12 +471,26 @@ public abstract class ParameterDescription<T, R>
         }
     }
 
+    /**
+     * A ParameterDescription for parameters that represent one-dimensional sparse
+     * arrays indexed by Integers.
+     */
     private static final class SparseArrayParameterDescription<T>
             extends
             ParameterDescription<List<Pair<Integer, T>>, TreeMap<Integer, T>>
     {
+        /**
+         * Conversions between values of type T and Strings.
+         */
         private final StringConversion<T> conversions;
 
+        /**
+         * Constructs a SparseArrayParameterDescription.
+         *
+         * @param name the name of the parameter.
+         * @param conversions Conversions between values of type T and Strings.
+         * @throws NullPointerException if name or conversions are null.
+         */
         private SparseArrayParameterDescription( final String name,
                 final StringConversion<T> conversions )
         {

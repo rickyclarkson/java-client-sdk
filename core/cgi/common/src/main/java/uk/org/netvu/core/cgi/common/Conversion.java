@@ -13,6 +13,9 @@ import java.math.BigInteger;
  */
 public abstract class Conversion<T, R>
 {
+    /**
+     * A partial Conversion between Strings containing non-negative hexadecimal numbers and Longs.
+     */
     private static final class HexStringToLongConversion
             extends Conversion<String, Option<Long>>
     {
@@ -42,6 +45,9 @@ public abstract class Conversion<T, R>
         }
     }
 
+    /**
+     * A partial Conversion between Strings containing non-negative hexadecimal numbers and Integers.
+     */
     private static final class HexStringToIntConversion
             extends Conversion<String, Option<Integer>>
     {
@@ -98,18 +104,18 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * A Conversion that, given a boolean, returns the ifTrue parameter if the
-     * boolean is true, and returns the ifFalse parameter otherwise.
+     * A Conversion that, given a Boolean, returns the ifTrue parameter if the
+     * Boolean is true, and returns the ifFalse parameter otherwise.
      * 
      * @param <T>
      *        the type of value to return.
      * @param ifTrue
-     *        the value to return if the boolean is true.
+     *        the value to return if the Boolean is true.
      * @param ifFalse
-     *        the value to return if the boolean is false.
+     *        the value to return if the Boolean is false.
      * @throws NullPointerException if ifTrue or ifFalse are null.
-     * @return a Conversion that, given a boolean, returns the ifTrue parameter
-     *         if the boolean is true, and returns the ifFalse parameter
+     * @return a Conversion that, given a Boolean, returns the ifTrue parameter
+     *         if the Boolean is true, and returns the ifFalse parameter
      *         otherwise.
      */
     public static <T> Conversion<Boolean, T> fromBoolean( final T ifTrue,
@@ -128,9 +134,9 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * A conversion from Strings containing hexadecimal to ints.
+     * A partial Conversion from Strings containing hexadecimal to Integers.
      * 
-     * @return a conversion from Strings containing hexadecimal to ints.
+     * @return a Conversion from Strings containing hexadecimal to Integers.
      */
     public static Conversion<String, Option<Integer>> getHexStringToIntConversion()
     {
@@ -138,9 +144,9 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * A conversion from Strings containing hexadecimal to longs.
+     * A partial Conversion from Strings containing hexadecimal to Longs.
      * 
-     * @return a conversion from Strings containing hexadecimal to longs.
+     * @return a partial Conversion from Strings containing hexadecimal to Longs.
      */
     public static Conversion<String, Option<Long>> getHexStringToLongConversion()
     {
@@ -187,9 +193,9 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * A conversion from longs to Strings containing hexadecimal.
+     * A Conversion from Longs to Strings containing hexadecimal.
      * 
-     * @return a conversion from longs to Strings containing hexadecimal.
+     * @return a Conversion from Longs to Strings containing hexadecimal.
      */
     public static Conversion<Long, String> getLongToHexStringConversion()
     {
@@ -204,7 +210,7 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * A conversion that uses Object's toString() to convert objects of type T
+     * A Conversion that uses Object's toString() to convert objects of type T
      * to Strings.
      * 
      * @param <T>

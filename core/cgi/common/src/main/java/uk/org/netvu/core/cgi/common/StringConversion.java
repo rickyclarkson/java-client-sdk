@@ -35,6 +35,7 @@ public final class StringConversion<T>
      * @param <T>
      *        the type that this StringConversion can convert Strings to and
      *        from.
+     * @throws NullPointerException if conversionFromString is null.
      * @return a StringConversion that can convert Strings to Ts and Ts to
      *         Strings.
      */
@@ -55,6 +56,7 @@ public final class StringConversion<T>
      * @param <T>
      *        the type that this StringConversion can convert Strings to and
      *        from.
+     * @throws NullPointerException if conversionFromString is null.
      * @return a StringConversion that can convert Strings to Ts and Ts to
      *         Strings.
      */
@@ -108,6 +110,7 @@ public final class StringConversion<T>
      * @param <T>
      *        the type that this StringConversion can convert Strings to and
      *        from.
+     * @throws NullPointerException if conversionFromString or conversionToString are null.
      * @return a StringConversion that can convert Strings to Ts and Ts to
      *         Strings.
      */
@@ -139,6 +142,7 @@ public final class StringConversion<T>
      * @param <T>
      *        the type that this StringConversion can convert Strings to and
      *        from.
+     * @throws NullPointerException if conversionFromString or conversionToString are null.
      * @return a StringConversion that can convert Strings to Ts and Ts to
      *         Strings.
      */
@@ -150,16 +154,35 @@ public final class StringConversion<T>
                 andThenToFullOption( conversionToString ) );
     }
 
+    /**
+     * Given a Conversion from T to R, produces a partial Conversion from T to R that
+     * always gives a full Option.
+     * @param conversion the total Conversion to use.
+     * @throws NullPointerException if conversion is null.
+     */
     private static <T, R> Conversion<T, Option<R>> andThenToFullOption(
             final Conversion<T, R> conversion )
     {
         return conversion.andThen( Option.<R> getConversionToFullOption() );
     }
 
+    /**
+     * The partial Conversion to use to convert Strings to Ts.  This is never null.
+     */
     private final Conversion<String, Option<T>> conversionFromString;
 
+    /**
+     * The partial Conversion to use to convert Ts to Strings.  This is never null.
+     */
     private final Conversion<T, Option<String>> conversionToString;
 
+    /**
+     * Constructs a StringConversion.
+     *
+     * @param conversionFromString the partial Conversion to use to convert Strings to Ts.
+     * @param conversionToString the partial Conversion to use to convert Ts to Strings.
+     * @throws NullPointerException if conversionFromString or conversionToString are null.
+     */
     private StringConversion(
             final Conversion<String, Option<T>> conversionFromString,
             final Conversion<T, Option<String>> conversionToString )
@@ -170,8 +193,12 @@ public final class StringConversion<T>
     }
 
     /**
-     * Converts Strings to Ts, returning the result in an Option that contains a
+     * Converts a String to a T, returning the result in an Option that contains a
      * T if the conversion succeeds, and nothing if it fails.
+     * @param string the String to convert to a T.
+     * @throws NullPointerException if string is null.
+     * @return An Option containing a T if the conversion succeeded,
+     * and an empty Option otherwise.
      */
     public Option<T> fromString( final String string )
     {
@@ -179,8 +206,11 @@ public final class StringConversion<T>
     }
 
     /**
-     * Converts Ts to Strings, returning the result in an Option that contains a
+     * Converts a T to a String, returning the result in an Option that contains a
      * String if the conversion succeeds, and nothing if it fails.
+     * @param t the T to convert to a String.
+     * @return a String representation of the T in an Option if the conversion succeeded,
+     * and an empty Option otherwise.
      */
     public Option<String> toString( final T t )
     {

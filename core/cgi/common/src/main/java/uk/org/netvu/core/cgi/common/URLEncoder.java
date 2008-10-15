@@ -8,6 +8,9 @@ import java.io.UnsupportedEncodingException;
 public final class URLEncoder
         extends Conversion<String, String>
 {
+    /**
+     * Constructs a URLEncoder.
+     */
     public URLEncoder()
     {
     }
@@ -17,11 +20,13 @@ public final class URLEncoder
      * 
      * @param value
      *        the value to encode.
+     * @throws NullPointerException if value is null.
      * @return the encoded value.
      */
     @Override
     public String convert( final String value )
     {
+        CheckParameters.areNotNull( value );
         try
         {
             return java.net.URLEncoder.encode( value, "UTF-8" );

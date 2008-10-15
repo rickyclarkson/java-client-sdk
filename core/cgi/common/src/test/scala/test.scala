@@ -298,6 +298,9 @@ class FormatTest extends JUnit4(new Specification with Scalacheck {
   "give an empty Option when supplied with 'foo'" in {
    Format.fromString.convert("foo").isEmpty mustEqual true
   }
+  "give an empty Option when supplied with an empty String" in {
+   Format.fromString.convert("").isEmpty mustEqual true
+  }
  }
 
  "Formats" should {
@@ -322,12 +325,18 @@ class ConversionTest extends JUnit4(new Specification with Scalacheck {
   "give an empty Option when supplied with 'foo'" in {
    Conversion.getStringToIntConversion.convert("foo").isEmpty mustEqual true
   }
+  "give an empty Option when supplied with an empty String" in {
+   Conversion.getStringToIntConversion.convert("").isEmpty mustEqual true
+  }
   "correctly convert Strings to ints" in { Conversion.getStringToIntConversion.convert("465").get mustEqual 465 }
  }
 
  "Conversion.getStringToLongConversion" should {
   "give an empty Option when supplied with \"foo\"" in {
    Conversion.getStringToLongConversion.convert("foo").isEmpty mustEqual true
+  }
+  "give an empty Option when supplied with an empty Option" in {
+   Conversion.getStringToLongConversion.convert("").isEmpty mustEqual true
   }
   "correctly convert Strings to longs" in { Conversion.getStringToLongConversion.convert("465").get mustEqual 465 }
  }
@@ -338,20 +347,29 @@ class ConversionTest extends JUnit4(new Specification with Scalacheck {
   "give an empty Option when given \"foo\"" in {
    Conversion.getStringToBooleanConversion.convert("foo").isEmpty mustEqual true
   }
+  "give an empty Option when given an empty String" in {
+   Conversion.getStringToBooleanConversion.convert("").isEmpty mustEqual true
+  }
  }
 
  "Conversion.getHexStringToIntConversion" should {
   "give an empty Option when given \"foo\"" in {
    Conversion.getHexStringToIntConversion.convert("foo").isEmpty mustEqual true
   }
+  "give an empty Option when given an empty String" in {
+   Conversion.getHexStringToIntConversion.convert("").isEmpty mustEqual true
+  }
   "correctly convert hex Strings to ints" in { Conversion.getHexStringToIntConversion.convert("Fe").get mustEqual 254 }
   "reject FFFFFFFFFF" in { Conversion.getHexStringToIntConversion.convert("FFFFFFFFFF").isEmpty mustEqual true }
   "accept FFFFFFFF" in { Conversion.getHexStringToIntConversion.convert("FFFFFFFF").isEmpty mustEqual false }
  }
 
- "Conversion.getHexStringtoLongConversion" should {
+ "Conversion.getHexStringToLongConversion" should {
   "give an empty Option when given \"foo\"" in {
    Conversion.getHexStringToLongConversion.convert("foo").isEmpty mustEqual true
+  }
+  "give an empty Option when given an empty String" in {
+   Conversion.getHexStringToLongConversion.convert("").isEmpty mustEqual true
   }
   "reject negative hexadecimal" in {
    Conversion.getHexStringToLongConversion.convert("-ff").isEmpty mustEqual true

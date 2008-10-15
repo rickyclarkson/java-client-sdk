@@ -20,6 +20,7 @@ public abstract class Option<T> implements Iterable<T>
      *        the type of the Option to produce.
      * @param reason
      *        the reason that the Option has no element.
+     * @throws NullPointerException if reason is null.
      * @return a Conversion that always yields an empty Option.
      */
     public static <T, U> Conversion<T, Option<U>> getConversionToEmptyOption(
@@ -64,6 +65,7 @@ public abstract class Option<T> implements Iterable<T>
      *        the type of the Option.
      * @param reason
      *        the reason that the Option has no elements.
+     * @throws NullPointerException if reason is null.
      * @return an Option holding no elements.
      */
     public static <T> Option<T> getEmptyOption( final String reason )
@@ -80,6 +82,7 @@ public abstract class Option<T> implements Iterable<T>
      *        the type of the element.
      * @param t
      *        the element.
+     * @throws NullPointerException if t is null.
      * @return an Option holding one element.
      */
     public static <T> Option<T> getFullOption( final T t )
@@ -99,6 +102,7 @@ public abstract class Option<T> implements Iterable<T>
      *        the type of the Option to produce.
      * @param conversion
      *        the Conversion to convert the T into a U.
+     * @throws NullPointerException if conversion is null.
      * @return a Conversion that takes in a T, converts it to a U, and produces
      *         an Option containing that U.
      */
@@ -117,6 +121,9 @@ public abstract class Option<T> implements Iterable<T>
         };
     }
 
+    /**
+     * This is private to prevent subclassing other than by the code in this class.
+     */
     private Option()
     {
     }
@@ -171,6 +178,7 @@ public abstract class Option<T> implements Iterable<T>
      *        the type to convert to.
      * @param conversion
      *        the Conversion to map over this Option.
+     * @throws NullPointerException if conversion is null.
      * @return an Option containing the mapped value, or nothing.
      */
     public abstract <U> Option<U> map( Conversion<T, U> conversion );
@@ -207,6 +215,7 @@ public abstract class Option<T> implements Iterable<T>
      *        the type of the Option to convert this Option to.
      * @param conversion
      *        the Conversion to apply to a value held by this Option.
+     * @throws NullPointerException if conversion is null.
      * @return an Option holding the result of binding the specified Conversion
      *         to this Option.
      */
@@ -221,11 +230,15 @@ public abstract class Option<T> implements Iterable<T>
      *        the U to return if the Option holds no value.
      * @param ifFull
      *        the Conversion to apply if the Option has a value.
+     * @throws NullPointerException if ifEmpty or ifFull are null.
      * @return a folded version of this Option according to the specified
      *         parameters.
      */
     abstract <U> U fold( U ifEmpty, Conversion<T, U> ifFull );
 
+    /**
+     * An Option that does not hold a value.
+     */
     private static final class Empty<T>
             extends Option<T>
     {
@@ -286,6 +299,9 @@ public abstract class Option<T> implements Iterable<T>
         }
     }
 
+    /**
+     * An Option that holds a value.
+     */
     private static final class Full<T>
             extends Option<T>
     {

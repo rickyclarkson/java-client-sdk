@@ -37,6 +37,7 @@ public final class URLParameter
      *        the name of this parameter.
      * @param value
      *        the value of this parameter.
+     * @throws NullPointerException if name or value are null.
      */
     public URLParameter( final String name, final String value )
     {

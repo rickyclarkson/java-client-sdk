@@ -67,6 +67,9 @@ final class URLExtractor
                 "/" );
     }
 
+    /**
+     * Private to prevent instantiation.
+     */
     private URLExtractor()
     {
     }
