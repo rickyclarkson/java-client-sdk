@@ -78,6 +78,7 @@ public abstract class Conversion<T, R>
      *        the type of the values that this Conversion can receive.
      * @param other
      *        the parameter to test values against.
+     * @throws NullPointerException if other is null.
      * @return a Conversion that returns true if the value it receives is the
      *         same as the specified parameter.
      */
@@ -106,6 +107,7 @@ public abstract class Conversion<T, R>
      *        the value to return if the boolean is true.
      * @param ifFalse
      *        the value to return if the boolean is false.
+     * @throws NullPointerException if ifTrue or ifFalse are null.
      * @return a Conversion that, given a boolean, returns the ifTrue parameter
      *         if the boolean is true, and returns the ifFalse parameter
      *         otherwise.
@@ -321,10 +323,13 @@ public abstract class Conversion<T, R>
      *        to.
      * @param conversion
      *        the second conversion to run.
+     * @throws NullPointerException if conversion is null.
      * @return a composed conversion.
      */
     public final <V> Conversion<T, V> andThen( final Conversion<R, V> conversion )
     {
+        CheckParameters.areNotNull( conversion );
+
         return new Conversion<T, V>()
         {
             @Override
@@ -341,6 +346,8 @@ public abstract class Conversion<T, R>
      * 
      * @param t
      *        the object to convert.
+     * @throws NullPointerException if t is null.
+     *
      * @return the converted object.
      */
     public abstract R convert( T t );

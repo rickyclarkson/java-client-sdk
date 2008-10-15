@@ -92,6 +92,7 @@ public final class EventsCGIResult
 
         final List<ParameterDescription<?, ?>> parameterDescriptions = new ArrayList<ParameterDescription<?, ?>>(
                 compulsoryParameterDescriptions );
+
         if ( values.length > 11 )
         {
             parameterDescriptions.add( STATUS );

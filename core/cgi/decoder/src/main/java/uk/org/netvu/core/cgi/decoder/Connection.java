@@ -23,7 +23,7 @@ public final class Connection
     private static final ParameterDescription<String, Option<String>> SLAVE_IP_PARAM = ParameterDescription.parameterWithoutDefault(
             "slaveip", StringConversion.string() );
     private static final ParameterDescription<Integer, Option<Integer>> SEQ_PARAM = ParameterDescription.parameterWithoutDefault(
-            "seq", StringConversion.hexInt() );
+            "seq", StringConversion.getHexToIntStringConversion() );
     private static final ParameterDescription<Integer, Option<Integer>> DWELL_PARAM = ParameterDescription.parameterWithoutDefault(
             "dwell", StringConversion.integer() );
     private static final ParameterDescription<Integer, Option<Integer>> CAM = ParameterDescription.parameterWithoutDefault(

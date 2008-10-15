@@ -715,8 +715,8 @@ class NullTest extends JUnit4(new Specification {
  twoWay(StringConversion.integer, "StringConversion.integer")
  twoWay(StringConversion.string, "StringConversion.string")
  twoWay(StringConversion.bool, "StringConversion.bool")
- twoWay(StringConversion.hexLong, "StringConversion.hexLong")
- twoWay(StringConversion.hexInt, "StringConversion.hexInt")
+ twoWay(StringConversion.getHexToLongStringConversion, "StringConversion.getHexToLongStringConversion")
+ twoWay(StringConversion.getHexToIntStringConversion, "StringConversion.getHexToIntStringConversion")
  
  noNull(StringConversion.convenientPartial _, "StringConversion.convenientPartial")
  noNull(StringConversion.convenientTotal _, "StringConversion.convenientTotal")

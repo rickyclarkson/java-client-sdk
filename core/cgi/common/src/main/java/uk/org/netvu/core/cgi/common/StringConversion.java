@@ -70,7 +70,7 @@ public final class StringConversion<T>
      * A StringConversion that converts between Strings containing hexadecimal
      * integers and Java's Integer, and vice-versa.
      */
-    public static StringConversion<Integer> hexInt()
+    public static StringConversion<Integer> getHexToIntStringConversion()
     {
         return partial(
                 Conversion.getHexStringToIntConversion(),
@@ -81,7 +81,7 @@ public final class StringConversion<T>
      * A StringConversion that converts between Strings containing hexadecimal
      * integers and Java's Long, and vice-versa.
      */
-    public static StringConversion<Long> hexLong()
+    public static StringConversion<Long> getHexToLongStringConversion()
     {
         return partial(
                 Conversion.getHexStringToLongConversion(),

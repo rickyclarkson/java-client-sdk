@@ -8,11 +8,12 @@ public final class CheckParameters
 {
     /**
      * Checks that all the arguments passed are non-null.
+     * Fails on the first null argument it encounters.
      * 
      * @param args
      *        the arguments to check.
      * @throws NullPointerException
-     *         if any of the arguments passed are null.
+     *         if any of the arguments passed are null, or if the varargs array itself is null.
      */
     public static void areNotNull( final Object... args )
             throws NullPointerException

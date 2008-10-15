@@ -37,21 +37,21 @@ public final class EventsCGI
             "text", "", StringConversion.string() );
 
     private static final ParameterDescription<Long, Long> CAMERA_MASK = ParameterDescription.parameterWithDefault(
-            "cammask", 0L, StringConversion.hexLong() );
+            "cammask", 0L, StringConversion.getHexToLongStringConversion() );
 
     private static final ParameterDescription<Integer, Integer> ALARM_MASK = ParameterDescription.parameterWithDefault(
-            "almmask", 0, StringConversion.hexInt() );
+            "almmask", 0, StringConversion.getHexToIntStringConversion() );
 
     private static final ParameterDescription<Long, Long> VIDEO_MOTION_DETECTION_MASK = ParameterDescription.parameterWithDefault(
             "vmdmask",
 
-            0L, StringConversion.hexLong() );
+            0L, StringConversion.getHexToLongStringConversion() );
 
     private static final ParameterDescription<Integer, Integer> GPS_MASK = ParameterDescription.parameterWithDefault(
-            "gpsmask", 0, StringConversion.hexInt() );
+            "gpsmask", 0, StringConversion.getHexToIntStringConversion() );
 
     private static final ParameterDescription<Integer, Integer> SYSTEM_MASK_PARAM = ParameterDescription.parameterWithDefault(
-            "sysmask", 0, StringConversion.hexInt() );
+            "sysmask", 0, StringConversion.getHexToIntStringConversion() );
 
     // this is an anonymous initialiser - it is creating a new ArrayList and
     // adding values to it inline.
