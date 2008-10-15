@@ -192,7 +192,7 @@ public class DecoderDemo
                 @Override
                 public String convert( final Pair<String, Integer> pair )
                 {
-                    return pair.second() + " -> " + pair.first();
+                    return pair.getSecondComponent() + " -> " + pair.getFirstComponent();
                 }
             }
 
@@ -203,13 +203,13 @@ public class DecoderDemo
                 public Boolean convert(
                         final Pair<String, Integer> valueAndIndex )
                 {
-                    return valueAndIndex.first().length() != 0;
+                    return valueAndIndex.getFirstComponent().length() != 0;
                 }
             }
 
             variables.setText( "Connections: \n"
                     + Strings.intersperse( "\n", Lists.map( Lists.filter(
-                            Lists.zipWithIndex( unquoted ), new Hack1() ),
+                            zipWithIndex( unquoted ), new Hack1() ),
                             new Hack2() ) )
                     + "'\nLayouts:\n"
                     + readOneLine( "http://192.168.106.127/"
@@ -224,6 +224,20 @@ public class DecoderDemo
                             + new VariableCGI.Builder().variable(
                                     Variable.COMMANDS ).build().toString() ) );
             variables.setCaretPosition( 0 );
+        }
+
+        private <T> List<Pair<T, Integer>> zipWithIndex(List<T> list)
+        {
+            List<Pair<T, Integer>> result = new ArrayList<Pair<T, Integer>>();
+
+            int a=0;
+
+            for (T t: list)
+            {
+                list.add(new Pair<T, Integer>(t, a++));
+            }
+
+            return list;
         }
 
         private String readOneLine( final String url )

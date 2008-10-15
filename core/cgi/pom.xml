@@ -10,11 +10,11 @@
     <packaging>pom</packaging>
     <name>NetVu Connected Java Client SDK-&gt;Core-&gt;CGI</name>
     <modules>
+        <module>demo</module>
         <module>common</module>
         <module>events</module>
         <module>vparts</module>
         <module>decoder</module>
 	<module>variable</module>
-        <!-- <module>demo</module> -->
     </modules>
 </project>
