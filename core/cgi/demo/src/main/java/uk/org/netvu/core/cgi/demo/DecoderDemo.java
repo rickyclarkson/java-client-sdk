@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -234,10 +235,10 @@ public class DecoderDemo
 
             for (T t: list)
             {
-                list.add(new Pair<T, Integer>(t, a++));
+                result.add(new Pair<T, Integer>(t, a++));
             }
 
-            return list;
+            return result;
         }
 
         private String readOneLine( final String url )
