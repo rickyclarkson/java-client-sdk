@@ -337,7 +337,9 @@ public final class EventsCGIResult
          * A dummy alarm type used for CGI parameters - never appears in a
          * database record.
          */
-        CAMERA( 16 ),
+        CAMERA_PARAMETER( 16 ), // this is not called CAMERA because there is
+        // another field in the outer class called
+        // CAMERA.
 
         /**
          * Used for activity search, never appears in a database record.

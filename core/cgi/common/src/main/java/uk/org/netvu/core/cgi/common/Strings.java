@@ -10,7 +10,8 @@ import java.util.List;
 public class Strings
 {
     /**
-     * A named String literal, used to improve the readability of uses of double quotes.
+     * A named String literal, used to improve the readability of uses of double
+     * quotes.
      */
     private static final String DOUBLE_QUOTES = "\"";
 
@@ -21,7 +22,8 @@ public class Strings
      *        the char to search for.
      * @param string
      *        the String to give a substring of.
-     * @throws NullPointerException if string is null.
+     * @throws NullPointerException
+     *         if string is null.
      * @return the substring of the specified String after the specified char.
      */
     public static String fromFirst( final char c, final String string )
@@ -36,7 +38,8 @@ public class Strings
      *        the separator to insert.
      * @param strings
      *        the List to intersperse.
-     * @throws NullPointerException if separator or strings are null.
+     * @throws NullPointerException
+     *         if separator or strings are null.
      * @return the interspersed String.
      */
     public static String intersperse( final String separator,
@@ -70,7 +73,8 @@ public class Strings
      * 
      * @param line
      *        the line to split.
-     * @throws NullPointerException if line is null.
+     * @throws NullPointerException
+     *         if line is null.
      * @return an array of Strings.
      */
     public static String[] splitCSV( final String line )
@@ -86,7 +90,8 @@ public class Strings
      *        the String to split.
      * @param separator
      *        the character to look for to separate on.
-     * @throws NullPointerException if string is null.
+     * @throws NullPointerException
+     *         if string is null.
      * @return a List of Strings that, in the original String, were before and
      *         after the separator.
      */
@@ -139,7 +144,8 @@ public class Strings
      *        the String to parse.
      * @param separator
      *        the separator to split on.
-     * @throws NullPointerException if string or separator are null.
+     * @throws NullPointerException
+     *         if string or separator are null.
      * @return the part of the given String that is after the first instance of
      *         the given separator, or the whole String if the separator isn't
      *         found in the String.
@@ -160,7 +166,8 @@ public class Strings
      *        the String to parse.
      * @param separator
      *        the separator to split on.
-     * @throws NullPointerException if string or separator are null.
+     * @throws NullPointerException
+     *         if string or separator are null.
      * @return the part of the given String that is after the last instance of
      *         the given separator, or the whole string if the separator isn't
      *         found in the string.
@@ -181,7 +188,8 @@ public class Strings
      *        the String to parse.
      * @param separator
      *        the separator to split on.
-     * @throws NullPointerException if string or separator are null.
+     * @throws NullPointerException
+     *         if string or separator are null.
      * @return the part of the given String that is before the first instance of
      *         the given separator, or the whole string if the separator isn't
      *         found in the String.
@@ -199,7 +207,7 @@ public class Strings
      * @param separator
      *        the separator to use.
      * @return a Conversion that can split a given String into two parts around
-     * the given separator.
+     *         the given separator.
      */
     static Conversion<String, Pair<String, String>> partition(
             final char separator )
@@ -233,7 +241,10 @@ public class Strings
 
     /**
      * Gives a Conversion that will append the specified String to its input.
-     * @param toAppend the String to append.  This is never null.
+     * 
+     * @param toAppend
+     *        the String to append. This is never null.
+     * @return a Conversion that will append the specified String to its input.
      */
     private static Conversion<String, String> append( final String toAppend )
     {
@@ -248,14 +259,16 @@ public class Strings
     }
 
     /**
-     * Partitions a String into 2 parts on a separator.  If that separator
-     * is not found, the returned List has one element, the original String.
-     *
-     * @param string the String to partition.  This is never null.
-     * @param separator the String that separates the two parts of the first String.
-     * This is never null.
-     * @return a List containing the text to the left of the separator, and the text
-     * to the right of the separator, if any.
+     * Partitions a String into 2 parts on a separator. If that separator is not
+     * found, the returned List has one element, the original String.
+     * 
+     * @param string
+     *        the String to partition. This is never null.
+     * @param separator
+     *        the String that separates the two parts of the first String. This
+     *        is never null.
+     * @return a List containing the text to the left of the separator, and the
+     *         text to the right of the separator, if any.
      */
     private static List<String> partitionLeniently( final String string,
             final String separator )
@@ -273,8 +286,9 @@ public class Strings
 
     /**
      * Gives a Conversion that will prepend the given String to its input.
-     *
-     * @param toPrepend the String to prepend.  This is never null.
+     * 
+     * @param toPrepend
+     *        the String to prepend. This is never null.
      * @return a Conversion that will prepend the given String to its input.
      */
     private static Conversion<String, String> prepend( final String toPrepend )

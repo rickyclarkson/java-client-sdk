@@ -74,7 +74,7 @@ public class VPartsCGIResult
             final ParameterDescription<T, R> param, final String s )
     {
         return parameterMap.set( param, param.fromURLParameter(
-                                                               new URLParameter( param.name, s ) ).get() );
+                new URLParameter( param.name, s ) ).get() );
     }
 
     private final ParameterMap builtMap;
@@ -86,7 +86,7 @@ public class VPartsCGIResult
             if ( parameterMap.get( parameterDescription ).isEmpty() )
             {
                 throw new IllegalStateException( "The parameter "
-                                                 + parameterDescription.name
+                        + parameterDescription.name
                         + " has not been given a value" );
             }
         }

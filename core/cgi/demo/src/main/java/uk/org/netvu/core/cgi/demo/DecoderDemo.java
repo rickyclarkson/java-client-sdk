@@ -193,7 +193,8 @@ public class DecoderDemo
                 @Override
                 public String convert( final Pair<String, Integer> pair )
                 {
-                    return pair.getSecondComponent() + " -> " + pair.getFirstComponent();
+                    return pair.getSecondComponent() + " -> "
+                            + pair.getFirstComponent();
                 }
             }
 
@@ -227,20 +228,6 @@ public class DecoderDemo
             variables.setCaretPosition( 0 );
         }
 
-        private <T> List<Pair<T, Integer>> zipWithIndex(List<T> list)
-        {
-            List<Pair<T, Integer>> result = new ArrayList<Pair<T, Integer>>();
-
-            int a=0;
-
-            for (T t: list)
-            {
-                result.add(new Pair<T, Integer>(t, a++));
-            }
-
-            return result;
-        }
-
         private String readOneLine( final String url )
         {
             InputStream stream;
@@ -272,6 +259,20 @@ public class DecoderDemo
                     e.printStackTrace();
                 }
             }
+        }
+
+        private <T> List<Pair<T, Integer>> zipWithIndex( final List<T> list )
+        {
+            final List<Pair<T, Integer>> result = new ArrayList<Pair<T, Integer>>();
+
+            int a = 0;
+
+            for ( final T t : list )
+            {
+                result.add( new Pair<T, Integer>( t, a++ ) );
+            }
+
+            return result;
         }
     }
 }

@@ -78,8 +78,7 @@ public final class ParameterMap
                         public Option<ParameterMap> convert(
                                 final ParameterMap map )
                         {
-                            return map.parseAndSet( parameterDescription,
-                                    part );
+                            return map.parseAndSet( parameterDescription, part );
                         }
                     } );
                 }
@@ -122,9 +121,11 @@ public final class ParameterMap
     /**
      * Constructs a ParameterMap using the specified Map for storing values, and
      * with the specified Validator.
-     *
-     * @param values the Map to use for storing values.
-     * @param validator a test against a ParameterMap for validity.
+     * 
+     * @param values
+     *        the Map to use for storing values.
+     * @param validator
+     *        a test against a ParameterMap for validity.
      */
     private ParameterMap( final Map<ParameterDescription<?, ?>, Object> values,
             final Validator validator )

@@ -20,7 +20,8 @@ public final class URLEncoder
      * 
      * @param value
      *        the value to encode.
-     * @throws NullPointerException if value is null.
+     * @throws NullPointerException
+     *         if value is null.
      * @return the encoded value.
      */
     @Override

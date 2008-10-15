@@ -14,69 +14,6 @@ import java.math.BigInteger;
 public abstract class Conversion<T, R>
 {
     /**
-     * A partial Conversion between Strings containing non-negative hexadecimal numbers and Longs.
-     */
-    private static final class HexStringToLongConversion
-            extends Conversion<String, Option<Long>>
-    {
-        @Override
-        public Option<Long> convert( final String string )
-        {
-            if ( string.startsWith( "-" ) )
-            {
-                return Option.getEmptyOption( "getHexStringToLongConversion does not support negative hexadecimal" );
-            }
-
-            if ( string.length() > 16 )
-            {
-                return Option.getEmptyOption( string
-                        + " is not a valid long value in hexadecimal" );
-            }
-
-            try
-            {
-                return Option.getFullOption( new BigInteger( string, 16 ).longValue() );
-            }
-            catch ( final NumberFormatException e )
-            {
-                return Option.getEmptyOption( string
-                        + " is not a valid long, in hexadecimal" );
-            }
-        }
-    }
-
-    /**
-     * A partial Conversion between Strings containing non-negative hexadecimal numbers and Integers.
-     */
-    private static final class HexStringToIntConversion
-            extends Conversion<String, Option<Integer>>
-    {
-        @Override
-        public Option<Integer> convert( final String t )
-        {
-            CheckParameters.areNotNull( t );
-
-            try
-            {
-                final long result = Long.parseLong( t, 16 );
-
-                if ( ( result & 0xFFFFFFFFL ) == result )
-                {
-                    return Option.getFullOption( (int) result );
-                }
-
-                return Option.getEmptyOption( t
-                        + " is outside the bounds of an int, in hexadecimal" );
-            }
-            catch ( final NumberFormatException e )
-            {
-                return Option.getEmptyOption( t
-                        + " is not a valid int, in hexadecimal" );
-            }
-        }
-    }
-
-    /**
      * A Conversion that returns true if the value it receives is the same as
      * the specified parameter.
      * 
@@ -84,7 +21,8 @@ public abstract class Conversion<T, R>
      *        the type of the values that this Conversion can receive.
      * @param other
      *        the parameter to test values against.
-     * @throws NullPointerException if other is null.
+     * @throws NullPointerException
+     *         if other is null.
      * @return a Conversion that returns true if the value it receives is the
      *         same as the specified parameter.
      */
@@ -113,7 +51,8 @@ public abstract class Conversion<T, R>
      *        the value to return if the Boolean is true.
      * @param ifFalse
      *        the value to return if the Boolean is false.
-     * @throws NullPointerException if ifTrue or ifFalse are null.
+     * @throws NullPointerException
+     *         if ifTrue or ifFalse are null.
      * @return a Conversion that, given a Boolean, returns the ifTrue parameter
      *         if the Boolean is true, and returns the ifFalse parameter
      *         otherwise.
@@ -146,7 +85,8 @@ public abstract class Conversion<T, R>
     /**
      * A partial Conversion from Strings containing hexadecimal to Longs.
      * 
-     * @return a partial Conversion from Strings containing hexadecimal to Longs.
+     * @return a partial Conversion from Strings containing hexadecimal to
+     *         Longs.
      */
     public static Conversion<String, Option<Long>> getHexStringToLongConversion()
     {
@@ -329,7 +269,8 @@ public abstract class Conversion<T, R>
      *        to.
      * @param conversion
      *        the second conversion to run.
-     * @throws NullPointerException if conversion is null.
+     * @throws NullPointerException
+     *         if conversion is null.
      * @return a composed conversion.
      */
     public final <V> Conversion<T, V> andThen( final Conversion<R, V> conversion )
@@ -352,9 +293,74 @@ public abstract class Conversion<T, R>
      * 
      * @param t
      *        the object to convert.
-     * @throws NullPointerException if t is null.
-     *
+     * @throws NullPointerException
+     *         if t is null.
      * @return the converted object.
      */
     public abstract R convert( T t );
+
+    /**
+     * A partial Conversion between Strings containing non-negative hexadecimal
+     * numbers and Integers.
+     */
+    private static final class HexStringToIntConversion
+            extends Conversion<String, Option<Integer>>
+    {
+        @Override
+        public Option<Integer> convert( final String t )
+        {
+            CheckParameters.areNotNull( t );
+
+            try
+            {
+                final long result = Long.parseLong( t, 16 );
+
+                if ( ( result & 0xFFFFFFFFL ) == result )
+                {
+                    return Option.getFullOption( (int) result );
+                }
+
+                return Option.getEmptyOption( t
+                        + " is outside the bounds of an int, in hexadecimal" );
+            }
+            catch ( final NumberFormatException e )
+            {
+                return Option.getEmptyOption( t
+                        + " is not a valid int, in hexadecimal" );
+            }
+        }
+    }
+
+    /**
+     * A partial Conversion between Strings containing non-negative hexadecimal
+     * numbers and Longs.
+     */
+    private static final class HexStringToLongConversion
+            extends Conversion<String, Option<Long>>
+    {
+        @Override
+        public Option<Long> convert( final String string )
+        {
+            if ( string.startsWith( "-" ) )
+            {
+                return Option.getEmptyOption( "getHexStringToLongConversion does not support negative hexadecimal" );
+            }
+
+            if ( string.length() > 16 )
+            {
+                return Option.getEmptyOption( string
+                        + " is not a valid long value in hexadecimal" );
+            }
+
+            try
+            {
+                return Option.getFullOption( new BigInteger( string, 16 ).longValue() );
+            }
+            catch ( final NumberFormatException e )
+            {
+                return Option.getEmptyOption( string
+                        + " is not a valid long, in hexadecimal" );
+            }
+        }
+    }
 }

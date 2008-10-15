@@ -300,7 +300,7 @@ class EventsCGIResultTest extends JUnit4(new Specification with Scalacheck {
  } }
 
  "Values stored in an EventsCGIResult" should { "be retrievable" in {
-  val result = (new EventsCGIResult.Builder() camera 1 alarm "test" julianTime 100 offset 5 file "ignore" onDisk true duration 40 preAlarm 1 archive 1 status EventsCGIResult.Status.NONE alarmType EventsCGIResult.AlarmType.CAMERA).build
+  val result = (new EventsCGIResult.Builder() camera 1 alarm "test" julianTime 100 offset 5 file "ignore" onDisk true duration 40 preAlarm 1 archive 1 status EventsCGIResult.Status.NONE alarmType EventsCGIResult.AlarmType.CAMERA_PARAMETER).build
 
   result.getCam mustEqual 1
   result.getAlarm mustEqual "test"
@@ -312,7 +312,7 @@ class EventsCGIResultTest extends JUnit4(new Specification with Scalacheck {
   result.getPreAlarm mustEqual 1
   result.getArchive mustEqual 1
   result.getStatus mustEqual EventsCGIResult.Status.NONE
-  result.getAlarmType mustEqual EventsCGIResult.AlarmType.CAMERA
+  result.getAlarmType mustEqual EventsCGIResult.AlarmType.CAMERA_PARAMETER
  } }
 
  "toCSV" should { "give a non-empty String" in {

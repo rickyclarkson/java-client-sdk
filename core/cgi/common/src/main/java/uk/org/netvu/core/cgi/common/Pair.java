@@ -21,7 +21,8 @@ public final class Pair<T, U>
      *        the first object.
      * @param u
      *        the second object.
-     * @throws NullPointerException if t or u are null.
+     * @throws NullPointerException
+     *         if t or u are null.
      */
     public Pair( final T t, final U u )
     {
