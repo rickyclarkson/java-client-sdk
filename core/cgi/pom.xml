@@ -16,5 +16,6 @@
         <module>vparts</module>
         <module>decoder</module>
 	<module>variable</module>
+        <module>displaypic</module>
     </modules>
 </project>
