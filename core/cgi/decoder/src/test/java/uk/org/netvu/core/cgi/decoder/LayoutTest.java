@@ -18,7 +18,7 @@ public class LayoutTest
     {
         for ( final Layout layout : Layout.values() )
         {
-            assertTrue( Layout.fromURL.convert( String.valueOf( layout.value ) ) == layout );
+            assertTrue( Layout.fromURL.apply( String.valueOf( layout.value ) ) == layout );
         }
     }
 
@@ -28,6 +28,6 @@ public class LayoutTest
     @Test( expected = IllegalArgumentException.class )
     public void invalidURL()
     {
-        Layout.fromURL.convert( "10" );
+        Layout.fromURL.apply( "10" );
     }
 }

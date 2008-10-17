@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Function;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.ParameterDescription;
@@ -36,8 +36,8 @@ public final class EventsCGIResult
             "file", StringConversion.string() );
 
     private static final ParameterDescription<Boolean, Option<Boolean>> ON_DISK = ParameterDescription.parameterWithoutDefault(
-            "onDisk", StringConversion.total( Conversion.equal( "exists" ),
-                    Conversion.fromBoolean( "exists", "overwitten" ) ) );
+            "onDisk", StringConversion.total( Function.equal( "exists" ),
+                    Function.fromBoolean( "exists", "overwitten" ) ) );
 
     private static final ParameterDescription<Integer, Option<Integer>> DURATION = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
             "duration", StringConversion.integer() ) );
@@ -105,10 +105,10 @@ public final class EventsCGIResult
         final Option<EventsCGIResult> result = ParameterMap.fromStrings(
                 parameterDescriptions,
                 Lists.removeByIndices( Arrays.asList( values ), 0, 7 ) ).map(
-                new Conversion<ParameterMap, EventsCGIResult>()
+                new Function<ParameterMap, EventsCGIResult>()
                 {
                     @Override
-                    public EventsCGIResult convert( final ParameterMap map )
+                    public EventsCGIResult apply( final ParameterMap map )
                     {
                         return new EventsCGIResult( map );
                     }
@@ -290,7 +290,7 @@ public final class EventsCGIResult
         all.addAll( alarmAndStatus );
 
         return Strings.intersperse( ", ", Lists.map( all,
-                Conversion.getObjectToStringConversion() ) );
+                Function.getObjectToStringFunction() ) );
     }
 
     /**
@@ -382,13 +382,13 @@ public final class EventsCGIResult
         public final int value;
 
         /**
-         * A Conversion that converts any String into an AlarmType if it can,
+         * A Function that converts any String into an AlarmType if it can,
          * storing the result in an Option.
          */
-        static final Conversion<String, Option<AlarmType>> fromString = new Conversion<String, Option<AlarmType>>()
+        static final Function<String, Option<AlarmType>> fromString = new Function<String, Option<AlarmType>>()
         {
             @Override
-            public Option<AlarmType> convert( final String t )
+            public Option<AlarmType> apply( final String t )
             {
                 try
                 {
@@ -592,10 +592,10 @@ public final class EventsCGIResult
                         "The Builder has already been built (build() has been called on it)." );
             }
 
-            real = real.map( new Conversion<ParameterMap, ParameterMap>()
+            real = real.map( new Function<ParameterMap, ParameterMap>()
             {
                 @Override
-                public ParameterMap convert( final ParameterMap map )
+                public ParameterMap apply( final ParameterMap map )
                 {
                     return map.set( parameter, value );
                 }
@@ -660,10 +660,10 @@ public final class EventsCGIResult
          */
         public final int value;
 
-        private static final Conversion<String, Option<Status>> fromString = new Conversion<String, Option<Status>>()
+        private static final Function<String, Option<Status>> fromString = new Function<String, Option<Status>>()
         {
             @Override
-            public Option<Status> convert( final String s )
+            public Option<Status> apply( final String s )
             {
                 try
                 {

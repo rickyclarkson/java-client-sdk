@@ -124,13 +124,13 @@ public class Strings
     }
 
     /**
-     * A Conversion that will surround any String passed to it with double
+     * A Function that will surround any String passed to it with double
      * quotes.
      * 
-     * @return a Conversion that will surround any String passed to it with
+     * @return a Function that will surround any String passed to it with
      *         double quotes.
      */
-    public static final Conversion<String, String> surroundWithQuotes()
+    public static final Function<String, String> surroundWithQuotes()
     {
         return prepend( DOUBLE_QUOTES ).andThen( append( DOUBLE_QUOTES ) );
     }
@@ -201,21 +201,21 @@ public class Strings
     }
 
     /**
-     * Gives a Conversion that can split a given String into two parts around
+     * Gives a Function that can split a given String into two parts around
      * the given separator.
      * 
      * @param separator
      *        the separator to use.
-     * @return a Conversion that can split a given String into two parts around
+     * @return a Function that can split a given String into two parts around
      *         the given separator.
      */
-    static Conversion<String, Pair<String, String>> partition(
+    static Function<String, Pair<String, String>> partition(
             final char separator )
     {
-        return new Conversion<String, Pair<String, String>>()
+        return new Function<String, Pair<String, String>>()
         {
             @Override
-            public Pair<String, String> convert( final String param )
+            public Pair<String, String> apply( final String param )
             {
                 return new Pair<String, String>( param.substring( 0,
                         param.indexOf( separator ) ),
@@ -240,18 +240,18 @@ public class Strings
     }
 
     /**
-     * Gives a Conversion that will append the specified String to its input.
+     * Gives a Function that will append the specified String to its input.
      * 
      * @param toAppend
      *        the String to append. This is never null.
-     * @return a Conversion that will append the specified String to its input.
+     * @return a Function that will append the specified String to its input.
      */
-    private static Conversion<String, String> append( final String toAppend )
+    private static Function<String, String> append( final String toAppend )
     {
-        return new Conversion<String, String>()
+        return new Function<String, String>()
         {
             @Override
-            public String convert( final String t )
+            public String apply( final String t )
             {
                 return t + toAppend;
             }
@@ -285,18 +285,18 @@ public class Strings
     }
 
     /**
-     * Gives a Conversion that will prepend the given String to its input.
+     * Gives a Function that will prepend the given String to its input.
      * 
      * @param toPrepend
      *        the String to prepend. This is never null.
-     * @return a Conversion that will prepend the given String to its input.
+     * @return a Function that will prepend the given String to its input.
      */
-    private static Conversion<String, String> prepend( final String toPrepend )
+    private static Function<String, String> prepend( final String toPrepend )
     {
-        return new Conversion<String, String>()
+        return new Function<String, String>()
         {
             @Override
-            public String convert( final String t )
+            public String apply( final String t )
             {
                 CheckParameters.areNotNull( t );
 

@@ -16,14 +16,14 @@ public final class URLParameter
     public final String value;
 
     /**
-     * A Conversion that, given a Pair of Strings, produces a URLParameter where
+     * A Function that, given a Pair of Strings, produces a URLParameter where
      * the first String corresponds to the key, and the second String
      * corresponds to the value.
      */
-    static final Conversion<Pair<String, String>, URLParameter> fromPair = new Conversion<Pair<String, String>, URLParameter>()
+    static final Function<Pair<String, String>, URLParameter> fromPair = new Function<Pair<String, String>, URLParameter>()
     {
         @Override
-        public URLParameter convert( final Pair<String, String> pair )
+        public URLParameter apply( final Pair<String, String> pair )
         {
             return new URLParameter( pair.getFirstComponent(),
                     pair.getSecondComponent() );

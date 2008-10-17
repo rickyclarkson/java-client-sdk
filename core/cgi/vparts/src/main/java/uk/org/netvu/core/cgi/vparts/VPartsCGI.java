@@ -3,7 +3,7 @@ package uk.org.netvu.core.cgi.vparts;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Function;
 import uk.org.netvu.core.cgi.common.Format;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
@@ -345,10 +345,10 @@ public final class VPartsCGI
                         "The Builder has already been built (build() has been called on it)." );
             }
 
-            real = real.map( new Conversion<ParameterMap, ParameterMap>()
+            real = real.map( new Function<ParameterMap, ParameterMap>()
             {
                 @Override
-                public ParameterMap convert( final ParameterMap map )
+                public ParameterMap apply( final ParameterMap map )
                 {
                     return map.set( parameter, value );
                 }

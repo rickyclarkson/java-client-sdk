@@ -119,7 +119,7 @@ public class DecoderCGITest
     public void fromUnquotedSlavePart() throws UnsupportedEncodingException
     {
         assertTrue( URLDecoder.decode(
-                Connection.urlEncode.convert( DecoderCGI.fromString(
+                Connection.urlEncode.apply( DecoderCGI.fromString(
                         "decoder.var?connections[64]=slaveip=192.168.1.10%2Cseq=F%2Cdwell=10"
                                 + "&commands[4]=\"display_pic.cgi?\"&layouts[4]=0" ).getConnections().get(
                         64 ) ), "UTF-8" ).equals(

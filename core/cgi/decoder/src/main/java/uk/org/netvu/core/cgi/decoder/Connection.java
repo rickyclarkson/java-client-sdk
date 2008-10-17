@@ -5,7 +5,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Function;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.ParameterDescription;
 import uk.org.netvu.core.cgi.common.ParameterMap;
@@ -47,27 +47,27 @@ public final class Connection
     private final ParameterMap parameterMap;
 
     /**
-     * A Conversion that, given a Connection, produces a URL-encoded String
+     * A Function that, given a Connection, produces a URL-encoded String
      * containing a representation of it as URL parameters.
      */
-    static final Conversion<Connection, String> urlEncode = new Conversion<Connection, String>()
+    static final Function<Connection, String> urlEncode = new Function<Connection, String>()
     {
         @Override
-        public String convert( final Connection connection )
+        public String apply( final Connection connection )
         {
-            return new URLEncoder().convert( connection.parameterMap.toURLParameters(
+            return new URLEncoder().apply( connection.parameterMap.toURLParameters(
                     params ).replaceAll( "&", "," ) );
         }
     }.andThen( Strings.surroundWithQuotes() );
 
     /**
-     * A Conversion that, given a String containing URL parameters, produces a
+     * A Function that, given a String containing URL parameters, produces a
      * Connection from it.
      */
-    static final Conversion<String, Connection> fromURL = new Conversion<String, Connection>()
+    static final Function<String, Connection> fromURL = new Function<String, Connection>()
     {
         @Override
-        public Connection convert( final String urlParameters )
+        public Connection apply( final String urlParameters )
         {
             try
             {

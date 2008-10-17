@@ -3,7 +3,7 @@ package uk.org.netvu.core.cgi.common;
 import java.math.BigInteger;
 
 /**
- * For internal use only! A conversion from objects of type T to those of type
+ * For internal use only! A function from objects of type T to those of type
  * R.
  * 
  * @param <T>
@@ -11,29 +11,29 @@ import java.math.BigInteger;
  * @param <R>
  *        the type of object to convert to.
  */
-public abstract class Conversion<T, R>
+public abstract class Function<T, R>
 {
     /**
-     * A Conversion that returns true if the value it receives is the same as
+     * A Function that returns true if the value it receives is the same as
      * the specified parameter.
      * 
      * @param <T>
-     *        the type of the values that this Conversion can receive.
+     *        the type of the values that this Function can receive.
      * @param other
      *        the parameter to test values against.
      * @throws NullPointerException
      *         if other is null.
-     * @return a Conversion that returns true if the value it receives is the
+     * @return a Function that returns true if the value it receives is the
      *         same as the specified parameter.
      */
-    public static <T> Conversion<T, Boolean> equal( final T other )
+    public static <T> Function<T, Boolean> equal( final T other )
     {
         CheckParameters.areNotNull( other );
 
-        return new Conversion<T, Boolean>()
+        return new Function<T, Boolean>()
         {
             @Override
-            public Boolean convert( final T t )
+            public Boolean apply( final T t )
             {
                 CheckParameters.areNotNull( t );
                 return other.equals( t );
@@ -42,7 +42,7 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * A Conversion that, given a Boolean, returns the ifTrue parameter if the
+     * A Function that, given a Boolean, returns the ifTrue parameter if the
      * Boolean is true, and returns the ifFalse parameter otherwise.
      * 
      * @param <T>
@@ -53,19 +53,19 @@ public abstract class Conversion<T, R>
      *        the value to return if the Boolean is false.
      * @throws NullPointerException
      *         if ifTrue or ifFalse are null.
-     * @return a Conversion that, given a Boolean, returns the ifTrue parameter
+     * @return a Function that, given a Boolean, returns the ifTrue parameter
      *         if the Boolean is true, and returns the ifFalse parameter
      *         otherwise.
      */
-    public static <T> Conversion<Boolean, T> fromBoolean( final T ifTrue,
+    public static <T> Function<Boolean, T> fromBoolean( final T ifTrue,
             final T ifFalse )
     {
         CheckParameters.areNotNull( ifTrue, ifFalse );
 
-        return new Conversion<Boolean, T>()
+        return new Function<Boolean, T>()
         {
             @Override
-            public T convert( final Boolean b )
+            public T apply( final Boolean b )
             {
                 return b ? ifTrue : ifFalse;
             }
@@ -73,40 +73,40 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * A partial Conversion from Strings containing hexadecimal to Integers.
+     * A partial Function from Strings containing hexadecimal to Integers.
      * 
-     * @return a Conversion from Strings containing hexadecimal to Integers.
+     * @return a Function from Strings containing hexadecimal to Integers.
      */
-    public static Conversion<String, Option<Integer>> getHexStringToIntConversion()
+    public static Function<String, Option<Integer>> getHexStringToIntFunction()
     {
-        return new HexStringToIntConversion();
+        return new HexStringToIntFunction();
     }
 
     /**
-     * A partial Conversion from Strings containing hexadecimal to Longs.
+     * A partial Function from Strings containing hexadecimal to Longs.
      * 
-     * @return a partial Conversion from Strings containing hexadecimal to
+     * @return a partial Function from Strings containing hexadecimal to
      *         Longs.
      */
-    public static Conversion<String, Option<Long>> getHexStringToLongConversion()
+    public static Function<String, Option<Long>> getHexStringToLongFunction()
     {
-        return new HexStringToLongConversion();
+        return new HexStringToLongFunction();
     }
 
     /**
-     * The identity conversion - given an object of type T it results in the
+     * The identity function - given an object of type T it results in the
      * same object of type T.
      * 
      * @param <T>
-     *        the input and output type of this conversion.
+     *        the input and output type of this Function.
      * @return the identity conversion for type T.
      */
-    public static <T> Conversion<T, T> getIdentityConversion()
+    public static <T> Function<T, T> getIdentityFunction()
     {
-        return new Conversion<T, T>()
+        return new Function<T, T>()
         {
             @Override
-            public T convert( final T t )
+            public T apply( final T t )
             {
                 CheckParameters.areNotNull( t );
                 return t;
@@ -115,17 +115,17 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * A Conversion from an Integer to a String containing a hexadecimal
+     * A Function from an Integer to a String containing a hexadecimal
      * representation of the Integer.
      * 
-     * @return a Conversion from an Integer to a String containing hexadecimal.
+     * @return a Function from an Integer to a String containing hexadecimal.
      */
-    public static Conversion<Integer, String> getIntToHexStringConversion()
+    public static Function<Integer, String> getIntToHexStringFunction()
     {
-        return new Conversion<Integer, String>()
+        return new Function<Integer, String>()
         {
             @Override
-            public String convert( final Integer value )
+            public String apply( final Integer value )
             {
                 return Integer.toHexString( value );
             }
@@ -133,16 +133,16 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * A Conversion from Longs to Strings containing hexadecimal.
+     * A Function from Longs to Strings containing hexadecimal.
      * 
-     * @return a Conversion from Longs to Strings containing hexadecimal.
+     * @return a Function from Longs to Strings containing hexadecimal.
      */
-    public static Conversion<Long, String> getLongToHexStringConversion()
+    public static Function<Long, String> getLongToHexStringFunction()
     {
-        return new Conversion<Long, String>()
+        return new Function<Long, String>()
         {
             @Override
-            public String convert( final Long value )
+            public String apply( final Long value )
             {
                 return Long.toHexString( value );
             }
@@ -150,7 +150,7 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * A Conversion that uses Object's toString() to convert objects of type T
+     * A Function that uses Object's toString() to convert objects of type T
      * to Strings.
      * 
      * @param <T>
@@ -158,12 +158,12 @@ public abstract class Conversion<T, R>
      * @return a conversion that uses Object's toString() to convert objects of
      *         type T into Strings.
      */
-    public static <T> Conversion<T, String> getObjectToStringConversion()
+    public static <T> Function<T, String> getObjectToStringFunction()
     {
-        return new Conversion<T, String>()
+        return new Function<T, String>()
         {
             @Override
-            public String convert( final T t )
+            public String apply( final T t )
             {
                 return t.toString();
             }
@@ -177,12 +177,12 @@ public abstract class Conversion<T, R>
      * 
      * @return a case-insensitive conversion from Strings to Booleans.
      */
-    public static Conversion<String, Option<Boolean>> getStringToBooleanConversion()
+    public static Function<String, Option<Boolean>> getStringToBooleanFunction()
     {
-        return new Conversion<String, Option<Boolean>>()
+        return new Function<String, Option<Boolean>>()
         {
             @Override
-            public Option<Boolean> convert( final String t )
+            public Option<Boolean> apply( final String t )
             {
                 if ( t.equalsIgnoreCase( "true" ) )
                 {
@@ -204,12 +204,12 @@ public abstract class Conversion<T, R>
      * @return a conversion from Strings to Integers, using
      *         Integer.parseInt(String).
      */
-    public static Conversion<String, Option<Integer>> getStringToIntConversion()
+    public static Function<String, Option<Integer>> getStringToIntFunction()
     {
-        return new Conversion<String, Option<Integer>>()
+        return new Function<String, Option<Integer>>()
         {
             @Override
-            public Option<Integer> convert( final String t )
+            public Option<Integer> apply( final String t )
             {
                 CheckParameters.areNotNull( t );
 
@@ -230,12 +230,12 @@ public abstract class Conversion<T, R>
      * 
      * @return a conversion from Strings to longs, using Long.parseLong(String).
      */
-    public static Conversion<String, Option<Long>> getStringToLongConversion()
+    public static Function<String, Option<Long>> getStringToLongFunction()
     {
-        return new Conversion<String, Option<Long>>()
+        return new Function<String, Option<Long>>()
         {
             @Override
-            public Option<Long> convert( final String t )
+            public Option<Long> apply( final String t )
             {
                 CheckParameters.areNotNull( t );
 
@@ -252,15 +252,15 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * Constructs a Conversion. This constructor has no effect.
+     * Constructs a Function. This constructor has no effect.
      */
-    protected Conversion()
+    protected Function()
     {
     }
 
     /**
      * Composes two conversions together such that an incoming object of type T
-     * gets converted by this Conversion to an object of type R, then gets
+     * gets converted by this Function to an object of type R, then gets
      * passed into the conversion supplied as a parameter, to finally produce an
      * object of type V.
      * 
@@ -273,17 +273,17 @@ public abstract class Conversion<T, R>
      *         if conversion is null.
      * @return a composed conversion.
      */
-    public final <V> Conversion<T, V> andThen( final Conversion<R, V> conversion )
+    public final <V> Function<T, V> andThen( final Function<R, V> conversion )
     {
         CheckParameters.areNotNull( conversion );
 
-        return new Conversion<T, V>()
+        return new Function<T, V>()
         {
             @Override
-            public V convert( final T t )
+            public V apply( final T t )
             {
-                final R intermediate = Conversion.this.convert( t );
-                return conversion.convert( intermediate );
+                final R intermediate = Function.this.apply( t );
+                return conversion.apply( intermediate );
             }
         };
     }
@@ -297,17 +297,17 @@ public abstract class Conversion<T, R>
      *         if t is null.
      * @return the converted object.
      */
-    public abstract R convert( T t );
+    public abstract R apply( T t );
 
     /**
-     * A partial Conversion between Strings containing non-negative hexadecimal
+     * A partial Function between Strings containing non-negative hexadecimal
      * numbers and Integers.
      */
-    private static final class HexStringToIntConversion
-            extends Conversion<String, Option<Integer>>
+    private static final class HexStringToIntFunction
+            extends Function<String, Option<Integer>>
     {
         @Override
-        public Option<Integer> convert( final String t )
+        public Option<Integer> apply( final String t )
         {
             CheckParameters.areNotNull( t );
 
@@ -332,18 +332,18 @@ public abstract class Conversion<T, R>
     }
 
     /**
-     * A partial Conversion between Strings containing non-negative hexadecimal
+     * A partial Function between Strings containing non-negative hexadecimal
      * numbers and Longs.
      */
-    private static final class HexStringToLongConversion
-            extends Conversion<String, Option<Long>>
+    private static final class HexStringToLongFunction
+            extends Function<String, Option<Long>>
     {
         @Override
-        public Option<Long> convert( final String string )
+        public Option<Long> apply( final String string )
         {
             if ( string.startsWith( "-" ) )
             {
-                return Option.getEmptyOption( "getHexStringToLongConversion does not support negative hexadecimal" );
+                return Option.getEmptyOption( "getHexStringToLongFunction does not support negative hexadecimal" );
             }
 
             if ( string.length() > 16 )

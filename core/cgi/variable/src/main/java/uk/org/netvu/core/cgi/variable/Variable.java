@@ -5,7 +5,7 @@ import static uk.org.netvu.core.cgi.variable.ArrayOrScalar.SCALAR;
 
 import java.util.regex.Pattern;
 
-import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Function;
 import uk.org.netvu.core.cgi.common.Option;
 
 /**
@@ -83,15 +83,15 @@ public enum Variable
     private final ArrayOrScalar arrayOrScalar;
 
     /**
-     * A Conversion that, given a String possibly ending in [], ignores the []
+     * A Function that, given a String possibly ending in [], ignores the []
      * and matches it, case-insensitively, to one of the given Variables,
      * returning it in an Option, or returning an empty Option if there was no
      * match.
      */
-    static final Conversion<String, Option<Variable>> fromString = new Conversion<String, Option<Variable>>()
+    static final Function<String, Option<Variable>> fromString = new Function<String, Option<Variable>>()
     {
         @Override
-        public Option<Variable> convert( final String s )
+        public Option<Variable> apply( final String s )
         {
             try
             {

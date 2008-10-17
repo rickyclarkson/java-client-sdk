@@ -425,12 +425,12 @@ public abstract class ParameterDescription<T, R>
         Option<String> toURLParameter( final T value )
         {
             return conversions.toString( value ).map(
-                    new Conversion<String, String>()
+                    new Function<String, String>()
                     {
                         @Override
-                        public String convert( final String t )
+                        public String apply( final String t )
                         {
-                            return name + '=' + new URLEncoder().convert( t );
+                            return name + '=' + new URLEncoder().apply( t );
                         }
                     } );
         }
@@ -488,16 +488,16 @@ public abstract class ParameterDescription<T, R>
         @Override
         Option<String> toURLParameter( final Option<T> value )
         {
-            return value.bind( new Conversion<T, Option<String>>()
+            return value.bind( new Function<T, Option<String>>()
             {
                 @Override
-                public Option<String> convert( final T value )
+                public Option<String> apply( final T value )
                 {
                     return conversion.toString( value ).map(
-                            new Conversion<String, String>()
+                            new Function<String, String>()
                             {
                                 @Override
-                                public String convert( final String valuePart )
+                                public String apply( final String valuePart )
                                 {
                                     return name + '=' + valuePart;
                                 }
@@ -520,7 +520,7 @@ public abstract class ParameterDescription<T, R>
             ParameterDescription<List<Pair<Integer, T>>, TreeMap<Integer, T>>
     {
         /**
-         * Conversions between values of type T and Strings.
+         * Functions between values of type T and Strings.
          */
         private final StringConversion<T> conversions;
 
@@ -530,7 +530,7 @@ public abstract class ParameterDescription<T, R>
          * @param name
          *        the name of the parameter.
          * @param conversions
-         *        Conversions between values of type T and Strings.
+         *        conversions between values of type T and Strings.
          * @throws NullPointerException
          *         if name or conversions are null.
          */
@@ -595,7 +595,7 @@ public abstract class ParameterDescription<T, R>
                     }
 
                     result.append( name + '[' + entry.getKey() + ']' + "="
-                            + new URLEncoder().convert( value ) );
+                            + new URLEncoder().apply( value ) );
                 }
             }
 

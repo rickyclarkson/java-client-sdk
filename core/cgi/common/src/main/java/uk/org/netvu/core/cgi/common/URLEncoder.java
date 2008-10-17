@@ -3,10 +3,10 @@ package uk.org.netvu.core.cgi.common;
 import java.io.UnsupportedEncodingException;
 
 /**
- * For internal use only! A Conversion for encoding text for safe use in URLs.
+ * For internal use only! A Function that encodes text for safe use in URLs.
  */
 public final class URLEncoder
-        extends Conversion<String, String>
+        extends Function<String, String>
 {
     /**
      * Constructs a URLEncoder.
@@ -25,7 +25,7 @@ public final class URLEncoder
      * @return the encoded value.
      */
     @Override
-    public String convert( final String value )
+    public String apply( final String value )
     {
         CheckParameters.areNotNull( value );
         try

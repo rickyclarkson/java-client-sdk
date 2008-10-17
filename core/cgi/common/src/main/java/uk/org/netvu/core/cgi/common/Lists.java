@@ -18,20 +18,20 @@ public final class Lists
      *        the type of the elements of the List.
      * @param list
      *        the List to filter.
-     * @param conversion
+     * @param predicate
      *        the predicate to filter by.
      * @return a List consisting of only the elements of the passed-in List that
      *         pass the predicate.
      */
     public static <T> List<T> filter( final List<T> list,
-            final Conversion<T, Boolean> conversion )
+            final Function<T, Boolean> predicate )
     {
-        CheckParameters.areNotNull( conversion );
+        CheckParameters.areNotNull( predicate );
 
         final List<T> results = new ArrayList<T>();
         for ( final T t : list )
         {
-            if ( conversion.convert( t ) )
+            if ( predicate.apply( t ) )
             {
                 results.add( t );
             }
@@ -41,7 +41,7 @@ public final class Lists
 
     /**
      * Creates a List by passing all items from the specified List through the
-     * specified Conversion.
+     * specified Function.
      * 
      * @param <T>
      *        the type of the specified List.
@@ -49,19 +49,19 @@ public final class Lists
      *        the type of the returned List.
      * @param list
      *        the List to map over.
-     * @param conversion
-     *        the conversion to map through.
+     * @param function
+     *        the function to map over the List.
      * @return a List containing objects of type R.
      */
     public static <T, R> List<R> map( final List<T> list,
-            final Conversion<T, R> conversion )
+            final Function<T, R> function )
     {
-        CheckParameters.areNotNull( conversion );
+        CheckParameters.areNotNull( function );
         final List<R> result = new ArrayList<R>();
 
         for ( final T t : list )
         {
-            result.add( conversion.convert( t ) );
+            result.add( function.apply( t ) );
         }
 
         return result;

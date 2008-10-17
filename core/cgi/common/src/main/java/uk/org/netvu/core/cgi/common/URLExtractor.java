@@ -24,8 +24,8 @@ final class URLExtractor
         }
 
         final List<String> parameters = parameters( url );
-        final Conversion<String, Pair<String, String>> partitionByEqualsSign = Strings.partition( '=' );
-        final Conversion<String, URLParameter> partitionByEqualsSignThenConstructAURLParameterFromThePair = partitionByEqualsSign.andThen( URLParameter.fromPair );
+        final Function<String, Pair<String, String>> partitionByEqualsSign = Strings.partition( '=' );
+        final Function<String, URLParameter> partitionByEqualsSignThenConstructAURLParameterFromThePair = partitionByEqualsSign.andThen( URLParameter.fromPair );
         return Lists.map( parameters,
                 partitionByEqualsSignThenConstructAURLParameterFromThePair );
     }

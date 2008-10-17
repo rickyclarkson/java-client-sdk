@@ -1,6 +1,6 @@
 package uk.org.netvu.core.cgi.vparts;
 
-import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Function;
 import uk.org.netvu.core.cgi.common.Option;
 
 /**
@@ -32,10 +32,10 @@ public enum Mode
      * (case-insensitive), returning it in an Option if it does, and returning
      * an empty Option otherwise.
      */
-    static Conversion<String, Option<Mode>> fromString = new Conversion<String, Option<Mode>>()
+    static Function<String, Option<Mode>> fromString = new Function<String, Option<Mode>>()
     {
         @Override
-        public Option<Mode> convert( final String s )
+        public Option<Mode> apply( final String s )
         {
             try
             {

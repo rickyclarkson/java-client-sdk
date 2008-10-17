@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Function;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.Pair;
@@ -27,7 +27,7 @@ public final class DecoderCGI
     private static final ParameterDescription<Persistence, Persistence> PERSISTENCE = ParameterDescription.parameterWithDefault(
             "persistence",
             Persistence.TEMPORARY,
-            StringConversion.convenientPartial( Option.<String, Persistence> getConversionToEmptyOption( "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name." ) ) );
+            StringConversion.convenientPartial( Option.<String, Persistence> getFunctionToEmptyOption( "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name." ) ) );
 
     private static final ParameterDescription<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = ParameterDescription.sparseArrayParameter(
             "connections", StringConversion.total( Connection.fromURL,
@@ -40,11 +40,11 @@ public final class DecoderCGI
     private static final ParameterDescription<String[], Option<String[]>> OUTPUT_TITLES = ParameterDescription.parameterWithoutDefault(
             "output_titles",
             StringConversion.partial(
-                    Option.<String, String[]> getConversionToEmptyOption( "Parsing not supported for output_titles" ),
-                    Option.toPartialConversion( new Conversion<String[], String>()
+                    Option.<String, String[]> getFunctionToEmptyOption( "Parsing not supported for output_titles" ),
+                    Option.toPartialFunction( new Function<String[], String>()
                     {
                         @Override
-                        public String convert( final String[] array )
+                        public String apply( final String[] array )
                         {
                             return Lists.reduce( Lists.map(
                                     Arrays.asList( array ),
@@ -55,7 +55,7 @@ public final class DecoderCGI
 
     private static final ParameterDescription<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = ParameterDescription.sparseArrayParameter(
             "commands", StringConversion.total(
-                    Conversion.<String> getIdentityConversion(),
+                    Function.<String> getIdentityFunction(),
                     new URLEncoder().andThen( Strings.surroundWithQuotes() ) ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and

@@ -27,13 +27,13 @@ public enum Format
     CSV;
 
     /**
-     * A conversion that converts Strings to Formats according to the String
+     * A Function that converts Strings to Formats according to the String
      * representation of Formats.
      */
-    public static final Conversion<String, Option<Format>> fromString = new Conversion<String, Option<Format>>()
+    public static final Function<String, Option<Format>> fromString = new Function<String, Option<Format>>()
     {
         @Override
-        public Option<Format> convert( final String t )
+        public Option<Format> apply( final String t )
         {
             try
             {

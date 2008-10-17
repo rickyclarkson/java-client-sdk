@@ -1,6 +1,6 @@
 package uk.org.netvu.core.cgi.decoder;
 
-import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Function;
 
 /**
  * An enumeration of all the layouts that the DecoderCGI can specify.
@@ -63,10 +63,10 @@ public enum Layout
     /**
      * Converts a Layout to its String representation for use in URL parameters.
      */
-    static final Conversion<Layout, String> urlEncode = new Conversion<Layout, String>()
+    static final Function<Layout, String> urlEncode = new Function<Layout, String>()
     {
         @Override
-        public String convert( final Layout layout )
+        public String apply( final Layout layout )
         {
             return String.valueOf( layout.value );
         }
@@ -75,10 +75,10 @@ public enum Layout
     /**
      * Converts the String representation of a Layout to a Layout.
      */
-    static final Conversion<String, Layout> fromURL = new Conversion<String, Layout>()
+    static final Function<String, Layout> fromURL = new Function<String, Layout>()
     {
         @Override
-        public Layout convert( final String url )
+        public Layout apply( final String url )
         {
             return find( Integer.parseInt( url ) );
         }

@@ -1,6 +1,6 @@
 package uk.org.netvu.core.cgi.vparts;
 
-import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Function;
 import uk.org.netvu.core.cgi.common.Option;
 
 /**
@@ -19,14 +19,14 @@ public enum DirectoryPathFormat
     LONG;
 
     /**
-     * A Conversion that, given a String, will produce an Option containing
+     * A Function that, given a String, will produce an Option containing
      * SHORT or LONG if the String matches it (ignoring case), and an empty
      * Option otherwise.
      */
-    static final Conversion<String, Option<DirectoryPathFormat>> fromString = new Conversion<String, Option<DirectoryPathFormat>>()
+    static final Function<String, Option<DirectoryPathFormat>> fromString = new Function<String, Option<DirectoryPathFormat>>()
     {
         @Override
-        public Option<DirectoryPathFormat> convert( final String t )
+        public Option<DirectoryPathFormat> apply( final String t )
         {
             try
             {

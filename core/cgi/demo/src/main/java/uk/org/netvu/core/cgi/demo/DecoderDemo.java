@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Function;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Pair;
 import uk.org.netvu.core.cgi.common.Strings;
@@ -171,10 +171,10 @@ public class DecoderDemo
             }
 
             final class Unquote
-                    extends Conversion<String, String>
+                    extends Function<String, String>
             {
                 @Override
-                public String convert( final String quoted )
+                public String apply( final String quoted )
                 {
                     return quoted.substring( 1, quoted.length() - 1 );
                 }
@@ -188,10 +188,10 @@ public class DecoderDemo
                             ',' ), new Unquote() );
 
             final class Hack2
-                    extends Conversion<Pair<String, Integer>, String>
+                    extends Function<Pair<String, Integer>, String>
             {
                 @Override
-                public String convert( final Pair<String, Integer> pair )
+                public String apply( final Pair<String, Integer> pair )
                 {
                     return pair.getSecondComponent() + " -> "
                             + pair.getFirstComponent();
@@ -199,10 +199,10 @@ public class DecoderDemo
             }
 
             final class Hack1
-                    extends Conversion<Pair<String, Integer>, Boolean>
+                    extends Function<Pair<String, Integer>, Boolean>
             {
                 @Override
-                public Boolean convert(
+                public Boolean apply(
                         final Pair<String, Integer> valueAndIndex )
                 {
                     return valueAndIndex.getFirstComponent().length() != 0;

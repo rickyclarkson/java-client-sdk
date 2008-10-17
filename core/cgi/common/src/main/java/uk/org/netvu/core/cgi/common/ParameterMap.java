@@ -33,10 +33,10 @@ public final class ParameterMap
         for ( final Pair<ParameterDescription<?, ?>, String> pair : Lists.zip(
                 parameterDescriptions, strings ) )
         {
-            parameterMap = parameterMap.bind( new Conversion<ParameterMap, Option<ParameterMap>>()
+            parameterMap = parameterMap.bind( new Function<ParameterMap, Option<ParameterMap>>()
             {
                 @Override
-                public Option<ParameterMap> convert( final ParameterMap map )
+                public Option<ParameterMap> apply( final ParameterMap map )
                 {
                     return map.parseAndSet( pair.getFirstComponent(),
                             new URLParameter( pair.getFirstComponent().name,
@@ -72,10 +72,10 @@ public final class ParameterMap
             {
                 if ( part.name.startsWith( parameterDescription.name ) )
                 {
-                    parameterMap = parameterMap.bind( new Conversion<ParameterMap, Option<ParameterMap>>()
+                    parameterMap = parameterMap.bind( new Function<ParameterMap, Option<ParameterMap>>()
                     {
                         @Override
-                        public Option<ParameterMap> convert(
+                        public Option<ParameterMap> apply(
                                 final ParameterMap map )
                         {
                             return map.parseAndSet( parameterDescription, part );
@@ -240,10 +240,10 @@ public final class ParameterMap
             final URLParameter keyAndValue )
     {
         return parameterDescription.fromURLParameter( keyAndValue ).map(
-                new Conversion<T, ParameterMap>()
+                new Function<T, ParameterMap>()
                 {
                     @Override
-                    public ParameterMap convert( final T value )
+                    public ParameterMap apply( final T value )
                     {
                         return set( parameterDescription, value );
                     }

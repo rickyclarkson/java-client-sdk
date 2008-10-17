@@ -1,6 +1,6 @@
 package uk.org.netvu.core.cgi.variable;
 
-import uk.org.netvu.core.cgi.common.Conversion;
+import uk.org.netvu.core.cgi.common.Function;
 import uk.org.netvu.core.cgi.common.Option;
 
 /**
@@ -19,14 +19,14 @@ public enum VariableType
     INCLUDE;
 
     /**
-     * A Conversion that, given a String, will return an Option containing HTTP
+     * A Function that, given a String, will return an Option containing HTTP
      * or INCLUDE if the String case-insensitively matches one of those, and an
      * empty Option otherwise.
      */
-    static final Conversion<String, Option<VariableType>> fromString = new Conversion<String, Option<VariableType>>()
+    static final Function<String, Option<VariableType>> fromString = new Function<String, Option<VariableType>>()
     {
         @Override
-        public Option<VariableType> convert( final String t )
+        public Option<VariableType> apply( final String t )
         {
             try
             {

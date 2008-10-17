@@ -12,7 +12,7 @@ import java.util.Iterator;
 public abstract class Option<T> implements Iterable<T>
 {
     /**
-     * A Conversion that always yields an empty Option.
+     * A Function that always yields an empty Option.
      * 
      * @param <T>
      *        the type of the ignored value to convert.
@@ -22,17 +22,17 @@ public abstract class Option<T> implements Iterable<T>
      *        the reason that the Option has no element.
      * @throws NullPointerException
      *         if reason is null.
-     * @return a Conversion that always yields an empty Option.
+     * @return a Function that always yields an empty Option.
      */
-    public static <T, U> Conversion<T, Option<U>> getConversionToEmptyOption(
+    public static <T, U> Function<T, Option<U>> getFunctionToEmptyOption(
             final String reason )
     {
         CheckParameters.areNotNull( reason );
 
-        return new Conversion<T, Option<U>>()
+        return new Function<T, Option<U>>()
         {
             @Override
-            public Option<U> convert( final T t )
+            public Option<U> apply( final T t )
             {
                 return getEmptyOption( reason );
             }
@@ -40,19 +40,19 @@ public abstract class Option<T> implements Iterable<T>
     }
 
     /**
-     * A Conversion that yields an Option containing the value given to it.
+     * A Function that yields an Option containing the value given to it.
      * 
      * @param <T>
-     *        the type of the values that this Conversion takes.
-     * @return a Conversion that yields an Option containing the value given to
+     *        the type of the values that this Function takes.
+     * @return a Function that yields an Option containing the value given to
      *         it.
      */
-    public static <T> Conversion<T, Option<T>> getConversionToFullOption()
+    public static <T> Function<T, Option<T>> getFunctionToFullOption()
     {
-        return new Conversion<T, Option<T>>()
+        return new Function<T, Option<T>>()
         {
             @Override
-            public Option<T> convert( final T t )
+            public Option<T> apply( final T t )
             {
                 return getFullOption( t );
             }
@@ -96,31 +96,31 @@ public abstract class Option<T> implements Iterable<T>
     }
 
     /**
-     * A Conversion that takes in a T, converts it to a U, and produces an
+     * A Function that takes in a T, converts it to a U, and produces an
      * Option containing that U.
      * 
      * @param <T>
      *        the type of the value to take in.
      * @param <U>
      *        the type of the Option to produce.
-     * @param conversion
-     *        the Conversion to convert the T into a U.
+     * @param function
+     *        the Function to convert the T into a U.
      * @throws NullPointerException
-     *         if conversion is null.
-     * @return a Conversion that takes in a T, converts it to a U, and produces
+     *         if function is null.
+     * @return a Function that takes in a T, converts it to a U, and produces
      *         an Option containing that U.
      */
-    public static <T, U> Conversion<T, Option<U>> toPartialConversion(
-            final Conversion<T, U> conversion )
+    public static <T, U> Function<T, Option<U>> toPartialFunction(
+            final Function<T, U> function )
     {
-        CheckParameters.areNotNull( conversion );
+        CheckParameters.areNotNull( function );
 
-        return new Conversion<T, Option<U>>()
+        return new Function<T, Option<U>>()
         {
             @Override
-            public Option<U> convert( final T t )
+            public Option<U> apply( final T t )
             {
-                return getFullOption( conversion.convert( t ) );
+                return getFullOption( function.apply( t ) );
             }
         };
     }
@@ -176,20 +176,20 @@ public abstract class Option<T> implements Iterable<T>
     public abstract boolean isEmpty();
 
     /**
-     * Maps the specified Conversion over this Option. If the Option has an
+     * Maps the specified Function over this Option. If the Option has an
      * element, then a new Option will be produced containing the value produced
-     * by running the Conversion on the value held by this Option. If the Option
+     * by running the Function on the value held by this Option. If the Option
      * is empty, an empty Option will be returned.
      * 
      * @param <U>
      *        the type to convert to.
-     * @param conversion
-     *        the Conversion to map over this Option.
+     * @param function
+     *        the Function to map over this Option.
      * @throws NullPointerException
-     *         if conversion is null.
+     *         if function is null.
      * @return an Option containing the mapped value, or nothing.
      */
-    public abstract <U> Option<U> map( Conversion<T, U> conversion );
+    public abstract <U> Option<U> map( Function<T, U> function );
 
     /**
      * The reason that the Option has no element.
@@ -215,21 +215,21 @@ public abstract class Option<T> implements Iterable<T>
     }
 
     /**
-     * Applies the specified Conversion to a value held by this Option.
-     * Specifically, if this Option is empty, the Conversion is not invoked - an
-     * empty Option is returned. If this Option is full, the Conversion is
+     * Applies the specified Function to a value held by this Option.
+     * Specifically, if this Option is empty, the Function is not invoked - an
+     * empty Option is returned. If this Option is full, the Function is
      * invoked, and its result is returned.
      * 
      * @param <U>
      *        the type of the Option to convert this Option to.
-     * @param conversion
-     *        the Conversion to apply to a value held by this Option.
+     * @param function
+     *        the Function to apply to a value held by this Option.
      * @throws NullPointerException
      *         if conversion is null.
-     * @return an Option holding the result of binding the specified Conversion
+     * @return an Option holding the result of binding the specified Function
      *         to this Option.
      */
-    abstract <U> Option<U> bind( Conversion<T, Option<U>> conversion );
+    abstract <U> Option<U> bind( Function<T, Option<U>> function );
 
     /**
      * Folds an Option, producing one value.
@@ -239,13 +239,13 @@ public abstract class Option<T> implements Iterable<T>
      * @param ifEmpty
      *        the U to return if the Option holds no value.
      * @param ifFull
-     *        the Conversion to apply if the Option has a value.
+     *        the Function to apply if the Option has a value.
      * @throws NullPointerException
      *         if ifEmpty or ifFull are null.
      * @return a folded version of this Option according to the specified
      *         parameters.
      */
-    abstract <U> U fold( U ifEmpty, Conversion<T, U> ifFull );
+    abstract <U> U fold( U ifEmpty, Function<T, U> ifFull );
 
     /**
      * An Option that does not hold a value.
@@ -264,9 +264,9 @@ public abstract class Option<T> implements Iterable<T>
         }
 
         @Override
-        public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
+        public <U> Option<U> bind( final Function<T, Option<U>> function )
         {
-            CheckParameters.areNotNull( conversion );
+            CheckParameters.areNotNull( function );
 
             return Option.getEmptyOption( reason );
         }
@@ -291,9 +291,9 @@ public abstract class Option<T> implements Iterable<T>
         }
 
         @Override
-        public <U> Option<U> map( final Conversion<T, U> conversion )
+        public <U> Option<U> map( final Function<T, U> function )
         {
-            CheckParameters.areNotNull( conversion );
+            CheckParameters.areNotNull( function );
 
             return Option.getEmptyOption( reason );
         }
@@ -305,7 +305,7 @@ public abstract class Option<T> implements Iterable<T>
         }
 
         @Override
-        <U> U fold( final U ifEmpty, final Conversion<T, U> ifFull )
+        <U> U fold( final U ifEmpty, final Function<T, U> ifFull )
         {
             CheckParameters.areNotNull( ifEmpty, ifFull );
 
@@ -330,9 +330,9 @@ public abstract class Option<T> implements Iterable<T>
         }
 
         @Override
-        public <U> Option<U> bind( final Conversion<T, Option<U>> conversion )
+        public <U> Option<U> bind( final Function<T, Option<U>> conversion )
         {
-            return conversion.convert( t );
+            return conversion.apply( t );
         }
 
         @Override
@@ -353,9 +353,9 @@ public abstract class Option<T> implements Iterable<T>
         }
 
         @Override
-        public <U> Option<U> map( final Conversion<T, U> conversion )
+        public <U> Option<U> map( final Function<T, U> conversion )
         {
-            return Option.getFullOption( conversion.convert( t ) );
+            return Option.getFullOption( conversion.apply( t ) );
         }
 
         @Override
@@ -366,11 +366,11 @@ public abstract class Option<T> implements Iterable<T>
         }
 
         @Override
-        <U> U fold( final U ifEmpty, final Conversion<T, U> ifFull )
+        <U> U fold( final U ifEmpty, final Function<T, U> ifFull )
         {
             CheckParameters.areNotNull( ifEmpty );
 
-            return ifFull.convert( t );
+            return ifFull.apply( t );
         }
     }
 }
