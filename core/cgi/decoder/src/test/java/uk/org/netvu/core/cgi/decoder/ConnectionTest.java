@@ -37,8 +37,7 @@ public class ConnectionTest
     @Test
     public void retention()
     {
-        assertTrue( Connection.fromURL.apply( "slaveip=192.168.1.10&cam=1" ).getSlaveIP().equals(
-                "192.168.1.10" ) );
+        assertTrue( Connection.fromURL.apply( "slaveip=192.168.1.10&cam=1" ).getSlaveIP().equals( "192.168.1.10" ) );
     }
 
     /**
@@ -47,8 +46,7 @@ public class ConnectionTest
     @Test
     public void retention2()
     {
-        assertTrue( new Connection().slaveIP( "foo" ).getSlaveIP().equals(
-                "foo" ) );
+        assertTrue( new Connection().slaveIP( "foo" ).getSlaveIP().equals( "foo" ) );
     }
 
     /**
@@ -60,8 +58,7 @@ public class ConnectionTest
     @Test
     public void urlEncode() throws UnsupportedEncodingException
     {
-        assertTrue( URLDecoder.decode(
-                Connection.urlEncode.apply( new Connection().cam( 2 ).slaveIP(
-                        "foo" ) ), "UTF-8" ).equals( "\"slaveip=foo,cam=2\"" ) );
+        assertTrue( URLDecoder.decode( Connection.urlEncode.apply( new Connection().cam( 2 ).slaveIP( "foo" ) ),
+                "UTF-8" ).equals( "\"slaveip=foo,cam=2\"" ) );
     }
 }

@@ -52,8 +52,8 @@ public abstract class ParameterDescription<T, R>
      *        the ParameterDescription to pass values on to.
      * @return a ParameterDescription that disallows a value.
      */
-    public static <T, U> ParameterDescription<T, U> parameterDisallowing(
-            final T banned, final ParameterDescription<T, U> delegate )
+    public static <T, U> ParameterDescription<T, U> parameterDisallowing( final T banned,
+            final ParameterDescription<T, U> delegate )
     {
         CheckParameters.areNotNull( banned );
 
@@ -80,12 +80,10 @@ public abstract class ParameterDescription<T, R>
      *         everything except the validation to a specified
      *         ParameterDescription.
      */
-    public static <U> ParameterDescription<Integer, U> parameterWithBounds(
-            final int lowerInclusive, final int higherInclusive,
-            final ParameterDescription<Integer, U> delegate )
+    public static <U> ParameterDescription<Integer, U> parameterWithBounds( final int lowerInclusive,
+            final int higherInclusive, final ParameterDescription<Integer, U> delegate )
     {
-        return new BoundParameterDescription<U>( lowerInclusive,
-                higherInclusive, delegate );
+        return new BoundParameterDescription<U>( lowerInclusive, higherInclusive, delegate );
     }
 
     /**
@@ -103,14 +101,12 @@ public abstract class ParameterDescription<T, R>
      * @return a ParameterDescription that can take 0 or 1 values of type T,
      *         yield that value or a default value.
      */
-    public static <T> ParameterDescription<T, T> parameterWithDefault(
-            final String name, final T defaultValue,
+    public static <T> ParameterDescription<T, T> parameterWithDefault( final String name, final T defaultValue,
             final StringConversion<T> conversions )
     {
         CheckParameters.areNotNull( name, defaultValue, conversions );
 
-        return new ParameterDescriptionWithDefault<T>( name, defaultValue,
-                conversions );
+        return new ParameterDescriptionWithDefault<T>( name, defaultValue, conversions );
     }
 
     /**
@@ -126,8 +122,8 @@ public abstract class ParameterDescription<T, R>
      * @return a parameter that can take 0 or 1 values of type T, yielding them
      *         as an Option<T>.
      */
-    public static <T> ParameterDescription<T, Option<T>> parameterWithoutDefault(
-            final String name, final StringConversion<T> conversion )
+    public static <T> ParameterDescription<T, Option<T>> parameterWithoutDefault( final String name,
+            final StringConversion<T> conversion )
     {
         CheckParameters.areNotNull( name, conversion );
 
@@ -211,8 +207,7 @@ public abstract class ParameterDescription<T, R>
      */
     public Option<String> toURLParameter( final ParameterMap parameterMap )
     {
-        return parameterMap.isDefault( this ) ? Option.getFullOption( "" )
-                : toURLParameter( parameterMap.get( this ) );
+        return parameterMap.isDefault( this ) ? Option.getFullOption( "" ) : toURLParameter( parameterMap.get( this ) );
     }
 
     /**
@@ -258,8 +253,7 @@ public abstract class ParameterDescription<T, R>
         private final T banned;
         private final ParameterDescription<T, U> delegate;
 
-        private BannedParameterDescription( final T banned,
-                final ParameterDescription<T, U> delegate )
+        private BannedParameterDescription( final T banned, final ParameterDescription<T, U> delegate )
         {
             super( delegate.name, delegate.defaultValue );
             this.banned = banned;
@@ -277,11 +271,8 @@ public abstract class ParameterDescription<T, R>
         {
             if ( newValue.equals( banned ) )
             {
-                throw new IllegalArgumentException(
-                        "The "
-                                + delegate.name
-                                + " parameter is not allowed to take the supplied value, "
-                                + newValue + '.' );
+                throw new IllegalArgumentException( "The " + delegate.name
+                        + " parameter is not allowed to take the supplied value, " + newValue + '.' );
             }
             return delegate.reduce( newValue, original );
         }
@@ -330,8 +321,7 @@ public abstract class ParameterDescription<T, R>
          *        the ParameterDescription to delegate to, including passing on
          *        all accepted values. delegate is never null.
          */
-        private BoundParameterDescription( final int lowerInclusive,
-                final int higherInclusive,
+        private BoundParameterDescription( final int lowerInclusive, final int higherInclusive,
                 final ParameterDescription<Integer, U> delegate )
         {
             super( delegate.name, delegate.defaultValue );
@@ -354,10 +344,8 @@ public abstract class ParameterDescription<T, R>
                 return delegate.reduce( newValue, original );
             }
 
-            throw new IllegalArgumentException( "The value " + newValue
-                    + " is not within the bounds for the " + delegate.name
-                    + " parameter (" + lowerInclusive + " to "
-                    + higherInclusive + " inclusive)." );
+            throw new IllegalArgumentException( "The value " + newValue + " is not within the bounds for the "
+                    + delegate.name + " parameter (" + lowerInclusive + " to " + higherInclusive + " inclusive)." );
         }
 
         @Override
@@ -394,8 +382,8 @@ public abstract class ParameterDescription<T, R>
          * @throws NullPointerException
          *         if name, defaultValue or conversions are null.
          */
-        private ParameterDescriptionWithDefault( final String name,
-                final T defaultValue, final StringConversion<T> conversions )
+        private ParameterDescriptionWithDefault( final String name, final T defaultValue,
+                final StringConversion<T> conversions )
         {
             super( name, defaultValue );
             this.conversions = conversions;
@@ -415,24 +403,21 @@ public abstract class ParameterDescription<T, R>
                 return newValue;
             }
 
-            throw new IllegalStateException(
-                    "The "
-                            + name
-                            + " parameter has already been set to a value other than its default" );
+            throw new IllegalStateException( "The " + name
+                    + " parameter has already been set to a value other than its default" );
         }
 
         @Override
         Option<String> toURLParameter( final T value )
         {
-            return conversions.toString( value ).map(
-                    new Function<String, String>()
-                    {
-                        @Override
-                        public String apply( final String t )
-                        {
-                            return name + '=' + new URLEncoder().apply( t );
-                        }
-                    } );
+            return conversions.toString( value ).map( new Function<String, String>()
+            {
+                @Override
+                public String apply( final String t )
+                {
+                    return name + '=' + new URLEncoder().apply( t );
+                }
+            } );
         }
     }
 
@@ -459,11 +444,9 @@ public abstract class ParameterDescription<T, R>
          * @param conversion
          *        the conversions between values of type T and Strings.
          */
-        private ParameterDescriptionWithoutDefault( final String name,
-                final StringConversion<T> conversion )
+        private ParameterDescriptionWithoutDefault( final String name, final StringConversion<T> conversion )
         {
-            super( name, Option.<T> getEmptyOption( "The value for the " + name
-                    + " parameter has not been set yet" ) );
+            super( name, Option.<T> getEmptyOption( "The value for the " + name + " parameter has not been set yet" ) );
             this.conversion = conversion;
         }
 
@@ -481,8 +464,7 @@ public abstract class ParameterDescription<T, R>
                 return Option.getFullOption( newValue );
             }
 
-            throw new IllegalStateException( "The " + name
-                    + " parameter has already been set to a value." );
+            throw new IllegalStateException( "The " + name + " parameter has already been set to a value." );
         }
 
         @Override
@@ -493,16 +475,15 @@ public abstract class ParameterDescription<T, R>
                 @Override
                 public Option<String> apply( final T value )
                 {
-                    return conversion.toString( value ).map(
-                            new Function<String, String>()
-                            {
-                                @Override
-                                public String apply( final String valuePart )
-                                {
-                                    return name + '=' + valuePart;
-                                }
+                    return conversion.toString( value ).map( new Function<String, String>()
+                    {
+                        @Override
+                        public String apply( final String valuePart )
+                        {
+                            return name + '=' + valuePart;
+                        }
 
-                            } );
+                    } );
                 }
             } );
         }
@@ -516,8 +497,7 @@ public abstract class ParameterDescription<T, R>
      *        the element type of this SparseArrayParameterDescription.
      */
     private static final class SparseArrayParameterDescription<T>
-            extends
-            ParameterDescription<List<Pair<Integer, T>>, TreeMap<Integer, T>>
+            extends ParameterDescription<List<Pair<Integer, T>>, TreeMap<Integer, T>>
     {
         /**
          * Functions between values of type T and Strings.
@@ -534,21 +514,18 @@ public abstract class ParameterDescription<T, R>
          * @throws NullPointerException
          *         if name or conversions are null.
          */
-        private SparseArrayParameterDescription( final String name,
-                final StringConversion<T> conversions )
+        private SparseArrayParameterDescription( final String name, final StringConversion<T> conversions )
         {
             super( name, new TreeMap<Integer, T>() );
             this.conversions = conversions;
         }
 
         @Override
-        public Option<List<Pair<Integer, T>>> fromURLParameter(
-                final URLParameter keyAndValue )
+        public Option<List<Pair<Integer, T>>> fromURLParameter( final URLParameter keyAndValue )
         {
-            final List<String> values = Strings.splitIgnoringQuotedSections(
-                    keyAndValue.value, ',' );
-            int startIndex = Integer.parseInt( keyAndValue.name.substring(
-                    name.length() + 1, keyAndValue.name.length() - 1 ) );
+            final List<String> values = Strings.splitIgnoringQuotedSections( keyAndValue.value, ',' );
+            int startIndex =
+                    Integer.parseInt( keyAndValue.name.substring( name.length() + 1, keyAndValue.name.length() - 1 ) );
 
             final List<Pair<Integer, T>> results = new ArrayList<Pair<Integer, T>>();
 
@@ -567,9 +544,7 @@ public abstract class ParameterDescription<T, R>
         }
 
         @Override
-        public TreeMap<Integer, T> reduce(
-                final List<Pair<Integer, T>> newValue,
-                final TreeMap<Integer, T> original )
+        public TreeMap<Integer, T> reduce( final List<Pair<Integer, T>> newValue, final TreeMap<Integer, T> original )
         {
             final TreeMap<Integer, T> copy = new TreeMap<Integer, T>( original );
             for ( final Pair<Integer, T> pair : newValue )
@@ -594,8 +569,7 @@ public abstract class ParameterDescription<T, R>
                         result.append( "&" );
                     }
 
-                    result.append( name + '[' + entry.getKey() + ']' + "="
-                            + new URLEncoder().apply( value ) );
+                    result.append( name + '[' + entry.getKey() + ']' + "=" + new URLEncoder().apply( value ) );
                 }
             }
 

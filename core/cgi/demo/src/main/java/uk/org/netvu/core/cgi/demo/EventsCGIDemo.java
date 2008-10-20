@@ -38,8 +38,7 @@ public class EventsCGIDemo
 
             try
             {
-                final BufferedReader reader = new BufferedReader(
-                        new InputStreamReader( in, "UTF-8" ) );
+                final BufferedReader reader = new BufferedReader( new InputStreamReader( in, "UTF-8" ) );
                 try
                 {
                     String line;

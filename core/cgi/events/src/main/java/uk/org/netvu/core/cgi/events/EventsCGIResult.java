@@ -14,62 +14,74 @@ import uk.org.netvu.core.cgi.common.StringConversion;
 import uk.org.netvu.core.cgi.common.Strings;
 
 /**
- * A single result from the events database.
+ * A single result from the events database. This can be used to build a result
+ * (via EventsCGIResult.Builder), or to parse a result from CSV.
  */
 public final class EventsCGIResult
 {
-    private static final ParameterDescription<Integer, Option<Integer>> CAMERA = ParameterDescription.parameterWithBounds(
-            0, 64, ParameterDescription.parameterWithoutDefault( "cam",
+    /**
+     * CAMERA_PARAMETER is not named CAMERA because that would conflict with
+     * AlarmType.CAMERA.
+     */
+    private static final ParameterDescription<Integer, Option<Integer>> CAMERA_PARAMETER =
+            ParameterDescription.parameterWithBounds( 0, 64, ParameterDescription.parameterWithoutDefault( "cam",
                     StringConversion.integer() ) );
 
-    private static final ParameterDescription<String, Option<String>> ALARM = ParameterDescription.parameterWithoutDefault(
-            "alarm", StringConversion.string() );
+    private static final ParameterDescription<String, Option<String>> ALARM =
+            ParameterDescription.parameterWithoutDefault( "alarm", StringConversion.string() );
 
-    private static final ParameterDescription<Integer, Option<Integer>> JULIAN_TIME = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
-            "time", StringConversion.integer() ) );
+    private static final ParameterDescription<Integer, Option<Integer>> JULIAN_TIME =
+            ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault( "time",
+                    StringConversion.integer() ) );
 
-    private static final ParameterDescription<Integer, Option<Integer>> OFFSET = ParameterDescription.parameterWithBounds(
-            -90000, 90000, ParameterDescription.parameterWithoutDefault(
+    private static final ParameterDescription<Integer, Option<Integer>> OFFSET =
+            ParameterDescription.parameterWithBounds( -90000, 90000, ParameterDescription.parameterWithoutDefault(
                     "offset", StringConversion.integer() ) );
 
-    private static final ParameterDescription<String, Option<String>> FILE = ParameterDescription.parameterWithoutDefault(
-            "file", StringConversion.string() );
+    private static final ParameterDescription<String, Option<String>> FILE =
+            ParameterDescription.parameterWithoutDefault( "file", StringConversion.string() );
 
-    private static final ParameterDescription<Boolean, Option<Boolean>> ON_DISK = ParameterDescription.parameterWithoutDefault(
-            "onDisk", StringConversion.total( Function.equal( "exists" ),
+    private static final ParameterDescription<Boolean, Option<Boolean>> ON_DISK =
+            ParameterDescription.parameterWithoutDefault( "onDisk", StringConversion.total( Function.equal( "exists" ),
                     Function.fromBoolean( "exists", "overwitten" ) ) );
 
-    private static final ParameterDescription<Integer, Option<Integer>> DURATION = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
-            "duration", StringConversion.integer() ) );
+    private static final ParameterDescription<Integer, Option<Integer>> DURATION =
+            ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault( "duration",
+                    StringConversion.integer() ) );
 
-    private static final ParameterDescription<Integer, Option<Integer>> PRE_ALARM = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
-            "preAlarm", StringConversion.integer() ) );
+    private static final ParameterDescription<Integer, Option<Integer>> PRE_ALARM =
+            ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault( "preAlarm",
+                    StringConversion.integer() ) );
 
-    private static final ParameterDescription<Integer, Option<Integer>> ARCHIVE = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
-            "archive", StringConversion.integer() ) );
-    private static final ParameterDescription<Status, Status> STATUS = ParameterDescription.parameterWithDefault(
-            "status", Status.NONE,
-            StringConversion.convenientPartial( Status.fromString ) );
-    private static final ParameterDescription<AlarmType, AlarmType> ALARM_TYPE = ParameterDescription.parameterWithDefault(
-            "alarmType", AlarmType.NONE,
-            StringConversion.convenientPartial( AlarmType.fromString ) );
+    private static final ParameterDescription<Integer, Option<Integer>> ARCHIVE =
+            ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault( "archive",
+                    StringConversion.integer() ) );
+
+    private static final ParameterDescription<Status, Status> STATUS =
+            ParameterDescription.parameterWithDefault( "status", Status.NONE,
+                    StringConversion.convenientPartial( Status.fromString() ) );
+
+    private static final ParameterDescription<AlarmType, AlarmType> ALARM_TYPE =
+            ParameterDescription.parameterWithDefault( "alarmType", AlarmType.NONE,
+                    StringConversion.convenientPartial( AlarmType.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
-    private static final ArrayList<ParameterDescription<?, ? extends Option<?>>> compulsoryParameterDescriptions = new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
-    {
-        {
-            add( CAMERA );
-            add( ALARM );
-            add( JULIAN_TIME );
-            add( OFFSET );
-            add( FILE );
-            add( ON_DISK );
-            add( DURATION );
-            add( PRE_ALARM );
-            add( ARCHIVE );
-        }
-    };
+    private static final ArrayList<ParameterDescription<?, ? extends Option<?>>> compulsoryParameterDescriptions =
+            new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
+            {
+                {
+                    add( CAMERA_PARAMETER );
+                    add( ALARM );
+                    add( JULIAN_TIME );
+                    add( OFFSET );
+                    add( FILE );
+                    add( ON_DISK );
+                    add( DURATION );
+                    add( PRE_ALARM );
+                    add( ARCHIVE );
+                }
+            };
 
     /**
      * Parses comma separated values in the format defined in the Video Server
@@ -85,13 +97,12 @@ public final class EventsCGIResult
 
         if ( values.length < 11 || values.length > 13 )
         {
-            throw new IllegalArgumentException( "The line ( " + line
-                    + ") needs to contain 11 to 13 fields, not "
+            throw new IllegalArgumentException( "The line ( " + line + ") needs to contain 11 to 13 fields, not "
                     + values.length );
         }
 
-        final List<ParameterDescription<?, ?>> parameterDescriptions = new ArrayList<ParameterDescription<?, ?>>(
-                compulsoryParameterDescriptions );
+        final List<ParameterDescription<?, ?>> parameterDescriptions =
+                new ArrayList<ParameterDescription<?, ?>>( compulsoryParameterDescriptions );
 
         if ( values.length > 11 )
         {
@@ -102,25 +113,21 @@ public final class EventsCGIResult
             parameterDescriptions.add( ALARM_TYPE );
         }
 
-        final Option<EventsCGIResult> result = ParameterMap.fromStrings(
-                parameterDescriptions,
-                Lists.removeByIndices( Arrays.asList( values ), 0, 7 ) ).map(
-                new Function<ParameterMap, EventsCGIResult>()
-                {
-                    @Override
-                    public EventsCGIResult apply( final ParameterMap map )
-                    {
-                        return new EventsCGIResult( map );
-                    }
-                } );
+        final Option<EventsCGIResult> result =
+                ParameterMap.fromStrings( parameterDescriptions, Lists.removeByIndices( Arrays.asList( values ), 0, 7 ) ).map(
+                        new Function<ParameterMap, EventsCGIResult>()
+                        {
+                            @Override
+                            public EventsCGIResult apply( final ParameterMap map )
+                            {
+                                return new EventsCGIResult( map );
+                            }
+                        } );
 
         if ( result.isEmpty() )
         {
-            throw new IllegalArgumentException(
-                    "The supplied data, "
-                            + line
-                            + ", is not valid for EventsCGIResult.fromString, because: "
-                            + result.reason() );
+            throw new IllegalArgumentException( "The supplied data, " + line
+                    + ", is not valid for EventsCGIResult.fromString, because: " + result.reason() );
         }
 
         return result.get();
@@ -128,14 +135,21 @@ public final class EventsCGIResult
 
     private final ParameterMap builtMap;
 
+    /**
+     * Constructs an EventsCGIResult with the final ParameterMap after
+     * Builder.build() is called.
+     * 
+     * @param builtMap
+     *        the final ParameterMap to get values from.
+     */
     private EventsCGIResult( final ParameterMap builtMap )
     {
         for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : compulsoryParameterDescriptions )
         {
             if ( builtMap.get( parameterDescription ).isEmpty() )
             {
-                throw new IllegalStateException( "The parameter "
-                        + parameterDescription + " has not been given a value" );
+                throw new IllegalStateException( "The parameter " + parameterDescription
+                        + " has not been given a value" );
             }
         }
 
@@ -181,7 +195,7 @@ public final class EventsCGIResult
      */
     public int getCam()
     {
-        return builtMap.get( CAMERA ).get();
+        return builtMap.get( CAMERA_PARAMETER ).get();
     }
 
     /**
@@ -271,10 +285,10 @@ public final class EventsCGIResult
     {
         // "overwitten" is taken from server output
 
-        final List<Object> all = new ArrayList<Object>( Arrays.<Object> asList(
-                index, getCam(), getAlarm(), getJulianTime(), getOffset(),
-                getFile(), isOnDisk() ? "exists" : "overwitten", index,
-                getDuration(), getPreAlarm(), getArchive() ) );
+        final List<Object> all =
+                new ArrayList<Object>( Arrays.<Object> asList( index, getCam(), getAlarm(), getJulianTime(),
+                        getOffset(), getFile(), isOnDisk() ? "exists" : "overwitten", index, getDuration(),
+                        getPreAlarm(), getArchive() ) );
 
         final List<Object> alarmAndStatus;
         if ( getAlarmType() == AlarmType.NONE && getStatus() == Status.NONE )
@@ -283,14 +297,12 @@ public final class EventsCGIResult
         }
         else
         {
-            alarmAndStatus = Arrays.<Object> asList( getStatus().value,
-                    getAlarmType().value );
+            alarmAndStatus = Arrays.<Object> asList( getStatus().value, getAlarmType().value );
         }
 
         all.addAll( alarmAndStatus );
 
-        return Strings.intersperse( ", ", Lists.map( all,
-                Function.getObjectToStringFunction() ) );
+        return Strings.intersperse( ", ", Lists.map( all, Function.getObjectToStringFunction() ) );
     }
 
     /**
@@ -337,9 +349,7 @@ public final class EventsCGIResult
          * A dummy alarm type used for CGI parameters - never appears in a
          * database record.
          */
-        CAMERA_PARAMETER( 16 ), // this is not called CAMERA because there is
-        // another field in the outer class called
-        // CAMERA.
+        CAMERA( 16 ),
 
         /**
          * Used for activity search, never appears in a database record.
@@ -361,8 +371,7 @@ public final class EventsCGIResult
          * @throws IllegalArgumentException
          *         if no matching AlarmType exists.
          */
-        public static AlarmType find( final int value )
-                throws IllegalArgumentException
+        public static AlarmType find( final int value ) throws IllegalArgumentException
         {
             for ( final AlarmType type : AlarmType.values() )
             {
@@ -372,8 +381,7 @@ public final class EventsCGIResult
                 }
             }
 
-            throw new IllegalArgumentException(
-                    "There is no AlarmType with the value " + value );
+            throw new IllegalArgumentException( "There is no AlarmType with the value " + value );
         }
 
         /**
@@ -396,8 +404,7 @@ public final class EventsCGIResult
                 }
                 catch ( final IllegalArgumentException e )
                 {
-                    return Option.getEmptyOption( t
-                            + " is not a valid AlarmType" );
+                    return Option.getEmptyOption( t + " is not a valid AlarmType" );
                 }
             }
         };
@@ -410,11 +417,14 @@ public final class EventsCGIResult
 
     /**
      * A builder that takes in all the information needed to construct an
-     * EventsCGIResult and constructs it.
+     * EventsCGIResult and constructs it. Note that a Builder can only have
+     * build() called on it once. Calling build() more than once will cause an
+     * IllegalStateException. Setting its values after build() has been called
+     * will cause an IllegalStateException.
      */
     public static final class Builder
     {
-        private Option<ParameterMap> real = Option.getFullOption( new ParameterMap() );
+        private Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
 
         /**
          * Constructs a builder ready to take in all the information needed to
@@ -429,6 +439,8 @@ public final class EventsCGIResult
          * 
          * @param alarm
          *        the alarm description.
+         * @throws NullPointerException
+         *         if alarm is null.
          * @return the builder.
          */
         public Builder alarm( final String alarm )
@@ -442,6 +454,8 @@ public final class EventsCGIResult
          * 
          * @param alarmType
          *        the type of alarm that this event represents.
+         * @throws NullPointerException
+         *         if alarmType is null.
          * @return the builder.
          */
         public Builder alarmType( final AlarmType alarmType )
@@ -456,6 +470,8 @@ public final class EventsCGIResult
          * @param archive
          *        the number of seconds since 1970 after which the video for
          *        this event may be overwritten.
+         * @throws IllegalArgumentException
+         *         if archive is negative.
          * @return the builder.
          */
         public Builder archive( final int archive )
@@ -473,25 +489,27 @@ public final class EventsCGIResult
         {
             try
             {
-                return new EventsCGIResult( real.get() );
+                return new EventsCGIResult( parameterMap.get() );
             }
             finally
             {
-                real = Option.getEmptyOption( "The Builder has already had build() called on it" );
+                parameterMap = Option.getEmptyOption( "The Builder has already had build() called on it" );
             }
         }
 
         /**
          * Adds the system camera number to the builder. Valid values are 0 to
-         * 64.
+         * 63 inclusive.
          * 
          * @param camera
          *        the system camera number.
-         * @return the builder.
+         * @throws IllegalArgumentException
+         *         if camera is not within 0 to 63 inclusive.
+         * @return the Builder.
          */
         public Builder camera( final int camera )
         {
-            return set( CAMERA, camera );
+            return set( CAMERA_PARAMETER, camera );
         }
 
         /**
@@ -499,7 +517,9 @@ public final class EventsCGIResult
          * 
          * @param duration
          *        the duration of the event.
-         * @return the builder.
+         * @throws IllegalArgumentException
+         *         if duration is negative.
+         * @return the Builder.
          */
         public Builder duration( final int duration )
         {
@@ -512,7 +532,9 @@ public final class EventsCGIResult
          * 
          * @param file
          *        the name of the video file.
-         * @return the builder.
+         * @throws NullPointerException
+         *         if file is negative.
+         * @return the Builder.
          */
         public Builder file( final String file )
         {
@@ -524,7 +546,9 @@ public final class EventsCGIResult
          * 
          * @param julianTime
          *        the time of the event.
-         * @return the builder.
+         * @throws IllegalArgumentException
+         *         if julianTime is negative.
+         * @return the Builder.
          */
         public Builder julianTime( final int julianTime )
         {
@@ -533,11 +557,13 @@ public final class EventsCGIResult
 
         /**
          * Adds the offset from UTC of the event to the builder. Must be between
-         * -90000 and +90000.
+         * -90,000 and +90,000 inclusive.
          * 
          * @param offset
          *        the offset from UTC.
-         * @return the builder.
+         * @throws IllegalArgumentException
+         *         if offset is not between -90,000 and +90,000 inclusive.
+         * @return the Builder.
          */
         public Builder offset( final int offset )
         {
@@ -550,7 +576,7 @@ public final class EventsCGIResult
          * 
          * @param onDisk
          *        true if the video file is still available, false otherwise.
-         * @return the builder.
+         * @return the Builder.
          */
         public Builder onDisk( final boolean onDisk )
         {
@@ -563,7 +589,9 @@ public final class EventsCGIResult
          * 
          * @param preAlarm
          *        the number of seconds before the alarm time that are relevant.
-         * @return the builder.
+         * @throws IllegalArgumentException
+         *         if preAlarm is negative.
+         * @return the Builder.
          */
         public Builder preAlarm( final int preAlarm )
         {
@@ -576,23 +604,37 @@ public final class EventsCGIResult
          * 
          * @param status
          *        the status of the database record.
-         * @return the builder.
+         * @throws NullPointerException
+         *         if status is negative.
+         * @return the Builder.
          */
         public Builder status( final Status status )
         {
             return set( STATUS, status );
         }
 
-        private <T> Builder set( final ParameterDescription<T, ?> parameter,
-                final T value )
+        /**
+         * Sets the value of a parameter to a given value, and returns the
+         * Builder.
+         * 
+         * @param <T>
+         *        the input type of the specified parameter.
+         * @param parameter
+         *        the parameter to set a value for.
+         * @param value
+         *        the value to give that parameter.
+         * @return the Builder.
+         * @throws IllegalStateException
+         *         if the Builder has already been built once.
+         */
+        private <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
         {
-            if ( real.isEmpty() )
+            if ( parameterMap.isEmpty() )
             {
-                throw new IllegalStateException(
-                        "The Builder has already been built (build() has been called on it)." );
+                throw new IllegalStateException( "The Builder has already been built (build() has been called on it)." );
             }
 
-            real = real.map( new Function<ParameterMap, ParameterMap>()
+            parameterMap = parameterMap.map( new Function<ParameterMap, ParameterMap>()
             {
                 @Override
                 public ParameterMap apply( final ParameterMap map )
@@ -600,6 +642,7 @@ public final class EventsCGIResult
                     return map.set( parameter, value );
                 }
             } );
+
             return this;
         }
     }
@@ -651,8 +694,32 @@ public final class EventsCGIResult
                 }
             }
 
-            throw new IllegalArgumentException(
-                    "There is no Status with the value " + value );
+            throw new IllegalArgumentException( "There is no Status with the value " + value );
+        }
+
+        /**
+         * A Function that parses a String into a Status, giving the Status in
+         * an Option. The Option is empty if the parsing fails.
+         * 
+         * @return a Function that parses a String into a Status.
+         */
+        private static Function<String, Option<Status>> fromString()
+        {
+            return new Function<String, Option<Status>>()
+            {
+                @Override
+                public Option<Status> apply( final String s )
+                {
+                    try
+                    {
+                        return Option.getFullOption( find( Integer.parseInt( s ) ) );
+                    }
+                    catch ( final IllegalArgumentException e )
+                    {
+                        return Option.getEmptyOption( s + " is not a valid Status" );
+                    }
+                }
+            };
         }
 
         /**
@@ -660,22 +727,12 @@ public final class EventsCGIResult
          */
         public final int value;
 
-        private static final Function<String, Option<Status>> fromString = new Function<String, Option<Status>>()
-        {
-            @Override
-            public Option<Status> apply( final String s )
-            {
-                try
-                {
-                    return Option.getFullOption( find( Integer.parseInt( s ) ) );
-                }
-                catch ( final IllegalArgumentException e )
-                {
-                    return Option.getEmptyOption( s + " is not a valid Status" );
-                }
-            }
-        };
-
+        /**
+         * Constructs a Status with the given value.
+         * 
+         * @param value
+         *        the numeric value associated with the constructed Status.
+         */
         Status( final int value )
         {
             this.value = value;

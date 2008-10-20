@@ -101,8 +101,7 @@ public enum Layout
             }
         }
 
-        throw new IllegalArgumentException(
-                "There is no Layout with the value " + value + '.' );
+        throw new IllegalArgumentException( "There is no Layout with the value " + value + '.' );
     }
 
     Layout( final int value )

@@ -20,15 +20,15 @@ public final class URLParameter
      * the first String corresponds to the key, and the second String
      * corresponds to the value.
      */
-    static final Function<Pair<String, String>, URLParameter> fromPair = new Function<Pair<String, String>, URLParameter>()
-    {
-        @Override
-        public URLParameter apply( final Pair<String, String> pair )
-        {
-            return new URLParameter( pair.getFirstComponent(),
-                    pair.getSecondComponent() );
-        }
-    };
+    static final Function<Pair<String, String>, URLParameter> fromPair =
+            new Function<Pair<String, String>, URLParameter>()
+            {
+                @Override
+                public URLParameter apply( final Pair<String, String> pair )
+                {
+                    return new URLParameter( pair.getFirstComponent(), pair.getSecondComponent() );
+                }
+            };
 
     /**
      * Constructs a URLParameter with the specified name and value.
@@ -59,8 +59,7 @@ public final class URLParameter
     @Override
     public boolean equals( final Object other )
     {
-        return other instanceof URLParameter
-                && ( (URLParameter) other ).name.equals( name )
+        return other instanceof URLParameter && ( (URLParameter) other ).name.equals( name )
                 && ( (URLParameter) other ).value.equals( value );
     }
 

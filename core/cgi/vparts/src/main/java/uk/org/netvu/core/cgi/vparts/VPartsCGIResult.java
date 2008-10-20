@@ -14,38 +14,42 @@ import uk.org.netvu.core.cgi.common.URLParameter;
  */
 public class VPartsCGIResult
 {
-    private static final ParameterDescription<Integer, Option<Integer>> INDEX = ParameterDescription.parameterWithoutDefault(
-            "index", StringConversion.integer() );
-    private static final ParameterDescription<String, Option<String>> DIRECTORY = ParameterDescription.parameterWithoutDefault(
-            "directory", StringConversion.string() );
-    private static final ParameterDescription<String, Option<String>> FILENAME = ParameterDescription.parameterWithoutDefault(
-            "filename", StringConversion.string() );
-    private static final ParameterDescription<Integer, Option<Integer>> START_TIME = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
-            "start_time", StringConversion.integer() ) );
-    private static final ParameterDescription<Integer, Option<Integer>> END_TIME = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
-            "end_time", StringConversion.integer() ) );
-    private static final ParameterDescription<Integer, Option<Integer>> EXPIRY_TIME = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault(
-            "expiry_time", StringConversion.integer() ) );
-    private static final ParameterDescription<Integer, Option<Integer>> NUMBER_OF_ENTRIES = ParameterDescription.parameterWithoutDefault(
-            "n_entries", StringConversion.integer() );
-    private static final ParameterDescription<Integer, Option<Integer>> CAM_MASK = ParameterDescription.parameterWithoutDefault(
-            "cammask", StringConversion.integer() );
+    private static final ParameterDescription<Integer, Option<Integer>> INDEX =
+            ParameterDescription.parameterWithoutDefault( "index", StringConversion.integer() );
+    private static final ParameterDescription<String, Option<String>> DIRECTORY =
+            ParameterDescription.parameterWithoutDefault( "directory", StringConversion.string() );
+    private static final ParameterDescription<String, Option<String>> FILENAME =
+            ParameterDescription.parameterWithoutDefault( "filename", StringConversion.string() );
+    private static final ParameterDescription<Integer, Option<Integer>> START_TIME =
+            ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault( "start_time",
+                    StringConversion.integer() ) );
+    private static final ParameterDescription<Integer, Option<Integer>> END_TIME =
+            ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault( "end_time",
+                    StringConversion.integer() ) );
+    private static final ParameterDescription<Integer, Option<Integer>> EXPIRY_TIME =
+            ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault( "expiry_time",
+                    StringConversion.integer() ) );
+    private static final ParameterDescription<Integer, Option<Integer>> NUMBER_OF_ENTRIES =
+            ParameterDescription.parameterWithoutDefault( "n_entries", StringConversion.integer() );
+    private static final ParameterDescription<Integer, Option<Integer>> CAM_MASK =
+            ParameterDescription.parameterWithoutDefault( "cammask", StringConversion.integer() );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
-    private static final ArrayList<ParameterDescription<?, ? extends Option<?>>> parameterDescriptions = new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
-    {
-        {
-            add( INDEX );
-            add( DIRECTORY );
-            add( FILENAME );
-            add( START_TIME );
-            add( END_TIME );
-            add( EXPIRY_TIME );
-            add( NUMBER_OF_ENTRIES );
-            add( CAM_MASK );
-        }
-    };
+    private static final ArrayList<ParameterDescription<?, ? extends Option<?>>> parameterDescriptions =
+            new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
+            {
+                {
+                    add( INDEX );
+                    add( DIRECTORY );
+                    add( FILENAME );
+                    add( START_TIME );
+                    add( END_TIME );
+                    add( EXPIRY_TIME );
+                    add( NUMBER_OF_ENTRIES );
+                    add( CAM_MASK );
+                }
+            };
 
     /**
      * Parses comma separated values as specified in the Video Server
@@ -63,18 +67,16 @@ public class VPartsCGIResult
         int a = 0;
         for ( final ParameterDescription<?, ?> parameterDescription : parameterDescriptions )
         {
-            parameterMap = hack( parameterMap, parameterDescription,
-                    elements[a] );
+            parameterMap = hack( parameterMap, parameterDescription, elements[a] );
             a++;
         }
         return new VPartsCGIResult( parameterMap );
     }
 
-    private static <T, R> ParameterMap hack( final ParameterMap parameterMap,
-            final ParameterDescription<T, R> param, final String s )
+    private static <T, R> ParameterMap hack( final ParameterMap parameterMap, final ParameterDescription<T, R> param,
+            final String s )
     {
-        return parameterMap.set( param, param.fromURLParameter(
-                new URLParameter( param.name, s ) ).get() );
+        return parameterMap.set( param, param.fromURLParameter( new URLParameter( param.name, s ) ).get() );
     }
 
     private final ParameterMap builtMap;
@@ -85,8 +87,7 @@ public class VPartsCGIResult
         {
             if ( parameterMap.get( parameterDescription ).isEmpty() )
             {
-                throw new IllegalStateException( "The parameter "
-                        + parameterDescription.name
+                throw new IllegalStateException( "The parameter " + parameterDescription.name
                         + " has not been given a value" );
             }
         }
@@ -188,8 +189,7 @@ public class VPartsCGIResult
 
         for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : parameterDescriptions )
         {
-            result.append( builtMap.get( parameterDescription ).get() ).append(
-                    ", " );
+            result.append( builtMap.get( parameterDescription ).get() ).append( ", " );
         }
 
         return result.substring( 0, result.length() - 2 );

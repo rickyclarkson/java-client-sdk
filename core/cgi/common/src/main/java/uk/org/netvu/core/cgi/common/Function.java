@@ -3,8 +3,7 @@ package uk.org.netvu.core.cgi.common;
 import java.math.BigInteger;
 
 /**
- * For internal use only! A function from objects of type T to those of type
- * R.
+ * For internal use only! A function from objects of type T to those of type R.
  * 
  * @param <T>
  *        the type of object to convert from.
@@ -14,8 +13,8 @@ import java.math.BigInteger;
 public abstract class Function<T, R>
 {
     /**
-     * A Function that returns true if the value it receives is the same as
-     * the specified parameter.
+     * A Function that returns true if the value it receives is the same as the
+     * specified parameter.
      * 
      * @param <T>
      *        the type of the values that this Function can receive.
@@ -23,8 +22,8 @@ public abstract class Function<T, R>
      *        the parameter to test values against.
      * @throws NullPointerException
      *         if other is null.
-     * @return a Function that returns true if the value it receives is the
-     *         same as the specified parameter.
+     * @return a Function that returns true if the value it receives is the same
+     *         as the specified parameter.
      */
     public static <T> Function<T, Boolean> equal( final T other )
     {
@@ -53,12 +52,10 @@ public abstract class Function<T, R>
      *        the value to return if the Boolean is false.
      * @throws NullPointerException
      *         if ifTrue or ifFalse are null.
-     * @return a Function that, given a Boolean, returns the ifTrue parameter
-     *         if the Boolean is true, and returns the ifFalse parameter
-     *         otherwise.
+     * @return a Function that, given a Boolean, returns the ifTrue parameter if
+     *         the Boolean is true, and returns the ifFalse parameter otherwise.
      */
-    public static <T> Function<Boolean, T> fromBoolean( final T ifTrue,
-            final T ifFalse )
+    public static <T> Function<Boolean, T> fromBoolean( final T ifTrue, final T ifFalse )
     {
         CheckParameters.areNotNull( ifTrue, ifFalse );
 
@@ -85,8 +82,7 @@ public abstract class Function<T, R>
     /**
      * A partial Function from Strings containing hexadecimal to Longs.
      * 
-     * @return a partial Function from Strings containing hexadecimal to
-     *         Longs.
+     * @return a partial Function from Strings containing hexadecimal to Longs.
      */
     public static Function<String, Option<Long>> getHexStringToLongFunction()
     {
@@ -94,8 +90,8 @@ public abstract class Function<T, R>
     }
 
     /**
-     * The identity function - given an object of type T it results in the
-     * same object of type T.
+     * The identity function - given an object of type T it results in the same
+     * object of type T.
      * 
      * @param <T>
      *        the input and output type of this Function.
@@ -150,8 +146,8 @@ public abstract class Function<T, R>
     }
 
     /**
-     * A Function that uses Object's toString() to convert objects of type T
-     * to Strings.
+     * A Function that uses Object's toString() to convert objects of type T to
+     * Strings.
      * 
      * @param <T>
      *        the input type.
@@ -260,9 +256,9 @@ public abstract class Function<T, R>
 
     /**
      * Composes two conversions together such that an incoming object of type T
-     * gets converted by this Function to an object of type R, then gets
-     * passed into the conversion supplied as a parameter, to finally produce an
-     * object of type V.
+     * gets converted by this Function to an object of type R, then gets passed
+     * into the conversion supplied as a parameter, to finally produce an object
+     * of type V.
      * 
      * @param <V>
      *        the type that the composed conversions convert objects of type T
@@ -320,13 +316,11 @@ public abstract class Function<T, R>
                     return Option.getFullOption( (int) result );
                 }
 
-                return Option.getEmptyOption( t
-                        + " is outside the bounds of an int, in hexadecimal" );
+                return Option.getEmptyOption( t + " is outside the bounds of an int, in hexadecimal" );
             }
             catch ( final NumberFormatException e )
             {
-                return Option.getEmptyOption( t
-                        + " is not a valid int, in hexadecimal" );
+                return Option.getEmptyOption( t + " is not a valid int, in hexadecimal" );
             }
         }
     }
@@ -348,8 +342,7 @@ public abstract class Function<T, R>
 
             if ( string.length() > 16 )
             {
-                return Option.getEmptyOption( string
-                        + " is not a valid long value in hexadecimal" );
+                return Option.getEmptyOption( string + " is not a valid long value in hexadecimal" );
             }
 
             try
@@ -358,8 +351,7 @@ public abstract class Function<T, R>
             }
             catch ( final NumberFormatException e )
             {
-                return Option.getEmptyOption( string
-                        + " is not a valid long, in hexadecimal" );
+                return Option.getEmptyOption( string + " is not a valid long, in hexadecimal" );
             }
         }
     }

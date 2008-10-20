@@ -18,8 +18,7 @@ public class Main
         {
             public void handleJPEG( final byte[] data ) throws IOException
             {
-                final FileOutputStream out = new FileOutputStream(
-                        "/home/ricky/deleteme" + index[0]++ + ".jpg" );
+                final FileOutputStream out = new FileOutputStream( "/home/ricky/deleteme" + index[0]++ + ".jpg" );
                 out.write( data );
                 out.close();
             }

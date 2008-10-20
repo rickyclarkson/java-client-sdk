@@ -8,8 +8,7 @@ import java.net.URLConnection;
 
 public final class Parser
 {
-    public static void parse( final URLConnection connection,
-            final Handler handler ) throws IOException
+    public static void parse( final URLConnection connection, final Handler handler ) throws IOException
     {
         new Parser( handler, connection.getInputStream() ).parse( connection );
     }

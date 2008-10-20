@@ -23,8 +23,7 @@ public abstract class Reduction<T, R>
      * @return a Reduction that constructs a new String containing two Strings
      *         with the given separator between them.
      */
-    public static final Reduction<String, String> intersperseWith(
-            final String separator )
+    public static final Reduction<String, String> intersperseWith( final String separator )
     {
         CheckParameters.areNotNull( separator );
 

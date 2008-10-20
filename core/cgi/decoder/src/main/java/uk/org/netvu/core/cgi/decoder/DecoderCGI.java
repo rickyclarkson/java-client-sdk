@@ -24,39 +24,36 @@ import uk.org.netvu.core.cgi.common.URLEncoder;
  */
 public final class DecoderCGI
 {
-    private static final ParameterDescription<Persistence, Persistence> PERSISTENCE = ParameterDescription.parameterWithDefault(
-            "persistence",
-            Persistence.TEMPORARY,
-            StringConversion.convenientPartial( Option.<String, Persistence> getFunctionToEmptyOption( "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name." ) ) );
+    private static final ParameterDescription<Persistence, Persistence> PERSISTENCE =
+            ParameterDescription.parameterWithDefault(
+                    "persistence",
+                    Persistence.TEMPORARY,
+                    StringConversion.convenientPartial( Option.<String, Persistence> getFunctionToEmptyOption( "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name." ) ) );
 
-    private static final ParameterDescription<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS = ParameterDescription.sparseArrayParameter(
-            "connections", StringConversion.total( Connection.fromURL,
+    private static final ParameterDescription<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS =
+            ParameterDescription.sparseArrayParameter( "connections", StringConversion.total( Connection.fromURL,
                     Connection.urlEncode ) );
 
-    private static final ParameterDescription<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> LAYOUTS = ParameterDescription.sparseArrayParameter(
-            "layouts",
-            StringConversion.total( Layout.fromURL, Layout.urlEncode ) );
+    private static final ParameterDescription<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> LAYOUTS =
+            ParameterDescription.sparseArrayParameter( "layouts", StringConversion.total( Layout.fromURL,
+                    Layout.urlEncode ) );
 
-    private static final ParameterDescription<String[], Option<String[]>> OUTPUT_TITLES = ParameterDescription.parameterWithoutDefault(
-            "output_titles",
-            StringConversion.partial(
+    private static final ParameterDescription<String[], Option<String[]>> OUTPUT_TITLES =
+            ParameterDescription.parameterWithoutDefault( "output_titles", StringConversion.partial(
                     Option.<String, String[]> getFunctionToEmptyOption( "Parsing not supported for output_titles" ),
                     Option.toPartialFunction( new Function<String[], String>()
                     {
                         @Override
                         public String apply( final String[] array )
                         {
-                            return Lists.reduce( Lists.map(
-                                    Arrays.asList( array ),
-                                    Strings.surroundWithQuotes() ),
+                            return Lists.reduce( Lists.map( Arrays.asList( array ), Strings.surroundWithQuotes() ),
                                     Reduction.intersperseWith( "," ) );
                         }
                     } ) ) );
 
-    private static final ParameterDescription<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS = ParameterDescription.sparseArrayParameter(
-            "commands", StringConversion.total(
-                    Function.<String> getIdentityFunction(),
-                    new URLEncoder().andThen( Strings.surroundWithQuotes() ) ) );
+    private static final ParameterDescription<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS =
+            ParameterDescription.sparseArrayParameter( "commands", StringConversion.total(
+                    Function.<String> getIdentityFunction(), new URLEncoder().andThen( Strings.surroundWithQuotes() ) ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
@@ -84,8 +81,8 @@ public final class DecoderCGI
         final Option<ParameterMap> map = ParameterMap.fromURL( string, params );
         if ( map.isEmpty() )
         {
-            throw new IllegalArgumentException( "Cannot parse " + string
-                    + " into a DecoderCGI, because " + map.reason() );
+            throw new IllegalArgumentException( "Cannot parse " + string + " into a DecoderCGI, because "
+                    + map.reason() );
         }
 
         return new DecoderCGI( map.get() ).persistence( string.contains( ".frm" ) ? Persistence.PERSISTENT
@@ -119,9 +116,8 @@ public final class DecoderCGI
      */
     public DecoderCGI command( final int index, final String command )
     {
-        return new DecoderCGI( parameterMap.set( COMMANDS,
-                Collections.singletonList( new Pair<Integer, String>( index,
-                        command ) ) ) );
+        return new DecoderCGI( parameterMap.set( COMMANDS, Collections.singletonList( new Pair<Integer, String>( index,
+                command ) ) ) );
     }
 
     /**
@@ -136,9 +132,8 @@ public final class DecoderCGI
      */
     public DecoderCGI connection( final int index, final Connection connection )
     {
-        return new DecoderCGI( parameterMap.set( CONNECTIONS,
-                Collections.singletonList( new Pair<Integer, Connection>(
-                        index, connection ) ) ) );
+        return new DecoderCGI( parameterMap.set( CONNECTIONS, Collections.singletonList( new Pair<Integer, Connection>(
+                index, connection ) ) ) );
     }
 
     /**
@@ -201,9 +196,8 @@ public final class DecoderCGI
      */
     public DecoderCGI layout( final int index, final Layout layout )
     {
-        return new DecoderCGI( parameterMap.set( LAYOUTS,
-                Collections.singletonList( new Pair<Integer, Layout>( index,
-                        layout ) ) ) );
+        return new DecoderCGI( parameterMap.set( LAYOUTS, Collections.singletonList( new Pair<Integer, Layout>( index,
+                layout ) ) ) );
     }
 
     /**
@@ -239,7 +233,6 @@ public final class DecoderCGI
      */
     public String toURLParameters()
     {
-        return "decoder" + getPersistence() + '?'
-                + parameterMap.toURLParameters( params );
+        return "decoder" + getPersistence() + '?' + parameterMap.toURLParameters( params );
     }
 }

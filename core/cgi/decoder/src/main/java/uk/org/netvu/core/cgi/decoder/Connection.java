@@ -20,29 +20,30 @@ import uk.org.netvu.core.cgi.common.ParameterMap.Validator;
  */
 public final class Connection
 {
-    private static final ParameterDescription<String, Option<String>> SLAVE_IP_PARAM = ParameterDescription.parameterWithoutDefault(
-            "slaveip", StringConversion.string() );
-    private static final ParameterDescription<Integer, Option<Integer>> SEQ_PARAM = ParameterDescription.parameterWithoutDefault(
-            "seq", StringConversion.getHexToIntStringConversion() );
-    private static final ParameterDescription<Integer, Option<Integer>> DWELL_PARAM = ParameterDescription.parameterWithoutDefault(
-            "dwell", StringConversion.integer() );
-    private static final ParameterDescription<Integer, Option<Integer>> CAM = ParameterDescription.parameterWithoutDefault(
-            "cam", StringConversion.integer() );
-    private static final ParameterDescription<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM = ParameterDescription.parameterWithoutDefault(
-            "audio", StringConversion.integer() );
+    private static final ParameterDescription<String, Option<String>> SLAVE_IP_PARAM =
+            ParameterDescription.parameterWithoutDefault( "slaveip", StringConversion.string() );
+    private static final ParameterDescription<Integer, Option<Integer>> SEQ_PARAM =
+            ParameterDescription.parameterWithoutDefault( "seq", StringConversion.getHexToIntStringConversion() );
+    private static final ParameterDescription<Integer, Option<Integer>> DWELL_PARAM =
+            ParameterDescription.parameterWithoutDefault( "dwell", StringConversion.integer() );
+    private static final ParameterDescription<Integer, Option<Integer>> CAM =
+            ParameterDescription.parameterWithoutDefault( "cam", StringConversion.integer() );
+    private static final ParameterDescription<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM =
+            ParameterDescription.parameterWithoutDefault( "audio", StringConversion.integer() );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
-    private static final List<ParameterDescription<?, ? extends Option<?>>> params = new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
-    {
-        {
-            add( SLAVE_IP_PARAM );
-            add( SEQ_PARAM );
-            add( DWELL_PARAM );
-            add( CAM );
-            add( AUDIO_CHANNEL_PARAM );
-        }
-    };
+    private static final List<ParameterDescription<?, ? extends Option<?>>> params =
+            new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
+            {
+                {
+                    add( SLAVE_IP_PARAM );
+                    add( SEQ_PARAM );
+                    add( DWELL_PARAM );
+                    add( CAM );
+                    add( AUDIO_CHANNEL_PARAM );
+                }
+            };
 
     private final ParameterMap parameterMap;
 
@@ -55,8 +56,7 @@ public final class Connection
         @Override
         public String apply( final Connection connection )
         {
-            return new URLEncoder().apply( connection.parameterMap.toURLParameters(
-                    params ).replaceAll( "&", "," ) );
+            return new URLEncoder().apply( connection.parameterMap.toURLParameters( params ).replaceAll( "&", "," ) );
         }
     }.andThen( Strings.surroundWithQuotes() );
 
@@ -71,15 +71,14 @@ public final class Connection
         {
             try
             {
-                final Option<ParameterMap> map = ParameterMap.fromURL(
-                        URLDecoder.decode( urlParameters, "UTF-8" ).replaceAll(
-                                ",", "&" ), params );
+                final Option<ParameterMap> map =
+                        ParameterMap.fromURL( URLDecoder.decode( urlParameters, "UTF-8" ).replaceAll( ",", "&" ),
+                                params );
 
                 if ( map.isEmpty() )
                 {
-                    throw new IllegalArgumentException( "Cannot parse "
-                            + urlParameters + " into a Connection, because "
-                            + map.reason() );
+                    throw new IllegalArgumentException( "Cannot parse " + urlParameters
+                            + " into a Connection, because " + map.reason() );
                 }
 
                 return new Connection( map.get() );
@@ -101,9 +100,8 @@ public final class Connection
             @Override
             public boolean isValid( final ParameterMap parameterMap )
             {
-                return parameterMap.isDefault( CAM ) ? true
-                        : parameterMap.isDefault( SEQ_PARAM )
-                                && parameterMap.isDefault( DWELL_PARAM );
+                return parameterMap.isDefault( CAM ) ? true : parameterMap.isDefault( SEQ_PARAM )
+                        && parameterMap.isDefault( DWELL_PARAM );
             }
         } ) );
     }
@@ -123,8 +121,7 @@ public final class Connection
      */
     public Connection audio( final int audioChannel )
     {
-        return new Connection( parameterMap.set( AUDIO_CHANNEL_PARAM,
-                audioChannel ) );
+        return new Connection( parameterMap.set( AUDIO_CHANNEL_PARAM, audioChannel ) );
     }
 
     /**

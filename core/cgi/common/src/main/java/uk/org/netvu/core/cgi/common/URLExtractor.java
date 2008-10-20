@@ -25,9 +25,9 @@ final class URLExtractor
 
         final List<String> parameters = parameters( url );
         final Function<String, Pair<String, String>> partitionByEqualsSign = Strings.partition( '=' );
-        final Function<String, URLParameter> partitionByEqualsSignThenConstructAURLParameterFromThePair = partitionByEqualsSign.andThen( URLParameter.fromPair );
-        return Lists.map( parameters,
-                partitionByEqualsSignThenConstructAURLParameterFromThePair );
+        final Function<String, URLParameter> partitionByEqualsSignThenConstructAURLParameterFromThePair =
+                partitionByEqualsSign.andThen( URLParameter.fromPair );
+        return Lists.map( parameters, partitionByEqualsSignThenConstructAURLParameterFromThePair );
     }
 
     /**
@@ -41,11 +41,9 @@ final class URLExtractor
      */
     static List<String> parameters( final String url )
     {
-        final String afterFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists = Strings.afterFirstLeniently(
-                url, "?" );
-        return Strings.splitIgnoringQuotedSections(
-                afterFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists,
-                '&' );
+        final String afterFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists =
+                Strings.afterFirstLeniently( url, "?" );
+        return Strings.splitIgnoringQuotedSections( afterFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists, '&' );
     }
 
     /**
@@ -60,11 +58,9 @@ final class URLExtractor
      */
     static String queryName( final String url )
     {
-        final String beforeFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists = Strings.beforeFirstLeniently(
-                url, "?" );
-        return Strings.afterLastLeniently(
-                beforeFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists,
-                "/" );
+        final String beforeFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists =
+                Strings.beforeFirstLeniently( url, "?" );
+        return Strings.afterLastLeniently( beforeFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists, "/" );
     }
 
     /**

@@ -19,26 +19,26 @@ public enum DirectoryPathFormat
     LONG;
 
     /**
-     * A Function that, given a String, will produce an Option containing
-     * SHORT or LONG if the String matches it (ignoring case), and an empty
-     * Option otherwise.
+     * A Function that, given a String, will produce an Option containing SHORT
+     * or LONG if the String matches it (ignoring case), and an empty Option
+     * otherwise.
      */
-    static final Function<String, Option<DirectoryPathFormat>> fromString = new Function<String, Option<DirectoryPathFormat>>()
-    {
-        @Override
-        public Option<DirectoryPathFormat> apply( final String t )
-        {
-            try
+    static final Function<String, Option<DirectoryPathFormat>> fromString =
+            new Function<String, Option<DirectoryPathFormat>>()
             {
-                return Option.getFullOption( DirectoryPathFormat.valueOf( t.toUpperCase() ) );
-            }
-            catch ( final IllegalArgumentException exception )
-            {
-                return Option.getEmptyOption( t
-                        + " is not a valid DirectoryPathFormat" );
-            }
-        }
-    };
+                @Override
+                public Option<DirectoryPathFormat> apply( final String t )
+                {
+                    try
+                    {
+                        return Option.getFullOption( DirectoryPathFormat.valueOf( t.toUpperCase() ) );
+                    }
+                    catch ( final IllegalArgumentException exception )
+                    {
+                        return Option.getEmptyOption( t + " is not a valid DirectoryPathFormat" );
+                    }
+                }
+            };
 
     @Override
     public String toString()

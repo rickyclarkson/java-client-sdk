@@ -36,9 +36,9 @@ public class VPartsCGIResultTest
     @Test
     public void success()
     {
-        final VPartsCGIResult result = new VPartsCGIResult.Builder().index( 100 ).camMask(
-                4 ).directory( "foo" ).endTime( 10 ).expiryTime( 100 ).filename(
-                "bar" ).numberOfEntries( 5 ).startTime( 1 ).build();
+        final VPartsCGIResult result =
+                new VPartsCGIResult.Builder().index( 100 ).camMask( 4 ).directory( "foo" ).endTime( 10 ).expiryTime(
+                        100 ).filename( "bar" ).numberOfEntries( 5 ).startTime( 1 ).build();
 
         assertTrue( result.getIndex() == 100 );
         assertTrue( result.getCamMask() == 4 );

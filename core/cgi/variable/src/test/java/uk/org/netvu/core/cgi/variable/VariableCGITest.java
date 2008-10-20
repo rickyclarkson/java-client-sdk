@@ -15,8 +15,8 @@ public class VariableCGITest
     @Test
     public void buildingURL()
     {
-        final String[] strings = { "/variable.cgi?variable=c_title[]",
-            "/variable.cgi?variable=c_title[]&type=include" };
+        final String[] strings =
+                { "/variable.cgi?variable=c_title[]", "/variable.cgi?variable=c_title[]&type=include" };
 
         for ( final String s : strings )
         {
@@ -30,8 +30,8 @@ public class VariableCGITest
     @Test
     public void buildingVariableCGI()
     {
-        final VariableCGI cgi = new VariableCGI.Builder().type(
-                VariableType.INCLUDE ).variable( Variable.C_TITLE ).build();
+        final VariableCGI cgi =
+                new VariableCGI.Builder().type( VariableType.INCLUDE ).variable( Variable.C_TITLE ).build();
 
         assertTrue( cgi.getType() == VariableType.INCLUDE );
         assertTrue( cgi.getVariable() == Variable.C_TITLE );
@@ -53,9 +53,7 @@ public class VariableCGITest
     @Test
     public void parsing()
     {
-        assertTrue( VariableCGI.fromString(
-                "foo/variable.cgi?variable=c_title[]" ).getVariable() == Variable.C_TITLE );
-        assertTrue( VariableCGI.fromString(
-                "foo/variable.cgi?variable=c_title[]&type=http" ).getType() == VariableType.HTTP );
+        assertTrue( VariableCGI.fromString( "foo/variable.cgi?variable=c_title[]" ).getVariable() == Variable.C_TITLE );
+        assertTrue( VariableCGI.fromString( "foo/variable.cgi?variable=c_title[]&type=http" ).getType() == VariableType.HTTP );
     }
 }

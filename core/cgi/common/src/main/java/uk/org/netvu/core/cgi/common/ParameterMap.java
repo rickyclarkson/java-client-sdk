@@ -24,23 +24,20 @@ public final class ParameterMap
      * @return a ParameterMap holding the parsed values, wrapped in an Option,
      *         or an empty Option if any of the values don't parse.
      */
-    public static Option<ParameterMap> fromStrings(
-            final List<ParameterDescription<?, ?>> parameterDescriptions,
+    public static Option<ParameterMap> fromStrings( final List<ParameterDescription<?, ?>> parameterDescriptions,
             final List<String> strings )
     {
         Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
 
-        for ( final Pair<ParameterDescription<?, ?>, String> pair : Lists.zip(
-                parameterDescriptions, strings ) )
+        for ( final Pair<ParameterDescription<?, ?>, String> pair : Lists.zip( parameterDescriptions, strings ) )
         {
             parameterMap = parameterMap.bind( new Function<ParameterMap, Option<ParameterMap>>()
             {
                 @Override
                 public Option<ParameterMap> apply( final ParameterMap map )
                 {
-                    return map.parseAndSet( pair.getFirstComponent(),
-                            new URLParameter( pair.getFirstComponent().name,
-                                    pair.getSecondComponent() ) );
+                    return map.parseAndSet( pair.getFirstComponent(), new URLParameter( pair.getFirstComponent().name,
+                            pair.getSecondComponent() ) );
                 }
             } );
         }
@@ -59,8 +56,7 @@ public final class ParameterMap
      *        the parameters of interest.
      * @return a ParameterMap holding the values parsed from the URL.
      */
-    public static Option<ParameterMap> fromURL(
-            final String url,
+    public static Option<ParameterMap> fromURL( final String url,
             final List<? extends ParameterDescription<?, ?>> parameterDescriptions )
     {
         Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
@@ -75,8 +71,7 @@ public final class ParameterMap
                     parameterMap = parameterMap.bind( new Function<ParameterMap, Option<ParameterMap>>()
                     {
                         @Override
-                        public Option<ParameterMap> apply(
-                                final ParameterMap map )
+                        public Option<ParameterMap> apply( final ParameterMap map )
                         {
                             return map.parseAndSet( parameterDescription, part );
                         }
@@ -127,8 +122,7 @@ public final class ParameterMap
      * @param validator
      *        a test against a ParameterMap for validity.
      */
-    private ParameterMap( final Map<ParameterDescription<?, ?>, Object> values,
-            final Validator validator )
+    private ParameterMap( final Map<ParameterDescription<?, ?>, Object> values, final Validator validator )
     {
         CheckParameters.areNotNull( validator );
 
@@ -161,8 +155,7 @@ public final class ParameterMap
      * @return true if the ParameterMap only has the parameter's default value,
      *         false otherwise.
      */
-    public boolean isDefault(
-            final ParameterDescription<?, ?> parameterDescription )
+    public boolean isDefault( final ParameterDescription<?, ?> parameterDescription )
     {
         return values.get( parameterDescription ) == null;
     }
@@ -183,28 +176,24 @@ public final class ParameterMap
      * @return a new ParameterMap with the specified value for the specified
      *         parameter.
      */
-    public <T, R> ParameterMap set(
-            final ParameterDescription<T, R> parameterDescription, final T value )
+    public <T, R> ParameterMap set( final ParameterDescription<T, R> parameterDescription, final T value )
     {
         CheckParameters.areNotNull( parameterDescription );
 
         if ( value == null )
         {
-            throw new NullPointerException( "Values for the "
-                    + parameterDescription.name + " parameter cannot be null." );
+            throw new NullPointerException( "Values for the " + parameterDescription.name
+                    + " parameter cannot be null." );
         }
 
-        final Map<ParameterDescription<?, ?>, Object> copy = new HashMap<ParameterDescription<?, ?>, Object>(
-                values );
+        final Map<ParameterDescription<?, ?>, Object> copy = new HashMap<ParameterDescription<?, ?>, Object>( values );
 
-        copy.put( parameterDescription, parameterDescription.reduce( value,
-                get( parameterDescription ) ) );
+        copy.put( parameterDescription, parameterDescription.reduce( value, get( parameterDescription ) ) );
 
         final ParameterMap built = new ParameterMap( copy, validator );
         if ( !validator.isValid( built ) )
         {
-            throw new IllegalStateException( value + " for "
-                    + parameterDescription.name
+            throw new IllegalStateException( value + " for " + parameterDescription.name
                     + " violates the constraints on this parameter map" );
         }
 
@@ -219,8 +208,7 @@ public final class ParameterMap
      *        the parameters of interest, in order.
      * @return the parameters part of a URL.
      */
-    public String toURLParameters(
-            final List<? extends ParameterDescription<?, ?>> parameterDescriptions )
+    public String toURLParameters( final List<? extends ParameterDescription<?, ?>> parameterDescriptions )
     {
         final StringBuilder builder = new StringBuilder();
         for ( final ParameterDescription<?, ?> parameterDescription : parameterDescriptions )
@@ -231,24 +219,21 @@ public final class ParameterMap
             }
         }
 
-        return builder.toString().replaceAll( "[&]+$", "" ).replaceAll( "[&]+",
-                "&" ).replaceAll( "^&", "" );
+        return builder.toString().replaceAll( "[&]+$", "" ).replaceAll( "[&]+", "&" ).replaceAll( "^&", "" );
     }
 
-    private <T, R> Option<ParameterMap> parseAndSet(
-            final ParameterDescription<T, R> parameterDescription,
+    private <T, R> Option<ParameterMap> parseAndSet( final ParameterDescription<T, R> parameterDescription,
             final URLParameter keyAndValue )
     {
-        return parameterDescription.fromURLParameter( keyAndValue ).map(
-                new Function<T, ParameterMap>()
-                {
-                    @Override
-                    public ParameterMap apply( final T value )
-                    {
-                        return set( parameterDescription, value );
-                    }
+        return parameterDescription.fromURLParameter( keyAndValue ).map( new Function<T, ParameterMap>()
+        {
+            @Override
+            public ParameterMap apply( final T value )
+            {
+                return set( parameterDescription, value );
+            }
 
-                } );
+        } );
     }
 
     /**
@@ -279,8 +264,7 @@ public final class ParameterMap
          * @return a Validator that ensures that only one of the specified
          *         mutually exclusive parameters has been set to a value.
          */
-        public static Validator mutuallyExclusive(
-                final List<ParameterDescription<?, ?>> exclusiveParameterDescriptions )
+        public static Validator mutuallyExclusive( final List<ParameterDescription<?, ?>> exclusiveParameterDescriptions )
         {
             CheckParameters.areNotNull( exclusiveParameterDescriptions );
 
@@ -294,8 +278,7 @@ public final class ParameterMap
                     int count = 0;
                     for ( final ParameterDescription<?, ?> exclusiveParameterDescription : exclusiveParameterDescriptions )
                     {
-                        count += parameterMap.isDefault( exclusiveParameterDescription ) ? 0
-                                : 1;
+                        count += parameterMap.isDefault( exclusiveParameterDescription ) ? 0 : 1;
                     }
 
                     return count < 2;

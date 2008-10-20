@@ -83,10 +83,9 @@ public enum Variable
     private final ArrayOrScalar arrayOrScalar;
 
     /**
-     * A Function that, given a String possibly ending in [], ignores the []
-     * and matches it, case-insensitively, to one of the given Variables,
-     * returning it in an Option, or returning an empty Option if there was no
-     * match.
+     * A Function that, given a String possibly ending in [], ignores the [] and
+     * matches it, case-insensitively, to one of the given Variables, returning
+     * it in an Option, or returning an empty Option if there was no match.
      */
     static final Function<String, Option<Variable>> fromString = new Function<String, Option<Variable>>()
     {
@@ -95,13 +94,11 @@ public enum Variable
         {
             try
             {
-                return Option.getFullOption( valueOf( s.replaceAll(
-                        Pattern.quote( "[]" ), "" ).toUpperCase() ) );
+                return Option.getFullOption( valueOf( s.replaceAll( Pattern.quote( "[]" ), "" ).toUpperCase() ) );
             }
             catch ( final IllegalArgumentException exception )
             {
-                return Option.getEmptyOption( "Cannot parse " + s
-                        + " into a Variable" );
+                return Option.getEmptyOption( "Cannot parse " + s + " into a Variable" );
             }
         }
     };
@@ -114,7 +111,6 @@ public enum Variable
     @Override
     public String toString()
     {
-        return super.toString().toLowerCase()
-                + ( arrayOrScalar == ArrayOrScalar.ARRAY ? "[]" : "" );
+        return super.toString().toLowerCase() + ( arrayOrScalar == ArrayOrScalar.ARRAY ? "[]" : "" );
     }
 }

@@ -19,8 +19,8 @@ public enum VariableType
     INCLUDE;
 
     /**
-     * A Function that, given a String, will return an Option containing HTTP
-     * or INCLUDE if the String case-insensitively matches one of those, and an
+     * A Function that, given a String, will return an Option containing HTTP or
+     * INCLUDE if the String case-insensitively matches one of those, and an
      * empty Option otherwise.
      */
     static final Function<String, Option<VariableType>> fromString = new Function<String, Option<VariableType>>()
@@ -34,8 +34,7 @@ public enum VariableType
             }
             catch ( final IllegalArgumentException exception )
             {
-                return Option.getEmptyOption( "Cannot parse " + t
-                        + " into a VariableType" );
+                return Option.getEmptyOption( "Cannot parse " + t + " into a VariableType" );
             }
         }
     };

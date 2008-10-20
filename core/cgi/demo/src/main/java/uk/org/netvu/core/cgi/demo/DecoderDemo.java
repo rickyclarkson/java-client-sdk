@@ -71,8 +71,7 @@ public class DecoderDemo
                         {
                             panel.run( new DecoderCGI().connection(
                                     panel.getInt( "index" ),
-                                    new Connection().cam(
-                                            panel.getInt( "camera number" ) ).slaveIP(
+                                    new Connection().cam( panel.getInt( "camera number" ) ).slaveIP(
                                             panel.getString( "slave IP" ) ) ).toURLParameters() );
                         }
                     }
@@ -91,8 +90,7 @@ public class DecoderDemo
                     {
                         public void actionPerformed( final ActionEvent e )
                         {
-                            panel.run( new DecoderCGI().layout(
-                                    panel.getInt( "index" ),
+                            panel.run( new DecoderCGI().layout( panel.getInt( "index" ),
                                     Layout.find( panel.getInt( "layout" ) ) ).toURLParameters() );
                         }
                     }
@@ -112,10 +110,8 @@ public class DecoderDemo
                     {
                         public void actionPerformed( final ActionEvent e )
                         {
-                            panel.run( new DecoderCGI().outputTitles(
-                                    panel.getString( "First title" ),
-                                    panel.getString( "second" ),
-                                    panel.getString( "last one" ) ).toURLParameters() );
+                            panel.run( new DecoderCGI().outputTitles( panel.getString( "First title" ),
+                                    panel.getString( "second" ), panel.getString( "last one" ) ).toURLParameters() );
                         }
                     }
 
@@ -130,8 +126,7 @@ public class DecoderDemo
                     {
                         public void actionPerformed( final ActionEvent e )
                         {
-                            Panel.this.run( new DecoderCGI().command(
-                                    Panel.this.getInt( " index" ),
+                            Panel.this.run( new DecoderCGI().command( Panel.this.getInt( " index" ),
                                     Panel.this.getString( "command" ) ).toURLParameters() );
                         }
                     } );
@@ -180,12 +175,10 @@ public class DecoderDemo
                 }
             }
 
-            final List<String> unquoted = Lists.map(
-                    Strings.splitIgnoringQuotedSections(
-                            readOneLine( "http://192.168.106.127/"
-                                    + new VariableCGI.Builder().variable(
-                                            Variable.CONNECTIONS ).build().toString() ),
-                            ',' ), new Unquote() );
+            final List<String> unquoted =
+                    Lists.map( Strings.splitIgnoringQuotedSections( readOneLine( "http://192.168.106.127/"
+                            + new VariableCGI.Builder().variable( Variable.CONNECTIONS ).build().toString() ), ',' ),
+                            new Unquote() );
 
             final class Hack2
                     extends Function<Pair<String, Integer>, String>
@@ -193,8 +186,7 @@ public class DecoderDemo
                 @Override
                 public String apply( final Pair<String, Integer> pair )
                 {
-                    return pair.getSecondComponent() + " -> "
-                            + pair.getFirstComponent();
+                    return pair.getSecondComponent() + " -> " + pair.getFirstComponent();
                 }
             }
 
@@ -202,29 +194,24 @@ public class DecoderDemo
                     extends Function<Pair<String, Integer>, Boolean>
             {
                 @Override
-                public Boolean apply(
-                        final Pair<String, Integer> valueAndIndex )
+                public Boolean apply( final Pair<String, Integer> valueAndIndex )
                 {
                     return valueAndIndex.getFirstComponent().length() != 0;
                 }
             }
 
             variables.setText( "Connections: \n"
-                    + Strings.intersperse( "\n", Lists.map( Lists.filter(
-                            zipWithIndex( unquoted ), new Hack1() ),
+                    + Strings.intersperse( "\n", Lists.map( Lists.filter( zipWithIndex( unquoted ), new Hack1() ),
                             new Hack2() ) )
                     + "'\nLayouts:\n"
                     + readOneLine( "http://192.168.106.127/"
-                            + new VariableCGI.Builder().variable(
-                                    Variable.LAYOUTS ).build().toString() )
+                            + new VariableCGI.Builder().variable( Variable.LAYOUTS ).build().toString() )
                     + "\nOutput titles: \n"
                     + readOneLine( "http://192.168.106.127/"
-                            + new VariableCGI.Builder().variable(
-                                    Variable.OUTPUT_TITLES ).build().toString() )
+                            + new VariableCGI.Builder().variable( Variable.OUTPUT_TITLES ).build().toString() )
                     + "\nCommands: \n"
                     + readOneLine( "http://192.168.106.127/"
-                            + new VariableCGI.Builder().variable(
-                                    Variable.COMMANDS ).build().toString() ) );
+                            + new VariableCGI.Builder().variable( Variable.COMMANDS ).build().toString() ) );
             variables.setCaretPosition( 0 );
         }
 
@@ -241,8 +228,7 @@ public class DecoderDemo
             }
             try
             {
-                return new BufferedReader( new InputStreamReader( stream,
-                        "UTF-8" ) ).readLine();
+                return new BufferedReader( new InputStreamReader( stream, "UTF-8" ) ).readLine();
             }
             catch ( final IOException e )
             {

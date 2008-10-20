@@ -12,54 +12,6 @@ import java.util.Iterator;
 public abstract class Option<T> implements Iterable<T>
 {
     /**
-     * A Function that always yields an empty Option.
-     * 
-     * @param <T>
-     *        the type of the ignored value to convert.
-     * @param <U>
-     *        the type of the Option to produce.
-     * @param reason
-     *        the reason that the Option has no element.
-     * @throws NullPointerException
-     *         if reason is null.
-     * @return a Function that always yields an empty Option.
-     */
-    public static <T, U> Function<T, Option<U>> getFunctionToEmptyOption(
-            final String reason )
-    {
-        CheckParameters.areNotNull( reason );
-
-        return new Function<T, Option<U>>()
-        {
-            @Override
-            public Option<U> apply( final T t )
-            {
-                return getEmptyOption( reason );
-            }
-        };
-    }
-
-    /**
-     * A Function that yields an Option containing the value given to it.
-     * 
-     * @param <T>
-     *        the type of the values that this Function takes.
-     * @return a Function that yields an Option containing the value given to
-     *         it.
-     */
-    public static <T> Function<T, Option<T>> getFunctionToFullOption()
-    {
-        return new Function<T, Option<T>>()
-        {
-            @Override
-            public Option<T> apply( final T t )
-            {
-                return getFullOption( t );
-            }
-        };
-    }
-
-    /**
      * Creates an Option holding no elements.
      * 
      * @param <T>
@@ -96,8 +48,55 @@ public abstract class Option<T> implements Iterable<T>
     }
 
     /**
-     * A Function that takes in a T, converts it to a U, and produces an
-     * Option containing that U.
+     * A Function that always yields an empty Option.
+     * 
+     * @param <T>
+     *        the type of the ignored value to convert.
+     * @param <U>
+     *        the type of the Option to produce.
+     * @param reason
+     *        the reason that the Option has no element.
+     * @throws NullPointerException
+     *         if reason is null.
+     * @return a Function that always yields an empty Option.
+     */
+    public static <T, U> Function<T, Option<U>> getFunctionToEmptyOption( final String reason )
+    {
+        CheckParameters.areNotNull( reason );
+
+        return new Function<T, Option<U>>()
+        {
+            @Override
+            public Option<U> apply( final T t )
+            {
+                return getEmptyOption( reason );
+            }
+        };
+    }
+
+    /**
+     * A Function that yields an Option containing the value given to it.
+     * 
+     * @param <T>
+     *        the type of the values that this Function takes.
+     * @return a Function that yields an Option containing the value given to
+     *         it.
+     */
+    public static <T> Function<T, Option<T>> getFunctionToFullOption()
+    {
+        return new Function<T, Option<T>>()
+        {
+            @Override
+            public Option<T> apply( final T t )
+            {
+                return getFullOption( t );
+            }
+        };
+    }
+
+    /**
+     * A Function that takes in a T, converts it to a U, and produces an Option
+     * containing that U.
      * 
      * @param <T>
      *        the type of the value to take in.
@@ -107,11 +106,10 @@ public abstract class Option<T> implements Iterable<T>
      *        the Function to convert the T into a U.
      * @throws NullPointerException
      *         if function is null.
-     * @return a Function that takes in a T, converts it to a U, and produces
-     *         an Option containing that U.
+     * @return a Function that takes in a T, converts it to a U, and produces an
+     *         Option containing that U.
      */
-    public static <T, U> Function<T, Option<U>> toPartialFunction(
-            final Function<T, U> function )
+    public static <T, U> Function<T, Option<U>> toPartialFunction( final Function<T, U> function )
     {
         CheckParameters.areNotNull( function );
 
@@ -164,8 +162,7 @@ public abstract class Option<T> implements Iterable<T>
     @Override
     public final int hashCode()
     {
-        throw new UnsupportedOperationException(
-                "hashCode not supported, to match equals." );
+        throw new UnsupportedOperationException( "hashCode not supported, to match equals." );
     }
 
     /**
@@ -226,8 +223,8 @@ public abstract class Option<T> implements Iterable<T>
      *        the Function to apply to a value held by this Option.
      * @throws NullPointerException
      *         if conversion is null.
-     * @return an Option holding the result of binding the specified Function
-     *         to this Option.
+     * @return an Option holding the result of binding the specified Function to
+     *         this Option.
      */
     abstract <U> Option<U> bind( Function<T, Option<U>> function );
 
@@ -361,8 +358,7 @@ public abstract class Option<T> implements Iterable<T>
         @Override
         public String reason()
         {
-            throw new IllegalStateException(
-                    "This Option has a value; reason() is only valid on an empty Option" );
+            throw new IllegalStateException( "This Option has a value; reason() is only valid on an empty Option" );
         }
 
         @Override

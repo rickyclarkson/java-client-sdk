@@ -30,8 +30,8 @@ public final class StringConversion<T>
     }
 
     /**
-     * Constructs a StringConversion from a partial Function from Strings to
-     * Ts, and T's toString() method.
+     * Constructs a StringConversion from a partial Function from Strings to Ts,
+     * and T's toString() method.
      * 
      * @param conversionFromString
      *        the partial Function from Strings to Ts.
@@ -43,17 +43,14 @@ public final class StringConversion<T>
      * @return a StringConversion that can convert Strings to Ts and Ts to
      *         Strings.
      */
-    public static <T> StringConversion<T> convenientPartial(
-            final Function<String, Option<T>> conversionFromString )
+    public static <T> StringConversion<T> convenientPartial( final Function<String, Option<T>> conversionFromString )
     {
-        return partial(
-                conversionFromString,
-                andThenToFullOption( Function.<T> getObjectToStringFunction() ) );
+        return partial( conversionFromString, andThenToFullOption( Function.<T> getObjectToStringFunction() ) );
     }
 
     /**
-     * Constructs a StringConversion from a Function from Strings to Ts, and
-     * T's toString() method.
+     * Constructs a StringConversion from a Function from Strings to Ts, and T's
+     * toString() method.
      * 
      * @param conversionFromString
      *        the Function from Strings to Ts.
@@ -65,11 +62,9 @@ public final class StringConversion<T>
      * @return a StringConversion that can convert Strings to Ts and Ts to
      *         Strings.
      */
-    public static <T> StringConversion<T> convenientTotal(
-            final Function<String, T> conversionFromString )
+    public static <T> StringConversion<T> convenientTotal( final Function<String, T> conversionFromString )
     {
-        return partial(
-                andThenToFullOption( conversionFromString ),
+        return partial( andThenToFullOption( conversionFromString ),
                 andThenToFullOption( Function.<T> getObjectToStringFunction() ) );
     }
 
@@ -82,8 +77,7 @@ public final class StringConversion<T>
      */
     public static StringConversion<Integer> getHexToIntStringConversion()
     {
-        return partial(
-                Function.getHexStringToIntFunction(),
+        return partial( Function.getHexStringToIntFunction(),
                 Option.toPartialFunction( Function.getIntToHexStringFunction() ) );
     }
 
@@ -96,8 +90,7 @@ public final class StringConversion<T>
      */
     public static StringConversion<Long> getHexToLongStringConversion()
     {
-        return partial(
-                Function.getHexStringToLongFunction(),
+        return partial( Function.getHexStringToLongFunction(),
                 Option.toPartialFunction( Function.getLongToHexStringFunction() ) );
     }
 
@@ -114,8 +107,8 @@ public final class StringConversion<T>
     }
 
     /**
-     * Constructs a StringConversion from a partial Function from Strings to
-     * Ts, and a partial Function from Ts to Strings.
+     * Constructs a StringConversion from a partial Function from Strings to Ts,
+     * and a partial Function from Ts to Strings.
      * 
      * @param conversionFromString
      *        the partial Function from Strings to Ts.
@@ -129,12 +122,10 @@ public final class StringConversion<T>
      * @return a StringConversion that can convert Strings to Ts and Ts to
      *         Strings.
      */
-    public static <T> StringConversion<T> partial(
-            final Function<String, Option<T>> conversionFromString,
+    public static <T> StringConversion<T> partial( final Function<String, Option<T>> conversionFromString,
             final Function<T, Option<String>> conversionToString )
     {
-        return new StringConversion<T>( conversionFromString,
-                conversionToString );
+        return new StringConversion<T>( conversionFromString, conversionToString );
     }
 
     /**
@@ -165,12 +156,10 @@ public final class StringConversion<T>
      * @return a StringConversion that can convert Strings to Ts and Ts to
      *         Strings.
      */
-    public static <T> StringConversion<T> total(
-            final Function<String, T> conversionFromString,
+    public static <T> StringConversion<T> total( final Function<String, T> conversionFromString,
             final Function<T, String> conversionToString )
     {
-        return partial( andThenToFullOption( conversionFromString ),
-                andThenToFullOption( conversionToString ) );
+        return partial( andThenToFullOption( conversionFromString ), andThenToFullOption( conversionToString ) );
     }
 
     /**
@@ -187,21 +176,18 @@ public final class StringConversion<T>
      * @throws NullPointerException
      *         if conversion is null.
      */
-    private static <T, R> Function<T, Option<R>> andThenToFullOption(
-            final Function<T, R> conversion )
+    private static <T, R> Function<T, Option<R>> andThenToFullOption( final Function<T, R> conversion )
     {
         return conversion.andThen( Option.<R> getFunctionToFullOption() );
     }
 
     /**
-     * The partial Function to use to convert Strings to Ts. This is never
-     * null.
+     * The partial Function to use to convert Strings to Ts. This is never null.
      */
     private final Function<String, Option<T>> conversionFromString;
 
     /**
-     * The partial Function to use to convert Ts to Strings. This is never
-     * null.
+     * The partial Function to use to convert Ts to Strings. This is never null.
      */
     private final Function<T, Option<String>> conversionToString;
 
@@ -215,8 +201,7 @@ public final class StringConversion<T>
      * @throws NullPointerException
      *         if conversionFromString or conversionToString are null.
      */
-    private StringConversion(
-            final Function<String, Option<T>> conversionFromString,
+    private StringConversion( final Function<String, Option<T>> conversionFromString,
             final Function<T, Option<String>> conversionToString )
     {
         CheckParameters.areNotNull( conversionFromString, conversionToString );

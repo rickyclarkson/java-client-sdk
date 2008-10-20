@@ -27,8 +27,7 @@ public final class VariableCGI
         final Option<ParameterMap> map = ParameterMap.fromURL( url, params );
         if ( map.isEmpty() )
         {
-            throw new IllegalArgumentException( "Cannot parse " + url
-                    + " into a VariableCGI because " + map.reason() );
+            throw new IllegalArgumentException( "Cannot parse " + url + " into a VariableCGI because " + map.reason() );
         }
 
         return new VariableCGI( map.get() );
@@ -36,13 +35,13 @@ public final class VariableCGI
 
     private final ParameterMap parameterMap;
 
-    private static final ParameterDescription<Variable, Option<Variable>> VARIABLE = ParameterDescription.parameterWithoutDefault(
-            "variable",
-            StringConversion.convenientPartial( Variable.fromString ) );
+    private static final ParameterDescription<Variable, Option<Variable>> VARIABLE =
+            ParameterDescription.parameterWithoutDefault( "variable",
+                    StringConversion.convenientPartial( Variable.fromString ) );
 
-    private static final ParameterDescription<VariableType, VariableType> TYPE = ParameterDescription.parameterWithDefault(
-            "type", VariableType.HTTP,
-            StringConversion.convenientPartial( VariableType.fromString ) );
+    private static final ParameterDescription<VariableType, VariableType> TYPE =
+            ParameterDescription.parameterWithDefault( "type", VariableType.HTTP,
+                    StringConversion.convenientPartial( VariableType.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
@@ -67,8 +66,7 @@ public final class VariableCGI
     {
         if ( parameterMap.get( VARIABLE ).isEmpty() )
         {
-            throw new IllegalStateException( VARIABLE.name
-                    + " has not been set to a value" );
+            throw new IllegalStateException( VARIABLE.name + " has not been set to a value" );
         }
 
         this.parameterMap = parameterMap;
@@ -148,13 +146,11 @@ public final class VariableCGI
             return set( VARIABLE, variable );
         }
 
-        private <T> Builder set( final ParameterDescription<T, ?> parameter,
-                final T value )
+        private <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
         {
             if ( real.isEmpty() )
             {
-                throw new IllegalStateException(
-                        "The Builder has already been built (build() has been called on it)." );
+                throw new IllegalStateException( "The Builder has already been built (build() has been called on it)." );
             }
 
             real = real.map( new Function<ParameterMap, ParameterMap>()

@@ -23,8 +23,7 @@ public final class Lists
      * @return a List consisting of only the elements of the passed-in List that
      *         pass the predicate.
      */
-    public static <T> List<T> filter( final List<T> list,
-            final Function<T, Boolean> predicate )
+    public static <T> List<T> filter( final List<T> list, final Function<T, Boolean> predicate )
     {
         CheckParameters.areNotNull( predicate );
 
@@ -53,8 +52,7 @@ public final class Lists
      *        the function to map over the List.
      * @return a List containing objects of type R.
      */
-    public static <T, R> List<R> map( final List<T> list,
-            final Function<T, R> function )
+    public static <T, R> List<R> map( final List<T> list, final Function<T, R> function )
     {
         CheckParameters.areNotNull( function );
         final List<R> result = new ArrayList<R>();
@@ -81,8 +79,7 @@ public final class Lists
      * @return the value produced by reducing the List with the specified
      *         Reduction.
      */
-    public static <T> T reduce( final List<T> list,
-            final Reduction<T, T> reduction )
+    public static <T> T reduce( final List<T> list, final Reduction<T, T> reduction )
     {
         CheckParameters.areNotNull( list, reduction );
 
@@ -111,8 +108,7 @@ public final class Lists
      * @return a new list containing the elements from the specified list,
      *         except for the specified element toRemove.
      */
-    public static <T> List<T> remove( final List<T> original,
-            final T... toRemove )
+    public static <T> List<T> remove( final List<T> original, final T... toRemove )
     {
         final List<T> newOne = new ArrayList<T>( original );
 
@@ -138,8 +134,7 @@ public final class Lists
      * @return a List containing all the elements from the specified List, but
      *         without the items at the specified indices.
      */
-    public static <T> List<T> removeByIndices( final List<T> values,
-            final int... indices )
+    public static <T> List<T> removeByIndices( final List<T> values, final int... indices )
     {
         final TreeSet<Integer> uniqueIndices = new TreeSet<Integer>();
         for ( final int index : indices )

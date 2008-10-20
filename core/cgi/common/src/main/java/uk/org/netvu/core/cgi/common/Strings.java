@@ -42,8 +42,7 @@ public class Strings
      *         if separator or strings are null.
      * @return the interspersed String.
      */
-    public static String intersperse( final String separator,
-            final List<String> strings )
+    public static String intersperse( final String separator, final List<String> strings )
     {
         CheckParameters.areNotNull( separator );
 
@@ -95,8 +94,7 @@ public class Strings
      * @return a List of Strings that, in the original String, were before and
      *         after the separator.
      */
-    public static List<String> splitIgnoringQuotedSections(
-            final String string, final char separator )
+    public static List<String> splitIgnoringQuotedSections( final String string, final char separator )
     {
         final List<String> results = new ArrayList<String>( Arrays.asList( "" ) );
 
@@ -115,8 +113,7 @@ public class Strings
             }
             else
             {
-                results.set( results.size() - 1,
-                        results.get( results.size() - 1 ) + c );
+                results.set( results.size() - 1, results.get( results.size() - 1 ) + c );
             }
         }
 
@@ -124,11 +121,10 @@ public class Strings
     }
 
     /**
-     * A Function that will surround any String passed to it with double
-     * quotes.
+     * A Function that will surround any String passed to it with double quotes.
      * 
-     * @return a Function that will surround any String passed to it with
-     *         double quotes.
+     * @return a Function that will surround any String passed to it with double
+     *         quotes.
      */
     public static final Function<String, String> surroundWithQuotes()
     {
@@ -150,8 +146,7 @@ public class Strings
      *         the given separator, or the whole String if the separator isn't
      *         found in the String.
      */
-    static String afterFirstLeniently( final String string,
-            final String separator )
+    static String afterFirstLeniently( final String string, final String separator )
     {
         final List<String> list = partitionLeniently( string, separator );
         return list.get( list.size() > 1 ? 1 : 0 );
@@ -172,8 +167,7 @@ public class Strings
      *         the given separator, or the whole string if the separator isn't
      *         found in the string.
      */
-    static String afterLastLeniently( final String string,
-            final String separator )
+    static String afterLastLeniently( final String string, final String separator )
     {
         final List<String> list = partitionLeniently( string, separator );
         return list.get( list.size() - 1 );
@@ -194,31 +188,28 @@ public class Strings
      *         the given separator, or the whole string if the separator isn't
      *         found in the String.
      */
-    static String beforeFirstLeniently( final String string,
-            final String separator )
+    static String beforeFirstLeniently( final String string, final String separator )
     {
         return partitionLeniently( string, separator ).get( 0 );
     }
 
     /**
-     * Gives a Function that can split a given String into two parts around
-     * the given separator.
+     * Gives a Function that can split a given String into two parts around the
+     * given separator.
      * 
      * @param separator
      *        the separator to use.
      * @return a Function that can split a given String into two parts around
      *         the given separator.
      */
-    static Function<String, Pair<String, String>> partition(
-            final char separator )
+    static Function<String, Pair<String, String>> partition( final char separator )
     {
         return new Function<String, Pair<String, String>>()
         {
             @Override
             public Pair<String, String> apply( final String param )
             {
-                return new Pair<String, String>( param.substring( 0,
-                        param.indexOf( separator ) ),
+                return new Pair<String, String>( param.substring( 0, param.indexOf( separator ) ),
                         param.substring( param.indexOf( separator ) + 1 ) );
             }
         };
@@ -234,8 +225,7 @@ public class Strings
      */
     static String removeSurroundingQuotesLeniently( final String value )
     {
-        return value.startsWith( DOUBLE_QUOTES )
-                && value.endsWith( DOUBLE_QUOTES ) ? value.substring( 1,
+        return value.startsWith( DOUBLE_QUOTES ) && value.endsWith( DOUBLE_QUOTES ) ? value.substring( 1,
                 value.length() - 1 ) : value;
     }
 
@@ -270,8 +260,7 @@ public class Strings
      * @return a List containing the text to the left of the separator, and the
      *         text to the right of the separator, if any.
      */
-    private static List<String> partitionLeniently( final String string,
-            final String separator )
+    private static List<String> partitionLeniently( final String string, final String separator )
     {
         final int index = string.indexOf( separator );
 
@@ -280,8 +269,8 @@ public class Strings
             return Arrays.asList( "" );
         }
 
-        return index >= 0 ? Arrays.asList( string.substring( 0, index ),
-                string.substring( index + 1 ) ) : Arrays.asList( string );
+        return index >= 0 ? Arrays.asList( string.substring( 0, index ), string.substring( index + 1 ) )
+                : Arrays.asList( string );
     }
 
     /**

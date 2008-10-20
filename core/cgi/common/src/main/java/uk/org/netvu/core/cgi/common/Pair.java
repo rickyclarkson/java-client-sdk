@@ -42,11 +42,8 @@ public final class Pair<T, U>
     @Override
     public boolean equals( final Object other )
     {
-        return other instanceof Pair
-                && ( (Pair) other ).getFirstComponent().equals(
-                        getFirstComponent() )
-                && ( (Pair) other ).getSecondComponent().equals(
-                        getSecondComponent() );
+        return other instanceof Pair && ( (Pair) other ).getFirstComponent().equals( getFirstComponent() )
+                && ( (Pair) other ).getSecondComponent().equals( getSecondComponent() );
     }
 
     /**
@@ -75,7 +72,6 @@ public final class Pair<T, U>
     @Override
     public int hashCode()
     {
-        return getFirstComponent().hashCode() + 13651
-                * getSecondComponent().hashCode();
+        return getFirstComponent().hashCode() + 13651 * getSecondComponent().hashCode();
     }
 }

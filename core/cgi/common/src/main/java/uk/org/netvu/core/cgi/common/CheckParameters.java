@@ -16,16 +16,14 @@ public final class CheckParameters
      *         if any of the arguments passed are null, or if the varargs array
      *         itself is null.
      */
-    public static void areNotNull( final Object... args )
-            throws NullPointerException
+    public static void areNotNull( final Object... args ) throws NullPointerException
     {
         int a = 0;
         for ( final Object o : args )
         {
             if ( o == null )
             {
-                throw new NullPointerException( "Argument number " + a
-                        + " was null." );
+                throw new NullPointerException( "Argument number " + a + " was null." );
             }
             a++;
         }

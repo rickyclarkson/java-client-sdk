@@ -105,7 +105,7 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
    property((a: Int) => a >= 0 ==> (new Builder().range(a).build.getRange == a)) must pass
    property((a: Long) => new Builder().cameraMask(a).build.getCameraMask == a) must pass
    property((a: Int) => new Builder().gpsMask(a).build.getGpsMask == a) must pass
-   property((a: Int) => new Builder().length(a).build.getMaxLength == a) must pass
+   property((a: Int) => new Builder().maxLength(a).build.getMaxLength == a) must pass
    property((a: Int) => new Builder().systemMask(a).build.getSystemMask == a) must pass
    property((a: String) => new Builder().text(a).build.getText == a) must pass
    property((a: Int) => a >= 0 ==> (new Builder().time(a).build.getTime == a)) must pass
@@ -149,7 +149,7 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
                      () => builder.cameraMask(anyLong.get),
                      () => builder.format(anyFormat.get),
                      () => builder.gpsMask(anyInt.get),
-                     () => builder.length(anyInt.get),
+                     () => builder.maxLength(anyInt.get),
                      () => builder.range(nonNegativeInt.get),
                      () => builder.systemMask(anyInt.get),
                      () => builder.text(anyString.get),
@@ -300,7 +300,7 @@ class EventsCGIResultTest extends JUnit4(new Specification with Scalacheck {
  } }
 
  "Values stored in an EventsCGIResult" should { "be retrievable" in {
-  val result = (new EventsCGIResult.Builder() camera 1 alarm "test" julianTime 100 offset 5 file "ignore" onDisk true duration 40 preAlarm 1 archive 1 status EventsCGIResult.Status.NONE alarmType EventsCGIResult.AlarmType.CAMERA_PARAMETER).build
+  val result = (new EventsCGIResult.Builder() camera 1 alarm "test" julianTime 100 offset 5 file "ignore" onDisk true duration 40 preAlarm 1 archive 1 status EventsCGIResult.Status.NONE alarmType EventsCGIResult.AlarmType.CAMERA).build
 
   result.getCam mustEqual 1
   result.getAlarm mustEqual "test"
@@ -312,7 +312,7 @@ class EventsCGIResultTest extends JUnit4(new Specification with Scalacheck {
   result.getPreAlarm mustEqual 1
   result.getArchive mustEqual 1
   result.getStatus mustEqual EventsCGIResult.Status.NONE
-  result.getAlarmType mustEqual EventsCGIResult.AlarmType.CAMERA_PARAMETER
+  result.getAlarmType mustEqual EventsCGIResult.AlarmType.CAMERA
  } }
 
  "toCSV" should { "give a non-empty String" in {

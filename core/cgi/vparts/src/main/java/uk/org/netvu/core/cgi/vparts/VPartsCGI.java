@@ -3,8 +3,8 @@ package uk.org.netvu.core.cgi.vparts;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.org.netvu.core.cgi.common.Function;
 import uk.org.netvu.core.cgi.common.Format;
+import uk.org.netvu.core.cgi.common.Function;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.ParameterDescription;
@@ -16,54 +16,56 @@ import uk.org.netvu.core.cgi.common.StringConversion;
  */
 public final class VPartsCGI
 {
-    private static final ParameterDescription<Format, Format> FORMAT = ParameterDescription.parameterDisallowing(
-            Format.HTML, ParameterDescription.parameterWithDefault( "format",
-                    Format.CSV,
-                    StringConversion.convenientPartial( Format.fromString ) ) );
+    private static final ParameterDescription<Format, Format> FORMAT =
+            ParameterDescription.parameterDisallowing( Format.HTML, ParameterDescription.parameterWithDefault(
+                    "format", Format.CSV, StringConversion.convenientPartial( Format.fromString ) ) );
 
-    private static final ParameterDescription<Mode, Mode> MODE = ParameterDescription.parameterWithDefault(
-            "mode", Mode.READ,
-            StringConversion.convenientPartial( Mode.fromString ) );
+    private static final ParameterDescription<Mode, Mode> MODE =
+            ParameterDescription.parameterWithDefault( "mode", Mode.READ,
+                    StringConversion.convenientPartial( Mode.fromString ) );
 
-    private static final ParameterDescription<Integer, Integer> TIME = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault(
-            "time", 0, StringConversion.integer() ) );
+    private static final ParameterDescription<Integer, Integer> TIME =
+            ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault( "time", 0,
+                    StringConversion.integer() ) );
 
-    private static final ParameterDescription<Integer, Integer> RANGE = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault(
-            "range", Integer.MAX_VALUE, StringConversion.integer() ) );
+    private static final ParameterDescription<Integer, Integer> RANGE =
+            ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault( "range",
+                    Integer.MAX_VALUE, StringConversion.integer() ) );
 
-    private static final ParameterDescription<Integer, Integer> EXPIRY = ParameterDescription.parameterWithDefault(
-            "expiry", 0, StringConversion.integer() );
+    private static final ParameterDescription<Integer, Integer> EXPIRY =
+            ParameterDescription.parameterWithDefault( "expiry", 0, StringConversion.integer() );
 
-    private static final ParameterDescription<Boolean, Boolean> WATERMARK = ParameterDescription.parameterWithDefault(
-            "watermark", false, StringConversion.bool() );
+    private static final ParameterDescription<Boolean, Boolean> WATERMARK =
+            ParameterDescription.parameterWithDefault( "watermark", false, StringConversion.bool() );
 
-    private static final ParameterDescription<Integer, Integer> WMARKSTEP = ParameterDescription.parameterWithBounds(
-            1, 256, ParameterDescription.parameterWithDefault(
+    private static final ParameterDescription<Integer, Integer> WMARKSTEP =
+            ParameterDescription.parameterWithBounds( 1, 256, ParameterDescription.parameterWithDefault(
                     "wmarkstepParam", 1, StringConversion.integer() ) );
 
-    private static final ParameterDescription<Integer, Integer> LIST_LENGTH = ParameterDescription.parameterWithDefault(
-            "listlength", 100, StringConversion.integer() );
+    private static final ParameterDescription<Integer, Integer> LIST_LENGTH =
+            ParameterDescription.parameterWithDefault( "listlength", 100, StringConversion.integer() );
 
-    private static final ParameterDescription<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = ParameterDescription.parameterWithDefault(
-            "pathstyle", DirectoryPathFormat.SHORT,
-            StringConversion.convenientPartial( DirectoryPathFormat.fromString ) );
+    private static final ParameterDescription<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE =
+            ParameterDescription.parameterWithDefault( "pathstyle", DirectoryPathFormat.SHORT,
+                    StringConversion.convenientPartial( DirectoryPathFormat.fromString ) );
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
-    private static final List<ParameterDescription<?, ?>> parameterDescriptions = new ArrayList<ParameterDescription<?, ?>>()
-    {
-        {
-            add( FORMAT );
-            add( MODE );
-            add( TIME );
-            add( RANGE );
-            add( EXPIRY );
-            add( WATERMARK );
-            add( WMARKSTEP );
-            add( LIST_LENGTH );
-            add( PATH_STYLE );
-        }
-    };
+    private static final List<ParameterDescription<?, ?>> parameterDescriptions =
+            new ArrayList<ParameterDescription<?, ?>>()
+            {
+                {
+                    add( FORMAT );
+                    add( MODE );
+                    add( TIME );
+                    add( RANGE );
+                    add( EXPIRY );
+                    add( WATERMARK );
+                    add( WMARKSTEP );
+                    add( LIST_LENGTH );
+                    add( PATH_STYLE );
+                }
+            };
 
     /**
      * Parses a vparts.cgi request into a VPartsCGI.
@@ -74,13 +76,10 @@ public final class VPartsCGI
      */
     public static VPartsCGI fromString( final String url )
     {
-        final Option<ParameterMap> map = ParameterMap.fromURL( url,
-                parameterDescriptions );
+        final Option<ParameterMap> map = ParameterMap.fromURL( url, parameterDescriptions );
         if ( map.isEmpty() )
         {
-            throw new IllegalArgumentException( url
-                    + " cannot be parsed into a VPartsCGI, because "
-                    + map.reason() );
+            throw new IllegalArgumentException( url + " cannot be parsed into a VPartsCGI, because " + map.reason() );
         }
 
         return new VPartsCGI( map.get() );
@@ -188,11 +187,8 @@ public final class VPartsCGI
     @Override
     public String toString()
     {
-        return "/vparts.cgi?format="
-                + builtMap.get( FORMAT )
-                + "&"
-                + builtMap.toURLParameters( Lists.remove(
-                        parameterDescriptions, FORMAT ) );
+        return "/vparts.cgi?format=" + builtMap.get( FORMAT ) + "&"
+                + builtMap.toURLParameters( Lists.remove( parameterDescriptions, FORMAT ) );
     }
 
     /**
@@ -336,13 +332,11 @@ public final class VPartsCGI
             return set( WMARKSTEP, step );
         }
 
-        private <T> Builder set( final ParameterDescription<T, ?> parameter,
-                final T value )
+        private <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
         {
             if ( real.isEmpty() )
             {
-                throw new IllegalStateException(
-                        "The Builder has already been built (build() has been called on it)." );
+                throw new IllegalStateException( "The Builder has already been built (build() has been called on it)." );
             }
 
             real = real.map( new Function<ParameterMap, ParameterMap>()

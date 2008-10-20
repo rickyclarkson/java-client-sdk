@@ -3,8 +3,8 @@ package uk.org.netvu.core.cgi.events;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.org.netvu.core.cgi.common.Function;
 import uk.org.netvu.core.cgi.common.Format;
+import uk.org.netvu.core.cgi.common.Function;
 import uk.org.netvu.core.cgi.common.Lists;
 import uk.org.netvu.core.cgi.common.Option;
 import uk.org.netvu.core.cgi.common.ParameterDescription;
@@ -18,40 +18,40 @@ import uk.org.netvu.core.cgi.common.ParameterMap.Validator;
  */
 public final class EventsCGI
 {
-    private static final ParameterDescription<Integer, Integer> TIME = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault(
-            "time", 0, StringConversion.integer() ) );
+    private static final ParameterDescription<Integer, Integer> TIME =
+            ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault( "time", 0,
+                    StringConversion.integer() ) );
 
-    private static final ParameterDescription<Integer, Integer> RANGE = ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault(
-            "range", Integer.MAX_VALUE, StringConversion.integer() ) );
+    private static final ParameterDescription<Integer, Integer> RANGE =
+            ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault( "range",
+                    Integer.MAX_VALUE, StringConversion.integer() ) );
 
-    private static final ParameterDescription<Format, Format> FORMAT = ParameterDescription.parameterWithDefault(
-            "format", Format.CSV,
-            StringConversion.convenientPartial( Format.fromString ) );
+    private static final ParameterDescription<Format, Format> FORMAT =
+            ParameterDescription.parameterWithDefault( "format", Format.CSV,
+                    StringConversion.convenientPartial( Format.fromString ) );
 
-    private static final ParameterDescription<Integer, Integer> LENGTH = ParameterDescription.parameterWithDefault(
-            "listlength",
+    private static final ParameterDescription<Integer, Integer> MAX_LENGTH =
+            ParameterDescription.parameterWithDefault( "listlength", 100, StringConversion.integer() );
 
-            100, StringConversion.integer() );
+    private static final ParameterDescription<String, String> TEXT =
+            ParameterDescription.parameterWithDefault( "text", "", StringConversion.string() );
 
-    private static final ParameterDescription<String, String> TEXT = ParameterDescription.parameterWithDefault(
-            "text", "", StringConversion.string() );
+    private static final ParameterDescription<Long, Long> CAMERA_MASK =
+            ParameterDescription.parameterWithDefault( "cammask", 0L, StringConversion.getHexToLongStringConversion() );
 
-    private static final ParameterDescription<Long, Long> CAMERA_MASK = ParameterDescription.parameterWithDefault(
-            "cammask", 0L, StringConversion.getHexToLongStringConversion() );
+    private static final ParameterDescription<Integer, Integer> ALARM_MASK =
+            ParameterDescription.parameterWithDefault( "almmask", 0, StringConversion.getHexToIntStringConversion() );
 
-    private static final ParameterDescription<Integer, Integer> ALARM_MASK = ParameterDescription.parameterWithDefault(
-            "almmask", 0, StringConversion.getHexToIntStringConversion() );
-
-    private static final ParameterDescription<Long, Long> VIDEO_MOTION_DETECTION_MASK = ParameterDescription.parameterWithDefault(
-            "vmdmask",
+    private static final ParameterDescription<Long, Long> VIDEO_MOTION_DETECTION_MASK =
+            ParameterDescription.parameterWithDefault( "vmdmask",
 
             0L, StringConversion.getHexToLongStringConversion() );
 
-    private static final ParameterDescription<Integer, Integer> GPS_MASK = ParameterDescription.parameterWithDefault(
-            "gpsmask", 0, StringConversion.getHexToIntStringConversion() );
+    private static final ParameterDescription<Integer, Integer> GPS_MASK =
+            ParameterDescription.parameterWithDefault( "gpsmask", 0, StringConversion.getHexToIntStringConversion() );
 
-    private static final ParameterDescription<Integer, Integer> SYSTEM_MASK_PARAM = ParameterDescription.parameterWithDefault(
-            "sysmask", 0, StringConversion.getHexToIntStringConversion() );
+    private static final ParameterDescription<Integer, Integer> SYSTEM_MASK =
+            ParameterDescription.parameterWithDefault( "sysmask", 0, StringConversion.getHexToIntStringConversion() );
 
     // this is an anonymous initialiser - it is creating a new ArrayList and
     // adding values to it inline.
@@ -61,13 +61,13 @@ public final class EventsCGI
             add( TIME );
             add( RANGE );
             add( FORMAT );
-            add( LENGTH );
+            add( MAX_LENGTH );
             add( TEXT );
             add( CAMERA_MASK );
             add( ALARM_MASK );
             add( VIDEO_MOTION_DETECTION_MASK );
             add( GPS_MASK );
-            add( SYSTEM_MASK_PARAM );
+            add( SYSTEM_MASK );
         }
     };
 
@@ -80,7 +80,7 @@ public final class EventsCGI
             add( ALARM_MASK );
             add( VIDEO_MOTION_DETECTION_MASK );
             add( GPS_MASK );
-            add( SYSTEM_MASK_PARAM );
+            add( SYSTEM_MASK );
         }
     };
 
@@ -96,8 +96,7 @@ public final class EventsCGI
     {
         if ( string.length() == 0 )
         {
-            throw new IllegalArgumentException(
-                    "Cannot parse an empty String into an EventsCGI." );
+            throw new IllegalArgumentException( "Cannot parse an empty String into an EventsCGI." );
         }
 
         final Option<ParameterMap> map = ParameterMap.fromURL( string, params );
@@ -112,6 +111,13 @@ public final class EventsCGI
 
     private final ParameterMap parameterMap;
 
+    /**
+     * Constructs an EventsCGI with the specified ParameterMap holding the
+     * values of the parameters that EventsCGI needs.
+     * 
+     * @param parameterMap
+     *        the ParameterMap to get values from.
+     */
     private EventsCGI( final ParameterMap parameterMap )
     {
         this.parameterMap = parameterMap;
@@ -165,7 +171,7 @@ public final class EventsCGI
      */
     public int getMaxLength()
     {
-        return parameterMap.get( LENGTH );
+        return parameterMap.get( MAX_LENGTH );
     }
 
     /**
@@ -185,7 +191,7 @@ public final class EventsCGI
      */
     public int getSystemMask()
     {
-        return parameterMap.get( SYSTEM_MASK_PARAM );
+        return parameterMap.get( SYSTEM_MASK );
     }
 
     /**
@@ -225,11 +231,9 @@ public final class EventsCGI
     @Override
     public String toString()
     {
-        final String theRest = parameterMap.toURLParameters( Lists.remove(
-                params, FORMAT ) );
+        final String theRest = parameterMap.toURLParameters( Lists.remove( params, FORMAT ) );
 
-        return "/events.cgi?format=" + getFormat()
-                + ( theRest.length() == 0 ? "" : "&" ) + theRest;
+        return "/events.cgi?format=" + getFormat() + ( theRest.length() == 0 ? "" : "&" ) + theRest;
     }
 
     /**
@@ -237,12 +241,15 @@ public final class EventsCGI
      * Video Server Specification, and produces an EventsCGI when build() is
      * called. Each parameter must be supplied no more than once, and the text,
      * alarm mask, VMD mask, GPS mask and sysmask parameters are mutually
-     * exclusive.
+     * exclusive. A Builder can only be built once; that is, it can only have
+     * build() called on it once. Calling it a second time will cause an
+     * IllegalStateException. Setting its values after calling build() will
+     * cause an IllegalStateException.
      */
     public static final class Builder
     {
-        private Option<ParameterMap> real = Option.getFullOption( new ParameterMap(
-                Validator.mutuallyExclusive( exclusiveParams ) ) );
+        private Option<ParameterMap> map =
+                Option.getFullOption( new ParameterMap( Validator.mutuallyExclusive( exclusiveParams ) ) );
 
         /**
          * Constructs a Builder ready to take in all the optional values for
@@ -257,6 +264,9 @@ public final class EventsCGI
          * 
          * @param alarmMask
          *        the mask of the alarms that we are interested in.
+         * @throws IllegalStateException
+         *         if the Builder has already been built, or if this value has
+         *         already been set.
          * @return the builder.
          */
         public Builder alarmMask( final int alarmMask )
@@ -265,19 +275,21 @@ public final class EventsCGI
         }
 
         /**
-         * Constructs an EventsCGI with the values from this builder.
+         * Constructs an EventsCGI with the values from this Builder.
          * 
-         * @return an EventsCGI with the values from this builder.
+         * @throws IllegalStateException
+         *         if this Builder has already been built.
+         * @return an EventsCGI containing the values from this Builder.
          */
         public EventsCGI build()
         {
             try
             {
-                return new EventsCGI( real.get() );
+                return new EventsCGI( map.get() );
             }
             finally
             {
-                real = Option.getEmptyOption( "This Builder has already been built once." );
+                map = Option.getEmptyOption( "This Builder has already been built once." );
             }
         }
 
@@ -286,6 +298,9 @@ public final class EventsCGI
          * 
          * @param camMask
          *        the mask of cameras whose images we want to obtain.
+         * @throws IllegalStateException
+         *         if the Builder has already been built, or if this value has
+         *         already been set.
          * @return the builder.
          */
         public Builder cameraMask( final long camMask )
@@ -300,6 +315,11 @@ public final class EventsCGI
          * 
          * @param format
          *        the format that results should come back in.
+         * @throws NullPointerException
+         *         if format is null.
+         * @throws IllegalStateException
+         *         if the Builder has already been built, or if this value has
+         *         already been set.
          * @return the builder
          */
         public Builder format( final Format format )
@@ -312,6 +332,9 @@ public final class EventsCGI
          * 
          * @param gpsMask
          *        the mask of GPS event types to search for.
+         * @throws IllegalStateException
+         *         if the Builder has already been built, or if this value has
+         *         already been set.
          * @return the builder.
          */
         public Builder gpsMask( final int gpsMask )
@@ -325,17 +348,24 @@ public final class EventsCGI
          * 
          * @param maxLength
          *        the maximum number of results to obtain.
+         * @throws IllegalStateException
+         *         if the Builder has already been built, or if this value has
+         *         already been set.
          * @return the builder.
          */
-        public Builder length( final int maxLength )
+        public Builder maxLength( final int maxLength )
         {
-            return set( LENGTH, maxLength );
+            return set( MAX_LENGTH, maxLength );
         }
 
         /**
          * The timespan to search, in seconds. Cannot be negative.
          * 
          * @param range
+         *        the timespan to search, in seconds.
+         * @throws IllegalStateException
+         *         if the Builder has already been built, or if this value has
+         *         already been set.
          * @return the builder.
          */
         public Builder range( final int range )
@@ -348,11 +378,14 @@ public final class EventsCGI
          * 
          * @param sysMask
          *        the mask of system event types to search for.
+         * @throws IllegalStateException
+         *         if the Builder has already been built, or if this value has
+         *         already been set.
          * @return the builder.
          */
         public Builder systemMask( final int sysMask )
         {
-            return set( SYSTEM_MASK_PARAM, sysMask );
+            return set( SYSTEM_MASK, sysMask );
         }
 
         /**
@@ -365,6 +398,11 @@ public final class EventsCGI
          * 
          * @param text
          *        the text to search for.
+         * @throws NullPointerException
+         *         if text is null.
+         * @throws IllegalStateException
+         *         if the Builder has already been built, or if this value has
+         *         already been set.
          * @return the builder.
          */
         public Builder text( final String text )
@@ -378,6 +416,11 @@ public final class EventsCGI
          * 
          * @param time
          *        the time from which to search.
+         * @throws IllegalArgumentException
+         *         if time is negative.
+         * @throws IllegalStateException
+         *         if the Builder has already been built, or if this value has
+         *         already been set.
          * @return the builder.
          */
         public Builder time( final int time )
@@ -390,24 +433,38 @@ public final class EventsCGI
          * 
          * @param videoMotionDetectionMask
          *        the mask of video motion detection channels to search in.
+         * @throws IllegalStateException
+         *         if the Builder has already been built, or if this value has
+         *         already been set.
          * @return the builder.
          */
-        public Builder videoMotionDetectionMask(
-                final long videoMotionDetectionMask )
+        public Builder videoMotionDetectionMask( final long videoMotionDetectionMask )
         {
             return set( VIDEO_MOTION_DETECTION_MASK, videoMotionDetectionMask );
         }
 
-        private <T> Builder set( final ParameterDescription<T, ?> parameter,
-                final T value )
+        /**
+         * Sets the value of a parameter to a given value, and returns the
+         * Builder.
+         * 
+         * @param <T>
+         *        the input type of the specified parameter.
+         * @param parameter
+         *        the parameter to set a value for.
+         * @param value
+         *        the value to give that parameter.
+         * @return the Builder.
+         * @throws IllegalStateException
+         *         if the Builder has already been built once.
+         */
+        private <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
         {
-            if ( real.isEmpty() )
+            if ( map.isEmpty() )
             {
-                throw new IllegalStateException(
-                        "The Builder has already been built (build() has been called on it)." );
+                throw new IllegalStateException( "The Builder has already been built (build() has been called on it)." );
             }
 
-            real = real.map( new Function<ParameterMap, ParameterMap>()
+            map = map.map( new Function<ParameterMap, ParameterMap>()
             {
                 @Override
                 public ParameterMap apply( final ParameterMap map )
