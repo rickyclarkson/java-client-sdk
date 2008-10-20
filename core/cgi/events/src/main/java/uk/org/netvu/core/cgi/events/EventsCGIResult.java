@@ -90,7 +90,7 @@ public final class EventsCGIResult
      *        the comma-separated values.
      * @return an EventsCGIResult containing the parsed values.
      */
-    public static EventsCGIResult fromString( final String line )
+    public static EventsCGIResult fromCSV( final String line )
     {
         final String[] values = Strings.splitCSV( line );
 

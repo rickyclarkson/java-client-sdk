@@ -91,7 +91,7 @@ public final class EventsCGI
      * @throws NullPointerException if string is null.
      * @return an EventsCGI holding the values obtained from the URL.
      */
-    public static EventsCGI fromCSV( final String string )
+    public static EventsCGI fromURL( final String string )
     {
         if ( string.length() == 0 )
         {

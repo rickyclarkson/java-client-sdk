@@ -115,22 +115,22 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
   "be rejected" in {
    new Builder().format(null) must throwA(new NullPointerException)
    new Builder().text(null) must throwA(new NullPointerException)
-   EventsCGI.fromCSV(null) must throwA(new NullPointerException) } }
+   EventsCGI.fromURL(null) must throwA(new NullPointerException) } }
 
  "Malformed URL parameters (invalid status)" should {
   "be rejected" in {
    val string = "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 3, 4"
-   EventsCGIResult.fromString(string) must throwA(new IllegalArgumentException) } }
+   EventsCGIResult.fromCSV(string) must throwA(new IllegalArgumentException) } }
 
  "Malformed URL parameters (invalid alarm type)" should {
   "be rejected" in {
    val string = "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 2, 5"
-   EventsCGIResult.fromString(string) must throwA(new IllegalArgumentException) } }
+   EventsCGIResult.fromCSV(string) must throwA(new IllegalArgumentException) } }
 
  "EventsCGIResult.toString()" should {
   "not be supported" in {
    val string = "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 3, 0, 2, 4"
-   EventsCGIResult.fromString(string).toString must throwA(new UnsupportedOperationException) } }
+   EventsCGIResult.fromCSV(string).toString must throwA(new UnsupportedOperationException) } }
 
  implicit val arbFormat: Arbitrary[Format] =
   Arbitrary { arbitrary[Int] map (x => Format.oneOf(new Random(x))) }
@@ -172,16 +172,16 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
 //  val cgi = randomEventsCGIBuilder.build 
 //  EventsCGI.fromString(cgi.toString).toString mustEqual cgi.toString
   property { e: EventsCGI => {
-   EventsCGI.fromCSV(e.toString).toString == e.toString
+   EventsCGI.fromURL(e.toString).toString == e.toString
   } } must pass
  } }
 
  "Parsing an invalid URL parameter" should { "cause an IllegalArgumentException" in {
-  EventsCGI.fromCSV("?almmask=six") must throwA(new IllegalArgumentException)
+  EventsCGI.fromURL("?almmask=six") must throwA(new IllegalArgumentException)
  } }
 
  "Parsing an empty String" should { "cause an IllegalArgumentException" in {
-  EventsCGI.fromCSV("") must throwA(new IllegalArgumentException)
+  EventsCGI.fromURL("") must throwA(new IllegalArgumentException)
  } }
 
  "Parsing real data stored from a server then generating a String from that" should { "give the same CSV as the original" in {
@@ -206,7 +206,7 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
    fields.zip(others).zipWithIndex forall { case ((f, o), i) => i == 0 || i == 7 || f == o }
   }
    
-  for (line <- data) compare(line, EventsCGIResult.fromString(line)) mustEqual true
+  for (line <- data) compare(line, EventsCGIResult.fromCSV(line)) mustEqual true
  } }
 
  "toString" should {
@@ -249,7 +249,7 @@ class EventsCGIResultTest extends JUnit4(new Specification with Scalacheck {
   Arbitrary { for (b <- arbitrary[EventsCGIResult.Builder]) yield b.build }
 
  "parsing an empty String" should { "cause an IllegalArgumentException" in {
-  EventsCGIResult.fromString("") must throwA(new IllegalArgumentException)
+  EventsCGIResult.fromCSV("") must throwA(new IllegalArgumentException)
  } }
 
  "EventsCGIResults" should { "have a non-negative (time + duration)" in {
@@ -284,19 +284,19 @@ class EventsCGIResultTest extends JUnit4(new Specification with Scalacheck {
 
  import java.lang.{IllegalArgumentException => IAE}
  "Parsing a line of CSV with a negative timestamp" should { "cause an IllegalArgumentException" in {
-  EventsCGIResult.fromString("1, 1, Y, -111488075, 3600, ,overwitten, 1, 10, 2, 0") must throwA(new IAE)
+  EventsCGIResult.fromCSV("1, 1, Y, -111488075, 3600, ,overwitten, 1, 10, 2, 0") must throwA(new IAE)
  } }
 
  "Parsing a line of CSV with not enough columns" should { "cause an IllegalArgumentException" in {
-  EventsCGIResult.fromString("1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2") must throwA(new IAE)
+  EventsCGIResult.fromCSV("1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2") must throwA(new IAE)
  } }
 
  "Parsing a line of CSV with a malformed number" should { "cause an IllegalArgumentException" in {
-  EventsCGIResult.fromString("1, b, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0") must throwA(new IAE)
+  EventsCGIResult.fromCSV("1, b, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0") must throwA(new IAE)
  } }
 
  "Parsing malformed CSV" should {"cause an IllegalArgumentException" in {
-  EventsCGIResult.fromString("3, 4, 5") must throwA(new IAE)
+  EventsCGIResult.fromCSV("3, 4, 5") must throwA(new IAE)
  } }
 
  "Values stored in an EventsCGIResult" should { "be retrievable" in {
@@ -320,11 +320,11 @@ class EventsCGIResultTest extends JUnit4(new Specification with Scalacheck {
  } }
 
  "Parsing a line of CSV with too many columns" should { "cause an IllegalArgumentException" in {
-  EventsCGIResult.fromString("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14") must throwA(new IAE)
+  EventsCGIResult.fromCSV("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14") must throwA(new IAE)
  } }
 
  "Parsing a valid line of CSV" should { "succeed" in {
-  EventsCGIResult.fromString("1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0")==null mustEqual false
-  EventsCGIResult.fromString("1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0, 4, 8")==null mustEqual false
+  EventsCGIResult.fromCSV("1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0")==null mustEqual false
+  EventsCGIResult.fromCSV("1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0, 4, 8")==null mustEqual false
  } }
 })
