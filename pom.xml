@@ -87,6 +87,7 @@
         </site>
     </distributionManagement>
     <modules>
+        <module>protocol</module>
         <module>core</module>
     </modules>
 </project>
