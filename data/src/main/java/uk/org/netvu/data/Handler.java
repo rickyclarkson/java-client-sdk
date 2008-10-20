@@ -1,7 +1,7 @@
 package uk.org.netvu.core.cgi.displaypic;
 
 import java.io.IOException;
-import java.net.ByteBuffer;
+import java.nio.ByteBuffer;
 
 interface Handler
 {

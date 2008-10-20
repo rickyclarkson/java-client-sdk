@@ -14,7 +14,7 @@ public class Main
 
         final int[] index = { 0 };
 
-        Parser.parse( connection, new Handler()
+        /*Parser.parse( connection, new Handler()
         {
             public void handleJPEG( final ByteBuffer data ) throws IOException
             {
@@ -22,7 +22,7 @@ public class Main
                 out.write( data );
                 out.close();
             }
-        } );
+            } );*/
 
     }
 }

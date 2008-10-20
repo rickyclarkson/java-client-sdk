@@ -88,6 +88,6 @@
     </distributionManagement>
     <modules>
         <module>protocol</module>
-        <module>core</module>
+        <module>data</module>
     </modules>
 </project>
