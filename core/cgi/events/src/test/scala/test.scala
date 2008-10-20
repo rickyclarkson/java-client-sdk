@@ -115,7 +115,7 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
   "be rejected" in {
    new Builder().format(null) must throwA(new NullPointerException)
    new Builder().text(null) must throwA(new NullPointerException)
-   EventsCGI.fromString(null) must throwA(new NullPointerException) } }
+   EventsCGI.fromCSV(null) must throwA(new NullPointerException) } }
 
  "Malformed URL parameters (invalid status)" should {
   "be rejected" in {
@@ -172,16 +172,16 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
 //  val cgi = randomEventsCGIBuilder.build 
 //  EventsCGI.fromString(cgi.toString).toString mustEqual cgi.toString
   property { e: EventsCGI => {
-   EventsCGI.fromString(e.toString).toString == e.toString
+   EventsCGI.fromCSV(e.toString).toString == e.toString
   } } must pass
  } }
 
  "Parsing an invalid URL parameter" should { "cause an IllegalArgumentException" in {
-  EventsCGI.fromString("?almmask=six") must throwA(new IllegalArgumentException)
+  EventsCGI.fromCSV("?almmask=six") must throwA(new IllegalArgumentException)
  } }
 
  "Parsing an empty String" should { "cause an IllegalArgumentException" in {
-  EventsCGI.fromString("") must throwA(new IllegalArgumentException)
+  EventsCGI.fromCSV("") must throwA(new IllegalArgumentException)
  } }
 
  "Parsing real data stored from a server then generating a String from that" should { "give the same CSV as the original" in {

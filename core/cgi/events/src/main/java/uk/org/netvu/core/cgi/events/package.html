@@ -16,7 +16,7 @@ To build a Java object representing an events.cgi query (in this case only showi
         {
             int oneHundredSecondsAgo = (int)(new Date().getTime() / 1000) - 100;
             EventsCGI cgi = new EventsCGI.Builder().time(oneHundredSecondsAgo).range(100).build();
-            URL url = "http://my-host/"+cgi.toString();
+            String url = "http://my-host/"+cgi.toString();
             // code here for actually connecting to that URL and doing work with it.
         }
     }
@@ -31,7 +31,7 @@ To parse a URL (or part of a URL) into an EventsCGI object:
     {
         public static void main(String[] args)
         {
-            EventsCGI cgi = EventsCGI.fromString("http://my-host/events.cgi?time=5000000&cam=4");
+            EventsCGI cgi = EventsCGI.fromCSV("http://my-host/events.cgi?time=5000000&cammask=4");
         }
     }
 </code></pre>
@@ -45,9 +45,9 @@ To parse the CSV returned by the server (in this case hard-coded):
     {
         public static void main(String[] args)
         {
-            EventsCGIResult result = EventsCGIResult.fromString(
-                "1, 1, COURTYARD, 1211488075, 3600, ,overwitten, 1, 10, 2, 0, 4, 8" );
-            // note that 'overwitten' is the spelling used by the servers.
+            EventsCGIResult result = EventsCGIResult.fromCSV(
+                "1, 1, COURTYARD, 1211488075, 3600, ,exists, 1, 10, 2, 0, 4, 8" );
+
             System.out.println( result.getStatus() );
             System.out.println( result.getAlarm() );
 

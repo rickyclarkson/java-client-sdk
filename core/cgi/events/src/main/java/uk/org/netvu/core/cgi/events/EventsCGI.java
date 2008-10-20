@@ -53,11 +53,10 @@ public final class EventsCGI
     private static final ParameterDescription<Integer, Integer> SYSTEM_MASK =
             ParameterDescription.parameterWithDefault( "sysmask", 0, StringConversion.getHexToIntStringConversion() );
 
-    // this is an anonymous initialiser - it is creating a new ArrayList and
-    // adding values to it inline.
     private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>()
     {
         {
+            // this is an anonymous initialiser - it creates an ArrayList and adds values to it inline.
             add( TIME );
             add( RANGE );
             add( FORMAT );
@@ -71,11 +70,10 @@ public final class EventsCGI
         }
     };
 
-    // this is an anonymous intialiser - it is creating a new ArrayList and
-    // adding values to it inline.
     private static final List<ParameterDescription<?, ?>> exclusiveParams = new ArrayList<ParameterDescription<?, ?>>()
     {
         {
+            // this is an anonymous initialiser - it creates an ArrayList and adds values to it inline.
             add( TEXT );
             add( ALARM_MASK );
             add( VIDEO_MOTION_DETECTION_MASK );
@@ -90,9 +88,10 @@ public final class EventsCGI
      * 
      * @param string
      *        the URL (or the query part of a URL) to parse.
+     * @throws NullPointerException if string is null.
      * @return an EventsCGI holding the values obtained from the URL.
      */
-    public static EventsCGI fromString( final String string )
+    public static EventsCGI fromCSV( final String string )
     {
         if ( string.length() == 0 )
         {
@@ -124,9 +123,9 @@ public final class EventsCGI
     }
 
     /**
-     * The 32-bit mask of the alarms to search for.
+     * The 32-bit mask of the alarm input zones to search for.
      * 
-     * @return the mask of the alarms to search for.
+     * @return the mask of the alarm input zones to search for.
      */
     public int getAlarmMask()
     {
@@ -248,7 +247,7 @@ public final class EventsCGI
      */
     public static final class Builder
     {
-        private Option<ParameterMap> map =
+        private Option<ParameterMap> parameterMap =
                 Option.getFullOption( new ParameterMap( Validator.mutuallyExclusive( exclusiveParams ) ) );
 
         /**
@@ -260,10 +259,10 @@ public final class EventsCGI
         }
 
         /**
-         * The 32-bit mask of the alarms that we are interested in.
+         * The 32-bit mask of the alarm input zones that we are interested in.
          * 
          * @param alarmMask
-         *        the mask of the alarms that we are interested in.
+         *        the mask of the alarm input zones that we are interested in.
          * @throws IllegalStateException
          *         if the Builder has already been built, or if this value has
          *         already been set.
@@ -285,11 +284,11 @@ public final class EventsCGI
         {
             try
             {
-                return new EventsCGI( map.get() );
+                return new EventsCGI( parameterMap.get() );
             }
             finally
             {
-                map = Option.getEmptyOption( "This Builder has already been built once." );
+                parameterMap = Option.getEmptyOption( "This Builder has already been built once." );
             }
         }
 
@@ -328,7 +327,7 @@ public final class EventsCGI
         }
 
         /**
-         * The 32-bit mask of GPS event types to search for.
+         * The 32-bit mask of GPS event types to search for.  
          * 
          * @param gpsMask
          *        the mask of GPS event types to search for.
@@ -459,19 +458,12 @@ public final class EventsCGI
          */
         private <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
         {
-            if ( map.isEmpty() )
+            if ( parameterMap.isEmpty() )
             {
                 throw new IllegalStateException( "The Builder has already been built (build() has been called on it)." );
             }
-
-            map = map.map( new Function<ParameterMap, ParameterMap>()
-            {
-                @Override
-                public ParameterMap apply( final ParameterMap map )
-                {
-                    return map.set( parameter, value );
-                }
-            } );
+           
+            parameterMap = Option.getFullOption( parameterMap.get().set( parameter, value ) );
             return this;
         }
     }

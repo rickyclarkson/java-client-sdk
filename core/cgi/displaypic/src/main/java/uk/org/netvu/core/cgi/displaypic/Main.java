@@ -16,9 +16,9 @@ public class Main
 
         Parser.parse( connection, new Handler()
         {
-            public void handleJPEG( final byte[] data ) throws IOException
+            public void handleJPEG( final ByteBuffer data ) throws IOException
             {
-                final FileOutputStream out = new FileOutputStream( "/home/ricky/deleteme" + index[0]++ + ".jpg" );
+                final FileOutputStream out = new FileOutputStream( System.getProperty("user.dir") + "/deleteme" + index[0]++ + ".jpg" );
                 out.write( data );
                 out.close();
             }

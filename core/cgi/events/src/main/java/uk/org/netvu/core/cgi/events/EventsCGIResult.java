@@ -65,12 +65,11 @@ public final class EventsCGIResult
             ParameterDescription.parameterWithDefault( "alarmType", AlarmType.NONE,
                     StringConversion.convenientPartial( AlarmType.fromString ) );
 
-    // this is an anonymous intialiser - it is creating a new ArrayList and
-    // adding values to it inline.
     private static final ArrayList<ParameterDescription<?, ? extends Option<?>>> compulsoryParameterDescriptions =
             new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
             {
                 {
+                    // this is an anonymous initialiser - it creates an ArrayList and adds values to it inline.
                     add( CAMERA_PARAMETER );
                     add( ALARM );
                     add( JULIAN_TIME );
@@ -634,15 +633,7 @@ public final class EventsCGIResult
                 throw new IllegalStateException( "The Builder has already been built (build() has been called on it)." );
             }
 
-            parameterMap = parameterMap.map( new Function<ParameterMap, ParameterMap>()
-            {
-                @Override
-                public ParameterMap apply( final ParameterMap map )
-                {
-                    return map.set( parameter, value );
-                }
-            } );
-
+            parameterMap = Option.getFullOption( parameterMap.get().set( parameter, value ) );
             return this;
         }
     }
