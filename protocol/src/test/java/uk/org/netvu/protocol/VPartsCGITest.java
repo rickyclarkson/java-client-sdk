@@ -73,6 +73,6 @@ public class VPartsCGITest
         assertTrue( new VPartsCGI.Builder().watermarkStep( 12 ).build().getWatermarkStep() == 12 );
         assertTrue( new VPartsCGI.Builder().format( Format.JS ).build().getFormat() == Format.JS );
         assertTrue( new VPartsCGI.Builder().listlength( 101 ).build().getListlength() == 101 );
-        assertTrue( new VPartsCGI.Builder().pathstyle( DirectoryPathFormat.LONG ).build().getPathstyle() == DirectoryPathFormat.LONG );
+        assertTrue( new VPartsCGI.Builder().pathstyle( VPartsCGI.DirectoryPathFormat.LONG ).build().getPathstyle() == VPartsCGI.DirectoryPathFormat.LONG );
     }
 }
