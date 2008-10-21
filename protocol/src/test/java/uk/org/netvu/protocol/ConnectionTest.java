@@ -18,7 +18,7 @@ public class ConnectionTest
     @Test( expected = IllegalStateException.class )
     public void mutualExclusiveParameters1()
     {
-        new Connection().cam( 2 ).seq( 4 );
+        new DecoderCGI.Connection().cam( 2 ).seq( 4 );
     }
 
     /**
@@ -27,7 +27,7 @@ public class ConnectionTest
     @Test( expected = IllegalStateException.class )
     public void mutualExclusiveParameters2()
     {
-        new Connection().cam( 2 ).dwell( 10 );
+        new DecoderCGI.Connection().cam( 2 ).dwell( 10 );
     }
 
     /**
@@ -37,7 +37,7 @@ public class ConnectionTest
     @Test
     public void retention()
     {
-        assertTrue( Connection.fromURL.apply( "slaveip=192.168.1.10&cam=1" ).getSlaveIP().equals( "192.168.1.10" ) );
+        assertTrue( DecoderCGI.Connection.fromURL.apply( "slaveip=192.168.1.10&cam=1" ).getSlaveIP().equals( "192.168.1.10" ) );
     }
 
     /**
@@ -46,7 +46,7 @@ public class ConnectionTest
     @Test
     public void retention2()
     {
-        assertTrue( new Connection().slaveIP( "foo" ).getSlaveIP().equals( "foo" ) );
+        assertTrue( new DecoderCGI.Connection().slaveIP( "foo" ).getSlaveIP().equals( "foo" ) );
     }
 
     /**
@@ -58,7 +58,7 @@ public class ConnectionTest
     @Test
     public void urlEncode() throws UnsupportedEncodingException
     {
-        assertTrue( URLDecoder.decode( Connection.urlEncode.apply( new Connection().cam( 2 ).slaveIP( "foo" ) ),
+        assertTrue( URLDecoder.decode( DecoderCGI.Connection.urlEncode.apply( new DecoderCGI.Connection().cam( 2 ).slaveIP( "foo" ) ),
                 "UTF-8" ).equals( "\"slaveip=foo,cam=2\"" ) );
     }
 }

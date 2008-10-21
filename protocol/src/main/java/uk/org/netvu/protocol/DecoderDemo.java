@@ -61,7 +61,7 @@ public class DecoderDemo
                         {
                             panel.run( new DecoderCGI().connection(
                                     panel.getInt( "index" ),
-                                    new Connection().cam( panel.getInt( "camera number" ) ).slaveIP(
+                                    new DecoderCGI.Connection().cam( panel.getInt( "camera number" ) ).slaveIP(
                                             panel.getString( "slave IP" ) ) ).toURLParameters() );
                         }
                     }

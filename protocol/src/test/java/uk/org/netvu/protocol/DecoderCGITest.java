@@ -115,7 +115,7 @@ public class DecoderCGITest
     public void fromUnquotedSlavePart() throws UnsupportedEncodingException
     {
         assertTrue( URLDecoder.decode(
-                Connection.urlEncode.apply( DecoderCGI.fromString(
+                DecoderCGI.Connection.urlEncode.apply( DecoderCGI.fromString(
                         "decoder.var?connections[64]=slaveip=192.168.1.10%2Cseq=F%2Cdwell=10"
                                 + "&commands[4]=\"display_pic.cgi?\"&layouts[4]=0" ).getConnections().get( 64 ) ),
                 "UTF-8" ).equals( "\"slaveip=192.168.1.10,seq=f,dwell=10\"" ) );
@@ -130,7 +130,7 @@ public class DecoderCGITest
         final DecoderCGI cgi =
                 new DecoderCGI().persistence( Persistence.PERSISTENT ).command( 1, "foo" ).command( 2, "bar" ).outputTitles(
                         "one", "two", "three" ).layout( 1, Layout.FOUR_WAY ).layout( 2, Layout.NINE_WAY ).connection(
-                        5, new Connection().audio( 4 ).seq( 0xF ).dwell( 40 ) );
+                        5, new DecoderCGI.Connection().audio( 4 ).seq( 0xF ).dwell( 40 ) );
 
         assertTrue( cgi.getCommands().size() == 2 );
         assertTrue( cgi.getCommands().get( 2 ).equals( "bar" ) );
