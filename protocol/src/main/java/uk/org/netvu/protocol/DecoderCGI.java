@@ -1,4 +1,4 @@
-package uk.org.netvu.core.cgi.decoder;
+package uk.org.netvu.protocol;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,17 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import uk.org.netvu.core.cgi.common.Function;
-import uk.org.netvu.core.cgi.common.Lists;
-import uk.org.netvu.core.cgi.common.Option;
-import uk.org.netvu.core.cgi.common.Pair;
-import uk.org.netvu.core.cgi.common.ParameterDescription;
-import uk.org.netvu.core.cgi.common.ParameterMap;
-import uk.org.netvu.core.cgi.common.Reduction;
-import uk.org.netvu.core.cgi.common.StringConversion;
-import uk.org.netvu.core.cgi.common.Strings;
-import uk.org.netvu.core.cgi.common.URLEncoder;
 
 /**
  * DecoderCGI is used for building CGI requests to send to decoders, using

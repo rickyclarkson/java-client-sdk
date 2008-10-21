@@ -1,4 +1,4 @@
-package uk.org.netvu.core.cgi.common;
+package uk.org.netvu.protocol;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * For internal use only! An immutable object that stores the values associated
+ * An immutable object that stores the values associated
  * with parameters and provides an interface to retrieving those values.
  */
-public final class ParameterMap
+final class ParameterMap
 {
     /**
      * Parses each of the specified Strings and gives it to the corresponding

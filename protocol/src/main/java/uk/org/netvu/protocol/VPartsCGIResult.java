@@ -1,13 +1,6 @@
-package uk.org.netvu.core.cgi.vparts;
+package uk.org.netvu.protocol;
 
 import java.util.ArrayList;
-
-import uk.org.netvu.core.cgi.common.Option;
-import uk.org.netvu.core.cgi.common.ParameterDescription;
-import uk.org.netvu.core.cgi.common.ParameterMap;
-import uk.org.netvu.core.cgi.common.StringConversion;
-import uk.org.netvu.core.cgi.common.Strings;
-import uk.org.netvu.core.cgi.common.URLParameter;
 
 /**
  * Builds and parses the results from vparts.cgi requests.

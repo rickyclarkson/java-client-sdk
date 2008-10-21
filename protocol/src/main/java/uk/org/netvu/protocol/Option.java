@@ -1,15 +1,15 @@
-package uk.org.netvu.core.cgi.common;
+package uk.org.netvu.protocol;
 
 import java.util.Collections;
 import java.util.Iterator;
 
 /**
- * For internal use only. An object that holds 0 or 1 elements.
+ * An object that holds 0 or 1 elements.
  * 
  * @param <T>
  *        the type of the object.
  */
-public abstract class Option<T> implements Iterable<T>
+abstract class Option<T> implements Iterable<T>
 {
     /**
      * Creates an Option holding no elements.

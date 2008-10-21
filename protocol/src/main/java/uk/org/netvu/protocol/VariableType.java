@@ -1,7 +1,4 @@
-package uk.org.netvu.core.cgi.variable;
-
-import uk.org.netvu.core.cgi.common.Function;
-import uk.org.netvu.core.cgi.common.Option;
+package uk.org.netvu.protocol;
 
 /**
  * The return type of the variable.

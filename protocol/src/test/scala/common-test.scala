@@ -1,4 +1,4 @@
-package uk.org.netvu.core.cgi.common
+package uk.org.netvu.protocol
 
 import _root_.org.{specs, scalacheck}
 

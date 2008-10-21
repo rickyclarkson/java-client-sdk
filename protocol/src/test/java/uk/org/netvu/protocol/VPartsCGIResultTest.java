@@ -1,4 +1,4 @@
-package uk.org.netvu.core.cgi.vparts;
+package uk.org.netvu.protocol;
 
 import static org.junit.Assert.assertTrue;
 

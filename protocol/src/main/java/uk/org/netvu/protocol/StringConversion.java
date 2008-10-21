@@ -1,7 +1,7 @@
-package uk.org.netvu.core.cgi.common;
+package uk.org.netvu.protocol;
 
 /**
- * For internal use only! A StringConversion can convert between Strings and a
+ * A StringConversion can convert between Strings and a
  * given type, T, though the conversion can be partial, which is represented by
  * an Option in the results. A partial mapping means that the conversion might
  * fail, though to have control over how we treat that failure, we represent it
@@ -15,7 +15,7 @@ package uk.org.netvu.core.cgi.common;
  * @param <T>
  *        the type that this StringConversion can convert Strings to and from.
  */
-public final class StringConversion<T>
+final class StringConversion<T>
 {
     /**
      * A StringConversion that converts between Strings containing 'true' or

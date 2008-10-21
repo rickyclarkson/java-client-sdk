@@ -1,16 +1,16 @@
-package uk.org.netvu.core.cgi.common;
+package uk.org.netvu.protocol;
 
 import java.math.BigInteger;
 
 /**
- * For internal use only! A function from objects of type T to those of type R.
+ * A function from objects of type T to those of type R.
  * 
  * @param <T>
  *        the type of object to convert from.
  * @param <R>
  *        the type of object to convert to.
  */
-public abstract class Function<T, R>
+abstract class Function<T, R>
 {
     /**
      * A Function that returns true if the value it receives is the same as the

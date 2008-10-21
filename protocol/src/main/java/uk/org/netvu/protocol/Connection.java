@@ -1,18 +1,9 @@
-package uk.org.netvu.core.cgi.decoder;
+package uk.org.netvu.protocol;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
-
-import uk.org.netvu.core.cgi.common.Function;
-import uk.org.netvu.core.cgi.common.Option;
-import uk.org.netvu.core.cgi.common.ParameterDescription;
-import uk.org.netvu.core.cgi.common.ParameterMap;
-import uk.org.netvu.core.cgi.common.StringConversion;
-import uk.org.netvu.core.cgi.common.Strings;
-import uk.org.netvu.core.cgi.common.URLEncoder;
-import uk.org.netvu.core.cgi.common.ParameterMap.Validator;
 
 /**
  * A Connection tells the decoder which camera to use, and what parameter values
@@ -95,7 +86,7 @@ public final class Connection
      */
     public Connection()
     {
-        this( new ParameterMap( new Validator()
+        this( new ParameterMap( new ParameterMap.Validator()
         {
             @Override
             public boolean isValid( final ParameterMap parameterMap )

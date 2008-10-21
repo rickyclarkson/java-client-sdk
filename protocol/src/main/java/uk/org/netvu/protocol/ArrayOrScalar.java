@@ -1,4 +1,4 @@
-package uk.org.netvu.core.cgi.variable;
+package uk.org.netvu.protocol;
 
 /**
  * Specifies whether a system variable is an array or a scalar value.

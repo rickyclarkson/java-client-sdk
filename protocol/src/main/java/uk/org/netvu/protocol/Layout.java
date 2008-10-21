@@ -1,6 +1,4 @@
-package uk.org.netvu.core.cgi.decoder;
-
-import uk.org.netvu.core.cgi.common.Function;
+package uk.org.netvu.protocol;
 
 /**
  * An enumeration of all the layouts that the DecoderCGI can specify.

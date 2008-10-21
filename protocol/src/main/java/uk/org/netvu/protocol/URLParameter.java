@@ -1,9 +1,9 @@
-package uk.org.netvu.core.cgi.common;
+package uk.org.netvu.protocol;
 
 /**
- * For internal use only! A representation of a URL Parameter (foo=bar).
+ * A representation of a URL Parameter (foo=bar).
  */
-public final class URLParameter
+final class URLParameter
 {
     /**
      * The name of this parameter.

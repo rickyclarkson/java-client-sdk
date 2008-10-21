@@ -1,4 +1,4 @@
-package uk.org.netvu.core.cgi.displaypic;
+package uk.org.netvu.data;
 
 import java.io.DataInputStream;
 import java.io.EOFException;

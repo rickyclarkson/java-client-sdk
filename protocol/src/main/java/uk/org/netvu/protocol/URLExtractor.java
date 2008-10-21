@@ -1,10 +1,10 @@
-package uk.org.netvu.core.cgi.common;
+package uk.org.netvu.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * For internal use only! A utility class for parsing Strings into URL parts.
+ * A utility class for parsing Strings into URL parts.
  */
 final class URLExtractor
 {

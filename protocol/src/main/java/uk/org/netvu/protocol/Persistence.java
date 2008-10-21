@@ -1,4 +1,4 @@
-package uk.org.netvu.core.cgi.decoder;
+package uk.org.netvu.protocol;
 
 /**
  * Specifies whether a DecoderCGI's query sets variables temporarily or

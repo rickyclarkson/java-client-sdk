@@ -1,4 +1,4 @@
-package uk.org.netvu.core.cgi.variable
+package uk.org.netvu.protocol
 
 import _root_.org.specs._
 import _root_.org.specs.util._

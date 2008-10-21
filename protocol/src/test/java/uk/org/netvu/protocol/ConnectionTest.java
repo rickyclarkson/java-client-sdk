@@ -1,4 +1,4 @@
-package uk.org.netvu.core.cgi.decoder;
+package uk.org.netvu.protocol;
 
 import static org.junit.Assert.assertTrue;
 

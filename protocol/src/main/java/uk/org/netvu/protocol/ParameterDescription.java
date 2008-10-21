@@ -1,4 +1,4 @@
-package uk.org.netvu.core.cgi.common;
+package uk.org.netvu.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * For internal use only! An object that describes a parameter for a Builder,
+ * An object that describes a parameter for a Builder,
  * including conversions from Strings to the input type of the parameter and
  * back, and validation.
  * 
@@ -17,7 +17,7 @@ import java.util.TreeMap;
  *        the output type of the parameter that the ParameterDescription
  *        describes.
  */
-public abstract class ParameterDescription<T, R>
+abstract class ParameterDescription<T, R>
 {
     /**
      * Constructs a ParameterDescription that describes a parameter that accepts

@@ -1,4 +1,4 @@
-package uk.org.netvu.core.cgi.events
+package uk.org.netvu.protocol
 
 import _root_.org.{scalacheck, specs, junit}
 import junit.Test
@@ -78,7 +78,6 @@ class StatusTest extends JUnit4(new Specification with Scalacheck {
  }
 })
 
-import cgi.common.Format
 import scalacheck.Arbitrary
 import Arbitrary.arbitrary
 import scalacheck.Prop.{property, extendedBoolean}
@@ -262,7 +261,6 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
     "12, 0, RTC reset (CBUS), 1122907620, 3600, (14:46:57 01/Aug/2005),overwitten, 12, 10, 2, 0, 4, 8")
 
    def compare(input: String, output: EventsCGIResult) = {
-    import common.Strings
     val fields = Strings.splitCSV(input)
     val others = Strings.splitCSV(output.toCSV(0))
 

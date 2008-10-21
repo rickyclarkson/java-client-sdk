@@ -1,10 +1,10 @@
-package uk.org.netvu.core.cgi.common;
+package uk.org.netvu.protocol;
 
 /**
- * For internal use only! A utility class for checking constraints about method
+ * A utility class for checking constraints about method
  * parameters.
  */
-public final class CheckParameters
+final class CheckParameters
 {
     /**
      * Checks that all the arguments passed are non-null. Fails on the first

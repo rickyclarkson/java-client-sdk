@@ -1,13 +1,13 @@
-package uk.org.netvu.core.cgi.common;
+package uk.org.netvu.protocol;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * For internal use only! Utility methods for dealing with Strings.
+ * Utility methods for dealing with Strings.
  */
-public class Strings
+final class Strings
 {
     /**
      * A named String literal, used to improve the readability of uses of double

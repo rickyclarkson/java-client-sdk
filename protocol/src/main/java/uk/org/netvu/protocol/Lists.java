@@ -1,4 +1,4 @@
-package uk.org.netvu.core.cgi.common;
+package uk.org.netvu.protocol;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.TreeSet;
 
 /**
- * For internal use only! A set of utility methods for operating on Lists.
+ * A set of utility methods for operating on Lists.
  */
-public final class Lists
+final class Lists
 {
     /**
      * Given a List and a predicate, constructs a List consisting of only the

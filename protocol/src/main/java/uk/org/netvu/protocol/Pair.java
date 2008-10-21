@@ -1,14 +1,14 @@
-package uk.org.netvu.core.cgi.common;
+package uk.org.netvu.protocol;
 
 /**
- * For internal use only! An object containing two objects.
+ * An object containing two objects.
  * 
  * @param <T>
  *        the type of the first object.
  * @param <U>
  *        the type of the second object.
  */
-public final class Pair<T, U>
+final class Pair<T, U>
 {
     private final T t;
 

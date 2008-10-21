@@ -1,7 +1,4 @@
-package uk.org.netvu.core.cgi.vparts;
-
-import uk.org.netvu.core.cgi.common.Function;
-import uk.org.netvu.core.cgi.common.Option;
+package uk.org.netvu.protocol;
 
 /**
  * Specifies the format of directory paths returned by the server.

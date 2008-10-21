@@ -1,4 +1,4 @@
-package uk.org.netvu.core.cgi.demo;
+package uk.org.netvu.protocol;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -19,16 +19,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-
-import uk.org.netvu.core.cgi.common.Function;
-import uk.org.netvu.core.cgi.common.Lists;
-import uk.org.netvu.core.cgi.common.Pair;
-import uk.org.netvu.core.cgi.common.Strings;
-import uk.org.netvu.core.cgi.decoder.Connection;
-import uk.org.netvu.core.cgi.decoder.DecoderCGI;
-import uk.org.netvu.core.cgi.decoder.Layout;
-import uk.org.netvu.core.cgi.variable.Variable;
-import uk.org.netvu.core.cgi.variable.VariableCGI;
 
 /**
  * A demonstration program that allows the user to interact with the decoder and

@@ -1,7 +1,4 @@
-package uk.org.netvu.core.cgi.vparts;
-
-import uk.org.netvu.core.cgi.common.Function;
-import uk.org.netvu.core.cgi.common.Option;
+package uk.org.netvu.protocol;
 
 /**
  * Determines the function of the CGI call.
