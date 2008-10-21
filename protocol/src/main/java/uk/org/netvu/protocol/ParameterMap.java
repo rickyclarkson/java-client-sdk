@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An immutable object that stores the values associated
- * with parameters and provides an interface to retrieving those values.
+ * An immutable object that stores the values associated with parameters and
+ * provides an interface to retrieving those values.
  */
 final class ParameterMap
 {
@@ -64,10 +64,13 @@ final class ParameterMap
 
         for ( final URLParameter part : parts )
         {
+            boolean matched = false;
+
             for ( final ParameterDescription<?, ?> parameterDescription : parameterDescriptions )
             {
                 if ( part.name.startsWith( parameterDescription.name ) )
                 {
+                    matched = true;
                     parameterMap = parameterMap.bind( new Function<ParameterMap, Option<ParameterMap>>()
                     {
                         @Override
@@ -77,6 +80,11 @@ final class ParameterMap
                         }
                     } );
                 }
+            }
+
+            if ( !matched )
+            {
+                parameterMap = Option.getEmptyOption( part.name + " is not a known URL parameter" );
             }
         }
 
@@ -259,14 +267,14 @@ final class ParameterMap
          * A convenience method that produces a Validator that ensures that only
          * one of the specified exclusive parameters has been set to a value.
          * 
-         * @param exclusiveParameterDescriptions
+         * @param exclusiveParameters
          *        the parameters that are mutually exclusive.
          * @return a Validator that ensures that only one of the specified
          *         mutually exclusive parameters has been set to a value.
          */
-        public static Validator mutuallyExclusive( final List<ParameterDescription<?, ?>> exclusiveParameterDescriptions )
+        public static Validator mutuallyExclusive( final List<ParameterDescription<?, ?>> exclusiveParameters )
         {
-            CheckParameters.areNotNull( exclusiveParameterDescriptions );
+            CheckParameters.areNotNull( exclusiveParameters );
 
             return new Validator()
             {
@@ -276,7 +284,7 @@ final class ParameterMap
                     CheckParameters.areNotNull( parameterMap );
 
                     int count = 0;
-                    for ( final ParameterDescription<?, ?> exclusiveParameterDescription : exclusiveParameterDescriptions )
+                    for ( final ParameterDescription<?, ?> exclusiveParameterDescription : exclusiveParameters )
                     {
                         count += parameterMap.isDefault( exclusiveParameterDescription ) ? 0 : 1;
                     }

@@ -3,9 +3,9 @@ package uk.org.netvu.protocol;
 import java.io.UnsupportedEncodingException;
 
 /**
- * For internal use only! A Function that encodes text for safe use in URLs.
+ * A Function that encodes text for safe use in URLs.
  */
-public final class URLEncoder
+final class URLEncoder
         extends Function<String, String>
 {
     /**

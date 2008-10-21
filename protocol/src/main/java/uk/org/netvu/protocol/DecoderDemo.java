@@ -43,6 +43,13 @@ public class DecoderDemo
         frame.setVisible( true );
     }
 
+    /**
+     * This is private to prevent instantiation.
+     */
+    private DecoderDemo()
+    {
+    }
+
     private static final class Panel
             extends JPanel
     {

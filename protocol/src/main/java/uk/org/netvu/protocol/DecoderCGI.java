@@ -1,13 +1,15 @@
 package uk.org.netvu.protocol;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.net.URLDecoder;
-import java.io.UnsupportedEncodingException;
+
+import uk.org.netvu.protocol.ParameterDescription.SparseArrayParameterDescription;
 
 /**
  * DecoderCGI is used for building CGI requests to send to decoders, using
@@ -15,17 +17,13 @@ import java.io.UnsupportedEncodingException;
  */
 public final class DecoderCGI
 {
-    private static final ParameterDescription<Persistence, Persistence> PERSISTENCE =
-            ParameterDescription.parameterWithDefault(
-                    "persistence",
-                    Persistence.TEMPORARY,
-                    StringConversion.convenientPartial( Option.<String, Persistence> getFunctionToEmptyOption( "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name." ) ) );
+    private static final ParameterDescription<Persistence, Persistence> PERSISTENCE;
 
-    private static final ParameterDescription<List<Pair<Integer, Connection>>, TreeMap<Integer, Connection>> CONNECTIONS =
-            ParameterDescription.sparseArrayParameter( "connections", StringConversion.total( Connection.fromURL,
-                    Connection.urlEncode ) );
+    private static final SparseArrayParameterDescription<Connection> CONNECTIONS =
+            ParameterDescription.sparseArrayParameter( "connections", StringConversion.total(
+                    new Connection.FromURLToConnection(), Connection.urlEncode ) );
 
-    private static final ParameterDescription<List<Pair<Integer, Layout>>, TreeMap<Integer, Layout>> LAYOUTS =
+    private static final SparseArrayParameterDescription<Layout> LAYOUTS =
             ParameterDescription.sparseArrayParameter( "layouts", StringConversion.total( Layout.fromURL,
                     Layout.urlEncode ) );
 
@@ -57,6 +55,16 @@ public final class DecoderCGI
             add( COMMANDS );
         }
     };
+
+    static
+    {
+        final String message = "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name.";
+        PERSISTENCE =
+                ParameterDescription.parameterWithDefault(
+                        "persistence",
+                        Persistence.TEMPORARY,
+                        StringConversion.convenientPartial( Option.<String, Persistence> getFunctionToEmptyOption( message ) ) );
+    }
 
     /**
      * Parses a URL, or part of a URL, into a DecoderCGI. If it cannot be
@@ -107,8 +115,8 @@ public final class DecoderCGI
      */
     public DecoderCGI command( final int index, final String command )
     {
-        return new DecoderCGI( parameterMap.set( COMMANDS, Collections.singletonList( new Pair<Integer, String>( index,
-                command ) ) ) );
+        return new DecoderCGI( parameterMap.set( COMMANDS, Collections.singletonList( new Pair<Integer, String>(
+                index, command ) ) ) );
     }
 
     /**
@@ -123,8 +131,8 @@ public final class DecoderCGI
      */
     public DecoderCGI connection( final int index, final Connection connection )
     {
-        return new DecoderCGI( parameterMap.set( CONNECTIONS, Collections.singletonList( new Pair<Integer, Connection>(
-                index, connection ) ) ) );
+        return new DecoderCGI( parameterMap.set( CONNECTIONS,
+                Collections.singletonList( new Pair<Integer, Connection>( index, connection ) ) ) );
     }
 
     /**
@@ -227,351 +235,362 @@ public final class DecoderCGI
         return "decoder" + getPersistence() + '?' + parameterMap.toURLParameters( params );
     }
 
-/**
- * A Connection tells the decoder which camera to use, and what parameter values
- * to send to it.
- */
-public static final class Connection
-{
-    private static final ParameterDescription<String, Option<String>> SLAVE_IP_PARAM =
-            ParameterDescription.parameterWithoutDefault( "slaveip", StringConversion.string() );
-    private static final ParameterDescription<Integer, Option<Integer>> SEQ_PARAM =
-            ParameterDescription.parameterWithoutDefault( "seq", StringConversion.getHexToIntStringConversion() );
-    private static final ParameterDescription<Integer, Option<Integer>> DWELL_PARAM =
-            ParameterDescription.parameterWithoutDefault( "dwell", StringConversion.integer() );
-    private static final ParameterDescription<Integer, Option<Integer>> CAM =
-            ParameterDescription.parameterWithoutDefault( "cam", StringConversion.integer() );
-    private static final ParameterDescription<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM =
-            ParameterDescription.parameterWithoutDefault( "audio", StringConversion.integer() );
+    /**
+     * A Connection tells the decoder which camera to use, and what parameter
+     * values to send to it.
+     */
+    public static final class Connection
+    {
+        private static final ParameterDescription<String, Option<String>> SLAVE_IP_PARAM =
+                ParameterDescription.parameterWithoutDefault( "slaveip", StringConversion.string() );
+        private static final ParameterDescription<Integer, Option<Integer>> SEQ_PARAM =
+                ParameterDescription.parameterWithoutDefault( "seq", StringConversion.getHexToIntStringConversion() );
+        private static final ParameterDescription<Integer, Option<Integer>> DWELL_PARAM =
+                ParameterDescription.parameterWithoutDefault( "dwell", StringConversion.integer() );
+        private static final ParameterDescription<Integer, Option<Integer>> CAM =
+                ParameterDescription.parameterWithoutDefault( "cam", StringConversion.integer() );
+        private static final ParameterDescription<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM =
+                ParameterDescription.parameterWithoutDefault( "audio", StringConversion.integer() );
 
-    // this is an anonymous intialiser - it is creating a new ArrayList and
-    // adding values to it inline.
-    private static final List<ParameterDescription<?, ? extends Option<?>>> params =
-            new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
-            {
+        private static final List<ParameterDescription<?, ? extends Option<?>>> connectionParameters =
+                new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
                 {
-                    add( SLAVE_IP_PARAM );
-                    add( SEQ_PARAM );
-                    add( DWELL_PARAM );
-                    add( CAM );
-                    add( AUDIO_CHANNEL_PARAM );
+                    {
+                        // this is an anonymous intialiser - it is creating a
+                        // new ArrayList and adding values to it inline.
+                        add( SLAVE_IP_PARAM );
+                        add( SEQ_PARAM );
+                        add( DWELL_PARAM );
+                        add( CAM );
+                        add( AUDIO_CHANNEL_PARAM );
+                    }
+                };
+
+        private final ParameterMap parameterMap;
+
+        /**
+         * A Function that, given a Connection, produces a URL-encoded String
+         * containing a representation of it as URL parameters.
+         */
+        static final Function<Connection, String> urlEncode;
+
+        static
+        {
+            final Function<Connection, String> beforeQuotes = new Function<Connection, String>()
+            {
+                @Override
+                public String apply( final Connection connection )
+                {
+                    return new URLEncoder().apply( connection.parameterMap.toURLParameters( connectionParameters ).replaceAll(
+                            "&", "," ) );
                 }
             };
 
-    private final ParameterMap parameterMap;
-
-    /**
-     * A Function that, given a Connection, produces a URL-encoded String
-     * containing a representation of it as URL parameters.
-     */
-    static final Function<Connection, String> urlEncode = new Function<Connection, String>()
-    {
-        @Override
-        public String apply( final Connection connection )
-        {
-            return new URLEncoder().apply( connection.parameterMap.toURLParameters( params ).replaceAll( "&", "," ) );
+            urlEncode = beforeQuotes.andThen( Strings.surroundWithQuotes() );
         }
-    }.andThen( Strings.surroundWithQuotes() );
 
-    /**
-     * A Function that, given a String containing URL parameters, produces a
-     * Connection from it.
-     */
-    static final Function<String, Connection> fromURL = new Function<String, Connection>()
-    {
-        @Override
-        public Connection apply( final String urlParameters )
+        /**
+         * Constructs a Connection.
+         */
+        public Connection()
         {
-            try
+            this( new ParameterMap( new ParameterMap.Validator()
             {
-                final Option<ParameterMap> map =
-                        ParameterMap.fromURL( URLDecoder.decode( urlParameters, "UTF-8" ).replaceAll( ",", "&" ),
-                                params );
-
-                if ( map.isEmpty() )
+                @Override
+                public boolean isValid( final ParameterMap parameterMap )
                 {
-                    throw new IllegalArgumentException( "Cannot parse " + urlParameters
-                            + " into a Connection, because " + map.reason() );
+                    return parameterMap.isDefault( CAM ) ? true : parameterMap.isDefault( SEQ_PARAM )
+                            && parameterMap.isDefault( DWELL_PARAM );
                 }
-
-                return new Connection( map.get() );
-            }
-            catch ( final UnsupportedEncodingException e )
-            {
-                throw new RuntimeException( e );
-            }
+            } ) );
         }
-    };
 
-    /**
-     * Constructs a Connection.
-     */
-    public Connection()
-    {
-        this( new ParameterMap( new ParameterMap.Validator()
+        private Connection( final ParameterMap parameterMap )
+        {
+            this.parameterMap = parameterMap;
+        }
+
+        /**
+         * Constructs a new Connection containing the same values as this
+         * Connection, but with audio set to the parameter passed in.
+         * 
+         * @param audioChannel
+         *        the source audio channel.
+         * @return the new Connection.
+         */
+        public Connection audio( final int audioChannel )
+        {
+            return new Connection( parameterMap.set( AUDIO_CHANNEL_PARAM, audioChannel ) );
+        }
+
+        /**
+         * Constructs a new Connection containing the same values as this
+         * Connection, but with cam set to the parameter passed in.
+         * 
+         * @param cam
+         *        the source camera.
+         * @return the new Connection.
+         */
+        public Connection cam( final int cam )
+        {
+            return new Connection( parameterMap.set( CAM, cam ) );
+        }
+
+        /**
+         * Constructs a new Connection containing the same values as this
+         * Connection, but with dwell set to the parameter passed in.
+         * 
+         * @param dwell
+         *        the time to dwell on each camera in the seq bitmask.
+         * @return the new Connection.
+         */
+        public Connection dwell( final int dwell )
+        {
+            return new Connection( parameterMap.set( DWELL_PARAM, dwell ) );
+        }
+
+        /**
+         * Returns the source camera, or throws an IllegalStateException if none
+         * exists.
+         * 
+         * @return the source camera.
+         */
+        public int getCam()
+        {
+            return parameterMap.get( CAM ).get();
+        }
+
+        /**
+         * Returns the time to dwell on each camera in the seq bitmask, or
+         * throws an IllegalStateException if this has not been set.
+         * 
+         * @return the time to dwell on each camera in the seq bitmask.
+         */
+        public int getDwell()
+        {
+            return parameterMap.get( DWELL_PARAM ).get();
+        }
+
+        /**
+         * Returns the source camera mask, or throws an IllegalStateException if
+         * none exists.
+         * 
+         * @return the source camera mask.
+         */
+        public int getSeq()
+        {
+            return parameterMap.get( SEQ_PARAM ).get();
+        }
+
+        /**
+         * Returns the source video server address, or throws an
+         * IllegalStateException if none exists.
+         * 
+         * @return the source video server address.
+         */
+        public String getSlaveIP()
+        {
+            return parameterMap.get( SLAVE_IP_PARAM ).get();
+        }
+
+        /**
+         * Constructs a new Connection containing the same values as this
+         * Connection, but with seq set to the parameter passed in.
+         * 
+         * @param seq
+         *        a bitmask of source cameras.
+         * @return the new Connection.
+         */
+        public Connection seq( final int seq )
+        {
+            return new Connection( parameterMap.set( SEQ_PARAM, seq ) );
+        }
+
+        /**
+         * Constructs a new Connection containing the same values as this
+         * Connection, but with the slaveIP set to the parameter passed in.
+         * 
+         * @param slaveIP
+         *        the IP address of the slave camera.
+         * @return the new Connection.
+         */
+        public Connection slaveIP( final String slaveIP )
+        {
+            return new Connection( parameterMap.set( SLAVE_IP_PARAM, slaveIP ) );
+        }
+
+        /**
+         * A Function that, given a String containing URL parameters, produces a
+         * Connection from it.
+         */
+        static final class FromURLToConnection
+                extends Function<String, Connection>
         {
             @Override
-            public boolean isValid( final ParameterMap parameterMap )
+            public Connection apply( final String urlParameters )
             {
-                return parameterMap.isDefault( CAM ) ? true : parameterMap.isDefault( SEQ_PARAM )
-                        && parameterMap.isDefault( DWELL_PARAM );
-            }
-        } ) );
-    }
+                try
+                {
+                    final Option<ParameterMap> map =
+                            ParameterMap.fromURL( URLDecoder.decode( urlParameters, "UTF-8" ).replaceAll( ",", "&" ),
+                                    connectionParameters );
 
-    private Connection( final ParameterMap parameterMap )
-    {
-        this.parameterMap = parameterMap;
-    }
+                    if ( map.isEmpty() )
+                    {
+                        throw new IllegalArgumentException( "Cannot parse " + urlParameters
+                                + " into a Connection, because " + map.reason() );
+                    }
 
-    /**
-     * Constructs a new Connection containing the same values as this
-     * Connection, but with audio set to the parameter passed in.
-     * 
-     * @param audioChannel
-     *        the source audio channel.
-     * @return the new Connection.
-     */
-    public Connection audio( final int audioChannel )
-    {
-        return new Connection( parameterMap.set( AUDIO_CHANNEL_PARAM, audioChannel ) );
-    }
-
-    /**
-     * Constructs a new Connection containing the same values as this
-     * Connection, but with cam set to the parameter passed in.
-     * 
-     * @param cam
-     *        the source camera.
-     * @return the new Connection.
-     */
-    public Connection cam( final int cam )
-    {
-        return new Connection( parameterMap.set( CAM, cam ) );
-    }
-
-    /**
-     * Constructs a new Connection containing the same values as this
-     * Connection, but with dwell set to the parameter passed in.
-     * 
-     * @param dwell
-     *        the time to dwell on each camera in the seq bitmask.
-     * @return the new Connection.
-     */
-    public Connection dwell( final int dwell )
-    {
-        return new Connection( parameterMap.set( DWELL_PARAM, dwell ) );
-    }
-
-    /**
-     * Returns the source camera, or throws an IllegalStateException if none
-     * exists.
-     * 
-     * @return the source camera.
-     */
-    public int getCam()
-    {
-        return parameterMap.get( CAM ).get();
-    }
-
-    /**
-     * Returns the time to dwell on each camera in the seq bitmask, or throws an
-     * IllegalStateException if this has not been set.
-     * 
-     * @return the time to dwell on each camera in the seq bitmask.
-     */
-    public int getDwell()
-    {
-        return parameterMap.get( DWELL_PARAM ).get();
-    }
-
-    /**
-     * Returns the source camera mask, or throws an IllegalStateException if
-     * none exists.
-     * 
-     * @return the source camera mask.
-     */
-    public int getSeq()
-    {
-        return parameterMap.get( SEQ_PARAM ).get();
-    }
-
-    /**
-     * Returns the source video server address, or throws an
-     * IllegalStateException if none exists.
-     * 
-     * @return the source video server address.
-     */
-    public String getSlaveIP()
-    {
-        return parameterMap.get( SLAVE_IP_PARAM ).get();
-    }
-
-    /**
-     * Constructs a new Connection containing the same values as this
-     * Connection, but with seq set to the parameter passed in.
-     * 
-     * @param seq
-     *        a bitmask of source cameras.
-     * @return the new Connection.
-     */
-    public Connection seq( final int seq )
-    {
-        return new Connection( parameterMap.set( SEQ_PARAM, seq ) );
-    }
-
-    /**
-     * Constructs a new Connection containing the same values as this
-     * Connection, but with the slaveIP set to the parameter passed in.
-     * 
-     * @param slaveIP
-     *        the IP address of the slave camera.
-     * @return the new Connection.
-     */
-    public Connection slaveIP( final String slaveIP )
-    {
-        return new Connection( parameterMap.set( SLAVE_IP_PARAM, slaveIP ) );
-    }
-}
-
-/**
- * An enumeration of all the layouts that the DecoderCGI can specify.
- */
-public enum Layout
-{
-    /**
-     * Displays one output on the whole screen.
-     */
-    SINGLE( 0 ),
-
-    /**
-     * Displays four outputs in a 2x2 grid.
-     */
-    FOUR_WAY( 1 ),
-
-    /**
-     * Displays six outputs, one large segment in the top left, with 5 smaller
-     * segments at the right and bottom.
-     */
-    SIX_WAY( 2 ),
-
-    /**
-     * Displays seven outputs, 3 large segments, with a quad in the bottom right
-     * quarter.
-     */
-    SEVEN_WAY( 3 ),
-
-    /**
-     * Displays nine outputs in a 3x3 grid.
-     */
-    NINE_WAY( 4 ),
-
-    /**
-     * Displays ten outputs, 2 quads at the top, and 2 quarters.
-     */
-    TEN_WAY( 5 ),
-
-    /**
-     * Displays thirteen outputs, 1 quarter at the top left, and 3 quads.
-     */
-    THIRTEEN_WAY( 6 ),
-
-    /**
-     * Displays sixteen outputs in a 4x4 grid.
-     */
-    SIXTEEN_WAY( 7 ),
-
-    /**
-     * Displays a near-fullscreen picture with a smaller picture embedded in the
-     * top-left.
-     */
-    PICTURE_IN_PICTURE( 8 );
-
-    /**
-     * The numeric value associated with this Layout.
-     */
-    final int value;
-
-    /**
-     * Converts a Layout to its String representation for use in URL parameters.
-     */
-    static final Function<Layout, String> urlEncode = new Function<Layout, String>()
-    {
-        @Override
-        public String apply( final Layout layout )
-        {
-            return String.valueOf( layout.value );
-        }
-    };
-
-    /**
-     * Converts the String representation of a Layout to a Layout.
-     */
-    static final Function<String, Layout> fromURL = new Function<String, Layout>()
-    {
-        @Override
-        public Layout apply( final String url )
-        {
-            return find( Integer.parseInt( url ) );
-        }
-    };
-
-    /**
-     * @param value
-     *        the number associated with the Layout to find.
-     * @return the Layout corresponding with the specified value.
-     * @throws IllegalArgumentException
-     *         if the number does not correspond to a value.
-     */
-    public static Layout find( final int value )
-    {
-        for ( final Layout layout : Layout.values() )
-        {
-            if ( layout.value == value )
-            {
-                return layout;
+                    return new Connection( map.get() );
+                }
+                catch ( final UnsupportedEncodingException e )
+                {
+                    throw new RuntimeException( e );
+                }
             }
         }
-
-        throw new IllegalArgumentException( "There is no Layout with the value " + value + '.' );
-    }
-
-    Layout( final int value )
-    {
-        this.value = value;
-    }
-
-}
-/**
- * Specifies whether a DecoderCGI's query sets variables temporarily or
- * persistently.
- */
-public enum Persistence
-{
-    /**
-     * Sets variables persistently (on-disk).
-     */
-    PERSISTENT( ".frm" ),
-
-    /**
-     * Sets variables temporarily (in-memory).
-     */
-    TEMPORARY( ".var" );
-
-    private final String extension;
-
-    Persistence( final String extension )
-    {
-        this.extension = extension;
     }
 
     /**
-     * Gives ".frm" for PERSISTENT and ".var" for TEMPORARY.
+     * An enumeration of all the layouts that the DecoderCGI can specify.
      */
-    @Override
-    public String toString()
+    public enum Layout
     {
-        return extension;
+        /**
+         * Displays one output on the whole screen.
+         */
+        SINGLE( 0 ),
+
+        /**
+         * Displays four outputs in a 2x2 grid.
+         */
+        FOUR_WAY( 1 ),
+
+        /**
+         * Displays six outputs, one large segment in the top left, with 5
+         * smaller segments at the right and bottom.
+         */
+        SIX_WAY( 2 ),
+
+        /**
+         * Displays seven outputs, 3 large segments, with a quad in the bottom
+         * right quarter.
+         */
+        SEVEN_WAY( 3 ),
+
+        /**
+         * Displays nine outputs in a 3x3 grid.
+         */
+        NINE_WAY( 4 ),
+
+        /**
+         * Displays ten outputs, 2 quads at the top, and 2 quarters.
+         */
+        TEN_WAY( 5 ),
+
+        /**
+         * Displays thirteen outputs, 1 quarter at the top left, and 3 quads.
+         */
+        THIRTEEN_WAY( 6 ),
+
+        /**
+         * Displays sixteen outputs in a 4x4 grid.
+         */
+        SIXTEEN_WAY( 7 ),
+
+        /**
+         * Displays a near-fullscreen picture with a smaller picture embedded in
+         * the top-left.
+         */
+        PICTURE_IN_PICTURE( 8 );
+
+        /**
+         * The numeric value associated with this Layout.
+         */
+        final int value;
+
+        /**
+         * Converts a Layout to its String representation for use in URL
+         * parameters.
+         */
+        static final Function<Layout, String> urlEncode = new Function<Layout, String>()
+        {
+            @Override
+            public String apply( final Layout layout )
+            {
+                return String.valueOf( layout.value );
+            }
+        };
+
+        /**
+         * Converts the String representation of a Layout to a Layout.
+         */
+        static final Function<String, Layout> fromURL = new Function<String, Layout>()
+        {
+            @Override
+            public Layout apply( final String url )
+            {
+                return find( Integer.parseInt( url ) );
+            }
+        };
+
+        /**
+         * @param value
+         *        the number associated with the Layout to find.
+         * @return the Layout corresponding with the specified value.
+         * @throws IllegalArgumentException
+         *         if the number does not correspond to a value.
+         */
+        public static Layout find( final int value )
+        {
+            for ( final Layout layout : Layout.values() )
+            {
+                if ( layout.value == value )
+                {
+                    return layout;
+                }
+            }
+
+            throw new IllegalArgumentException( "There is no Layout with the value " + value + '.' );
+        }
+
+        Layout( final int value )
+        {
+            this.value = value;
+        }
+
     }
-}
+
+    /**
+     * Specifies whether a DecoderCGI's query sets variables temporarily or
+     * persistently.
+     */
+    public enum Persistence
+    {
+        /**
+         * Sets variables persistently (on-disk).
+         */
+        PERSISTENT( ".frm" ),
+
+        /**
+         * Sets variables temporarily (in-memory).
+         */
+        TEMPORARY( ".var" );
+
+        private final String extension;
+
+        Persistence( final String extension )
+        {
+            this.extension = extension;
+        }
+
+        /**
+         * Gives ".frm" for PERSISTENT and ".var" for TEMPORARY.
+         */
+        @Override
+        public String toString()
+        {
+            return extension;
+        }
+    }
 }

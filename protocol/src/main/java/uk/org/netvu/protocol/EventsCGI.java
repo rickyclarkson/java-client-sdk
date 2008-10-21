@@ -3,9 +3,11 @@ package uk.org.netvu.protocol;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.org.netvu.protocol.ParameterMap.Validator;
+
 /**
  * A parameter list for an events.cgi query. Use {@link EventsCGI.Builder} to
- * construct an EventsCGI, or {@link EventsCGI#fromString(String)}.
+ * construct an EventsCGI, or {@link EventsCGI#fromURL(String)}.
  */
 public final class EventsCGI
 {
@@ -19,9 +21,9 @@ public final class EventsCGI
 
     private static final ParameterDescription<Format, Format> FORMAT =
             ParameterDescription.parameterWithDefault( "format", Format.CSV,
-                    StringConversion.convenientPartial( Format.fromString ) );
+                                                       StringConversion.convenientPartial( Format.functionFromStringToFormat() ) );
 
-    private static final ParameterDescription<Integer, Integer> MAX_LENGTH =
+    private static final ParameterDescription<Integer, Integer> LIST_LENGTH =
             ParameterDescription.parameterWithDefault( "listlength", 100, StringConversion.integer() );
 
     private static final ParameterDescription<String, String> TEXT =
@@ -47,11 +49,12 @@ public final class EventsCGI
     private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>()
     {
         {
-            // this is an anonymous initialiser - it creates an ArrayList and adds values to it inline.
+            // this is an anonymous initialiser - it creates an ArrayList and
+            // adds values to it inline.
             add( TIME );
             add( RANGE );
             add( FORMAT );
-            add( MAX_LENGTH );
+            add( LIST_LENGTH );
             add( TEXT );
             add( CAMERA_MASK );
             add( ALARM_MASK );
@@ -61,17 +64,20 @@ public final class EventsCGI
         }
     };
 
-    private static final List<ParameterDescription<?, ?>> exclusiveParams = new ArrayList<ParameterDescription<?, ?>>()
-    {
-        {
-            // this is an anonymous initialiser - it creates an ArrayList and adds values to it inline.
-            add( TEXT );
-            add( ALARM_MASK );
-            add( VIDEO_MOTION_DETECTION_MASK );
-            add( GPS_MASK );
-            add( SYSTEM_MASK );
-        }
-    };
+    private static final List<ParameterDescription<?, ?>> exclusiveParams =
+            new ArrayList<ParameterDescription<?, ?>>()
+            {
+                {
+                    // this is an anonymous initialiser - it creates an
+                    // ArrayList and
+                    // adds values to it inline.
+                    add( TEXT );
+                    add( ALARM_MASK );
+                    add( VIDEO_MOTION_DETECTION_MASK );
+                    add( GPS_MASK );
+                    add( SYSTEM_MASK );
+                }
+            };
 
     /**
      * Parses a URL (or the query part of a URL) to obtain an EventsCGI holding
@@ -79,7 +85,8 @@ public final class EventsCGI
      * 
      * @param string
      *        the URL (or the query part of a URL) to parse.
-     * @throws NullPointerException if string is null.
+     * @throws NullPointerException
+     *         if string is null.
      * @return an EventsCGI holding the values obtained from the URL.
      */
     public static EventsCGI fromURL( final String string )
@@ -154,14 +161,14 @@ public final class EventsCGI
     }
 
     /**
-     * The maximum number of results to obtain. Negative values reverse the
-     * direction of the search.
+     * The number of results to obtain. Negative values reverse the direction of
+     * the search.
      * 
-     * @return the maximum number of results to obtain.
+     * @return the number of results to obtain.
      */
-    public int getMaxLength()
+    public int getListLength()
     {
-        return parameterMap.get( MAX_LENGTH );
+        return parameterMap.get( LIST_LENGTH );
     }
 
     /**
@@ -238,8 +245,7 @@ public final class EventsCGI
      */
     public static final class Builder
     {
-        private Option<ParameterMap> parameterMap =
-                Option.getFullOption( new ParameterMap( ParameterMap.Validator.mutuallyExclusive( exclusiveParams ) ) );
+        private Option<ParameterMap> parameterMap;
 
         /**
          * Constructs a Builder ready to take in all the optional values for
@@ -247,6 +253,8 @@ public final class EventsCGI
          */
         public Builder()
         {
+            final Validator mutuallyExclusive = ParameterMap.Validator.mutuallyExclusive( exclusiveParams );
+            parameterMap = Option.getFullOption( new ParameterMap( mutuallyExclusive ) );
         }
 
         /**
@@ -318,7 +326,7 @@ public final class EventsCGI
         }
 
         /**
-         * The 32-bit mask of GPS event types to search for.  
+         * The 32-bit mask of GPS event types to search for.
          * 
          * @param gpsMask
          *        the mask of GPS event types to search for.
@@ -333,19 +341,19 @@ public final class EventsCGI
         }
 
         /**
-         * The maximum number of results to obtain. Negative values reverse the
+         * The number of results to obtain. Negative values reverse the
          * direction of the search.
          * 
-         * @param maxLength
-         *        the maximum number of results to obtain.
+         * @param listLength
+         *        the number of results to obtain.
          * @throws IllegalStateException
          *         if the Builder has already been built, or if this value has
          *         already been set.
          * @return the builder.
          */
-        public Builder maxLength( final int maxLength )
+        public Builder listLength( final int listLength )
         {
-            return set( MAX_LENGTH, maxLength );
+            return set( LIST_LENGTH, listLength );
         }
 
         /**
@@ -451,9 +459,10 @@ public final class EventsCGI
         {
             if ( parameterMap.isEmpty() )
             {
-                throw new IllegalStateException( "The Builder has already been built (build() has been called on it)." );
+                final String message = "The Builder has already been built (build() has been called on it).";
+                throw new IllegalStateException( message );
             }
-           
+
             parameterMap = Option.getFullOption( parameterMap.get().set( parameter, value ) );
             return this;
         }

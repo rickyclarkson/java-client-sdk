@@ -92,7 +92,7 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
    events.getFormat mustEqual Format.CSV
    events.getTime mustEqual 0
    events.getRange mustEqual Integer.MAX_VALUE
-   events.getMaxLength mustEqual 100
+   events.getListLength mustEqual 100
    events.getText mustEqual ""
    events.getCameraMask mustEqual 0
    events.getAlarmMask mustEqual 0
@@ -152,7 +152,7 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
    property((a: Int) => a >= 0 ==> (new Builder().range(a).build.getRange == a)) must pass
    property((a: Long) => new Builder().cameraMask(a).build.getCameraMask == a) must pass
    property((a: Int) => new Builder().gpsMask(a).build.getGpsMask == a) must pass
-   property((a: Int) => new Builder().maxLength(a).build.getMaxLength == a) must pass
+   property((a: Int) => new Builder().listLength(a).build.getListLength == a) must pass
    property((a: Int) => new Builder().systemMask(a).build.getSystemMask == a) must pass
    property((a: String) => new Builder().text(a).build.getText == a) must pass
    property((a: Int) => a >= 0 ==> (new Builder().time(a).build.getTime == a)) must pass
@@ -207,7 +207,7 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
                      () => builder.cameraMask(anyLong.get),
                      () => builder.format(anyFormat.get),
                      () => builder.gpsMask(anyInt.get),
-                     () => builder.maxLength(anyInt.get),
+                     () => builder.listLength(anyInt.get),
                      () => builder.range(nonNegativeInt.get),
                      () => builder.systemMask(anyInt.get),
                      () => builder.text(anyString.get),

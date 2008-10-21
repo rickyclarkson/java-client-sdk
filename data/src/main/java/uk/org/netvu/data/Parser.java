@@ -74,8 +74,7 @@ public final class Parser
 
     private void jpegParse( final int length ) throws IOException
     {
-        final byte[] bytes = actuallyRead( length );
-        //handler.handleJPEG( bytes );
+        actuallyRead( length );
     }
 
     private void multiPartMimeParse() throws IOException

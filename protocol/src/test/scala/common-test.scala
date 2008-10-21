@@ -294,12 +294,12 @@ class FormatTest extends JUnit4(new Specification with Scalacheck {
  implicit val arbFormat: Arbitrary[Format] =
   Arbitrary(Gen.choose(1, 1000000).map(i => Format.oneOf(new Random(i))))
 
- "Format.fromString" should {
+ "Format.functionFromStringToFormat" should {
   "give an empty Option when supplied with 'foo'" in {
-   Format.fromString("foo").isEmpty mustEqual true
+   Format.functionFromStringToFormat()("foo").isEmpty mustEqual true
   }
   "give an empty Option when supplied with an empty String" in {
-   Format.fromString("").isEmpty mustEqual true
+   Format.functionFromStringToFormat()("").isEmpty mustEqual true
   }
  }
 
@@ -308,7 +308,7 @@ class FormatTest extends JUnit4(new Specification with Scalacheck {
    property { f: Format => f.toString == f.toString.toLowerCase } must pass
   }
   "be retrievable by their String representation" in {
-   property { f: Format => Format.fromString(f.toString).get == f } must pass
+   property { f: Format => Format.functionFromStringToFormat()(f.toString).get == f } must pass
   }
  }
 })

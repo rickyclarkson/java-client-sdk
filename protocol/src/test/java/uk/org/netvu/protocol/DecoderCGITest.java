@@ -128,9 +128,10 @@ public class DecoderCGITest
     public void retention()
     {
         final DecoderCGI cgi =
-                new DecoderCGI().persistence( DecoderCGI.Persistence.PERSISTENT ).command( 1, "foo" ).command( 2, "bar" ).outputTitles(
-                        "one", "two", "three" ).layout( 1, DecoderCGI.Layout.FOUR_WAY ).layout( 2, DecoderCGI.Layout.NINE_WAY ).connection(
-                        5, new DecoderCGI.Connection().audio( 4 ).seq( 0xF ).dwell( 40 ) );
+                new DecoderCGI().persistence( DecoderCGI.Persistence.PERSISTENT ).command( 1, "foo" ).command( 2,
+                        "bar" ).outputTitles( "one", "two", "three" ).layout( 1, DecoderCGI.Layout.FOUR_WAY ).layout(
+                        2, DecoderCGI.Layout.NINE_WAY ).connection( 5,
+                        new DecoderCGI.Connection().audio( 4 ).seq( 0xF ).dwell( 40 ) );
 
         assertTrue( cgi.getCommands().size() == 2 );
         assertTrue( cgi.getCommands().get( 2 ).equals( "bar" ) );

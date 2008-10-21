@@ -1,5 +1,7 @@
 package uk.org.netvu.protocol;
 
+import java.util.Locale;
+
 /**
  * The return type of the variable.
  */
@@ -20,28 +22,31 @@ public enum VariableType
      * INCLUDE if the String case-insensitively matches one of those, and an
      * empty Option otherwise.
      */
-    static final Function<String, Option<VariableType>> fromString = new Function<String, Option<VariableType>>()
+    static Function<String, Option<VariableType>> functionFromStringToVariableType()
     {
-        @Override
-        public Option<VariableType> apply( final String t )
+        return new Function<String, Option<VariableType>>()
         {
-            try
+            @Override
+            public Option<VariableType> apply( final String t )
             {
-                return Option.getFullOption( VariableType.valueOf( t.toUpperCase() ) );
+                try
+                {
+                    return Option.getFullOption( VariableType.valueOf( t.toUpperCase( Locale.ENGLISH ) ) );
+                }
+                catch ( final IllegalArgumentException exception )
+                {
+                    return Option.getEmptyOption( "Cannot parse " + t + " into a VariableType" );
+                }
             }
-            catch ( final IllegalArgumentException exception )
-            {
-                return Option.getEmptyOption( "Cannot parse " + t + " into a VariableType" );
-            }
-        }
-    };
+        };
+    }
 
     /**
-     * Returns the name of the enum constant, lowercase.
+     * Returns the name of the enum constant, in lowercase.
      */
     @Override
     public String toString()
     {
-        return super.toString().toLowerCase();
+        return super.toString().toLowerCase( Locale.ENGLISH );
     }
 }

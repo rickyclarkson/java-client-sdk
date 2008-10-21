@@ -1,5 +1,6 @@
 package uk.org.netvu.protocol;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -13,7 +14,7 @@ public enum Variable
     C_TITLE( ArrayOrScalar.ARRAY ),
 
     /**
-     * Offset to UTC time.
+     * Offset from UTC time.
      */
     UTC_OFFSET( ArrayOrScalar.SCALAR ),
 
@@ -55,7 +56,7 @@ public enum Variable
     VA_VERTICAL_RESOLUTION( ArrayOrScalar.ARRAY ),
 
     /**
-     * The cameras to display input from for each segment.
+     * The cameras to display input from for each segment (decoder-specific).
      */
     COMMANDS( ArrayOrScalar.ARRAY ),
 
@@ -81,14 +82,17 @@ public enum Variable
      * matches it, case-insensitively, to one of the given Variables, returning
      * it in an Option, or returning an empty Option if there was no match.
      */
-    static final Function<String, Option<Variable>> fromString = new Function<String, Option<Variable>>()
+    static final Function<String, Option<Variable>> functionFromStringToVariable()
+    {
+        return new Function<String, Option<Variable>>()
     {
         @Override
         public Option<Variable> apply( final String s )
         {
             try
             {
-                return Option.getFullOption( valueOf( s.replaceAll( Pattern.quote( "[]" ), "" ).toUpperCase() ) );
+                return Option.getFullOption( valueOf( s.replaceAll( Pattern.quote( "[]" ), "" ).toUpperCase(
+                        Locale.ENGLISH ) ) );
             }
             catch ( final IllegalArgumentException exception )
             {
@@ -96,16 +100,32 @@ public enum Variable
             }
         }
     };
+    }
 
+    /**
+     * Constructs a Variable, specifying whether it is an array or scalar
+     * variable.
+     * 
+     * @param arrayOrScalar
+     *        this is ArrayOrScala.ARRAY if the Variable is an array variable,
+     *        and ArrayOrScala.SCALAR otherwise.
+     */
     Variable( final ArrayOrScalar arrayOrScalar )
     {
+        CheckParameters.areNotNull( arrayOrScalar );
         this.arrayOrScalar = arrayOrScalar;
     }
 
+    /**
+     * Gives this Variable as a lowercase String. If it is an array variable,
+     * then [] is appended.
+     * 
+     * @return this Variable as a lowercase String.
+     */
     @Override
     public String toString()
     {
-        return super.toString().toLowerCase() + ( arrayOrScalar == ArrayOrScalar.ARRAY ? "[]" : "" );
+        return super.toString().toLowerCase( Locale.ENGLISH ) + ( arrayOrScalar == ArrayOrScalar.ARRAY ? "[]" : "" );
     }
 
     /**
@@ -117,7 +137,7 @@ public enum Variable
          * Represents that the system variable is an array (0 or more values).
          */
         ARRAY,
-            
+
         /**
          * Represents that the system variable is a scalar (1 value).
          */

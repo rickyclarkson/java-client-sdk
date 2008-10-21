@@ -27,12 +27,12 @@ public class VPartsCGIResult
     private static final ParameterDescription<Integer, Option<Integer>> CAM_MASK =
             ParameterDescription.parameterWithoutDefault( "cammask", StringConversion.integer() );
 
-    // this is an anonymous intialiser - it is creating a new ArrayList and
-    // adding values to it inline.
     private static final ArrayList<ParameterDescription<?, ? extends Option<?>>> parameterDescriptions =
             new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
             {
                 {
+                    // this is an anonymous intialiser - it is creating a new
+                    // ArrayList and adding values to it inline.
                     add( INDEX );
                     add( DIRECTORY );
                     add( FILENAME );
@@ -50,30 +50,59 @@ public class VPartsCGIResult
      * 
      * @param csv
      *        the comma separated values to parse.
+     * @throws NullPointerException
+     *         if csv is null.
      * @return a VPartsCGIResult containing the values from the comma separated
      *         values.
      */
     public static VPartsCGIResult fromCSV( final String csv )
     {
+        CheckParameters.areNotNull( csv );
         ParameterMap parameterMap = new ParameterMap();
         final String[] elements = Strings.splitCSV( csv );
         int a = 0;
         for ( final ParameterDescription<?, ?> parameterDescription : parameterDescriptions )
         {
-            parameterMap = hack( parameterMap, parameterDescription, elements[a] );
+            parameterMap = setFromString( parameterMap, parameterDescription, elements[a] );
             a++;
         }
         return new VPartsCGIResult( parameterMap );
     }
 
-    private static <T, R> ParameterMap hack( final ParameterMap parameterMap, final ParameterDescription<T, R> param,
-            final String s )
+    /**
+     * Sets a parameter to a given value after parsing it from a String. This
+     * exists as a separate method because of type parameter inference
+     * limitations.
+     * 
+     * @param <T>
+     *        the input type of the parameter.
+     * @param <R>
+     *        the output type of the parameter.
+     * @param parameterMap
+     *        the ParameterMap to apply the value to.
+     * @param param
+     *        the ParameterDescription describing the parameter.
+     * @param s
+     *        the String to parse.
+     * @throws NullPointerException
+     *         if parameterMap, param or s are null.
+     * @return a new ParameterMap containing the specified value, plus all the
+     *         other values from the specified ParameterMap.
+     */
+    private static <T, R> ParameterMap setFromString( final ParameterMap parameterMap,
+            final ParameterDescription<T, R> param, final String s )
     {
         return parameterMap.set( param, param.fromURLParameter( new URLParameter( param.name, s ) ).get() );
     }
 
     private final ParameterMap builtMap;
 
+    /**
+     * Constructs a VPartsCGIResult using the specified ParameterMap's values.
+     * 
+     * @param parameterMap
+     *        a ParameterMap to get values from.
+     */
     private VPartsCGIResult( final ParameterMap parameterMap )
     {
         for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : parameterDescriptions )
@@ -86,6 +115,12 @@ public class VPartsCGIResult
         }
 
         builtMap = parameterMap;
+
+        if ( getEndTime() < getStartTime() )
+        {
+            throw new IllegalStateException( "The end time ( " + getEndTime() + " ) is less than the start time ( "
+                    + getStartTime() + " )." );
+        }
     }
 
     /**
@@ -224,6 +259,8 @@ public class VPartsCGIResult
          * 
          * @param directory
          *        the directory that the video partition can be found in.
+         * @throws NullPointerException
+         *         if directory is null.
          * @return the Builder.
          */
         public Builder directory( final String directory )
@@ -233,7 +270,9 @@ public class VPartsCGIResult
         }
 
         /**
-         * Sets the end time for the video partition.
+         * Sets the end time for the video partition. The end time cannot be
+         * less than the start time. If it is, then build() will fail with an
+         * IllegalStateException.
          * 
          * @param endTime
          *        the end time for the video partition.
@@ -251,7 +290,7 @@ public class VPartsCGIResult
          * 
          * @param expiryTime
          *        the time at which the video partition expires (can be
-         *        overwritten)..
+         *        overwritten).
          * @return the Builder.
          */
         public Builder expiryTime( final int expiryTime )
@@ -265,6 +304,8 @@ public class VPartsCGIResult
          * 
          * @param filename
          *        the filename for the video partition.
+         * @throws NullPointerException
+         *         if filename is null.
          * @return the Builder.
          */
         public Builder filename( final String filename )

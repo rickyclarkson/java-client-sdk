@@ -2,19 +2,24 @@ package uk.org.netvu.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
- * Builds and parses vparts.cgi requests.
+ * A parameter list for a vparts.cgi query. Use {@link VPartsCGI.Builder} to
+ * construct a VPartsCGI, or {@link VPartsCGI#fromURL(String)}. A vparts.cgi
+ * query has three modes, 'read', 'protect' and 'reinitialise'. Some of the
+ * parameters in this class are only applicable to certain of those. Those are
+ * documented in each appropriate method in {@link VPartsCGI.Builder}.
  */
 public final class VPartsCGI
 {
     private static final ParameterDescription<Format, Format> FORMAT =
             ParameterDescription.parameterDisallowing( Format.HTML, ParameterDescription.parameterWithDefault(
-                    "format", Format.CSV, StringConversion.convenientPartial( Format.fromString ) ) );
+                                                                                                              "format", Format.CSV, StringConversion.convenientPartial( Format.functionFromStringToFormat() ) ) );
 
     private static final ParameterDescription<Mode, Mode> MODE =
             ParameterDescription.parameterWithDefault( "mode", Mode.READ,
-                    StringConversion.convenientPartial( Mode.fromString ) );
+                    StringConversion.convenientPartial( Mode.functionFromStringToMode() ) );
 
     private static final ParameterDescription<Integer, Integer> TIME =
             ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault( "time", 0,
@@ -25,7 +30,8 @@ public final class VPartsCGI
                     Integer.MAX_VALUE, StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Integer> EXPIRY =
-            ParameterDescription.parameterWithDefault( "expiry", 0, StringConversion.integer() );
+            ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault( "expiry", 0,
+                    StringConversion.integer() ) );
 
     private static final ParameterDescription<Boolean, Boolean> WATERMARK =
             ParameterDescription.parameterWithDefault( "watermark", false, StringConversion.bool() );
@@ -37,16 +43,14 @@ public final class VPartsCGI
     private static final ParameterDescription<Integer, Integer> LIST_LENGTH =
             ParameterDescription.parameterWithDefault( "listlength", 100, StringConversion.integer() );
 
-    private static final ParameterDescription<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE =
-            ParameterDescription.parameterWithDefault( "pathstyle", DirectoryPathFormat.SHORT,
-                    StringConversion.convenientPartial( DirectoryPathFormat.fromString ) );
+    private static final ParameterDescription<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = pathStyle();
 
-    // this is an anonymous intialiser - it is creating a new ArrayList and
-    // adding values to it inline.
     private static final List<ParameterDescription<?, ?>> parameterDescriptions =
             new ArrayList<ParameterDescription<?, ?>>()
             {
                 {
+                    // this is an anonymous intialiser - it is creating a new
+                    // ArrayList and adding values to it inline.
                     add( FORMAT );
                     add( MODE );
                     add( TIME );
@@ -64,11 +68,18 @@ public final class VPartsCGI
      * 
      * @param url
      *        the vparts request to parse.
+     * @throws NullPointerException
+     *         if url is null.
+     * @throws IllegalArgumentException
+     *         if the URL cannot be parsed into a VPartsCGI.
      * @return a VPartsCGI containing the values from the URL.
      */
-    public static VPartsCGI fromString( final String url )
+    public static VPartsCGI fromURL( final String url )
     {
+        CheckParameters.areNotNull( url );
+
         final Option<ParameterMap> map = ParameterMap.fromURL( url, parameterDescriptions );
+
         if ( map.isEmpty() )
         {
             throw new IllegalArgumentException( url + " cannot be parsed into a VPartsCGI, because " + map.reason() );
@@ -77,10 +88,28 @@ public final class VPartsCGI
         return new VPartsCGI( map.get() );
     }
 
+    private static ParameterDescription<DirectoryPathFormat, DirectoryPathFormat> pathStyle()
+    {
+        final Function<String, Option<DirectoryPathFormat>> stringToDirectoryPathFormat =
+                DirectoryPathFormat.functionFromStringToDirectoryPathFormat();
+
+        return ParameterDescription.parameterWithDefault( "pathstyle", DirectoryPathFormat.SHORT,
+                StringConversion.convenientPartial( stringToDirectoryPathFormat ) );
+    }
+
     private final ParameterMap builtMap;
 
+    /**
+     * Constructs a VPartsCGI, using the values from the specified ParameterMap.
+     * 
+     * @param builtMap
+     *        the ParameterMap to get values from.
+     * @throws NullPointerException
+     *         if builtMap is null.
+     */
     private VPartsCGI( final ParameterMap builtMap )
     {
+        CheckParameters.areNotNull( builtMap );
         this.builtMap = builtMap;
     }
 
@@ -110,7 +139,7 @@ public final class VPartsCGI
      * 
      * @return the maximum number of elements in the list.
      */
-    public int getListlength()
+    public int getListLength()
     {
         return builtMap.get( LIST_LENGTH );
     }
@@ -176,6 +205,10 @@ public final class VPartsCGI
         return builtMap.get( WMARKSTEP );
     }
 
+    /**
+     * Gives /vparts.cgi? followed by the values stored in this VPartsCGI, as
+     * URL parameters.
+     */
     @Override
     public String toString()
     {
@@ -188,7 +221,15 @@ public final class VPartsCGI
      */
     public static final class Builder
     {
-        private Option<ParameterMap> real = Option.getFullOption( new ParameterMap() );
+        private Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
+
+        /**
+         * Constructs a Builder ready to take in the values needed for
+         * constructing a VPartsCGI.
+         */
+        public Builder()
+        {
+        }
 
         /**
          * Constructs a VPartsCGI containing the stored parameters.
@@ -199,20 +240,22 @@ public final class VPartsCGI
         {
             try
             {
-                return new VPartsCGI( real.get() );
+                return new VPartsCGI( parameterMap.get() );
             }
             finally
             {
-                real = Option.getEmptyOption( "This Builder has already had build() called on it" );
+                parameterMap = Option.getEmptyOption( "This Builder has already had build() called on it" );
             }
         }
 
         /**
          * Sets the expiry time for partitions, in Julianised GMT (only used in
-         * protect mode).
+         * protect mode). Must not be negative.
          * 
          * @param expiry
          *        the expiry time for partitions
+         * @throws IllegalArgumentException
+         *         if expiry is negative.
          * @return the Builder.
          */
         public Builder expiry( final int expiry )
@@ -222,10 +265,13 @@ public final class VPartsCGI
 
         /**
          * Determines the output format (defaults to CSV in this API, which is
-         * different to the servers' defaults).
+         * different to the servers' defaults). Note that Format.HTML is
+         * disallowed, as per the Video Server Specification.
          * 
          * @param format
          *        the output format.
+         * @throws NullPointerException
+         *         if format is null.
          * @return the Builder.
          */
         public Builder format( final Format format )
@@ -236,13 +282,13 @@ public final class VPartsCGI
         /**
          * Determines the maximum number of elements in the list.
          * 
-         * @param listlength
+         * @param listLength
          *        the maximum number of elements in the list.
          * @return the Builder.
          */
-        public Builder listlength( final int listlength )
+        public Builder listLength( final int listLength )
         {
-            return set( LIST_LENGTH, listlength );
+            return set( LIST_LENGTH, listLength );
         }
 
         /**
@@ -250,6 +296,8 @@ public final class VPartsCGI
          * 
          * @param mode
          *        the {@link Mode} to use.
+         * @throws NullPointerException
+         *         if mode is null.
          * @return the Builder.
          */
         public Builder mode( final Mode mode )
@@ -265,9 +313,11 @@ public final class VPartsCGI
          * 
          * @param style
          *        the format of directory paths.
+         * @throws NullPointerException
+         *         if style is null.
          * @return the Builder.
          */
-        public Builder pathstyle( final DirectoryPathFormat style )
+        public Builder pathStyle( final DirectoryPathFormat style )
         {
             return set( PATH_STYLE, style );
         }
@@ -277,6 +327,8 @@ public final class VPartsCGI
          * 
          * @param range
          *        the time span to search in seconds.
+         * @throws IllegalArgumentException
+         *         if range is negative.
          * @return the Builder.
          */
         public Builder range( final int range )
@@ -289,6 +341,8 @@ public final class VPartsCGI
          * 
          * @param time
          *        the start time for database search.
+         * @throws IllegalArgumentException
+         *         if time is negative.
          * @return the Builder.
          */
         public Builder time( final int time )
@@ -297,6 +351,7 @@ public final class VPartsCGI
         }
 
         // TODO decide whether to restrict watermark to read mode.
+
         /**
          * Sets whether to generate watermark codes (read mode only).
          * 
@@ -311,12 +366,15 @@ public final class VPartsCGI
         }
 
         // TODO make this and the watermark parameter be mutually 'inclusive'.
+
         /**
-         * defines the step size to be used in watermark code generation, used
+         * Defines the step size to be used in watermark code generation, used
          * in conjunction with the watermark parameter.
          * 
          * @param step
          *        the step size to be used in watermark code generation.
+         * @throws IllegalArgumentException
+         *         if step is not between 1 and 256 inclusive.
          * @return the Builder.
          */
         public Builder watermarkStep( final int step )
@@ -324,54 +382,65 @@ public final class VPartsCGI
             return set( WMARKSTEP, step );
         }
 
+        /**
+         * Sets the value of a parameter to a given value, and returns the
+         * Builder.
+         * 
+         * @param <T>
+         *        the input type of the specified parameter.
+         * @param parameter
+         *        the parameter to set a value for.
+         * @param value
+         *        the value to give that parameter.
+         * @return the Builder.
+         * @throws IllegalStateException
+         *         if the Builder has already been built once.
+         */
         private <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
         {
-            if ( real.isEmpty() )
+            if ( parameterMap.isEmpty() )
             {
-                throw new IllegalStateException( "The Builder has already been built (build() has been called on it)." );
+                final String message = "The Builder has already been built (build() has been called on it).";
+                throw new IllegalStateException( message );
             }
 
-            real = real.map( new Function<ParameterMap, ParameterMap>()
-            {
-                @Override
-                public ParameterMap apply( final ParameterMap map )
-                {
-                    return map.set( parameter, value );
-                }
-            } );
+            parameterMap = Option.getFullOption( parameterMap.get().set( parameter, value ) );
             return this;
         }
     }
 
     /**
- * Specifies the format of directory paths returned by the server.
- */
-public enum DirectoryPathFormat
-{
-    /**
-     * The directory paths returned by the server are short.
+     * Specifies the format of directory paths returned by the server.
      */
-    SHORT,
+    public enum DirectoryPathFormat
+    {
+        /**
+         * The directory paths returned by the server are short.
+         */
+        SHORT,
 
-    /**
-     * The directory paths returned by the server are long.
-     */
-    LONG;
+        /**
+         * The directory paths returned by the server are long.
+         */
+        LONG;
 
-    /**
-     * A Function that, given a String, will produce an Option containing SHORT
-     * or LONG if the String matches it (ignoring case), and an empty Option
-     * otherwise.
-     */
-    static final Function<String, Option<DirectoryPathFormat>> fromString =
-            new Function<String, Option<DirectoryPathFormat>>()
+        /**
+         * A Function that, given a String, will produce an Option containing
+         * SHORT or LONG if the String matches it (ignoring case), and an empty
+         * Option otherwise.
+         * 
+         * @return a Function that parses a String into a DirectoryPathFormat.
+         */
+        static Function<String, Option<DirectoryPathFormat>> functionFromStringToDirectoryPathFormat()
+        {
+            return new Function<String, Option<DirectoryPathFormat>>()
             {
                 @Override
                 public Option<DirectoryPathFormat> apply( final String t )
                 {
                     try
                     {
-                        return Option.getFullOption( DirectoryPathFormat.valueOf( t.toUpperCase() ) );
+                        return Option.getFullOption( DirectoryPathFormat.valueOf( t.toUpperCase( Locale.ENGLISH ) ) );
                     }
                     catch ( final IllegalArgumentException exception )
                     {
@@ -379,63 +448,75 @@ public enum DirectoryPathFormat
                     }
                 }
             };
-
-    @Override
-    public String toString()
-    {
-        return super.toString().toLowerCase();
-    }
-}
-
-/**
- * Determines the function of the CGI call.
- */
-public enum Mode
-{
-    /**
-     * Supplies a javascript array or comma separated variable list of video
-     * partition information.
-     */
-    READ,
-
-    /**
-     * Manual protect/unprotect of video partitions. The time/range/expiry
-     * parameters are used to set/clear expiration times on all stored video
-     * data in the specified time range. If the expiry time is specified as 0
-     * then any existing protection is removed
-     */
-    PROTECT,
-
-    /**
-     * Reset video partitions.
-     */
-    REINITIALISE;
-
-    /**
-     * Converts a String to a Mode if it matches a Mode's name
-     * (case-insensitive), returning it in an Option if it does, and returning
-     * an empty Option otherwise.
-     */
-    static Function<String, Option<Mode>> fromString = new Function<String, Option<Mode>>()
-    {
-        @Override
-        public Option<Mode> apply( final String s )
-        {
-            try
-            {
-                return Option.getFullOption( Mode.valueOf( s.toUpperCase() ) );
-            }
-            catch ( final IllegalArgumentException exception )
-            {
-                return Option.getEmptyOption( s + " is not a valid Mode" );
-            }
         }
-    };
 
-    @Override
-    public String toString()
-    {
-        return super.toString().toLowerCase();
+        /**
+         * Gives a lowercase String representation of this DirectoryPathFormat.
+         */
+        @Override
+        public String toString()
+        {
+            return super.toString().toLowerCase( Locale.ENGLISH );
+        }
     }
-}
+
+    /**
+     * Determines the function of the CGI call.
+     */
+    public enum Mode
+    {
+        /**
+         * Supplies a javascript array or comma separated variable list of video
+         * partition information.
+         */
+        READ,
+
+        /**
+         * Manual protect/unprotect of video partitions. The time/range/expiry
+         * parameters are used to set/clear expiration times on all stored video
+         * data in the specified time range. If the expiry time is specified as
+         * 0 then any existing protection is removed
+         */
+        PROTECT,
+
+        /**
+         * Reset video partitions.
+         */
+        REINITIALISE;
+
+        /**
+         * Converts a String to a Mode if it matches a Mode's name
+         * (case-insensitive), returning it in an Option if it does, and
+         * returning an empty Option otherwise.
+         * 
+         * @return a Function that parses a String into a Mode.
+         */
+        static Function<String, Option<Mode>> functionFromStringToMode()
+        {
+            return new Function<String, Option<Mode>>()
+            {
+                @Override
+                public Option<Mode> apply( final String s )
+                {
+                    try
+                    {
+                        return Option.getFullOption( Mode.valueOf( s.toUpperCase( Locale.ENGLISH ) ) );
+                    }
+                    catch ( final IllegalArgumentException exception )
+                    {
+                        return Option.getEmptyOption( s + " is not a valid Mode" );
+                    }
+                }
+            };
+        }
+
+        /**
+         * Gives a lowercase String representation of this Locale.
+         */
+        @Override
+        public String toString()
+        {
+            return super.toString().toLowerCase( Locale.ENGLISH );
+        }
+    }
 }

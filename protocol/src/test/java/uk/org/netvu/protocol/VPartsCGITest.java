@@ -23,11 +23,11 @@ public class VPartsCGITest
      * results in the same URL.
      */
     @Test
-    public void fromString()
+    public void fromURL()
     {
         final String url = "/vparts.cgi?format=csv&mode=protect&time=958038820&range=120&pathstyle=long";
 
-        assertTrue( VPartsCGI.fromString( url ).toString().equals( url ) );
+        assertTrue( VPartsCGI.fromURL( url ).toString().equals( url ) );
     }
 
     /**
@@ -72,7 +72,7 @@ public class VPartsCGITest
         assertTrue( new VPartsCGI.Builder().watermark( true ).build().getWatermark() );
         assertTrue( new VPartsCGI.Builder().watermarkStep( 12 ).build().getWatermarkStep() == 12 );
         assertTrue( new VPartsCGI.Builder().format( Format.JS ).build().getFormat() == Format.JS );
-        assertTrue( new VPartsCGI.Builder().listlength( 101 ).build().getListlength() == 101 );
-        assertTrue( new VPartsCGI.Builder().pathstyle( VPartsCGI.DirectoryPathFormat.LONG ).build().getPathstyle() == VPartsCGI.DirectoryPathFormat.LONG );
+        assertTrue( new VPartsCGI.Builder().listLength( 101 ).build().getListLength() == 101 );
+        assertTrue( new VPartsCGI.Builder().pathStyle( VPartsCGI.DirectoryPathFormat.LONG ).build().getPathstyle() == VPartsCGI.DirectoryPathFormat.LONG );
     }
 }

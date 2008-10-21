@@ -37,7 +37,8 @@ public class ConnectionTest
     @Test
     public void retention()
     {
-        assertTrue( DecoderCGI.Connection.fromURL.apply( "slaveip=192.168.1.10&cam=1" ).getSlaveIP().equals( "192.168.1.10" ) );
+        assertTrue( new DecoderCGI.Connection.FromURLToConnection().apply( "slaveip=192.168.1.10&cam=1" ).getSlaveIP().equals(
+                "192.168.1.10" ) );
     }
 
     /**
@@ -58,7 +59,8 @@ public class ConnectionTest
     @Test
     public void urlEncode() throws UnsupportedEncodingException
     {
-        assertTrue( URLDecoder.decode( DecoderCGI.Connection.urlEncode.apply( new DecoderCGI.Connection().cam( 2 ).slaveIP( "foo" ) ),
+        assertTrue( URLDecoder.decode(
+                DecoderCGI.Connection.urlEncode.apply( new DecoderCGI.Connection().cam( 2 ).slaveIP( "foo" ) ),
                 "UTF-8" ).equals( "\"slaveip=foo,cam=2\"" ) );
     }
 }

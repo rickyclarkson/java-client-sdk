@@ -126,7 +126,7 @@ final class Strings
      * @return a Function that will surround any String passed to it with double
      *         quotes.
      */
-    public static final Function<String, String> surroundWithQuotes()
+    public static Function<String, String> surroundWithQuotes()
     {
         return prepend( DOUBLE_QUOTES ).andThen( append( DOUBLE_QUOTES ) );
     }

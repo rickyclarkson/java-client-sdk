@@ -1,10 +1,9 @@
 package uk.org.netvu.protocol;
 
 /**
- * A transformation from 2 values to 1 value, that can be
- * used across many values to 'reduce' n values to 1. For example, a Reduction
- * that takes two Integers and returns their sum can be used to sum a collection
- * of Integers.
+ * A transformation from 2 values to 1 value, that can be used across many
+ * values to 'reduce' n values to 1. For example, a Reduction that takes two
+ * Integers and returns their sum can be used to sum a collection of Integers.
  * 
  * @param <T>
  *        the type of the new value to 'add' to the original.

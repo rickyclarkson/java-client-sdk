@@ -34,8 +34,8 @@ public final class EventsCGIResult
             ParameterDescription.parameterWithoutDefault( "file", StringConversion.string() );
 
     private static final ParameterDescription<Boolean, Option<Boolean>> ON_DISK =
-            ParameterDescription.parameterWithoutDefault( "onDisk", StringConversion.total( Function.equal( "exists" ),
-                    Function.fromBoolean( "exists", "overwitten" ) ) );
+            ParameterDescription.parameterWithoutDefault( "onDisk", StringConversion.total(
+                    Function.equal( "exists" ), Function.fromBoolean( "exists", "overwitten" ) ) );
 
     private static final ParameterDescription<Integer, Option<Integer>> DURATION =
             ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithoutDefault( "duration",
@@ -57,11 +57,12 @@ public final class EventsCGIResult
             ParameterDescription.parameterWithDefault( "alarmType", AlarmType.NONE,
                     StringConversion.convenientPartial( AlarmType.fromString ) );
 
-    private static final ArrayList<ParameterDescription<?, ? extends Option<?>>> compulsoryParameterDescriptions =
+    private static final ArrayList<ParameterDescription<?, ? extends Option<?>>> compulsoryParameters =
             new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
             {
                 {
-                    // this is an anonymous initialiser - it creates an ArrayList and adds values to it inline.
+                    // this is an anonymous initialiser - it creates an
+                    // ArrayList and adds values to it inline.
                     add( CAMERA_PARAMETER );
                     add( ALARM );
                     add( JULIAN_TIME );
@@ -93,7 +94,7 @@ public final class EventsCGIResult
         }
 
         final List<ParameterDescription<?, ?>> parameterDescriptions =
-                new ArrayList<ParameterDescription<?, ?>>( compulsoryParameterDescriptions );
+                new ArrayList<ParameterDescription<?, ?>>( compulsoryParameters );
 
         if ( values.length > 11 )
         {
@@ -104,16 +105,18 @@ public final class EventsCGIResult
             parameterDescriptions.add( ALARM_TYPE );
         }
 
-        final Option<EventsCGIResult> result =
-                ParameterMap.fromStrings( parameterDescriptions, Lists.removeByIndices( Arrays.asList( values ), 0, 7 ) ).map(
-                        new Function<ParameterMap, EventsCGIResult>()
-                        {
-                            @Override
-                            public EventsCGIResult apply( final ParameterMap map )
-                            {
-                                return new EventsCGIResult( map );
-                            }
-                        } );
+        final List<String> removeItems0And7 = Lists.removeByIndices( Arrays.asList( values ), 0, 7 );
+
+        final Option<ParameterMap> parameterMap = ParameterMap.fromStrings( parameterDescriptions, removeItems0And7 );
+
+        final Option<EventsCGIResult> result = parameterMap.map( new Function<ParameterMap, EventsCGIResult>()
+        {
+            @Override
+            public EventsCGIResult apply( final ParameterMap map )
+            {
+                return new EventsCGIResult( map );
+            }
+        } );
 
         if ( result.isEmpty() )
         {
@@ -135,7 +138,7 @@ public final class EventsCGIResult
      */
     private EventsCGIResult( final ParameterMap builtMap )
     {
-        for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : compulsoryParameterDescriptions )
+        for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : compulsoryParameters )
         {
             if ( builtMap.get( parameterDescription ).isEmpty() )
             {
@@ -622,7 +625,8 @@ public final class EventsCGIResult
         {
             if ( parameterMap.isEmpty() )
             {
-                throw new IllegalStateException( "The Builder has already been built (build() has been called on it)." );
+                final String message = "The Builder has already been built (build() has been called on it).";
+                throw new IllegalStateException( message );
             }
 
             parameterMap = Option.getFullOption( parameterMap.get().set( parameter, value ) );

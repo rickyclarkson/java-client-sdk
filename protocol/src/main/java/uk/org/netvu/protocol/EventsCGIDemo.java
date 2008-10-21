@@ -54,4 +54,11 @@ public class EventsCGIDemo
             }
         }
     }
+
+    /**
+     * Private to prevent instantiation.
+     */
+    private EventsCGIDemo()
+    {
+    }
 }

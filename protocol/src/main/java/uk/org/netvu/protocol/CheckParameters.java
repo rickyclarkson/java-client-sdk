@@ -1,8 +1,7 @@
 package uk.org.netvu.protocol;
 
 /**
- * A utility class for checking constraints about method
- * parameters.
+ * A utility class for checking constraints about method parameters.
  */
 final class CheckParameters
 {

@@ -16,32 +16,41 @@ public final class VariableCGI
      *        the request to parse.
      * @return a VariableCGI holding the request's values.
      */
-    public static VariableCGI fromString( final String url )
+    public static VariableCGI fromURL( final String url )
     {
         final Option<ParameterMap> map = ParameterMap.fromURL( url, params );
+
         if ( map.isEmpty() )
         {
             throw new IllegalArgumentException( "Cannot parse " + url + " into a VariableCGI because " + map.reason() );
         }
 
-        return new VariableCGI( map.get() );
+        try
+        {
+            return new VariableCGI( map.get() );
+        }
+        catch ( final IllegalStateException e )
+        {
+            throw new IllegalArgumentException( "Cannot parse " + url + " into a VariableCGI because "
+                    + e.getMessage() );
+        }
     }
 
     private final ParameterMap parameterMap;
 
     private static final ParameterDescription<Variable, Option<Variable>> VARIABLE =
             ParameterDescription.parameterWithoutDefault( "variable",
-                    StringConversion.convenientPartial( Variable.fromString ) );
+                                                          StringConversion.convenientPartial( Variable.functionFromStringToVariable() ) );
 
     private static final ParameterDescription<VariableType, VariableType> TYPE =
             ParameterDescription.parameterWithDefault( "type", VariableType.HTTP,
-                    StringConversion.convenientPartial( VariableType.fromString ) );
+                                                       StringConversion.convenientPartial( VariableType.functionFromStringToVariableType() ) );
 
-    // this is an anonymous intialiser - it is creating a new ArrayList and
-    // adding values to it inline.
     private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>()
     {
         {
+            // this is an anonymous intialiser - it is creating a new ArrayList
+            // and adding values to it inline.
             add( VARIABLE );
             add( TYPE );
         }
@@ -86,6 +95,10 @@ public final class VariableCGI
         return parameterMap.get( VARIABLE ).get();
     }
 
+    /**
+     * Gives /variable.cgi? followed by the values stored in this VariableCGI,
+     * as URL parameters.
+     */
     @Override
     public String toString()
     {
@@ -97,7 +110,7 @@ public final class VariableCGI
      */
     public static final class Builder
     {
-        private Option<ParameterMap> real = Option.getFullOption( new ParameterMap() );
+        private Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
 
         /**
          * Builds a VariableCGI with the stored values.
@@ -108,11 +121,11 @@ public final class VariableCGI
         {
             try
             {
-                return new VariableCGI( real.get() );
+                return new VariableCGI( parameterMap.get() );
             }
             finally
             {
-                real = Option.getEmptyOption( "This Builder has already been built once." );
+                parameterMap = Option.getEmptyOption( "This Builder has already been built once." );
             }
         }
 
@@ -140,21 +153,29 @@ public final class VariableCGI
             return set( VARIABLE, variable );
         }
 
+        /**
+         * Sets the value of a parameter to a given value, and returns the
+         * Builder.
+         * 
+         * @param <T>
+         *        the input type of the specified parameter.
+         * @param parameter
+         *        the parameter to set a value for.
+         * @param value
+         *        the value to give that parameter.
+         * @return the Builder.
+         * @throws IllegalStateException
+         *         if the Builder has already been built once.
+         */
         private <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
         {
-            if ( real.isEmpty() )
+            if ( parameterMap.isEmpty() )
             {
-                throw new IllegalStateException( "The Builder has already been built (build() has been called on it)." );
+                final String message = "The Builder has already been built (build() has been called on it).";
+                throw new IllegalStateException( message );
             }
 
-            real = real.map( new Function<ParameterMap, ParameterMap>()
-            {
-                @Override
-                public ParameterMap apply( final ParameterMap map )
-                {
-                    return map.set( parameter, value );
-                }
-            } );
+            parameterMap = Option.getFullOption( parameterMap.get().set( parameter, value ) );
             return this;
         }
     }

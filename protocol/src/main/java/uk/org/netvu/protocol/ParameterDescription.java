@@ -6,9 +6,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * An object that describes a parameter for a Builder,
- * including conversions from Strings to the input type of the parameter and
- * back, and validation.
+ * An object that describes a parameter for a Builder, including conversions
+ * from Strings to the input type of the parameter and back, and validation.
  * 
  * @param <T>
  *        the input type of the parameter that the ParameterDescription
@@ -147,8 +146,8 @@ abstract class ParameterDescription<T, R>
      *         Integers to values of type T accordingly, representing a sparse
      *         array.
      */
-    public static <T> ParameterDescription<List<Pair<Integer, T>>, TreeMap<Integer, T>> sparseArrayParameter(
-            final String name, final StringConversion<T> conversions )
+    public static <T> SparseArrayParameterDescription<T> sparseArrayParameter( final String name,
+            final StringConversion<T> conversions )
     {
         CheckParameters.areNotNull( name, conversions );
 
@@ -238,6 +237,94 @@ abstract class ParameterDescription<T, R>
      *         ParameterDescription.
      */
     abstract Option<String> toURLParameter( R value );
+
+    /**
+     * A ParameterDescription for parameters that represent one-dimensional
+     * sparse arrays indexed by Integers.
+     * 
+     * @param <T>
+     *        the element type of this SparseArrayParameterDescription.
+     */
+    static final class SparseArrayParameterDescription<T>
+            extends ParameterDescription<List<Pair<Integer, T>>, TreeMap<Integer, T>>
+    {
+        /**
+         * Functions between values of type T and Strings.
+         */
+        private final StringConversion<T> conversions;
+
+        /**
+         * Constructs a SparseArrayParameterDescription.
+         * 
+         * @param name
+         *        the name of the parameter.
+         * @param conversions
+         *        conversions between values of type T and Strings.
+         * @throws NullPointerException
+         *         if name or conversions are null.
+         */
+        private SparseArrayParameterDescription( final String name, final StringConversion<T> conversions )
+        {
+            super( name, new TreeMap<Integer, T>() );
+            this.conversions = conversions;
+        }
+
+        @Override
+        public Option<List<Pair<Integer, T>>> fromURLParameter( final URLParameter keyAndValue )
+        {
+            final List<String> values = Strings.splitIgnoringQuotedSections( keyAndValue.value, ',' );
+            int startIndex =
+                    Integer.parseInt( keyAndValue.name.substring( name.length() + 1, keyAndValue.name.length() - 1 ) );
+
+            final List<Pair<Integer, T>> results = new ArrayList<Pair<Integer, T>>();
+
+            for ( final String value : values )
+            {
+                final int hack = startIndex;
+                for ( final T t : conversions.fromString( Strings.removeSurroundingQuotesLeniently( value ) ) )
+                {
+                    results.add( new Pair<Integer, T>( hack, t ) );
+                }
+
+                startIndex++;
+            }
+
+            return Option.getFullOption( results );
+        }
+
+        @Override
+        public TreeMap<Integer, T> reduce( final List<Pair<Integer, T>> newValue, final TreeMap<Integer, T> original )
+        {
+            final TreeMap<Integer, T> copy = new TreeMap<Integer, T>( original );
+            for ( final Pair<Integer, T> pair : newValue )
+            {
+                copy.put( pair.getFirstComponent(), pair.getSecondComponent() );
+            }
+
+            return copy;
+        }
+
+        @Override
+        Option<String> toURLParameter( final TreeMap<Integer, T> map )
+        {
+            final StringBuilder result = new StringBuilder();
+
+            for ( final Map.Entry<Integer, T> entry : map.entrySet() )
+            {
+                for ( final String value : conversions.toString( entry.getValue() ) )
+                {
+                    if ( result.length() != 0 )
+                    {
+                        result.append( "&" );
+                    }
+
+                    result.append( name + '[' + entry.getKey() + ']' + "=" + new URLEncoder().apply( value ) );
+                }
+            }
+
+            return Option.getFullOption( result.toString() );
+        }
+    }
 
     /**
      * A ParameterDescription that disallows a certain value.
@@ -486,94 +573,6 @@ abstract class ParameterDescription<T, R>
                     } );
                 }
             } );
-        }
-    }
-
-    /**
-     * A ParameterDescription for parameters that represent one-dimensional
-     * sparse arrays indexed by Integers.
-     * 
-     * @param <T>
-     *        the element type of this SparseArrayParameterDescription.
-     */
-    private static final class SparseArrayParameterDescription<T>
-            extends ParameterDescription<List<Pair<Integer, T>>, TreeMap<Integer, T>>
-    {
-        /**
-         * Functions between values of type T and Strings.
-         */
-        private final StringConversion<T> conversions;
-
-        /**
-         * Constructs a SparseArrayParameterDescription.
-         * 
-         * @param name
-         *        the name of the parameter.
-         * @param conversions
-         *        conversions between values of type T and Strings.
-         * @throws NullPointerException
-         *         if name or conversions are null.
-         */
-        private SparseArrayParameterDescription( final String name, final StringConversion<T> conversions )
-        {
-            super( name, new TreeMap<Integer, T>() );
-            this.conversions = conversions;
-        }
-
-        @Override
-        public Option<List<Pair<Integer, T>>> fromURLParameter( final URLParameter keyAndValue )
-        {
-            final List<String> values = Strings.splitIgnoringQuotedSections( keyAndValue.value, ',' );
-            int startIndex =
-                    Integer.parseInt( keyAndValue.name.substring( name.length() + 1, keyAndValue.name.length() - 1 ) );
-
-            final List<Pair<Integer, T>> results = new ArrayList<Pair<Integer, T>>();
-
-            for ( final String value : values )
-            {
-                final int hack = startIndex;
-                for ( final T t : conversions.fromString( Strings.removeSurroundingQuotesLeniently( value ) ) )
-                {
-                    results.add( new Pair<Integer, T>( hack, t ) );
-                }
-
-                startIndex++;
-            }
-
-            return Option.getFullOption( results );
-        }
-
-        @Override
-        public TreeMap<Integer, T> reduce( final List<Pair<Integer, T>> newValue, final TreeMap<Integer, T> original )
-        {
-            final TreeMap<Integer, T> copy = new TreeMap<Integer, T>( original );
-            for ( final Pair<Integer, T> pair : newValue )
-            {
-                copy.put( pair.getFirstComponent(), pair.getSecondComponent() );
-            }
-
-            return copy;
-        }
-
-        @Override
-        Option<String> toURLParameter( final TreeMap<Integer, T> map )
-        {
-            final StringBuilder result = new StringBuilder();
-
-            for ( final Map.Entry<Integer, T> entry : map.entrySet() )
-            {
-                for ( final String value : conversions.toString( entry.getValue() ) )
-                {
-                    if ( result.length() != 0 )
-                    {
-                        result.append( "&" );
-                    }
-
-                    result.append( name + '[' + entry.getKey() + ']' + "=" + new URLEncoder().apply( value ) );
-                }
-            }
-
-            return Option.getFullOption( result.toString() );
         }
     }
 }
