@@ -81,7 +81,7 @@ public class DecoderDemo
                         public void actionPerformed( final ActionEvent e )
                         {
                             panel.run( new DecoderCGI().layout( panel.getInt( "index" ),
-                                    Layout.find( panel.getInt( "layout" ) ) ).toURLParameters() );
+                                    DecoderCGI.Layout.find( panel.getInt( "layout" ) ) ).toURLParameters() );
                         }
                     }
 

@@ -20,7 +20,7 @@ public class DecoderCGITest
     public void fromCGI()
     {
         assertTrue( new DecoderCGI().outputTitles( "foo", "bar", "baz" ).command( 2, "blah" ).layout( 1,
-                Layout.FOUR_WAY ).toURLParameters().equals(
+                DecoderCGI.Layout.FOUR_WAY ).toURLParameters().equals(
                 "decoder.var?layouts[1]=1&output_titles=\"foo\",\"bar\",\"baz\"&commands[2]=%22blah%22" ) );
     }
 
@@ -46,7 +46,7 @@ public class DecoderCGITest
         }
 
         assertTrue( cgi.getLayouts().size() == 1 );
-        assertTrue( cgi.getLayouts().get( 1 ) == Layout.FOUR_WAY );
+        assertTrue( cgi.getLayouts().get( 1 ) == DecoderCGI.Layout.FOUR_WAY );
         assertTrue( cgi.getCommands().size() == 1 );
         assertTrue( cgi.getCommands().get( 1 ).equals( "display_pic.cgi?" ) );
     }
@@ -103,7 +103,7 @@ public class DecoderCGITest
         assertTrue( cgi.getCommands().get( 4 ).equals( "display_pic.cgi?" ) );
 
         assertTrue( cgi.getLayouts().size() == 1 );
-        assertTrue( cgi.getLayouts().get( 4 ) == Layout.SINGLE );
+        assertTrue( cgi.getLayouts().get( 4 ) == DecoderCGI.Layout.SINGLE );
     }
 
     /**
@@ -129,12 +129,12 @@ public class DecoderCGITest
     {
         final DecoderCGI cgi =
                 new DecoderCGI().persistence( Persistence.PERSISTENT ).command( 1, "foo" ).command( 2, "bar" ).outputTitles(
-                        "one", "two", "three" ).layout( 1, Layout.FOUR_WAY ).layout( 2, Layout.NINE_WAY ).connection(
+                        "one", "two", "three" ).layout( 1, DecoderCGI.Layout.FOUR_WAY ).layout( 2, DecoderCGI.Layout.NINE_WAY ).connection(
                         5, new DecoderCGI.Connection().audio( 4 ).seq( 0xF ).dwell( 40 ) );
 
         assertTrue( cgi.getCommands().size() == 2 );
         assertTrue( cgi.getCommands().get( 2 ).equals( "bar" ) );
         assertTrue( cgi.getOutputTitles()[2].equals( "three" ) );
-        assertTrue( cgi.getLayouts().get( 2 ) == Layout.NINE_WAY );
+        assertTrue( cgi.getLayouts().get( 2 ) == DecoderCGI.Layout.NINE_WAY );
     }
 }
