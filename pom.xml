@@ -89,5 +89,6 @@
     <modules>
         <module>protocol</module>
         <module>data</module>
+        <module>core</module>
     </modules>
 </project>
