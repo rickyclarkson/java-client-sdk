@@ -66,7 +66,7 @@ public class VPartsCGITest
     public void retention()
     {
         assertTrue( new VPartsCGI.Builder().expiry( 5 ).build().getExpiry() == 5 );
-        assertTrue( new VPartsCGI.Builder().mode( Mode.PROTECT ).build().getMode() == Mode.PROTECT );
+        assertTrue( new VPartsCGI.Builder().mode( VPartsCGI.Mode.PROTECT ).build().getMode() == VPartsCGI.Mode.PROTECT );
         assertTrue( new VPartsCGI.Builder().time( 50 ).build().getTime() == 50 );
         assertTrue( new VPartsCGI.Builder().range( 100 ).build().getRange() == 100 );
         assertTrue( new VPartsCGI.Builder().watermark( true ).build().getWatermark() );
