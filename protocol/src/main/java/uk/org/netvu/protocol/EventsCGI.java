@@ -21,7 +21,7 @@ public final class EventsCGI
 
     private static final ParameterDescription<Format, Format> FORMAT =
             ParameterDescription.parameterWithDefault( "format", Format.CSV,
-                                                       StringConversion.convenientPartial( Format.functionFromStringToFormat() ) );
+                    StringConversion.convenientPartial( Format.fromStringFunction() ) );
 
     private static final ParameterDescription<Integer, Integer> LIST_LENGTH =
             ParameterDescription.parameterWithDefault( "listlength", 100, StringConversion.integer() );

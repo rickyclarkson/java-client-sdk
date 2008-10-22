@@ -21,8 +21,10 @@ public enum VariableType
      * A Function that, given a String, will return an Option containing HTTP or
      * INCLUDE if the String case-insensitively matches one of those, and an
      * empty Option otherwise.
+     * 
+     * @return a Function that converts Strings to VariableTypes.
      */
-    static Function<String, Option<VariableType>> functionFromStringToVariableType()
+    static Function<String, Option<VariableType>> fromStringFunction()
     {
         return new Function<String, Option<VariableType>>()
         {

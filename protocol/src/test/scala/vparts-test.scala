@@ -27,13 +27,13 @@ class VPartsCGISecondTest extends JUnit4(new Specification with Scalacheck {
 
  "Parsing a VPartsCGI.DirectoryPathFormat from an invalid String" should {
   "yield an empty Option" in {
-   VPartsCGI.DirectoryPathFormat.functionFromStringToDirectoryPathFormat()("foo").isEmpty mustEqual true
+   VPartsCGI.DirectoryPathFormat.fromStringFunction()("foo").isEmpty mustEqual true
   }
  }
 
  "Parsing a VPartsCGI.Mode from an invalid String" should {
   "yield an empty Option" in {
-   VPartsCGI.Mode.functionFromStringToMode()("foo").isEmpty mustEqual true
+   VPartsCGI.Mode.fromStringFunction()("foo").isEmpty mustEqual true
   }
  }
 })

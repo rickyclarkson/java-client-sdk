@@ -40,11 +40,11 @@ public final class VariableCGI
 
     private static final ParameterDescription<Variable, Option<Variable>> VARIABLE =
             ParameterDescription.parameterWithoutDefault( "variable",
-                                                          StringConversion.convenientPartial( Variable.functionFromStringToVariable() ) );
+                    StringConversion.convenientTotal( Variable.fromStringFunction() ) );
 
     private static final ParameterDescription<VariableType, VariableType> TYPE =
             ParameterDescription.parameterWithDefault( "type", VariableType.HTTP,
-                                                       StringConversion.convenientPartial( VariableType.functionFromStringToVariableType() ) );
+                    StringConversion.convenientPartial( VariableType.fromStringFunction() ) );
 
     private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>()
     {

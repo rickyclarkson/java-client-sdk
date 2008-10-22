@@ -6,16 +6,14 @@ import _root_.org.specs.runner._
 
 class VariableSecondTest extends JUnit4(new Specification {
  import Variable._
- "functionFromStringToVariable" should { "give an empty Option when passed an invalid String" in {
-  functionFromStringToVariable()("foo").isEmpty must beTrue } }
  "toString" should { "give the name of the variable in lowercase plus [] for an array" in {
   OUTPUT_TITLES.toString mustEqual "output_titles[]"
   UTC_OFFSET.toString mustEqual "utc_offset" } } })
 
 class VariableTypeSecondTest extends JUnit4(new Specification {
  import VariableType._
- "functionFromStringToVariableType" should { "give an empty Option when passed an invalid String" in {
-  functionFromStringToVariableType()("foo").isEmpty must beTrue } } })
+ "fromStringFunction" should { "give an empty Option when passed an invalid String" in {
+  fromStringFunction()("foo").isEmpty must beTrue } } })
 
 class VariableCGISecondTest extends JUnit4(new Specification {
  import VariableCGI._

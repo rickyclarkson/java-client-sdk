@@ -15,11 +15,11 @@ public final class VPartsCGI
 {
     private static final ParameterDescription<Format, Format> FORMAT =
             ParameterDescription.parameterDisallowing( Format.HTML, ParameterDescription.parameterWithDefault(
-                                                                                                              "format", Format.CSV, StringConversion.convenientPartial( Format.functionFromStringToFormat() ) ) );
+                    "format", Format.CSV, StringConversion.convenientPartial( Format.fromStringFunction() ) ) );
 
     private static final ParameterDescription<Mode, Mode> MODE =
             ParameterDescription.parameterWithDefault( "mode", Mode.READ,
-                    StringConversion.convenientPartial( Mode.functionFromStringToMode() ) );
+                    StringConversion.convenientPartial( Mode.fromStringFunction() ) );
 
     private static final ParameterDescription<Integer, Integer> TIME =
             ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault( "time", 0,
@@ -91,7 +91,7 @@ public final class VPartsCGI
     private static ParameterDescription<DirectoryPathFormat, DirectoryPathFormat> pathStyle()
     {
         final Function<String, Option<DirectoryPathFormat>> stringToDirectoryPathFormat =
-                DirectoryPathFormat.functionFromStringToDirectoryPathFormat();
+                DirectoryPathFormat.fromStringFunction();
 
         return ParameterDescription.parameterWithDefault( "pathstyle", DirectoryPathFormat.SHORT,
                 StringConversion.convenientPartial( stringToDirectoryPathFormat ) );
@@ -431,7 +431,7 @@ public final class VPartsCGI
          * 
          * @return a Function that parses a String into a DirectoryPathFormat.
          */
-        static Function<String, Option<DirectoryPathFormat>> functionFromStringToDirectoryPathFormat()
+        static Function<String, Option<DirectoryPathFormat>> fromStringFunction()
         {
             return new Function<String, Option<DirectoryPathFormat>>()
             {
@@ -491,7 +491,7 @@ public final class VPartsCGI
          * 
          * @return a Function that parses a String into a Mode.
          */
-        static Function<String, Option<Mode>> functionFromStringToMode()
+        static Function<String, Option<Mode>> fromStringFunction()
         {
             return new Function<String, Option<Mode>>()
             {

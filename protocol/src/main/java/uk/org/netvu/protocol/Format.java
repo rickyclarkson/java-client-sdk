@@ -29,25 +29,27 @@ public enum Format
     /**
      * A Function that converts Strings to Formats according to the String
      * representation of Formats.
+     * 
+     * @return a Function that converts Strings to Formats.
      */
-    public static final Function<String, Option<Format>> functionFromStringToFormat()
+    public static final Function<String, Option<Format>> fromStringFunction()
     {
         return new Function<String, Option<Format>>()
+        {
+            @Override
+            public Option<Format> apply( final String t )
             {
-                @Override
-                    public Option<Format> apply( final String t )
-                    {
-                        try
-                            {
-                                return Option.getFullOption( Format.valueOf( t.toUpperCase( Locale.ENGLISH ) ) );
-                            }
-                        catch ( final IllegalArgumentException exception )
-                            {
-                                return Option.getEmptyOption( t + " is not a valid Format" );
-                            }
-                    }
-            };
-        }
+                try
+                {
+                    return Option.getFullOption( Format.valueOf( t.toUpperCase( Locale.ENGLISH ) ) );
+                }
+                catch ( final IllegalArgumentException exception )
+                {
+                    return Option.getEmptyOption( t + " is not a valid Format" );
+                }
+            }
+        };
+    }
 
     /**
      * Gives a random Format.

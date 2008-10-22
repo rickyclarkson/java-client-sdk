@@ -296,10 +296,10 @@ class FormatTest extends JUnit4(new Specification with Scalacheck {
 
  "Format.functionFromStringToFormat" should {
   "give an empty Option when supplied with 'foo'" in {
-   Format.functionFromStringToFormat()("foo").isEmpty mustEqual true
+   Format.fromStringFunction()("foo").isEmpty mustEqual true
   }
   "give an empty Option when supplied with an empty String" in {
-   Format.functionFromStringToFormat()("").isEmpty mustEqual true
+   Format.fromStringFunction()("").isEmpty mustEqual true
   }
  }
 
@@ -308,7 +308,7 @@ class FormatTest extends JUnit4(new Specification with Scalacheck {
    property { f: Format => f.toString == f.toString.toLowerCase } must pass
   }
   "be retrievable by their String representation" in {
-   property { f: Format => Format.functionFromStringToFormat()(f.toString).get == f } must pass
+   property { f: Format => Format.fromStringFunction()(f.toString).get == f } must pass
   }
  }
 })

@@ -53,7 +53,8 @@ public class VariableCGITest
     @Test
     public void parsing()
     {
-        assertTrue( VariableCGI.fromURL( "foo/variable.cgi?variable=c_title[]" ).getVariable() == Variable.C_TITLE );
+        assertTrue( VariableCGI.fromURL( "foo/variable.cgi?variable=c_title[]" ).getVariable().equals(
+                Variable.C_TITLE ) );
         assertTrue( VariableCGI.fromURL( "foo/variable.cgi?variable=c_title[]&type=http" ).getType() == VariableType.HTTP );
     }
 }
