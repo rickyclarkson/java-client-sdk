@@ -12,6 +12,32 @@ class VariableTest extends JUnit4(new Specification {
    UTC_OFFSET.toString mustEqual "utc_offset"
   }
  }
+
+ import ArrayOrScalar.{ARRAY, SCALAR}
+ val fooArray = new Variable("foo", ARRAY)
+ val fooScalar = new Variable("foo", SCALAR)
+ val barArray = new Variable("bar", ARRAY)
+ val barScalar = new Variable("bar", SCALAR)
+
+ "equals" should {
+  "be true for equal Variables, and false otherwise" in {
+   fooArray mustEqual fooArray
+   fooArray == fooScalar must beFalse
+   fooArray == barArray must beFalse
+   fooArray == barScalar must beFalse
+  }
+  "be false for objects that aren't Variables" in {
+   fooArray == "hello" must beFalse
+  }
+ }
+
+ "hashCode" should {
+  "be equal for equal Variables" in {
+   List(fooArray, fooScalar, barArray, barScalar) foreach {
+    v => v.hashCode mustEqual new Variable(v.getName(), if (v.isArray) ARRAY else SCALAR).hashCode
+   }
+  }
+ }
 })
 
 class VariableTypeSecondTest extends JUnit4(new Specification {

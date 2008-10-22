@@ -158,6 +158,26 @@ public final class Variable
     }
 
     /**
+     * Gives the name of the Variable.
+     *
+     * @return the name of the Variable.
+     */
+    public String getName()
+    {
+        return name;
+    }
+
+    /**
+     * Identifies whether the Variable is an array variable or not.
+     *
+     * @return true if the Variable is an array variable, false otherwise.
+     */
+    public boolean isArray()
+    {
+        return arrayOrScalar == ArrayOrScalar.ARRAY;
+    }
+
+    /**
      * Specifies whether a system variable is an array or a scalar value.
      */
     public enum ArrayOrScalar
