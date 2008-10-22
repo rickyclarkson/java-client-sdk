@@ -75,8 +75,9 @@ public final class DecoderCGI
      *        the URL to parse.
      * @return a DecoderCGI.
      */
-    public static DecoderCGI fromString( final String string )
+    public static DecoderCGI fromURL( final String string )
     {
+        CheckParameters.areNotNull( string );
         final Option<ParameterMap> map = ParameterMap.fromURL( string, params );
         if ( map.isEmpty() )
         {
@@ -98,8 +99,14 @@ public final class DecoderCGI
         this( new ParameterMap() );
     }
 
+    /**
+     * Constructs a DecoderCGI with the specified ParameterMap.
+     *
+     * @param parameterMap the ParameterMap to retrieve parameter values from.
+     */
     private DecoderCGI( final ParameterMap parameterMap )
     {
+        CheckParameters.areNotNull( parameterMap );
         this.parameterMap = parameterMap;
     }
 
@@ -115,6 +122,8 @@ public final class DecoderCGI
      */
     public DecoderCGI command( final int index, final String command )
     {
+        CheckParameters.areNotNull( command );
+
         return new DecoderCGI( parameterMap.set( COMMANDS, Collections.singletonList( new Pair<Integer, String>(
                 index, command ) ) ) );
     }
@@ -131,6 +140,8 @@ public final class DecoderCGI
      */
     public DecoderCGI connection( final int index, final Connection connection )
     {
+        CheckParameters.areNotNull( connection );
+
         return new DecoderCGI( parameterMap.set( CONNECTIONS,
                 Collections.singletonList( new Pair<Integer, Connection>( index, connection ) ) ) );
     }
@@ -195,6 +206,8 @@ public final class DecoderCGI
      */
     public DecoderCGI layout( final int index, final Layout layout )
     {
+        CheckParameters.areNotNull( layout );
+
         return new DecoderCGI( parameterMap.set( LAYOUTS, Collections.singletonList( new Pair<Integer, Layout>( index,
                 layout ) ) ) );
     }
@@ -208,6 +221,7 @@ public final class DecoderCGI
      */
     public DecoderCGI outputTitles( final String... titles )
     {
+        CheckParameters.areNotNull( titles );
         return new DecoderCGI( parameterMap.set( OUTPUT_TITLES, titles ) );
     }
 
@@ -221,6 +235,7 @@ public final class DecoderCGI
      */
     public DecoderCGI persistence( final Persistence persistence )
     {
+        CheckParameters.areNotNull( persistence );
         return new DecoderCGI( parameterMap.set( PERSISTENCE, persistence ) );
     }
 

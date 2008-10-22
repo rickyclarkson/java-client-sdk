@@ -37,7 +37,7 @@ public class DecoderCGITest
                         + "\"slaveip=192.168.1.10%2Ccam=3\"," + "\"slaveip=192.168.1.10%2Ccam=4\"" + "&layouts[1]=1"
                         + "&commands[1]=\"display_pic.cgi?\"";
 
-        final DecoderCGI cgi = DecoderCGI.fromString( string );
+        final DecoderCGI cgi = DecoderCGI.fromURL( string );
         assertTrue( cgi.getConnections().size() == 4 );
         for ( int a = 0; a < 4; a++ )
         {
@@ -60,7 +60,7 @@ public class DecoderCGITest
     {
         final String string = "decoder.frm?connections[18]=\"slaveip=192.168.1.10%2Ccam=7\"";
 
-        final DecoderCGI cgi = DecoderCGI.fromString( string );
+        final DecoderCGI cgi = DecoderCGI.fromURL( string );
         assertTrue( cgi.getConnections().size() == 1 );
         assertTrue( cgi.getConnections().get( 18 ).getSlaveIP().equals( "192.168.1.10" ) );
         assertTrue( cgi.getConnections().get( 18 ).getCam() == 7 );
@@ -76,7 +76,7 @@ public class DecoderCGITest
         final String string =
                 "decoder.var?commands[1]=\"replay_pic.cgi?id=123456&time=12:34:00:28:11:03&control=PLAY\"";
 
-        final DecoderCGI cgi = DecoderCGI.fromString( string );
+        final DecoderCGI cgi = DecoderCGI.fromURL( string );
         assertTrue( cgi.getCommands().size() == 1 );
         assertTrue( cgi.getCommands().get( 1 ).equals( "replay_pic.cgi?id=123456&time=12:34:00:28:11:03&control=PLAY" ) );
     }
@@ -93,7 +93,7 @@ public class DecoderCGITest
                 "decoder.var?connections[64]=\"slaveip=192.168.1.10%2Cseq=F%2Cdwell=10\""
                         + "&commands[4]=\"display_pic.cgi?\"&layouts[4]=0";
 
-        final DecoderCGI cgi = DecoderCGI.fromString( string );
+        final DecoderCGI cgi = DecoderCGI.fromURL( string );
         assertTrue( cgi.getConnections().size() == 1 );
         assertTrue( cgi.getConnections().get( 64 ).getSlaveIP().equals( "192.168.1.10" ) );
         assertTrue( cgi.getConnections().get( 64 ).getSeq() == 15 );
@@ -115,7 +115,7 @@ public class DecoderCGITest
     public void fromUnquotedSlavePart() throws UnsupportedEncodingException
     {
         assertTrue( URLDecoder.decode(
-                DecoderCGI.Connection.urlEncode.apply( DecoderCGI.fromString(
+                DecoderCGI.Connection.urlEncode.apply( DecoderCGI.fromURL(
                         "decoder.var?connections[64]=slaveip=192.168.1.10%2Cseq=F%2Cdwell=10"
                                 + "&commands[4]=\"display_pic.cgi?\"&layouts[4]=0" ).getConnections().get( 64 ) ),
                 "UTF-8" ).equals( "\"slaveip=192.168.1.10,seq=f,dwell=10\"" ) );
