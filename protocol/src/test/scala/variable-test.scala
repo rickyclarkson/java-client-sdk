@@ -34,6 +34,7 @@ class VariableCGITest extends JUnit4(new Specification {
    builder.build must throwA(new IllegalStateException)
   }
  }
+
  "Setting parameters on a built VariableCGI.Builder" should {
   "cause an IllegalStateException" in {
    val builder = new VariableCGI.Builder() variable Variable.UTC_OFFSET
@@ -68,6 +69,7 @@ class VariableCGITest extends JUnit4(new Specification {
   "have the values present in the URL" in {
    VariableCGI.fromURL("foo/variable.cgi?variable=c_title[]").getVariable mustEqual Variable.C_TITLE
    VariableCGI.fromURL("foo/variable.cgi?variable=c_title[]&type=http").getType mustEqual VariableType.HTTP
+   VariableCGI.fromURL("foo/variable.cgi?variable=has_rtc").getVariable mustEqual Variable.HAS_RTC
   }
  }
 })
