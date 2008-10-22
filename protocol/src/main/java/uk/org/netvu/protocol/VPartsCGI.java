@@ -38,7 +38,7 @@ public final class VPartsCGI
 
     private static final ParameterDescription<Integer, Integer> WMARKSTEP =
             ParameterDescription.parameterWithBounds( 1, 256, ParameterDescription.parameterWithDefault(
-                    "wmarkstepParam", 1, StringConversion.integer() ) );
+                    "wmarkstep", 1, StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Integer> LIST_LENGTH =
             ParameterDescription.parameterWithDefault( "listlength", 100, StringConversion.integer() );
@@ -159,7 +159,7 @@ public final class VPartsCGI
      * 
      * @return the format of directory paths, short or long.
      */
-    public DirectoryPathFormat getPathstyle()
+    public DirectoryPathFormat getPathStyle()
     {
         return builtMap.get( PATH_STYLE );
     }
