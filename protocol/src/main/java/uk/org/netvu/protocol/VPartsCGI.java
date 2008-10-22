@@ -37,8 +37,8 @@ public final class VPartsCGI
             ParameterDescription.parameterWithDefault( "watermark", false, StringConversion.bool() );
 
     private static final ParameterDescription<Integer, Integer> WMARKSTEP =
-            ParameterDescription.parameterWithBounds( 1, 256, ParameterDescription.parameterWithDefault(
-                    "wmarkstep", 1, StringConversion.integer() ) );
+            ParameterDescription.parameterWithBounds( 1, 256, ParameterDescription.parameterWithDefault( "wmarkstep",
+                    1, StringConversion.integer() ) );
 
     private static final ParameterDescription<Integer, Integer> LIST_LENGTH =
             ParameterDescription.parameterWithDefault( "listlength", 100, StringConversion.integer() );
