@@ -111,11 +111,27 @@ public final class VPartsCGI
     {
         CheckParameters.areNotNull( builtMap );
         this.builtMap = builtMap;
+        if ( getExpiry() != EXPIRY.defaultValue && getMode() != Mode.PROTECT )
+        {
+            throw new IllegalStateException(
+                    "Setting the expiry time without setting the mode to VPartsCGI.Mode.PROTECT is not allowed" );
+        }
+
+        if ( getWatermark() && getMode() != Mode.READ )
+        {
+            throw new IllegalStateException(
+                    "Setting watermark to true without setting the mode to VPartsCGI.Mode.READ is not allowed" );
+        }
+
+        if ( getWatermarkStep() != WMARKSTEP.defaultValue && !getWatermark() )
+        {
+            throw new IllegalStateException( "Setting watermarkStep without setting watermark is not allowed" );
+        }
     }
 
     /**
-     * The expiry time for partitions, in Julianised GMT (only used in protect
-     * mode).
+     * The expiry time for partitions, in Julianised GMT (only allowed in
+     * protect mode).
      * 
      * @return the expiry time for partitions.
      */
@@ -196,7 +212,8 @@ public final class VPartsCGI
     }
 
     /**
-     * The step size to be used in watermark code generation.
+     * The step size to be used in watermark code generation. Only allowed with
+     * the watermark parameter.
      * 
      * @return the step size to be used in watermark code generation.
      */
@@ -305,9 +322,6 @@ public final class VPartsCGI
             return set( MODE, mode );
         }
 
-        // TODO decide whether to restrict expiry to a VPartsCGI with protect
-        // set.
-
         /**
          * Determines the format of directory paths, short or long.
          * 
@@ -350,8 +364,6 @@ public final class VPartsCGI
             return set( TIME, time );
         }
 
-        // TODO decide whether to restrict watermark to read mode.
-
         /**
          * Sets whether to generate watermark codes (read mode only).
          * 
@@ -364,8 +376,6 @@ public final class VPartsCGI
         {
             return set( WATERMARK, watermark );
         }
-
-        // TODO make this and the watermark parameter be mutually 'inclusive'.
 
         /**
          * Defines the step size to be used in watermark code generation, used

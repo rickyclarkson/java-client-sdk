@@ -81,7 +81,7 @@ public final class Variable
      * 
      * @return a Function that constructs a Variable from a String.
      */
-    static final Function<String, Variable> fromStringFunction()
+    static Function<String, Variable> fromStringFunction()
     {
         return new Function<String, Variable>()
         {
@@ -137,12 +137,32 @@ public final class Variable
     }
 
     /**
+     * Gives the name of the Variable.
+     * 
+     * @return the name of the Variable.
+     */
+    public String getName()
+    {
+        return name;
+    }
+
+    /**
      * Computes a hashcode based on the name and arrayOrScalar values.
      */
     @Override
     public int hashCode()
     {
         return name.hashCode() + arrayOrScalar.hashCode() * 13237;
+    }
+
+    /**
+     * Identifies whether the Variable is an array variable or not.
+     * 
+     * @return true if the Variable is an array variable, false otherwise.
+     */
+    public boolean isArray()
+    {
+        return arrayOrScalar == ArrayOrScalar.ARRAY;
     }
 
     /**
@@ -155,26 +175,6 @@ public final class Variable
     public String toString()
     {
         return name + ( arrayOrScalar == ArrayOrScalar.ARRAY ? "[]" : "" );
-    }
-
-    /**
-     * Gives the name of the Variable.
-     *
-     * @return the name of the Variable.
-     */
-    public String getName()
-    {
-        return name;
-    }
-
-    /**
-     * Identifies whether the Variable is an array variable or not.
-     *
-     * @return true if the Variable is an array variable, false otherwise.
-     */
-    public boolean isArray()
-    {
-        return arrayOrScalar == ArrayOrScalar.ARRAY;
     }
 
     /**

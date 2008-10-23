@@ -101,8 +101,9 @@ public final class DecoderCGI
 
     /**
      * Constructs a DecoderCGI with the specified ParameterMap.
-     *
-     * @param parameterMap the ParameterMap to retrieve parameter values from.
+     * 
+     * @param parameterMap
+     *        the ParameterMap to retrieve parameter values from.
      */
     private DecoderCGI( final ParameterMap parameterMap )
     {
@@ -221,7 +222,9 @@ public final class DecoderCGI
      */
     public DecoderCGI outputTitles( final String... titles )
     {
-        CheckParameters.areNotNull( titles );
+        CheckParameters.areNotNull( (Object) titles );
+        CheckParameters.areNotNull( (Object[]) titles );
+
         return new DecoderCGI( parameterMap.set( OUTPUT_TITLES, titles ) );
     }
 

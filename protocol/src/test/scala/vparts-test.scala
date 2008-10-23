@@ -9,6 +9,7 @@ import java.util.EnumSet
 import scala.collection.jcl.Conversions.convertSet
 
 class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
+ import VPartsCGI.Mode
  "Parsing an invalid URL" should {
   "cause an IllegalArgumentException" in {
    VPartsCGI.fromURL("vparts.cgi?foo=bar") must throwA(new IllegalArgumentException)
@@ -25,7 +26,7 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
   "cause an IllegalStateException" in {
    val builder = new VPartsCGI.Builder()
    builder.build
-   builder.mode(VPartsCGI.Mode.PROTECT) must throwA(new IllegalStateException)
+   builder.mode(Mode.PROTECT) must throwA(new IllegalStateException)
   }
  }
 
@@ -35,9 +36,9 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
   }
  }
 
- "Parsing a VPartsCGI.Mode from an invalid String" should {
+ "Parsing a Mode from an invalid String" should {
   "yield an empty Option" in {
-   VPartsCGI.Mode.fromStringFunction()("foo").isEmpty mustEqual true
+   Mode.fromStringFunction()("foo").isEmpty mustEqual true
   }
  }
 
@@ -47,10 +48,15 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
   }
  }
 
- "Parsing a URL then generating a URL from the resulting object" should {
-  "result in the same URL" in {
+ "Parsing a URL" should {
+  "give a VPartsCGI containing the values held in the URL" in {
    val url = "/vparts.cgi?format=csv&mode=protect&time=958038820&range=120&pathstyle=long"
-   VPartsCGI.fromURL(url).toString mustEqual url
+   val cgi = VPartsCGI.fromURL(url)
+   cgi.getFormat mustEqual Format.CSV
+   cgi.getMode mustEqual Mode.PROTECT
+   cgi.getTime mustEqual 958038820
+   cgi.getRange mustEqual 120
+   cgi.getPathStyle mustEqual VPartsCGI.DirectoryPathFormat.LONG
   }
  }
 
@@ -66,17 +72,11 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
   }
  }
 
- "Setting the same value twice" should {
-  "cause an IllegalStateException" in {
-   new VPartsCGI.Builder() expiry 5 expiry 5 must throwA(new IllegalStateException)
-  }
- }
-
  "A built VPartsCGI" should {
   "contain the values passed to it" in {
-   property { x: Int => x >= 0 ==> { new VPartsCGI.Builder().expiry(x).build.getExpiry == x } } must pass
+   property { x: Int => x >= 0 ==> { new VPartsCGI.Builder().expiry(x).mode(Mode.PROTECT).build.getExpiry == x } } must pass
 
-   EnumSet.allOf(classOf[VPartsCGI.Mode]) forall { mode => new VPartsCGI.Builder().mode(mode).build.getMode mustEqual mode }
+   EnumSet.allOf(classOf[Mode]) forall { mode => new VPartsCGI.Builder().mode(mode).build.getMode mustEqual mode }
 
    property { x: Int => x >= 0 ==> { new VPartsCGI.Builder().time(x).build.getTime mustEqual x } } must pass
 
@@ -86,7 +86,7 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
 
    property {
     x: Int => (x >= 1 && x <= 256) ==> {
-     new VPartsCGI.Builder().watermarkStep(x).build.getWatermarkStep mustEqual x
+     new VPartsCGI.Builder().watermarkStep(x).watermark(true).build.getWatermarkStep mustEqual x
     }
    } must pass
 
@@ -98,6 +98,29 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
    EnumSet.allOf(classOf[VPartsCGI.DirectoryPathFormat]) forall {
     f => new VPartsCGI.Builder().pathStyle(f).build.getPathStyle mustEqual f
    }
+  }
+ }
+
+ "Building a VPartsCGI with expiry set but not protect set" should {
+  "cause an IllegalStateException" in {
+   new VPartsCGI.Builder().expiry(4).build must throwA(new IllegalStateException)
+   List(Mode.READ, Mode.REINITIALISE) foreach {
+    mode => new VPartsCGI.Builder().expiry(4).mode(mode).build must throwA(new IllegalStateException)
+   }
+  }
+ }
+
+ "Building a VPartsCGI with watermark set but not read set" should {
+  "cause an IllegalStateException" in {
+   List(Mode.PROTECT, Mode.REINITIALISE) foreach {
+    mode => new VPartsCGI.Builder().watermark(true).mode(mode).build must throwA(new IllegalStateException)
+   }
+  }
+ }
+
+ "Building a VPartsCGI with the watermark step set but without watermark set" should {
+  "cause an IllegalStateException" in {
+   new VPartsCGI.Builder().watermarkStep(4).build must throwA(new IllegalStateException)
   }
  }
 })
@@ -148,12 +171,24 @@ class VPartsCGIResultTest extends JUnit4(new Specification with Scalacheck {
   }
  }
 
+ import VPartsCGIResult.Builder
+ val setters = List[Builder => Builder](_ startTime 4, _ numberOfEntries 4, _ index 4, _ camMask 4,
+                                        _ directory "4", _ endTime 4, _ expiryTime 4, _ filename "4")
  "Setting the same value twice" should {
   "cause an IllegalStateException" in {
-   import VPartsCGIResult.Builder
-   val setters = List[Builder => Builder](_ startTime 4, _ numberOfEntries 4, _ index 4, _ camMask 4,
-                                          _ directory "4", _ endTime 4, _ expiryTime 4, _ filename "4")
    setters foreach { setter => setter(setter(new Builder)) must throwA(new IllegalStateException) }
+  }
+ }
+
+ "Setting a Builder's values after it has been built" should {
+  "cause an IllegalStateException" in {
+   def builder = {
+    val b = new Builder
+    b.build
+    b
+   }
+
+   setters foreach { setter => setter(builder) must throwA(new IllegalStateException) }
   }
  }
 })

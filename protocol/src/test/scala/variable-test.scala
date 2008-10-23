@@ -61,19 +61,15 @@ class VariableCGITest extends JUnit4(new Specification {
   }
  }
 
- "Setting parameters on a built VariableCGI.Builder" should {
-  "cause an IllegalStateException" in {
-   val builder = new VariableCGI.Builder() variable Variable.UTC_OFFSET
-   builder.build
-   builder `type` VariableType.HTTP must throwA(new IllegalStateException)
-  }
- }
-
- "Parsing a URL into a VariableCGI then generating a URL" should {
-  "yield the original URL" in {
-    List("/variable.cgi?variable=c_title[]", "/variable.cgi?variable=c_title[]&type=include") foreach {
-     s => VariableCGI.fromURL(s).toString mustEqual s
-    }
+ "A VariableCGI built from a URL" should {
+  "contain the URL's values" in {
+   val v1 = VariableCGI.fromURL("/variable.cgi?variable=c_title[]")
+   v1.getVariable.getName mustEqual "c_title"
+   v1.getVariable.isArray must beTrue
+   val v2 = VariableCGI.fromURL("/variable.cgi?variable=c_title[]&type=include")
+   v2.getVariable.getName mustEqual "c_title"
+   v2.getVariable.isArray must beTrue
+   v2.getType mustEqual VariableType.INCLUDE
   }
  }
 
@@ -96,6 +92,27 @@ class VariableCGITest extends JUnit4(new Specification {
    VariableCGI.fromURL("foo/variable.cgi?variable=c_title[]").getVariable mustEqual Variable.C_TITLE
    VariableCGI.fromURL("foo/variable.cgi?variable=c_title[]&type=http").getType mustEqual VariableType.HTTP
    VariableCGI.fromURL("foo/variable.cgi?variable=has_rtc").getVariable mustEqual Variable.HAS_RTC
+  }
+ }
+
+ import VariableCGI.Builder
+ val setters = List[Builder => Builder](_ variable Variable.LIVE_CAM, _ `type` VariableType.INCLUDE)
+
+ "Setting a Builder's values after it has been built" should {
+  "cause an IllegalStateException" in {
+   def builder = {
+    val b = new Builder
+    b.build
+    b
+   }
+   
+   setters foreach { setter => setter(builder) must throwA(new IllegalStateException) }
+  }
+ }
+
+ "Setting a Builder's value twice" should {
+  "cause an IllegalStateException" in {
+   setters foreach { setter => setter(setter(new Builder)) must throwA(new IllegalStateException) }
   }
  }
 })

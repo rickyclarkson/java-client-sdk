@@ -5,7 +5,8 @@ import _root_.org.{specs, scalacheck}
 import specs.{Specification, Scalacheck}
 import specs.util.DataTables
 import specs.runner.JUnit4
-import scalacheck.Prop.property
+import scalacheck.{Arbitrary, Gen, Prop}
+import Prop.property
 
 import java.util.{Arrays, Random, List => JavaList, ArrayList => JavaArrayList, TreeMap => JavaTreeMap}
 import java.lang.{Boolean => JavaBoolean}
@@ -23,6 +24,7 @@ object Implicits {
  implicit def listToJavaList[T](list: List[T]): JavaList[T] = new JavaArrayList[T] { for (t <- list) add(t) }
  implicit def pairToTuple[T, U](pair: Pair[T, U]) = (pair.getFirstComponent, pair.getSecondComponent)
  implicit def tupleToPair[T, U](tuple: (T, U)) = new Pair(tuple._1, tuple._2)
+ implicit val arbFormat: Arbitrary[Format] = Arbitrary { Gen.elements(Format.CSV, Format.HTML, Format.JS) }
 }
 
 import Implicits._
@@ -290,9 +292,6 @@ class ListsTest extends JUnit4(new Specification with Scalacheck {
 
 class FormatTest extends JUnit4(new Specification with Scalacheck {
  import scalacheck.{Gen, Arbitrary}
-
- implicit val arbFormat: Arbitrary[Format] =
-  Arbitrary(Gen.choose(1, 1000000).map(i => Format.oneOf(new Random(i))))
 
  "Format.functionFromStringToFormat" should {
   "give an empty Option when supplied with 'foo'" in {

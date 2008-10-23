@@ -1,7 +1,6 @@
 package uk.org.netvu.protocol;
 
 import java.util.Locale;
-import java.util.Random;
 
 /**
  * The format of the results to be returned from a server.
@@ -49,26 +48,6 @@ public enum Format
                 }
             }
         };
-    }
-
-    /**
-     * Gives a random Format.
-     * 
-     * @param random
-     *        the random number generator to use.
-     * @return a random Format.
-     */
-    static Format oneOf( final Random random )
-    {
-        if ( random.nextInt( 3 ) == 0 )
-        {
-            return JS;
-        }
-        if ( random.nextInt( 2 ) == 0 )
-        {
-            return HTML;
-        }
-        return CSV;
     }
 
     /**

@@ -7,6 +7,8 @@ import java.util.Random
 import specs.runner.JUnit4
 import specs.{Specification, Scalacheck}
 
+import Implicits.arbFormat
+
 class AlarmTypeTest extends JUnit4(new Specification with Scalacheck {
  import EventsCGIResult.AlarmType
  import Integer.{MIN_VALUE => MIN_INT, MAX_VALUE => MAX_INT}
@@ -189,9 +191,6 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
    EventsCGIResult.fromCSV(string).toString must throwA(new UnsupportedOperationException)
   }
  }
-
- implicit val arbFormat: Arbitrary[Format] =
-  Arbitrary { arbitrary[Int] map (x => Format.oneOf(new Random(x))) }
 
  implicit val arbString: Arbitrary[String] = Arbitrary { Gen.identifier }
 
