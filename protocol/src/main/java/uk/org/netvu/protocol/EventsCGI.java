@@ -91,6 +91,8 @@ public final class EventsCGI
      */
     public static EventsCGI fromURL( final String string )
     {
+        CheckParameters.areNotNull( string );
+
         if ( string.length() == 0 )
         {
             throw new IllegalArgumentException( "Cannot parse an empty String into an EventsCGI." );
@@ -114,9 +116,12 @@ public final class EventsCGI
      * 
      * @param parameterMap
      *        the ParameterMap to get values from.
+     * @throws NullPointerException if parameterMap is null.
      */
     private EventsCGI( final ParameterMap parameterMap )
     {
+        CheckParameters.areNotNull( parameterMap );
+
         this.parameterMap = parameterMap;
     }
 
@@ -454,6 +459,7 @@ public final class EventsCGI
          * @return the Builder.
          * @throws IllegalStateException
          *         if the Builder has already been built once.
+         * @throws NullPointerException if parameter or value are null.
          */
         private <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
         {

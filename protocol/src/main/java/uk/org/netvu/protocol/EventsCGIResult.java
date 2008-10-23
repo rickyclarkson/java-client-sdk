@@ -85,6 +85,8 @@ public final class EventsCGIResult
      */
     public static EventsCGIResult fromCSV( final String line )
     {
+        CheckParameters.areNotNull( line );
+
         final String[] values = Strings.splitCSV( line );
 
         if ( values.length < 11 || values.length > 13 )
@@ -135,9 +137,12 @@ public final class EventsCGIResult
      * 
      * @param builtMap
      *        the final ParameterMap to get values from.
+     * @throws NullPointerException if builtMap is null.
      */
     private EventsCGIResult( final ParameterMap builtMap )
     {
+        CheckParameters.areNotNull( builtMap );
+
         for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : compulsoryParameters )
         {
             if ( builtMap.get( parameterDescription ).isEmpty() )
@@ -302,7 +307,6 @@ public final class EventsCGIResult
     /**
      * Throws an UnsupportedOperationException - use toCSV instead.
      */
-    @Deprecated
     @Override
     public String toString()
     {
@@ -392,6 +396,8 @@ public final class EventsCGIResult
             @Override
             public Option<AlarmType> apply( final String t )
             {
+                CheckParameters.areNotNull( t );
+
                 try
                 {
                     return Option.getFullOption( find( Integer.parseInt( t ) ) );
@@ -697,6 +703,8 @@ public final class EventsCGIResult
                 @Override
                 public Option<Status> apply( final String s )
                 {
+                    CheckParameters.areNotNull( s );
+
                     try
                     {
                         return Option.getFullOption( find( Integer.parseInt( s ) ) );
