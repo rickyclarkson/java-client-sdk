@@ -1,0 +1,47 @@
+Identify Operating System
+
+  Provide a concise and typesafe way of identifying which operating system the code is running on.
+
+* Summary:
+
+  When porting NetVu ObserVer to Mac OS X, it became apparent that some functionality could not be ported quickly or easily. In these cases, we need to remove access to that functionality from the user interface. This involves checking the operating system at runtime, potentially in several places. Since the only way to identify the operating system is by String comparison, which is repetitive and error prone, it makes sense to have a utility class that can identify it in a concise and typesafe manner.
+
+* Related ticket(s):
+
+  {{{http://adwiki.ad-group.adh/ticket/2660}#2660 Port ObserVer to Mac OS X}}
+
+* Goal:
+
+  To provide a concise and typesafe way of identifying which operating system the code is running on.
+
+* Actors:
+
+  NetVu ObserVer.
+
+* Pre-conditions:
+
+  None.
+
+* Triggers:
+
+  The client calls a function to identify the operating system it is running on.
+
+* Basic success path:
+
+  The operating system is recognized and returned to the client.
+
+* Other success path(s):
+
+  None.
+
+* Exception paths:
+
+  The operating system is not recognized and a value indicating that the operating system is unknown (or unsupported) is returned to the client.
+
+* Post-conditions:
+
+  None.
+
+* Notes:
+
+  None.
