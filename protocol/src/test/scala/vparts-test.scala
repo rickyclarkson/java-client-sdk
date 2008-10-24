@@ -126,11 +126,14 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
 })
 
 class VPartsCGIResultTest extends JUnit4(new Specification with Scalacheck {
+ def builder(endTime: Int) = {
+  val b = new VPartsCGIResult.Builder() index 5 directory "dir" filename "name" startTime 100 endTime endTime
+  b expiryTime 1000 numberOfEntries 20 camMask 4
+ }
+
  "An end time less than the start time" should {
   "cause an IllegalStateException when build() is called" in {
-   var builder = new VPartsCGIResult.Builder() index 5 directory "dir" filename "name" startTime 100 endTime 50
-   builder = builder expiryTime 1000 numberOfEntries 20 camMask 4
-   builder.build must throwA(new IllegalStateException)
+   builder(50).build must throwA(new IllegalStateException)
   }
  }
 
@@ -174,21 +177,6 @@ class VPartsCGIResultTest extends JUnit4(new Specification with Scalacheck {
  import VPartsCGIResult.Builder
  val setters = List[Builder => Builder](_ startTime 4, _ numberOfEntries 4, _ index 4, _ camMask 4,
                                         _ directory "4", _ endTime 4, _ expiryTime 4, _ filename "4")
- "Setting the same value twice" should {
-  "cause an IllegalStateException" in {
-   setters foreach { setter => setter(setter(new Builder)) must throwA(new IllegalStateException) }
-  }
- }
-
- "Setting a Builder's values after it has been built" should {
-  "cause an IllegalStateException" in {
-   def builder = {
-    val b = new Builder
-    b.build
-    b
-   }
-
-   setters foreach { setter => setter(builder) must throwA(new IllegalStateException) }
-  }
- }
+ "Builder constraints" areSpecifiedBy BuildersTests.testBuilder[VPartsCGIResult, Builder](
+  new Builder, builder(150), setters)
 })

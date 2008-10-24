@@ -101,11 +101,11 @@ class VariableCGITest extends JUnit4(new Specification {
  "Setting a Builder's values after it has been built" should {
   "cause an IllegalStateException" in {
    def builder = {
-    val b = new Builder
+    val b = new Builder variable Variable.UTC_OFFSET
     b.build
     b
    }
-   
+                   
    setters foreach { setter => setter(builder) must throwA(new IllegalStateException) }
   }
  }

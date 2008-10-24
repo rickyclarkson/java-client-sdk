@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project>
+    <body>
+        <menu name="Requirements">
+            <item name="Use Cases" href="use-cases/index.html" collapse="true">
+                <item name="Maintain Builder values" href="use-cases/maintain-builder-values.html"/>
+                <item name="Build URL Parameters" href="use-cases/build-url-parameters.html"/>
+                <item name="Parse URL Parameters" href="use-cases/parse-url-parameters.html"/>
+                <item name="Build CSV" href="use-cases/build-csv.html"/>
+                <item name="Parse CSV" href="use-cases/parse-csv.html"/>
+                <item name="Build EventsCGI" href="use-cases/build-events-cgi.html"/>
+                <item name="Convert EventsCGIResult to CSV" href="use-cases/convert-events-cgi-result-to-csv.html"/>
+                <item name="Parse EventsCGI Requests" href="use-cases/parse-events-cgi.html"/>
+                <item name="Parse EventsCGI Results" href="use-cases/parse-events-cgi-results.html"/>
+            </item>
+        </menu>
+        <menu name="Design">
+            <item name="Rationale" href="rationale.html"/>
+        </menu>
+        <menu ref="reports"/>
+    </body>
+</project>

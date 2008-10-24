@@ -104,11 +104,10 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
   }
  }
 
- "Applying the time parameter more than once" should {
-  "cause an IllegalStateException" in {
-   new Builder() time 100 time 200 must throwA(new IllegalStateException)
-  }
- }
+ val setters = List[Builder => Builder](_ alarmMask 4, _ cameraMask 4, _ format Format.HTML, _ gpsMask 4,
+                                        _ listLength 4, _ range 4, _ systemMask 4, _ text "4", _ time 4, 
+                                        _ videoMotionDetectionMask 4)
+ "Builder constraints" areSpecifiedBy BuildersTests.testBuilder[EventsCGI, Builder](new Builder, new Builder, setters)
 
  "Negative times" should {
   "cause an IllegalArgumentException" in {
@@ -273,6 +272,7 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
  "toString" should {
   "give a valid URL" in {
    property { e: EventsCGI.Builder => new java.net.URL("http://none" + e.build.toString) != null } must pass
+   new EventsCGI.Builder().build.toString == null must beFalse
   }
 
   "not give a URL containing spaces" in {
@@ -280,7 +280,29 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
   }
  }
 })
-                                  
+
+object BuildersTests {
+ def testBuilder[I, B <: { def build(): I }](builder: => B, completeBuilder: => B, setters: List[B => B]) =
+  new Specification {
+   "Setting a value twice" should {
+    "cause an IllegalStateException" in {
+     setters foreach { setter => setter(setter(builder)) must throwA(new IllegalStateException) }
+    }
+   }
+   "Setting a value after calling build()" should {
+    "cause an IllegalStateException" in {
+     setters foreach {
+      setter => {
+       val b = completeBuilder
+       b.build
+       setter(b) must throwA(new IllegalStateException)
+      }
+     }
+    }
+   }
+  }
+}
+
 class EventsCGIResultTest extends JUnit4(new Specification with Scalacheck { 
  import EventsCGIResult.{Status, AlarmType, Builder}
 
@@ -429,4 +451,11 @@ class EventsCGIResultTest extends JUnit4(new Specification with Scalacheck {
   EventsCGIResult.fromCSV(firstCase)==null mustEqual false
   EventsCGIResult.fromCSV(firstCase + ", 4, 8")==null mustEqual false
  } }
+
+ val setters = List[Builder => Builder](_ alarm "4", _ alarmType AlarmType.VMD, _ archive 4, _ camera 4, _ duration 4,
+                                        _ file "4", _ julianTime 4, _ offset 4, _ onDisk true, _ preAlarm 4,
+                                        _ status Status.PENDING)
+ def result = Arbitrary.arbitrary[Builder].sample.get
+ import BuildersTests.testBuilder
+ "Builder constraints" areSpecifiedBy testBuilder[EventsCGIResult, Builder](new Builder, result, setters)
 })
