@@ -44,8 +44,8 @@ public final class DecoderCGI
 
     private static SparseArrayParameterDescription<String> commandsParameter()
     {
-        Function<String, String> urlEncodeThenQuote = new URLEncoder().andThen( Strings.surroundWithQuotes() );
-        StringConversion<String> conversions = StringConversion.total( Function.<String>getIdentityFunction(),
+        final Function<String, String> urlEncodeThenQuote = new URLEncoder().andThen( Strings.surroundWithQuotes() );
+        final StringConversion<String> conversions = StringConversion.total( Function.<String>getIdentityFunction(),
                 urlEncodeThenQuote );
 
         return ParameterDescription.sparseArrayParameter( "commands", conversions );
@@ -66,7 +66,7 @@ public final class DecoderCGI
     static
     {
         final String message = "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name.";
-        Function<String, Option<Persistence>> alwaysEmpty = Option.getFunctionToEmptyOption( message );
+        final Function<String, Option<Persistence>> alwaysEmpty = Option.getFunctionToEmptyOption( message );
         PERSISTENCE =
                 ParameterDescription.parameterWithDefault(
                         "persistence",
@@ -307,8 +307,8 @@ public final class DecoderCGI
                 @Override
                 public String apply( final Connection connection )
                 {
-                    URLEncoder e = new URLEncoder();
-                    String result = connection.parameterMap.toURLParameters( connectionParameters );
+                    final URLEncoder e = new URLEncoder();
+                    final String result = connection.parameterMap.toURLParameters( connectionParameters );
                     return e.apply( result.replaceAll( "&", "," ) );
                 }
             };
