@@ -40,9 +40,16 @@ public final class DecoderCGI
                         }
                     } ) ) );
 
-    private static final ParameterDescription<List<Pair<Integer, String>>, TreeMap<Integer, String>> COMMANDS =
-            ParameterDescription.sparseArrayParameter( "commands", StringConversion.total(
-                    Function.<String> getIdentityFunction(), new URLEncoder().andThen( Strings.surroundWithQuotes() ) ) );
+    private static final SparseArrayParameterDescription<String> COMMANDS = commandsParameter();
+
+    private static SparseArrayParameterDescription<String> commandsParameter()
+    {
+        Function<String, String> urlEncodeThenQuote = new URLEncoder().andThen( Strings.surroundWithQuotes() );
+        StringConversion<String> conversions = StringConversion.total( Function.<String>getIdentityFunction(),
+                urlEncodeThenQuote );
+
+        return ParameterDescription.sparseArrayParameter( "commands", conversions );
+    }
 
     // this is an anonymous intialiser - it is creating a new ArrayList and
     // adding values to it inline.
@@ -59,11 +66,12 @@ public final class DecoderCGI
     static
     {
         final String message = "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name.";
+        Function<String, Option<Persistence>> alwaysEmpty = Option.getFunctionToEmptyOption( message );
         PERSISTENCE =
                 ParameterDescription.parameterWithDefault(
                         "persistence",
                         Persistence.TEMPORARY,
-                        StringConversion.convenientPartial( Option.<String, Persistence> getFunctionToEmptyOption( message ) ) );
+                        StringConversion.convenientPartial( alwaysEmpty ) );
     }
 
     /**
@@ -299,8 +307,9 @@ public final class DecoderCGI
                 @Override
                 public String apply( final Connection connection )
                 {
-                    return new URLEncoder().apply( connection.parameterMap.toURLParameters( connectionParameters ).replaceAll(
-                            "&", "," ) );
+                    URLEncoder e = new URLEncoder();
+                    String result = connection.parameterMap.toURLParameters( connectionParameters );
+                    return e.apply( result.replaceAll( "&", "," ) );
                 }
             };
 
