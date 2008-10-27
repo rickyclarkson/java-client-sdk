@@ -24,7 +24,7 @@ public final class DecoderCGI
                     new Connection.FromURLToConnection(), Connection.urlEncode ) );
 
     private static final SparseArrayParameterDescription<Layout> LAYOUTS =
-            ParameterDescription.sparseArrayParameter( "layouts", StringConversion.total( Layout.fromURL,
+        ParameterDescription.sparseArrayParameter( "layouts", StringConversion.total( Layout.fromURLFunction(),
                     Layout.urlEncode ) );
 
     private static final ParameterDescription<String[], Option<String[]>> OUTPUT_TITLES =
@@ -552,14 +552,17 @@ public final class DecoderCGI
         /**
          * Converts the String representation of a Layout to a Layout.
          */
-        static final Function<String, Layout> fromURL = new Function<String, Layout>()
+        static Function<String, Layout> fromURLFunction()
         {
-            @Override
-            public Layout apply( final String url )
+            return new Function<String, Layout>()
             {
-                return find( Integer.parseInt( url ) );
-            }
-        };
+                @Override
+                public Layout apply( final String url )
+                {
+                    return find( Integer.parseInt( url ) );
+                }
+            };
+        }
 
         /**
          * @param value

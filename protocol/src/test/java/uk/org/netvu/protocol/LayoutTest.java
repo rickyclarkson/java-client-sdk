@@ -18,7 +18,7 @@ public class LayoutTest
     {
         for ( final DecoderCGI.Layout layout : DecoderCGI.Layout.values() )
         {
-            assertTrue( DecoderCGI.Layout.fromURL.apply( String.valueOf( layout.value ) ) == layout );
+            assertTrue( DecoderCGI.Layout.fromURLFunction().apply( String.valueOf( layout.value ) ) == layout );
         }
     }
 
@@ -28,6 +28,6 @@ public class LayoutTest
     @Test( expected = IllegalArgumentException.class )
     public void invalidURL()
     {
-        DecoderCGI.Layout.fromURL.apply( "10" );
+        DecoderCGI.Layout.fromURLFunction().apply( "10" );
     }
 }

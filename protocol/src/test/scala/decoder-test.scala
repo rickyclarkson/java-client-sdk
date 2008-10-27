@@ -57,3 +57,21 @@ class ConnectionTest extends JUnit4(new Specification {
   }
  }
 })
+
+class LayoutTest extends JUnit4(new Specification {
+ import DecoderCGI.Layout
+ import scala.collection.jcl.Conversions.convertSet
+ "Converting a Layout to a String and back" should {
+  "give the original Layout" in {
+   val fromURL = Layout.fromURLFunction
+   import java.util.EnumSet
+   EnumSet.allOf(classOf[Layout]) forall { layout => fromURL(String.valueOf(layout.value)) mustEqual layout }
+  }
+ }
+
+ "Invalid values in Layout.fromURLFunction" should {
+  "cause an IllegalArgumentException" in {
+   Layout.fromURLFunction()("10") must throwA(new IllegalArgumentException)
+  }
+ }
+})
