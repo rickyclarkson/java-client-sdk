@@ -18,7 +18,7 @@ class ConnectionTest extends JUnit4(new Specification {
  import DecoderCGI.Connection
  val camSetter: Connection => Connection = _ cam 2
  val seqSetter: Connection => Connection = _ seq 4
- val dwellSetter:Connection => Connection = _ dwell 10
+ val dwellSetter: Connection => Connection = _ dwell 10
 
  "cam and seq" isSpecifiedBy mutuallyExclusive(new Connection, List(camSetter, seqSetter))
  "cam and dwell" isSpecifiedBy mutuallyExclusive(new Connection, List(camSetter, dwellSetter))
@@ -48,9 +48,11 @@ class ConnectionTest extends JUnit4(new Specification {
    "be mutually exclusive" in {
     for { one <- setters
           two <- setters
-          if one != two } { val part1 = one(t)
-                            two(t) must throwA(new IllegalStateException)
-                          }
+          if one != two } {
+           val connection = t
+           val part1 = one(connection)
+           two(part1) must throwA(new IllegalStateException)
+          }
    }
   }
  }
