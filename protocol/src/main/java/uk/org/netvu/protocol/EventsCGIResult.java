@@ -137,7 +137,8 @@ public final class EventsCGIResult
      * 
      * @param builtMap
      *        the final ParameterMap to get values from.
-     * @throws NullPointerException if builtMap is null.
+     * @throws NullPointerException
+     *         if builtMap is null.
      */
     private EventsCGIResult( final ParameterMap builtMap )
     {

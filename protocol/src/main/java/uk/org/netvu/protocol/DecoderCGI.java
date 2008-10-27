@@ -24,37 +24,18 @@ public final class DecoderCGI
                     new Connection.FromURLToConnection(), Connection.urlEncode ) );
 
     private static final SparseArrayParameterDescription<Layout> LAYOUTS =
-        ParameterDescription.sparseArrayParameter( "layouts", StringConversion.total( Layout.fromURLFunction(),
+            ParameterDescription.sparseArrayParameter( "layouts", StringConversion.total( Layout.fromURLFunction(),
                     Layout.urlEncode ) );
 
-    private static final ParameterDescription<String[], Option<String[]>> OUTPUT_TITLES =
-            ParameterDescription.parameterWithoutDefault( "output_titles", StringConversion.partial(
-                    Option.<String, String[]> getFunctionToEmptyOption( "Parsing not supported for output_titles" ),
-                    Option.toPartialFunction( new Function<String[], String>()
-                    {
-                        @Override
-                        public String apply( final String[] array )
-                        {
-                            return Lists.reduce( Lists.map( Arrays.asList( array ), Strings.surroundWithQuotes() ),
-                                    Reduction.intersperseWith( "," ) );
-                        }
-                    } ) ) );
+    private static final ParameterDescription<String[], Option<String[]>> OUTPUT_TITLES = outputTitles();
 
     private static final SparseArrayParameterDescription<String> COMMANDS = commandsParameter();
-
-    private static SparseArrayParameterDescription<String> commandsParameter()
-    {
-        final Function<String, String> urlEncodeThenQuote = new URLEncoder().andThen( Strings.surroundWithQuotes() );
-        final StringConversion<String> conversions = StringConversion.total( Function.<String>getIdentityFunction(),
-                urlEncodeThenQuote );
-
-        return ParameterDescription.sparseArrayParameter( "commands", conversions );
-    }
 
     private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>()
     {
         {
-            // this is an anonymous intialiser - it is creating a new ArrayList and adding values to it inline.
+            // this is an anonymous intialiser - it is creating a new ArrayList
+            // and adding values to it inline.
             add( CONNECTIONS );
             add( LAYOUTS );
             add( OUTPUT_TITLES );
@@ -67,9 +48,7 @@ public final class DecoderCGI
         final String message = "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name.";
         final Function<String, Option<Persistence>> alwaysEmpty = Option.getFunctionToEmptyOption( message );
         PERSISTENCE =
-                ParameterDescription.parameterWithDefault(
-                        "persistence",
-                        Persistence.TEMPORARY,
+                ParameterDescription.parameterWithDefault( "persistence", Persistence.TEMPORARY,
                         StringConversion.convenientPartial( alwaysEmpty ) );
     }
 
@@ -80,7 +59,8 @@ public final class DecoderCGI
      * 
      * @param string
      *        the URL to parse.
-     * @throws NullPointerException if string is null.
+     * @throws NullPointerException
+     *         if string is null.
      * @return a DecoderCGI.
      */
     public static DecoderCGI fromURL( final String string )
@@ -95,6 +75,56 @@ public final class DecoderCGI
 
         return new DecoderCGI( map.get() ).persistence( string.contains( ".frm" ) ? Persistence.PERSISTENT
                 : Persistence.TEMPORARY );
+    }
+
+    private static SparseArrayParameterDescription<String> commandsParameter()
+    {
+        final Function<String, String> urlEncodeThenQuote = new URLEncoder().andThen( Strings.surroundWithQuotes() );
+        final StringConversion<String> conversions =
+                StringConversion.total( Function.<String> getIdentityFunction(), urlEncodeThenQuote );
+
+        return ParameterDescription.sparseArrayParameter( "commands", conversions );
+    }
+
+    private static ParameterDescription<String[], Option<String[]>> outputTitles()
+    {
+        final Function<String, Option<String[]>> parse = new Function<String, Option<String[]>>()
+        {
+            @Override
+            public Option<String[]> apply( final String text )
+            {
+                final String[] values = text.split( "," );
+
+                for ( int a = 0; a < values.length; a++ )
+                {
+                    if ( !values[a].startsWith( "\"" ) || !values[a].endsWith( "\"" ) || values[a].length() < 3 )
+                    {
+                        String message = " could not be parsed as output_titles";
+                        message += " - it should be quoted comma-separated text";
+                        return Option.getEmptyOption( text + message );
+                    }
+                    values[a] = values[a].substring( 1, values[a].length() - 1 );
+                }
+
+                return Option.getFullOption( values );
+            }
+        };
+
+        final Function<String[], Option<String>> generate = new Function<String[], Option<String>>()
+        {
+            @Override
+            public Option<String> apply( final String[] array )
+            {
+                final List<String> eachTitleSurroundedByQuotes =
+                        Lists.map( Arrays.asList( array ), Strings.surroundWithQuotes() );
+
+                final String result = Lists.reduce( eachTitleSurroundedByQuotes, Reduction.intersperseWith( "," ) );
+                return Option.getFullOption( result );
+            }
+        };
+
+        return ParameterDescription.parameterWithoutDefault( "output_titles", StringConversion.partial( parse,
+                generate ) );
     }
 
     private final ParameterMap parameterMap;
@@ -112,7 +142,8 @@ public final class DecoderCGI
      * 
      * @param parameterMap
      *        the ParameterMap to retrieve parameter values from.
-     * @throws NullPointerException if parameterMap is null.
+     * @throws NullPointerException
+     *         if parameterMap is null.
      */
     private DecoderCGI( final ParameterMap parameterMap )
     {
@@ -128,8 +159,10 @@ public final class DecoderCGI
      *        the index of the new command.
      * @param command
      *        the command to store.
-     * @throws NullPointerException if command is null.
-     * @throws IllegalArgumentException if index is negative.
+     * @throws NullPointerException
+     *         if command is null.
+     * @throws IllegalArgumentException
+     *         if index is negative.
      * @return a new DecoderCGI.
      */
     public DecoderCGI command( final int index, final String command )
@@ -148,8 +181,10 @@ public final class DecoderCGI
      *        the index of the new Connection.
      * @param connection
      *        the Connection to store.
-     * @throws NullPointerException if connection is null.
-     * @throws IllegalArgumentException if index is negative.
+     * @throws NullPointerException
+     *         if connection is null.
+     * @throws IllegalArgumentException
+     *         if index is negative.
      * @return a new DecoderCGI.
      */
     public DecoderCGI connection( final int index, final Connection connection )
@@ -216,8 +251,10 @@ public final class DecoderCGI
      *        the index of the new Layout.
      * @param layout
      *        the Layout to store.
-     * @throws NullPointerException if layout is null.
-     * @throws IllegalArgumentException if index is negative.
+     * @throws NullPointerException
+     *         if layout is null.
+     * @throws IllegalArgumentException
+     *         if index is negative.
      * @return a new DecoderCGI.
      */
     public DecoderCGI layout( final int index, final Layout layout )
@@ -233,7 +270,8 @@ public final class DecoderCGI
      * 
      * @param titles
      *        the output titles to use.
-     * @throws NullPointerException if any of the titles are null.
+     * @throws NullPointerException
+     *         if any of the titles are null.
      * @return a new DecoderCGI.
      */
     public DecoderCGI outputTitles( final String... titles )
@@ -250,7 +288,8 @@ public final class DecoderCGI
      * 
      * @param persistence
      *        the value to use.
-     * @throws NullPointerException if persistence is null.
+     * @throws NullPointerException
+     *         if persistence is null.
      * @return a new DecoderCGI.
      */
     public DecoderCGI persistence( final Persistence persistence )
@@ -276,15 +315,15 @@ public final class DecoderCGI
      */
     public static final class Connection
     {
-        private static final ParameterDescription<String, Option<String>> SLAVE_IP_PARAM =
+        private static final ParameterDescription<String, Option<String>> SLAVE_IP =
                 ParameterDescription.parameterWithoutDefault( "slaveip", StringConversion.string() );
-        private static final ParameterDescription<Integer, Option<Integer>> SEQ_PARAM =
+        private static final ParameterDescription<Integer, Option<Integer>> SEQ =
                 ParameterDescription.parameterWithoutDefault( "seq", StringConversion.getHexToIntStringConversion() );
-        private static final ParameterDescription<Integer, Option<Integer>> DWELL_PARAM =
+        private static final ParameterDescription<Integer, Option<Integer>> DWELL =
                 ParameterDescription.parameterWithoutDefault( "dwell", StringConversion.integer() );
         private static final ParameterDescription<Integer, Option<Integer>> CAM =
                 ParameterDescription.parameterWithoutDefault( "cam", StringConversion.integer() );
-        private static final ParameterDescription<Integer, Option<Integer>> AUDIO_CHANNEL_PARAM =
+        private static final ParameterDescription<Integer, Option<Integer>> AUDIO_CHANNEL =
                 ParameterDescription.parameterWithoutDefault( "audio", StringConversion.integer() );
 
         private static final List<ParameterDescription<?, ? extends Option<?>>> connectionParameters =
@@ -293,11 +332,11 @@ public final class DecoderCGI
                     {
                         // this is an anonymous intialiser - it is creating a
                         // new ArrayList and adding values to it inline.
-                        add( SLAVE_IP_PARAM );
-                        add( SEQ_PARAM );
-                        add( DWELL_PARAM );
+                        add( SLAVE_IP );
+                        add( SEQ );
+                        add( DWELL );
                         add( CAM );
-                        add( AUDIO_CHANNEL_PARAM );
+                        add( AUDIO_CHANNEL );
                     }
                 };
 
@@ -335,16 +374,18 @@ public final class DecoderCGI
                 @Override
                 public boolean isValid( final ParameterMap parameterMap )
                 {
-                    return parameterMap.isDefault( CAM ) ? true : parameterMap.isDefault( SEQ_PARAM )
-                            && parameterMap.isDefault( DWELL_PARAM );
+                    return parameterMap.isDefault( CAM ) ? true : parameterMap.isDefault( SEQ )
+                            && parameterMap.isDefault( DWELL );
                 }
             } ) );
         }
 
         /**
-         * Constructs a Connection using the specified ParameterMap to store values.
-         *
-         * @throws NullPointerException if parameterMap is null.
+         * Constructs a Connection using the specified ParameterMap to store
+         * values.
+         * 
+         * @throws NullPointerException
+         *         if parameterMap is null.
          */
         private Connection( final ParameterMap parameterMap )
         {
@@ -353,15 +394,16 @@ public final class DecoderCGI
 
         /**
          * Constructs a new Connection containing the same values as this
-         * Connection, but with audio set to the parameter passed in.
+         * Connection, but with the audio channel set to the parameter passed
+         * in.
          * 
          * @param audioChannel
          *        the source audio channel.
          * @return the new Connection.
          */
-        public Connection audio( final int audioChannel )
+        public Connection audioChannel( final int audioChannel )
         {
-            return new Connection( parameterMap.set( AUDIO_CHANNEL_PARAM, audioChannel ) );
+            return new Connection( parameterMap.set( AUDIO_CHANNEL, audioChannel ) );
         }
 
         /**
@@ -387,7 +429,19 @@ public final class DecoderCGI
          */
         public Connection dwell( final int dwell )
         {
-            return new Connection( parameterMap.set( DWELL_PARAM, dwell ) );
+            return new Connection( parameterMap.set( DWELL, dwell ) );
+        }
+
+        /**
+         * Returns the audio channel.
+         * 
+         * @throws IllegalStateException
+         *         if no audio channel has been set.
+         * @return the audio channel.
+         */
+        public int getAudioChannel()
+        {
+            return parameterMap.get( AUDIO_CHANNEL ).get();
         }
 
         /**
@@ -409,7 +463,7 @@ public final class DecoderCGI
          */
         public int getDwell()
         {
-            return parameterMap.get( DWELL_PARAM ).get();
+            return parameterMap.get( DWELL ).get();
         }
 
         /**
@@ -420,7 +474,7 @@ public final class DecoderCGI
          */
         public int getSeq()
         {
-            return parameterMap.get( SEQ_PARAM ).get();
+            return parameterMap.get( SEQ ).get();
         }
 
         /**
@@ -431,7 +485,7 @@ public final class DecoderCGI
          */
         public String getSlaveIP()
         {
-            return parameterMap.get( SLAVE_IP_PARAM ).get();
+            return parameterMap.get( SLAVE_IP ).get();
         }
 
         /**
@@ -444,7 +498,7 @@ public final class DecoderCGI
          */
         public Connection seq( final int seq )
         {
-            return new Connection( parameterMap.set( SEQ_PARAM, seq ) );
+            return new Connection( parameterMap.set( SEQ, seq ) );
         }
 
         /**
@@ -453,12 +507,13 @@ public final class DecoderCGI
          * 
          * @param slaveIP
          *        the IP address of the slave camera.
-         * @throws NullPointerException if slaveIP is null.
+         * @throws NullPointerException
+         *         if slaveIP is null.
          * @return the new Connection.
          */
         public Connection slaveIP( final String slaveIP )
         {
-            return new Connection( parameterMap.set( SLAVE_IP_PARAM, slaveIP ) );
+            return new Connection( parameterMap.set( SLAVE_IP, slaveIP ) );
         }
 
         /**
@@ -565,21 +620,6 @@ public final class DecoderCGI
         };
 
         /**
-         * Converts the String representation of a Layout to a Layout.
-         */
-        static Function<String, Layout> fromURLFunction()
-        {
-            return new Function<String, Layout>()
-            {
-                @Override
-                public Layout apply( final String url )
-                {
-                    return find( Integer.parseInt( url ) );
-                }
-            };
-        }
-
-        /**
          * @param value
          *        the number associated with the Layout to find.
          * @return the Layout corresponding with the specified value.
@@ -597,6 +637,21 @@ public final class DecoderCGI
             }
 
             throw new IllegalArgumentException( "There is no Layout with the value " + value + '.' );
+        }
+
+        /**
+         * Converts the String representation of a Layout to a Layout.
+         */
+        static Function<String, Layout> fromURLFunction()
+        {
+            return new Function<String, Layout>()
+            {
+                @Override
+                public Layout apply( final String url )
+                {
+                    return find( Integer.parseInt( url ) );
+                }
+            };
         }
 
         Layout( final int value )

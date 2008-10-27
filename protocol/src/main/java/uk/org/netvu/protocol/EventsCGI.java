@@ -116,7 +116,8 @@ public final class EventsCGI
      * 
      * @param parameterMap
      *        the ParameterMap to get values from.
-     * @throws NullPointerException if parameterMap is null.
+     * @throws NullPointerException
+     *         if parameterMap is null.
      */
     private EventsCGI( final ParameterMap parameterMap )
     {
@@ -459,7 +460,8 @@ public final class EventsCGI
          * @return the Builder.
          * @throws IllegalStateException
          *         if the Builder has already been built once.
-         * @throws NullPointerException if parameter or value are null.
+         * @throws NullPointerException
+         *         if parameter or value are null.
          */
         private <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
         {

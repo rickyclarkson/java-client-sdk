@@ -32,20 +32,29 @@ final class CheckParameters
     }
 
     /**
-     * Checks that all the arguments passed are not negative.  Fails on the first
+     * This is private to prevent uncontrolled instantiation.
+     */
+    private CheckParameters()
+    {
+    }
+
+    /**
+     * Checks that all the arguments passed are not negative. Fails on the first
      * negative argument it encounters.
-     *
+     * 
      * @param args
      *        the arguments to check.
      * @return a CheckParameters instance to call further checks on.
-     * @throws NullPointerException if the args varargs array is null.
-     * @throws IllegalArgumentException if any of the arguments passed are negative.
+     * @throws NullPointerException
+     *         if the args varargs array is null.
+     * @throws IllegalArgumentException
+     *         if any of the arguments passed are negative.
      */
     CheckParameters areNotNegative( final int... args )
     {
         CheckParameters.areNotNull( args );
         int a = 0;
-        for ( final int i: args )
+        for ( final int i : args )
         {
             if ( i < 0 )
             {
@@ -55,12 +64,5 @@ final class CheckParameters
         }
 
         return this;
-    }
-
-    /**
-     * This is private to prevent uncontrolled instantiation.
-     */
-    private CheckParameters()
-    {
     }
 }
