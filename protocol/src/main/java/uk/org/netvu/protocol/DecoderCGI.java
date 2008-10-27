@@ -51,11 +51,10 @@ public final class DecoderCGI
         return ParameterDescription.sparseArrayParameter( "commands", conversions );
     }
 
-    // this is an anonymous intialiser - it is creating a new ArrayList and
-    // adding values to it inline.
     private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>()
     {
         {
+            // this is an anonymous intialiser - it is creating a new ArrayList and adding values to it inline.
             add( CONNECTIONS );
             add( LAYOUTS );
             add( OUTPUT_TITLES );
@@ -81,6 +80,7 @@ public final class DecoderCGI
      * 
      * @param string
      *        the URL to parse.
+     * @throws NullPointerException if string is null.
      * @return a DecoderCGI.
      */
     public static DecoderCGI fromURL( final String string )
@@ -112,6 +112,7 @@ public final class DecoderCGI
      * 
      * @param parameterMap
      *        the ParameterMap to retrieve parameter values from.
+     * @throws NullPointerException if parameterMap is null.
      */
     private DecoderCGI( final ParameterMap parameterMap )
     {
@@ -127,11 +128,13 @@ public final class DecoderCGI
      *        the index of the new command.
      * @param command
      *        the command to store.
+     * @throws NullPointerException if command is null.
+     * @throws IllegalArgumentException if index is negative.
      * @return a new DecoderCGI.
      */
     public DecoderCGI command( final int index, final String command )
     {
-        CheckParameters.areNotNull( command );
+        CheckParameters.areNotNull( command ).areNotNegative( index );
 
         return new DecoderCGI( parameterMap.set( COMMANDS, Collections.singletonList( new Pair<Integer, String>(
                 index, command ) ) ) );
@@ -145,11 +148,13 @@ public final class DecoderCGI
      *        the index of the new Connection.
      * @param connection
      *        the Connection to store.
+     * @throws NullPointerException if connection is null.
+     * @throws IllegalArgumentException if index is negative.
      * @return a new DecoderCGI.
      */
     public DecoderCGI connection( final int index, final Connection connection )
     {
-        CheckParameters.areNotNull( connection );
+        CheckParameters.areNotNull( connection ).areNotNegative( index );
 
         return new DecoderCGI( parameterMap.set( CONNECTIONS,
                 Collections.singletonList( new Pair<Integer, Connection>( index, connection ) ) ) );
@@ -211,11 +216,13 @@ public final class DecoderCGI
      *        the index of the new Layout.
      * @param layout
      *        the Layout to store.
+     * @throws NullPointerException if layout is null.
+     * @throws IllegalArgumentException if index is negative.
      * @return a new DecoderCGI.
      */
     public DecoderCGI layout( final int index, final Layout layout )
     {
-        CheckParameters.areNotNull( layout );
+        CheckParameters.areNotNull( layout ).areNotNegative( index );
 
         return new DecoderCGI( parameterMap.set( LAYOUTS, Collections.singletonList( new Pair<Integer, Layout>( index,
                 layout ) ) ) );
@@ -226,6 +233,7 @@ public final class DecoderCGI
      * 
      * @param titles
      *        the output titles to use.
+     * @throws NullPointerException if any of the titles are null.
      * @return a new DecoderCGI.
      */
     public DecoderCGI outputTitles( final String... titles )
@@ -242,6 +250,7 @@ public final class DecoderCGI
      * 
      * @param persistence
      *        the value to use.
+     * @throws NullPointerException if persistence is null.
      * @return a new DecoderCGI.
      */
     public DecoderCGI persistence( final Persistence persistence )
@@ -332,6 +341,11 @@ public final class DecoderCGI
             } ) );
         }
 
+        /**
+         * Constructs a Connection using the specified ParameterMap to store values.
+         *
+         * @throws NullPointerException if parameterMap is null.
+         */
         private Connection( final ParameterMap parameterMap )
         {
             this.parameterMap = parameterMap;
@@ -439,6 +453,7 @@ public final class DecoderCGI
          * 
          * @param slaveIP
          *        the IP address of the slave camera.
+         * @throws NullPointerException if slaveIP is null.
          * @return the new Connection.
          */
         public Connection slaveIP( final String slaveIP )

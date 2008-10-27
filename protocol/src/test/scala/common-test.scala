@@ -639,7 +639,7 @@ class NullTest extends JUnit4(new Specification {
    }
  }
 
- "CheckParameters.areNotNull" should { "not accept null" in { CheckParameters.areNotNull _ must notAcceptNull[Nothing, Unit] } }
+ "CheckParameters.areNotNull" should { "not accept null" in { CheckParameters.areNotNull _ must notAcceptNull[Nothing, CheckParameters] } }
 
  def noNull[T <: AnyRef, R](f: T => R, desc: String) =
   "annoying" should { desc + " should not accept null" in { f must notAcceptNull[T, R] } }

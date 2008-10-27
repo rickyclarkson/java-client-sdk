@@ -17,6 +17,7 @@
         </menu>
         <menu name="Design">
             <item name="Rationale" href="rationale.html"/>
+            <item name="Rationale/Builders" href="rationale/builders.html"/>
         </menu>
         <menu ref="reports"/>
     </body>
