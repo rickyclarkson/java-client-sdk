@@ -12,6 +12,7 @@
                 <item name="Convert EventsCGIResult to CSV" href="use-cases/convert-events-cgi-result-to-csv.html"/>
                 <item name="Parse EventsCGI Requests" href="use-cases/parse-events-cgi.html"/>
                 <item name="Parse EventsCGI Results" href="use-cases/parse-events-cgi-results.html"/>
+                <item name="Build and Parse DecoderCGI Requests" href="use-cases/build-decoder-cgi.html"/>
             </item>
         </menu>
         <menu name="Design">

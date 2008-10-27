@@ -2,7 +2,9 @@
  Rationale
  ----
 
-* CheckParameters
+* Private Implementation Code
+
+** CheckParameters
 
  Every public method other than equals methods disallows null parameters to methods, and rather than write:
 
@@ -12,7 +14,7 @@
 
  The NullPointerException that notNull can throw contains the index of the null parameter, so if y was null above, the exception message would mention the 2nd parameter.
 
-* Function
+** Function
 
  A Function represents a mapping from one type to another.
 
@@ -20,19 +22,19 @@
 
  The Function class contains a number of useful conversions between Java's built-in types.
 
-* Format
+** Format
 
  Most of the CGI requests need to specify what format the results return in.  Rather than repeat the Format enum in each module that uses it, we keep it in core/cgi/common.
 
-* Option
+** Option
 
  Option is a container that can contain either one or zero elements.  It is used to allow a ParameterDescription to work for compulsory parameters, by allowing the ParameterMap to distinguish between an unset parameter and a parameter that has a value, without resorting to sentinel values, and it's used throughout the API to represent failure, e.g., Conversion.stringToLong gives an empty option for "foo", and an option containing the Long 5 for "5".
 
-* Pair
+** Pair
 
  Pair is useful for passing two values where an API only expects one.  It's used by ParameterDescription so that sparse array parameters don't have to be a special case.  ParameterDescription's type parameters are T and R, where T means the input type.  For sparse arrays, the input type needs to have two values; the index into the sparse array and the value to place there, which doesn't fit in ParameterDescription's type parameters.  A Pair is one value, so that works well.
 
-* ParameterDescription
+** ParameterDescription
 
  A ParameterDescription is a specification of a parameter for a Builder.  It doesn't contain any mutable data, it only works as a specification, leaving ParameterMap to store the data.
 
