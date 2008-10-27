@@ -12,7 +12,9 @@ Rationale
 
 * DecoderCGI
 
- DecoderCGI is the only module so far that does not use the Builder pattern.  It is written this way to avoid nested Builder use, or fragile Builders (as in RIFE).  
+ DecoderCGI is the only module so far that does not use the Builder pattern.  It is written this way to avoid nested Builder use, or fragile Builders (as in RIFE).  In general, if building X requires a Y, and building Y requires a Z, the code using Builders would look like: new X.Builder().y(new Y.Builder().z(new Z()).build()).build(), and that's for the simplest possible example!  With the way DecoderCGI is written you would instead write: new X().y(new Y().z(new Z())).  This only works well for DecoderCGI because a DecoderCGI containing no values is perfectly valid.  An alternative to this nested building would be to copy RIFE's idea of having 'contextual' method calls: startX().startY().z(new Z()).endY().endX(), where normal code is emulated through method calls.  I don't think this is a good idea.
+
+ DecoderCGI is currently immutable, so the objects created from it can be reused by adding more parameters to them.  This is quite different to the Builder approach, where each Builder is 'one-shot'; the caller can not add more parameters after calling build().  This is a positive for DecoderCGI in terms of code quality, but as we expect the callers to be novice programmers, they might be more used to handling mutable objects.  Java forums endlessly have questions about String's replaceAll method, because String's immutability surprises novices.  String in Java cannot be made mutable to remove that surprise, as Strings are shared across threads and are important for security.  DecoderCGI doesn't have similar constraints, but it's difficult to imagine all the possible uses of a class.  It might be appropriate to make it mutable.
 
 * Function
 
