@@ -7,17 +7,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import uk.org.netvu.protocol.ParameterDescription.SparseArrayParameterDescription;
 
 /**
- * DecoderCGI is used for building CGI requests to send to decoders, using
- * decoder.frm or decoder.var, and for parsing those requests from URLs.
+ * A parameter list for a decoder query. Use {@link DecoderCGI.Builder} to
+ * construct a DecoderCGI, or {@link DecoderCGI#fromURL(String)}.
  */
 public final class DecoderCGI
 {
-    private static final ParameterDescription<Persistence, Persistence> PERSISTENCE;
+    private static final ParameterDescription<Persistence, Persistence> PERSISTENCE = persistence();
 
     private static final SparseArrayParameterDescription<Connection> CONNECTIONS =
             ParameterDescription.sparseArrayParameter( "connections", StringConversion.total(
@@ -34,23 +33,14 @@ public final class DecoderCGI
     private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>()
     {
         {
-            // this is an anonymous intialiser - it is creating a new ArrayList
-            // and adding values to it inline.
+            // this is an anonymous intialiser - it creates a new ArrayList
+            // and adds values to it inline.
             add( CONNECTIONS );
             add( LAYOUTS );
             add( OUTPUT_TITLES );
             add( COMMANDS );
         }
     };
-
-    static
-    {
-        final String message = "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name.";
-        final Function<String, Option<Persistence>> alwaysEmpty = Option.getFunctionToEmptyOption( message );
-        PERSISTENCE =
-                ParameterDescription.parameterWithDefault( "persistence", Persistence.TEMPORARY,
-                        StringConversion.convenientPartial( alwaysEmpty ) );
-    }
 
     /**
      * Parses a URL, or part of a URL, into a DecoderCGI. If it cannot be
@@ -73,10 +63,18 @@ public final class DecoderCGI
                     + map.reason() );
         }
 
-        return new DecoderCGI( map.get() ).persistence( string.contains( ".frm" ) ? Persistence.PERSISTENT
-                : Persistence.TEMPORARY );
+        final Persistence persistence = string.contains( ".frm" ) ? Persistence.PERSISTENT : Persistence.TEMPORARY;
+
+        final ParameterMap complete = map.get().set( PERSISTENCE, persistence );
+
+        return new DecoderCGI( complete );
     }
 
+    /**
+     * Initialisation for the COMMANDS variable.
+     * 
+     * @return the value to assign to COMMANDS.
+     */
     private static SparseArrayParameterDescription<String> commandsParameter()
     {
         final Function<String, String> urlEncodeThenQuote = new URLEncoder().andThen( Strings.surroundWithQuotes() );
@@ -86,6 +84,11 @@ public final class DecoderCGI
         return ParameterDescription.sparseArrayParameter( "commands", conversions );
     }
 
+    /**
+     * Initialisation for the OUTPUT_TITLES variable.
+     * 
+     * @return the value to assign to OUTPUT_TITLES.
+     */
     private static ParameterDescription<String[], Option<String[]>> outputTitles()
     {
         final Function<String, Option<String[]>> parse = new Function<String, Option<String[]>>()
@@ -127,15 +130,15 @@ public final class DecoderCGI
                 generate ) );
     }
 
-    private final ParameterMap parameterMap;
-
-    /**
-     * Constructs a DecoderCGI with no values set.
-     */
-    public DecoderCGI()
+    private static ParameterDescription<Persistence, Persistence> persistence()
     {
-        this( new ParameterMap() );
+        final String message = "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name.";
+        final Function<String, Option<Persistence>> alwaysEmpty = Option.getFunctionToEmptyOption( message );
+        return ParameterDescription.parameterWithDefault( "persistence", Persistence.TEMPORARY,
+                StringConversion.convenientPartial( alwaysEmpty ) );
     }
+
+    private final ParameterMap parameterMap;
 
     /**
      * Constructs a DecoderCGI with the specified ParameterMap.
@@ -149,50 +152,6 @@ public final class DecoderCGI
     {
         CheckParameters.areNotNull( parameterMap );
         this.parameterMap = parameterMap;
-    }
-
-    /**
-     * Constructs a DecoderCGI containing the current values, but with the
-     * indexed command set to the passed-in command.
-     * 
-     * @param index
-     *        the index of the new command.
-     * @param command
-     *        the command to store.
-     * @throws NullPointerException
-     *         if command is null.
-     * @throws IllegalArgumentException
-     *         if index is negative.
-     * @return a new DecoderCGI.
-     */
-    public DecoderCGI command( final int index, final String command )
-    {
-        CheckParameters.areNotNull( command ).areNotNegative( index );
-
-        return new DecoderCGI( parameterMap.set( COMMANDS, Collections.singletonList( new Pair<Integer, String>(
-                index, command ) ) ) );
-    }
-
-    /**
-     * Constructs a DecoderCGI containing the current values, but with the
-     * indexed connection set to the passed in Connection.
-     * 
-     * @param index
-     *        the index of the new Connection.
-     * @param connection
-     *        the Connection to store.
-     * @throws NullPointerException
-     *         if connection is null.
-     * @throws IllegalArgumentException
-     *         if index is negative.
-     * @return a new DecoderCGI.
-     */
-    public DecoderCGI connection( final int index, final Connection connection )
-    {
-        CheckParameters.areNotNull( connection ).areNotNegative( index );
-
-        return new DecoderCGI( parameterMap.set( CONNECTIONS,
-                Collections.singletonList( new Pair<Integer, Connection>( index, connection ) ) ) );
     }
 
     /**
@@ -210,7 +169,7 @@ public final class DecoderCGI
      * 
      * @return the connections that have been set for this DecoderCGI.
      */
-    public TreeMap<Integer, Connection> getConnections()
+    public Map<Integer, Connection> getConnections()
     {
         return parameterMap.get( CONNECTIONS );
     }
@@ -244,61 +203,6 @@ public final class DecoderCGI
     }
 
     /**
-     * Constructs a DecoderCGI containing the current values, but with the
-     * indexed layout set to the passed in Layout.
-     * 
-     * @param index
-     *        the index of the new Layout.
-     * @param layout
-     *        the Layout to store.
-     * @throws NullPointerException
-     *         if layout is null.
-     * @throws IllegalArgumentException
-     *         if index is negative.
-     * @return a new DecoderCGI.
-     */
-    public DecoderCGI layout( final int index, final Layout layout )
-    {
-        CheckParameters.areNotNull( layout ).areNotNegative( index );
-
-        return new DecoderCGI( parameterMap.set( LAYOUTS, Collections.singletonList( new Pair<Integer, Layout>( index,
-                layout ) ) ) );
-    }
-
-    /**
-     * Constructs a DecoderCGI containing the output titles passed in.
-     * 
-     * @param titles
-     *        the output titles to use.
-     * @throws NullPointerException
-     *         if any of the titles are null.
-     * @return a new DecoderCGI.
-     */
-    public DecoderCGI outputTitles( final String... titles )
-    {
-        CheckParameters.areNotNull( (Object) titles );
-        CheckParameters.areNotNull( (Object[]) titles );
-
-        return new DecoderCGI( parameterMap.set( OUTPUT_TITLES, titles ) );
-    }
-
-    /**
-     * Constructs a DecoderCGI containing the current values, but with the
-     * persistence parameter to the passed-in value.
-     * 
-     * @param persistence
-     *        the value to use.
-     * @throws NullPointerException
-     *         if persistence is null.
-     * @return a new DecoderCGI.
-     */
-    public DecoderCGI persistence( final Persistence persistence )
-    {
-        CheckParameters.areNotNull( persistence );
-        return new DecoderCGI( parameterMap.set( PERSISTENCE, persistence ) );
-    }
-
-    /**
      * Produces part of a URL that can be passed to a decoder, beginning with
      * decoder.frm or decoder.var.
      * 
@@ -307,6 +211,170 @@ public final class DecoderCGI
     public String toURLParameters()
     {
         return "decoder" + getPersistence() + '?' + parameterMap.toURLParameters( params );
+    }
+
+    /**
+     * A builder that takes in all the values for decoder requests as per the
+     * Draft Decoder Control Specification, and produces a DecoderCGI when
+     * build() is called. Each value must be supplied no more than once. A
+     * Builder can only be built once; that is, it can only have build() called
+     * on it once. Calling build() a second time will cause an
+     * IllegalStateException. Setting its values after calling build() will
+     * cause an IllegalStateException.
+     */
+    public static final class Builder
+    {
+        /**
+         * The ParameterMap that this Builder stores values in.
+         */
+        private Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
+
+        /**
+         * Constructs a Builder ready to take in the values needed to construct
+         * a Connection.
+         */
+        public Builder()
+        {
+        }
+
+        /**
+         * Constructs a DecoderCGI with the values from this Builder.
+         * 
+         * @throws IllegalStateException
+         *         if this Builder has already been built.
+         * @return a DecoderCGI containing the values from this Builder.
+         */
+        public DecoderCGI build()
+        {
+            try
+            {
+                return new DecoderCGI( parameterMap.get() );
+            }
+            finally
+            {
+                parameterMap = Option.getEmptyOption( "This Builder has already been built once." );
+            }
+        }
+
+        /**
+         * Sets the indexed command to the passed-in command.
+         * 
+         * @param index
+         *        the index of the new command.
+         * @param command
+         *        the command to store.
+         * @throws NullPointerException
+         *         if command is null.
+         * @throws IllegalArgumentException
+         *         if index is negative.
+         * @return the Builder.
+         */
+        public Builder command( final int index, final String command )
+        {
+            CheckParameters.areNotNull( command ).areNotNegative( index );
+
+            return set( COMMANDS, Collections.singletonList( new Pair<Integer, String>( index, command ) ) );
+        }
+
+        /**
+         * Sets the indexed Connection to the passed-in Connection.
+         * 
+         * @param index
+         *        the index of the new Connection.
+         * @param connection
+         *        the Connection to store.
+         * @throws NullPointerException
+         *         if connection is null.
+         * @throws IllegalArgumentException
+         *         if index is negative.
+         * @return the Builder.
+         */
+        public Builder connection( final int index, final Connection connection )
+        {
+            CheckParameters.areNotNull( connection ).areNotNegative( index );
+
+            return set( CONNECTIONS, Collections.singletonList( new Pair<Integer, Connection>( index, connection ) ) );
+        }
+
+        /**
+         * Sets the indexed Layout to the passed-in Layout.
+         * 
+         * @param index
+         *        the index of the new Layout.
+         * @param layout
+         *        the Layout to store.
+         * @throws NullPointerException
+         *         if layout is null.
+         * @throws IllegalArgumentException
+         *         if index is negative.
+         * @return the Builder.
+         */
+        public Builder layout( final int index, final Layout layout )
+        {
+            CheckParameters.areNotNull( layout ).areNotNegative( index );
+
+            return set( LAYOUTS, Collections.singletonList( new Pair<Integer, Layout>( index, layout ) ) );
+        }
+
+        /**
+         * Sets the stored output titles to the passed-in output titles.
+         * 
+         * @param titles
+         *        the output titles to use.
+         * @throws NullPointerException
+         *         if any of the titles are null.
+         * @return the Builder.
+         */
+        public Builder outputTitles( final String... titles )
+        {
+            CheckParameters.areNotNull( (Object) titles );
+            CheckParameters.areNotNull( (Object[]) titles );
+
+            return set( OUTPUT_TITLES, titles );
+        }
+
+        /**
+         * Sets the persistence to the passed-in value.
+         * 
+         * @param persistence
+         *        the value to use.
+         * @throws NullPointerException
+         *         if persistence is null.
+         * @return the Builder.
+         */
+        public Builder persistence( final Persistence persistence )
+        {
+            CheckParameters.areNotNull( persistence );
+            return set( PERSISTENCE, persistence );
+        }
+
+        /**
+         * Sets the value of a parameter to a given value, and returns the
+         * Builder.
+         * 
+         * @param <T>
+         *        the input type of the specified parameter.
+         * @param parameter
+         *        the parameter to set a value for.
+         * @param value
+         *        the value to give that parameter.
+         * @return the Builder.
+         * @throws IllegalStateException
+         *         if the Builder has already been built once.
+         * @throws NullPointerException
+         *         if parameter or value are null.
+         */
+        private <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
+        {
+            if ( parameterMap.isEmpty() )
+            {
+                final String message = "The Builder has already been built (build() has been called on it).";
+                throw new IllegalStateException( message );
+            }
+
+            parameterMap = Option.getFullOption( parameterMap.get().set( parameter, value ) );
+            return this;
+        }
     }
 
     /**
@@ -365,71 +433,17 @@ public final class DecoderCGI
         }
 
         /**
-         * Constructs a Connection.
-         */
-        public Connection()
-        {
-            this( new ParameterMap( new ParameterMap.Validator()
-            {
-                @Override
-                public boolean isValid( final ParameterMap parameterMap )
-                {
-                    return parameterMap.isDefault( CAM ) ? true : parameterMap.isDefault( SEQ )
-                            && parameterMap.isDefault( DWELL );
-                }
-            } ) );
-        }
-
-        /**
-         * Constructs a Connection using the specified ParameterMap to store
+         * Constructs a Connection using the specified ParameterMap to retrieve
          * values.
          * 
+         * @param parameterMap
+         *        the ParameterMap that holds the values for this Connection.
          * @throws NullPointerException
          *         if parameterMap is null.
          */
         private Connection( final ParameterMap parameterMap )
         {
             this.parameterMap = parameterMap;
-        }
-
-        /**
-         * Constructs a new Connection containing the same values as this
-         * Connection, but with the audio channel set to the parameter passed
-         * in.
-         * 
-         * @param audioChannel
-         *        the source audio channel.
-         * @return the new Connection.
-         */
-        public Connection audioChannel( final int audioChannel )
-        {
-            return new Connection( parameterMap.set( AUDIO_CHANNEL, audioChannel ) );
-        }
-
-        /**
-         * Constructs a new Connection containing the same values as this
-         * Connection, but with cam set to the parameter passed in.
-         * 
-         * @param cam
-         *        the source camera.
-         * @return the new Connection.
-         */
-        public Connection cam( final int cam )
-        {
-            return new Connection( parameterMap.set( CAM, cam ) );
-        }
-
-        /**
-         * Constructs a new Connection containing the same values as this
-         * Connection, but with dwell set to the parameter passed in.
-         * 
-         * @param dwell
-         *        the time to dwell on each camera in the seq bitmask.
-         * @return the new Connection.
-         */
-        public Connection dwell( final int dwell )
-        {
-            return new Connection( parameterMap.set( DWELL, dwell ) );
         }
 
         /**
@@ -489,31 +503,143 @@ public final class DecoderCGI
         }
 
         /**
-         * Constructs a new Connection containing the same values as this
-         * Connection, but with seq set to the parameter passed in.
-         * 
-         * @param seq
-         *        a bitmask of source cameras.
-         * @return the new Connection.
+         * A Builder that takes in all the optional values for a Connection as
+         * per the Draft Decoder Control Specification, and produces a
+         * Connection when build() is called. Each parameter must be supplied no
+         * more than once. A Builder can only be built once; that is, it can
+         * only have build() called on it once. Calling it a second time will
+         * cause an IllegalStateException. Setting its values after calling
+         * build() will cause an IllegalStateException.
          */
-        public Connection seq( final int seq )
+        public static final class Builder
         {
-            return new Connection( parameterMap.set( SEQ, seq ) );
-        }
+            private Option<ParameterMap> parameterMap =
+                    Option.getFullOption( new ParameterMap( new ParameterMap.Validator()
+                    {
+                        @Override
+                        public boolean isValid( final ParameterMap parameterMap )
+                        {
+                            return parameterMap.isDefault( CAM ) ? true : parameterMap.isDefault( SEQ )
+                                    && parameterMap.isDefault( DWELL );
+                        }
+                    } ) );
 
-        /**
-         * Constructs a new Connection containing the same values as this
-         * Connection, but with the slaveIP set to the parameter passed in.
-         * 
-         * @param slaveIP
-         *        the IP address of the slave camera.
-         * @throws NullPointerException
-         *         if slaveIP is null.
-         * @return the new Connection.
-         */
-        public Connection slaveIP( final String slaveIP )
-        {
-            return new Connection( parameterMap.set( SLAVE_IP, slaveIP ) );
+            /**
+             * Constructs a Builder ready to take in all the optional values for
+             * a Connection.
+             */
+            public Builder()
+            {
+            }
+
+            /**
+             * Sets the audio channel for the Connection.
+             * 
+             * @param audioChannel
+             *        the source audio channel.
+             * @return the Builder.
+             */
+            public Builder audioChannel( final int audioChannel )
+            {
+                return set( AUDIO_CHANNEL, audioChannel );
+            }
+
+            /**
+             * Constructs a Connection with the values from this Builder.
+             * 
+             * @throws IllegalStateException
+             *         if this Builder has already been built.
+             * @return a Connection containing the values from this Builder.
+             */
+            public Connection build()
+            {
+                try
+                {
+                    return new Connection( parameterMap.get() );
+                }
+                finally
+                {
+                    parameterMap = Option.getEmptyOption( "This Builder has already been built once." );
+                }
+            }
+
+            /**
+             * Sets the source camera for the Connection.
+             * 
+             * @param camera
+             *        the source camera.
+             * @return the Builder.
+             */
+            public Builder camera( final int camera )
+            {
+                return set( CAM, camera );
+            }
+
+            /**
+             * Sets the dwell time for the Connection.
+             * 
+             * @param dwell
+             *        the time to dwell on each camera in the seq bitmask.
+             * @return the Builder.
+             */
+            public Builder dwell( final int dwell )
+            {
+                return set( DWELL, dwell );
+            }
+
+            /**
+             * Sets the seq bitmask for the Connection.
+             * 
+             * @param seq
+             *        a bitmask of source cameras.
+             * @return the Builder.
+             */
+            public Builder seq( final int seq )
+            {
+                return set( SEQ, seq );
+            }
+
+            /**
+             * Sets the slave IP address for the Connection.
+             * 
+             * @param slaveIP
+             *        the IP address of the slave camera.
+             * @throws NullPointerException
+             *         if slaveIP is null.
+             * @return the Builder.
+             */
+            public Builder slaveIP( final String slaveIP )
+            {
+                return set( SLAVE_IP, slaveIP );
+            }
+
+            /**
+             * Sets the value of a parameter to a given value, and returns the
+             * Builder.
+             * 
+             * @param <T>
+             *        the input type of the specified parameter.
+             * @param parameter
+             *        the parameter to set a value for.
+             * @param value
+             *        the value to give that parameter.
+             * @return the Builder.
+             * @throws IllegalStateException
+             *         if the Builder has already been built once.
+             * @throws NullPointerException
+             *         if parameter or value are null.
+             */
+            private <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
+            {
+                if ( parameterMap.isEmpty() )
+                {
+                    final String message = "The Builder has already been built (build() has been called on it).";
+                    throw new IllegalStateException( message );
+                }
+
+                parameterMap = Option.getFullOption( parameterMap.get().set( parameter, value ) );
+                return this;
+            }
         }
 
         /**
@@ -641,6 +767,9 @@ public final class DecoderCGI
 
         /**
          * Converts the String representation of a Layout to a Layout.
+         * 
+         * @return a Function that converts the String representation of a
+         *         Layout to a Layout.
          */
         static Function<String, Layout> fromURLFunction()
         {

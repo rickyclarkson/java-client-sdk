@@ -107,7 +107,7 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
  val setters = List[Builder => Builder](_ alarmMask 4, _ cameraMask 4, _ format Format.HTML, _ gpsMask 4,
                                         _ listLength 4, _ range 4, _ systemMask 4, _ text "4", _ time 4, 
                                         _ videoMotionDetectionMask 4)
- "Builder constraints" areSpecifiedBy BuildersTests.testBuilder[EventsCGI, Builder](new Builder, new Builder, setters)
+ "Builder constraints" areSpecifiedBy BuildersTests.testBuilder[EventsCGI, Builder](new Builder, new Builder, setters, "EventsCGITest")
 
  "Negative times" should {
   "cause an IllegalArgumentException" in {
@@ -282,10 +282,10 @@ class EventsCGITest extends JUnit4(new Specification with Scalacheck {
 })
 
 object BuildersTests {
- def testBuilder[I, B <: { def build(): I }](builder: => B, completeBuilder: => B, setters: List[B => B]) =
+ def testBuilder[I, B <: { def build(): I }](builder: => B, completeBuilder: => B, setters: List[B => B], theName: String) =
   new Specification {
    "Setting a value twice" should {
-    "cause an IllegalStateException" in {
+    "cause an IllegalStateException: " + theName in {
      setters foreach { setter => setter(setter(builder)) must throwA(new IllegalStateException) }
     }
    }
@@ -457,5 +457,5 @@ class EventsCGIResultTest extends JUnit4(new Specification with Scalacheck {
                                         _ status Status.PENDING)
  def result = Arbitrary.arbitrary[Builder].sample.get
  import BuildersTests.testBuilder
- "Builder constraints" areSpecifiedBy testBuilder[EventsCGIResult, Builder](new Builder, result, setters)
+ "Builder constraints" areSpecifiedBy testBuilder[EventsCGIResult, Builder](new Builder, result, setters, "EventsCGIResultTest")
 })

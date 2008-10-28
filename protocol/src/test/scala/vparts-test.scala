@@ -178,5 +178,5 @@ class VPartsCGIResultTest extends JUnit4(new Specification with Scalacheck {
  val setters = List[Builder => Builder](_ startTime 4, _ numberOfEntries 4, _ index 4, _ camMask 4,
                                         _ directory "4", _ endTime 4, _ expiryTime 4, _ filename "4")
  "Builder constraints" areSpecifiedBy BuildersTests.testBuilder[VPartsCGIResult, Builder](
-  new Builder, builder(150), setters)
+  new Builder, builder(150), setters, "VPartsCGIResultTest")
 })

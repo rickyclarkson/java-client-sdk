@@ -298,6 +298,12 @@ abstract class ParameterDescription<T, R>
             final TreeMap<Integer, T> copy = new TreeMap<Integer, T>( original );
             for ( final Pair<Integer, T> pair : newValue )
             {
+                if ( copy.containsKey( pair.getFirstComponent() ) )
+                {
+                    throw new IllegalStateException( "Cannot specify " + name + "[" + pair.getFirstComponent()
+                            + "] twice." );
+                }
+
                 copy.put( pair.getFirstComponent(), pair.getSecondComponent() );
             }
 

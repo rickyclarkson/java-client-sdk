@@ -1,15 +1,15 @@
 package uk.org.netvu.protocol
 
 import _root_.org.{specs, scalacheck}
-import specs.Specification
+import specs.{Specification, Scalacheck}
 import specs.runner.JUnit4
 
-class DecoderCGITest extends JUnit4(new Specification {
+class DecoderCGITest extends JUnit4(new Specification with Scalacheck {
  "A DecoderCGI with output titles" should {
   "be properly converted to URL parameters" in {
-   var cgi = new DecoderCGI() outputTitles(Array("foo", "bar", "baz")) command(2, "blah")
+   var builder = new DecoderCGI.Builder outputTitles(Array("foo", "bar", "baz")) command(2, "blah")
    val url = "decoder.var?layouts[1]=1&output_titles=\"foo\",\"bar\",\"baz\"&commands[2]=%22blah%22"
-   cgi.layout(1, DecoderCGI.Layout.FOUR_WAY).toURLParameters mustEqual url
+   builder.layout(1, DecoderCGI.Layout.FOUR_WAY).build.toURLParameters mustEqual url
   }
  }
 
@@ -33,32 +33,49 @@ class DecoderCGITest extends JUnit4(new Specification {
 
  "Parsing a Decoder request whose output titles are not quoted" should {
   "cause an IllegalArgumentException" in {
-   for {
-    varOrFrm <- List("var","frm")
-    item <- List("foo", "\"foo", "bar\"","\"\"")
-   } {
-    DecoderCGI.fromURL("decoder." + varOrFrm + "?output_titles=" + item) must throwA(new IllegalArgumentException)
+   for { item <- List("foo", "\"foo", "bar\"","\"\"") } {
+    DecoderCGI.fromURL("decoder.frm?output_titles=" + item) must throwA(new IllegalArgumentException)
    }
   }
  }
 
- "A built DecoderCGI" should {
-  "have the values given to it" in {
-   import DecoderCGI.Connection
-   new DecoderCGI().connection(1, new Connection().cam(2)).getConnections.get(1).getCam mustEqual 2
-   new DecoderCGI().command(1, "foo").getCommands.get(1) mustEqual "foo"
+ "A parsed DecoderCGI" should {
+  "have the values from the URL" in {
+   for {
+    varOrFrm <- List("var", "frm")
+   } {
+    import DecoderCGI.Persistence
+    val persistence = if (varOrFrm == "var") Persistence.TEMPORARY else Persistence.PERSISTENT
+    DecoderCGI.fromURL("decoder." + varOrFrm + "?layouts[2]=1").getPersistence mustEqual persistence
+   }
   }
  }
+
+ import DecoderCGI.{Connection, Layout}
+
+ "A built DecoderCGI" should {
+  "have the values given to it" in {
+   new DecoderCGI.Builder().connection(1, new Connection.Builder().camera(2).build).build.getConnections.get(1).getCam mustEqual 2
+   new DecoderCGI.Builder().command(1, "foo").build.getCommands.get(1) mustEqual "foo"
+  }
+ }
+
+ import DecoderCGI.{Builder, Persistence}
+ val setters = List[Builder => Builder](_ connection (1, new Connection.Builder().camera(2).build), _ command (3, "foo"), _ layout (4, Layout.NINE_WAY),
+                                        _ outputTitles Array("bar", "baz", "spam", "eggs"), _ persistence Persistence.PERSISTENT)
+ "DecoderCGI.Builder" isSpecifiedBy BuildersTests.testBuilder[DecoderCGI, Builder](new Builder, new Builder, setters, "DecoderCGITest")
 })
 
 class ConnectionTest extends JUnit4(new Specification {
  import DecoderCGI.Connection
- val camSetter: Connection => Connection = _ cam 2
- val seqSetter: Connection => Connection = _ seq 4
- val dwellSetter: Connection => Connection = _ dwell 10
+ import Connection.Builder
+ val camSetter: Builder => Builder = _ camera 2
+ val seqSetter: Builder => Builder = _ seq 4
+ val dwellSetter: Builder => Builder = _ dwell 10
 
- "cam and seq" isSpecifiedBy mutuallyExclusive(new Connection, List(camSetter, seqSetter))
- "cam and dwell" isSpecifiedBy mutuallyExclusive(new Connection, List(camSetter, dwellSetter))
+ "cam and seq" areSpecifiedBy mutuallyExclusive(new Connection.Builder, List(camSetter, seqSetter))
+ "cam and dwell" areSpecifiedBy mutuallyExclusive(new Connection.Builder, List(camSetter, dwellSetter))
+ "Connection.Builder" isSpecifiedBy BuildersTests.testBuilder[Connection, Builder](new Connection.Builder, new Connection.Builder, List(camSetter, seqSetter, dwellSetter), "DecoderCGI.Connection")
 
  "parsing a URL into a Connection" should {
   "give the values from the URL" in {
@@ -78,13 +95,13 @@ class ConnectionTest extends JUnit4(new Specification {
 
  "A Connection constructed with a particular slaveIP" should {
   "contain that slaveIP" in {
-   new DecoderCGI.Connection().slaveIP("foo").getSlaveIP mustEqual "foo"
+   new Builder().slaveIP("foo").build.getSlaveIP mustEqual "foo"
   }
  }
 
  "A Connection constructed with a particular audio channel" should {
   "contain that audio channel" in {
-   new Connection().audioChannel(4).getAudioChannel mustEqual 4
+   new Builder().audioChannel(4).build.getAudioChannel mustEqual 4
   }
  }
 
@@ -92,7 +109,7 @@ class ConnectionTest extends JUnit4(new Specification {
   val result = "\"slaveip=foo,cam=2\""
   "give "+result in {
    import java.net.URLDecoder
-   URLDecoder decode (Connection urlEncode (new Connection cam 2 slaveIP "foo"), "UTF-8") mustEqual result
+   URLDecoder decode (Connection urlEncode (new Builder camera 2 slaveIP "foo" build), "UTF-8") mustEqual result
   }
  }
 

@@ -271,7 +271,7 @@ public final class EventsCGI
          * @throws IllegalStateException
          *         if the Builder has already been built, or if this value has
          *         already been set.
-         * @return the builder.
+         * @return the Builder.
          */
         public Builder alarmMask( final int alarmMask )
         {
