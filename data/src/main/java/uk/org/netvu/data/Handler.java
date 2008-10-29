@@ -5,5 +5,6 @@ import java.nio.ByteBuffer;
 
 interface Handler
 {
-    void handleJPEG( ByteBuffer data ) throws IOException;
+    void jpeg( JPEGPacket packet ) throws IOException;
+    void binaryStreamHeader( BinaryStreamHeader header );
 }
