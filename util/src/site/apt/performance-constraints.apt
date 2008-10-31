@@ -1,0 +1,35 @@
+ -----------------------
+ Performance Constraints
+ -----------------------
+
+Performance Constraints
+
+*---------------------------------------------------------+----+
+|Is there a minimum performance level that is acceptable? |No  |
+*---------------------------------------------------------+----+
+
+ <If the answer to the above question is "Yes", please complete the sections below.>
+ 
+* Description of performance constraints
+
+ <Please provide a detailed description of the performance constraints.>
+ 
+* Reference Hardware
+
+ <Please enter details of the reference hardware to be used in the performance tests. Duplicate the table for each reference platform that is to be tested.>
+ 
+*------------------+------+
+|Operating System: |      |
+*------------------+------+
+|CPU:              |      |
+*------------------+------+
+|RAM:              |      |
+*------------------+------+
+|GPU:              |      |
+*------------------+------+
+|GPU RAM:          |      |
+*------------------+------+
+|JVM:              |      |
+*------------------+------+
+
+

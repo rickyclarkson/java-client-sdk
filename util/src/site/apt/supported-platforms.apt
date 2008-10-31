@@ -1,0 +1,26 @@
+ -------------------
+ Supported Platforms
+ -------------------
+
+Supported Platforms
+
+ <If a platform is not supported, please explain why in the> <<Notes>> <column.>
+ 
+*--------------+--------------+-----------+
+|<<Platform>>  |<<Supported>> |<<Notes>>  |
+*--------------+--------------+-----------+
+|Windows XP    |Yes           |           |
+*--------------+--------------+-----------+
+|Windows Vista |Yes           |           |
+*--------------+--------------+-----------+
+|Mac OS X      |Yes           |           |
+*--------------+--------------+-----------+
+|Linux         |No            | This isn't a supported OS for the Java Client SDK yet.When the port to Linux is done, this should be updated. |
+*--------------+--------------+-----------+
+|Solaris x86   |No            | This isn't a supported OS for the Java Client SDK yet.When the port to Solaris is done, this should be updated. |
+*--------------+--------------+-----------+
+|Solaris SPARC |No            | This isn't a supported OS for the Java Client SDK yet.When the port to Solaris is done, this should be updated. |
+*--------------+--------------+-----------+
+Supported platforms
+
+

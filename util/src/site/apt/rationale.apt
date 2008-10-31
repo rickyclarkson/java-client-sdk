@@ -2,9 +2,21 @@ Design Rationale
 
 * Making Operating System detection typesafe
 
-  We considered two approaches for this, a Java 5 enum type and a utility class and we decided to go with the enum type.
+  We considered two approaches for this, a Java 5 enum type and a utility class and we decided to go with the enum type since it guarantees type safety and gives us a straight forward mechanism for adding new operating systems as they are supported.
   
-  The enum type (called OperatingSystem) enumerates the operating systems that we support. It  includes a default value (OperatingSystem.Unknown) for unrecognized and unsupported operating systems. There is a static method that returns one of the enum values based on the operating system that you are running on. There is also a convenience method, which identifies whether or not the current operating system is a member of the Windows family.
+  The enum type (called OperatingSystem) enumerates the operating systems that we support. It  includes a default value (OperatingSystem.Unknown) for unrecognized and unsupported operating systems. There is a static method that returns one of the enum values based on the operating system that you are running on. Each enum instance also has a method which identifies whether or not the operating system is a member of the Windows family.
   
-  The use of an enum type guarantees type safety. It gives us a straight forward mechanism for adding new operating systems as they are supported. Since it is still possible to add static methods to enum types, we can still provide static convenience methods where they are needed, but clients can still access all the information they need if the logic they want is not provided by a convenience method. The only potential downside to using an enum, is that the client code may become more verbose than with a utility class, but that should be avoidable with the appropriate use of static convenience methods.
+  The only potential downside to using an enum, is that the client code may become more verbose than with a utility class:
+  
++--
+OperatingSystem.getOperatingSystem().isWindows()
++--
+  
+  versus
+  
++--
+OperatingSystem.isWindows()
++--
+  
+  This can be avoided by adding static methods to the enum class or can be minimized using static imports, if it becomes a real problem.
   
