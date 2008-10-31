@@ -14,11 +14,31 @@ public enum OperatingSystem
     /**
      * Windows Vista.
      */
-    WindowsVista,
+    WindowsVista
+    {
+        /**
+         * @inheritDoc
+         */
+        @Override
+        public boolean isWindows()
+        {
+            return true;
+        }
+    },
     /**
      * Windows XP.
      */
-    WindowsXP,
+    WindowsXP
+    {
+        /**
+         * @inheritDoc
+         */
+        @Override
+        public boolean isWindows()
+        {
+            return true;
+        }
+    },
     /**
      * Mac OS X.
      */
@@ -54,21 +74,14 @@ public enum OperatingSystem
     }
     
     /**
-     * Returns {@code true} if the current operating system is recognized and is in the Windows 
-     * family of operating systems. Returns {@code false} otherwise.
+     * Returns {@code true} if the operating system is in the Windows family of operating systems. 
+     * Returns {@code false} otherwise.
      *
-     * @return {@code true} if the current operating system is recognized and is in the Windows 
-     * family of operating systems, {@code false} otherwise
-     */
-    public static boolean isWindows()
+     * @return {@code true} if the operating system is in the Windows family of operating systems, 
+     * {@code false} otherwise
+     */    
+    public boolean isWindows()
     {
-        switch ( getOperatingSystem() )
-        {
-            case WindowsXP:
-            case WindowsVista:
-                return true;
-            default:
-                return false;
-        }
+        return false;
     }
 }
