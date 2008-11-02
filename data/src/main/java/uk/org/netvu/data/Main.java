@@ -11,6 +11,7 @@ public class Main
 {
     public static void main( final String[] args ) throws Exception
     {
+        System.out.println("Aquí");
         try
         {
             doIt();
@@ -32,34 +33,28 @@ public class Main
 
     private static void doIt() throws IOException
     {
-        final URL url = new URL( "file:testdata/192-168-106-206-binary-jpeg" );
+        final URL url = new URL( "file:testdata/192-168-106-204-binary-jfif" );
         URLConnection connection = url.openConnection();
 
-        ParserFactory.parserFor( DataType.BINARY ).parse( connection.getInputStream(), new Handler()
+        ParserFactory.parserFor( DataType.BINARY ).parse( connection.getInputStream(), new StreamHandler()
         {
             int index = 0;
-            public void jpeg( final JPEGPacket packet ) throws IOException
+            public void jfif( final JPEGPacket packet ) throws IOException
             {
                 final FileOutputStream out = new FileOutputStream( System.getProperty( "user.dir" ) + 
                         "/deleteme" + index++ + ".jpg" );
                 ByteChannel channel = out.getChannel();
                 int total = 0;
 
-                while ( ( total += channel.write( packet.byteBuffer ) ) < packet.length )
-                {
-                    System.out.println( "Still writing: total is "+total );
-                }
+                channel.write( packet.byteBuffer );
 
                 channel.close();                
                 out.close();
             }
 
-            public void binaryStreamHeader( BinaryStreamHeader header )
+            public void unknown( ByteBuffer data, StreamMetadata metadata )
             {
-                System.out.println( "A header received" );
-                System.out.println( "frametype: "+header.frameType );
-                System.out.println( "channel: "+header.channel );
-                System.out.println( "dataLength: "+header.dataLength );
+                System.out.println(metadata.getLength() + " bytes of unknown data received");
             }
         } );
     }
@@ -69,26 +64,22 @@ public class Main
         final URL url = new URL("file:testdata/192-168-106-204");
         URLConnection connection = url.openConnection();
 
-        ParserFactory.parserFor( DataType.MIME ).parse( connection.getInputStream(), new Handler()
+        ParserFactory.parserFor( DataType.MIME ).parse( connection.getInputStream(), new StreamHandler()
         {
             int index = 0;
-            public void jpeg( final JPEGPacket packet ) throws IOException
+            public void jfif( final JPEGPacket packet ) throws IOException
             {
                 final FileOutputStream out = new FileOutputStream( System.getProperty("user.dir")+"/deletehim"+index+++".jpg");
                 ByteChannel channel=out.getChannel();
                 int total = 0;
-                while ((total+=channel.write(packet.byteBuffer))<packet.length)
-                {
-                    System.out.println("Still writing: total is "+total);
-                }
+                channel.write(packet.byteBuffer);
 
                 channel.close();
                 out.close();
             }
 
-            public void binaryStreamHeader(BinaryStreamHeader header)
+            public void unknown( final ByteBuffer data, StreamMetadata metadata )
             {
-                throw null;
             }
         });
     }

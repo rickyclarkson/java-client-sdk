@@ -5,11 +5,12 @@ import java.nio.ByteBuffer;
 public final class JPEGPacket
 {
     public final ByteBuffer byteBuffer;
-    public final int length;
+    public final StreamMetadata metadata;
 
-    public JPEGPacket( ByteBuffer byteBuffer, int length )
+    public JPEGPacket( ByteBuffer byteBuffer, StreamMetadata metadata )
     {
+        metadata.toString();
         this.byteBuffer = byteBuffer;
-        this.length = length;
+        this.metadata = metadata;
     }
 }

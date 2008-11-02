@@ -3,7 +3,7 @@ package uk.org.netvu.protocol;
 /**
  * A utility class for checking constraints about method parameters.
  */
-final class CheckParameters
+public final class CheckParameters
 {
     /**
      * Checks that all the arguments passed are non-null. Fails on the first
@@ -16,7 +16,7 @@ final class CheckParameters
      *         if any of the arguments passed are null, or if the varargs array
      *         itself is null.
      */
-    static CheckParameters areNotNull( final Object... args )
+    public static CheckParameters areNotNull( final Object... args )
     {
         int a = 0;
         for ( final Object o : args )

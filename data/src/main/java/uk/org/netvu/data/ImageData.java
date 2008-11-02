@@ -30,26 +30,25 @@ public final class ImageData
     private static final int LOCALE = FORMAT + Picture.SIZE;
     private static final int UTC_OFFSET = LOCALE + MAX_NAME_LENGTH;
     private static final int ALM_BITMASK = UTC_OFFSET + INT;
+    public static final int IMAGE_DATA_SIZE = ALM_BITMASK + INT;
 
     private final ByteBuffer buffer;
-    private final int offset;
 
-    public ImageData(ByteBuffer buffer, int offset)
+    public ImageData(ByteBuffer buffer)
     {
         this.buffer = buffer;
-        this.offset = offset;
     }
 
     private int readInt(int where)
     {
         buffer.order(ByteOrder.BIG_ENDIAN);
-        return buffer.getInt(offset + where);
+        return buffer.getInt(where);
     }
 
     public byte[] read(int length, int where)
     {
         byte[] result = new byte[length];
-        buffer.get(offset + where -1);
+        buffer.get(where -1);
         buffer.get(result);
         return result;
     }
@@ -75,7 +74,7 @@ public final class ImageData
 
     private final Picture format()
     {
-        return new Picture(buffer, offset + FORMAT);
+        return new Picture(buffer, FORMAT);
     }
 
     public final byte[] locale = read(MAX_NAME_LENGTH + 1, LOCALE);

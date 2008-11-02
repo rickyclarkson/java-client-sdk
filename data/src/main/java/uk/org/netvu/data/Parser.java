@@ -9,5 +9,5 @@ import java.nio.ByteBuffer;
 
 public interface Parser
 {
-    void parse( InputStream input, Handler handler ) throws IOException;
+    void parse( InputStream input, StreamHandler handler ) throws IOException;
 }
