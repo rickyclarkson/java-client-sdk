@@ -2,14 +2,13 @@ package uk.org.netvu.data;
 
 import java.nio.ByteBuffer;
 
-public final class JPEGPacket
+public final class JFIFPacket
 {
     public final ByteBuffer byteBuffer;
     public final StreamMetadata metadata;
 
-    public JPEGPacket( ByteBuffer byteBuffer, StreamMetadata metadata )
+    public JFIFPacket( ByteBuffer byteBuffer, StreamMetadata metadata )
     {
-        metadata.toString();
         this.byteBuffer = byteBuffer;
         this.metadata = metadata;
     }

@@ -23,7 +23,7 @@ class MimeParser implements Parser
                 final int length = IO.expectIntFromRestOfLine(input);
                 IO.expectLine( input, "" );
                 ByteBuffer jpeg = jpegParse( input, length );
-                handler.jfif(new JPEGPacket(jpeg, new MimeStreamMetadata(length)));
+                handler.jfif(new JFIFPacket(jpeg, new MimeStreamMetadata(length)));
                 IO.expectLine( input, "" );
             }
         }

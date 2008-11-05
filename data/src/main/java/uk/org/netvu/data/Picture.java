@@ -20,6 +20,13 @@ public final class Picture
     {
         this.buffer = buffer;
         this.offset = offset;
+
+        srcPixels = readShort(SRC_PIXELS);
+        srcLines = readShort(SRC_LINES);
+        targetPixels = readShort(TARGET_PIXELS);
+        targetLines = readShort(TARGET_LINES);
+        pixelOffset = readShort(PIXEL_OFFSET);
+        lineOffset = readShort(LINE_OFFSET);
     }
 
     private short readShort(int where)
@@ -31,10 +38,10 @@ public final class Picture
     private final ByteBuffer buffer;
     private final int offset;
 
-    public final short srcPixels = readShort(SRC_PIXELS);
-    public final short srcLines = readShort(SRC_LINES);
-    public final short targetPixels = readShort(TARGET_PIXELS);
-    public final short targetLines = readShort(TARGET_LINES);
-    public final short pixelOffset = readShort(PIXEL_OFFSET);
-    public final short lineOffset = readShort(LINE_OFFSET);
+    public final short srcPixels;
+    public final short srcLines;
+    public final short targetPixels;
+    public final short targetLines;
+    public final short pixelOffset;
+    public final short lineOffset;
 }

@@ -4,17 +4,26 @@ import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public final class BinaryStreamMetadata implements StreamMetadata
+final class BinaryStreamMetadata implements StreamMetadata
 {
     public final FrameType frameType;
     public final int channel;
     private final int length;
 
     public BinaryStreamMetadata( InputStream input ) throws IOException
-    {
-        int firstByte = input.read();
-        System.out.println("firstByte = "+firstByte);
-        frameType = firstByte == 1 ? FrameType.JFIF : FrameType.UNKNOWN;
+    {      
+        switch (input.read())
+        {
+        case 0:
+            frameType = FrameType.JPEG;
+            break;
+        case 1:
+            frameType = FrameType.JFIF;
+            break;
+        default:
+            frameType = FrameType.UNKNOWN;
+        }
+
         channel = input.read() + 1;
         length = new DataInputStream( input ).readInt();
     }

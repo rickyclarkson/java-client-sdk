@@ -60,7 +60,7 @@ class IOTest extends JUnit4(new Specification {
   "return an int when the rest of the line contains an int" in {
    IO.expectIntFromRestOfLine(asInputStream(List("123", "bar"))) mustEqual 123
   }
-  "cause an IllegalStateException when the rest of the line does not contain an int" in {
+  "throw an IllegalStateException when the rest of the line does not contain an int" in {
    IO.expectIntFromRestOfLine(asInputStream(List("23a", "bar"))) must throwA(new IllegalStateException)
   }
  }
@@ -70,52 +70,71 @@ import java.net.URL
 import java.nio.ByteBuffer
 
 class ParseBinaryStreamsTest extends JUnit4(new Specification {
- "reading a binary stream containing JPEGs" should {
-  "parse out at least two valid JPEG images" in {
-   val url = new URL("file:testdata/192-168-106-204-binary-jfif")
-   val connection = url.openConnection
-   var numValidFrames = 0
-   var numInvalidFrames = 0
+ "parsing binary streams containing JFIF" isSpecifiedBy {
+  validlyParse("file:testdata/192-168-106-204-binary-jfif", DataType.BINARY)
+ }
 
-   ParserFactory parserFor DataType.BINARY parse (connection.getInputStream, new StreamHandler {
-    def jfif(packet: JPEGPacket) = {
-     println("Receiving a JPEG")
-     val buffer = packet.byteBuffer
-     if (buffer.position != 0) throw null
-     val (a, b, c) = (buffer.get & 0xFF, buffer.get & 0xFF, buffer.get & 0xFF)
-     println(a + " should be " + 0xFF + ", " + b + " should be " + 0xD8 + ", " + c + " should be " + 0xFF)
-     if (a == 0xFF && b == 0xd8 && c == 0xFF)
-      numValidFrames += 1
-     else
-      numInvalidFrames += 1
-    }
+ "parsing mime streams containing JFIF" isSpecifiedBy {
+  validlyParse("file:testdata/192-168-106-204", DataType.MIME)
+ }
 
-    def unknown(data: ByteBuffer, metadata: StreamMetadata) = ()
-   })
+ def validlyParse(filename: String, dataType: DataType) = new Specification {
+  "reading a " + dataType.toString.toLowerCase( java.util.Locale.ENGLISH ) + " stream containing JFIFs" should {
+   "parse out at least two valid JFIF images" in {
+    val url = new URL(filename)
+    val connection = url.openConnection
+    var numValidFrames = 0
+    var numInvalidFrames = 0
+    
+    ParserFactory parserFor dataType parse (connection.getInputStream, new StreamHandler {
+     def jfif(packet: JFIFPacket) = {
+      val buffer = packet.byteBuffer
+      def next = buffer.get & 0xFF
+      if (next == 0xFF && next == 0xD8 && next == 0xFF)
+       numValidFrames += 1
+      else
+       numInvalidFrames += 1
+     }
 
-   println(numValidFrames+", "+numInvalidFrames)
-   numValidFrames >= 2 must beTrue
-   numInvalidFrames == 0 must beTrue
+     def dataArrived(byteBuffer: ByteBuffer, metadata: StreamMetadata) = ()
+    })
+
+    numValidFrames >= 2 must beTrue
+    numInvalidFrames == 0 must beTrue
+   }
   }
  }
 
- "reading a mime stream containing JPEGs" should {
-  "parse out at least two valid JPEG images" in {
-   val url = new URL("file:testdata/192-168-106-204")
+ "parsing binary streams containing JPEG" should {
+  "give at least two valid JPEG images" in {
+   val url = new URL("file:testdata/192-168-106-204-binary-jpeg")
    val connection = url.openConnection
    var numValidFrames = 0
    var numInvalidFrames = 0
-   
-   ParserFactory parserFor DataType.MIME parse (connection.getInputStream, new StreamHandler {
-    def jfif(packet: JPEGPacket) = {
+
+   var index = 0
+
+   ParserFactory parserFor DataType.BINARY parse (connection.getInputStream, new StreamHandler {
+    def jfif(packet: JFIFPacket) = {
+     println("Does this ever happen?")
      val buffer = packet.byteBuffer
-     if ((buffer.get & 0xFF) == 0xFF && (buffer.get & 0xFF) == 0xD8 && (buffer.get & 0xFF) == 0xFF)
+     def next = buffer.get & 0xFF
+     val (a, b, c) = (next, next, next)
+     println((a, b, c))
+     if (a == 0xFF && b == 0xD8 && c == 0xFF)
       numValidFrames += 1
      else
       numInvalidFrames += 1
+     
+     buffer.position(0)
+     import java.io.FileOutputStream
+     val out = new FileOutputStream("/home/ricky/deleteme"+index+".jpg");
+     index += 1
+     out.getChannel.write(buffer);
+     out.close
     }
 
-    def unknown(data: ByteBuffer, metadata: StreamMetadata) = ()
+    def dataArrived(data: ByteBuffer, metadata: StreamMetadata) = ()
    })
 
    numValidFrames >= 2 must beTrue

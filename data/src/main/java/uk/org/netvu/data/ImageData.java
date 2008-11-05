@@ -18,8 +18,8 @@ public final class ImageData
     private static final int SIZE = START_OFFSET + INT;
     private static final int MAX_SIZE = SIZE + INT;
     private static final int TARGET_SIZE = MAX_SIZE + INT;
-    private static final int FACTOR = TARGET_SIZE + INT;
-    private static final int ALM_BITMASK_HI = FACTOR + INT;
+    private static final int Q_FACTOR = TARGET_SIZE + INT;
+    private static final int ALM_BITMASK_HI = Q_FACTOR + INT;
     private static final int STATUS = ALM_BITMASK_HI + INT;
     private static final int SESSION_TIME = STATUS + INT;
     private static final int MILLISECONDS = SESSION_TIME + TIME_SIZE;
@@ -36,11 +36,19 @@ public final class ImageData
 
     public ImageData(ByteBuffer buffer)
     {
+        if (buffer == null)
+            throw null;
+
         this.buffer = buffer;
     }
 
     private int readInt(int where)
     {
+        if (buffer == null)
+            throw null;
+        if (ByteOrder.BIG_ENDIAN == null)
+            throw null;
+
         buffer.order(ByteOrder.BIG_ENDIAN);
         return buffer.getInt(where);
     }
@@ -53,31 +61,24 @@ public final class ImageData
         return result;
     }
 
-    public final int version = readInt(VERSION);
-    public final int mode = readInt(MODE);
-    public final int cam = readInt(CAM);
-    public final int vidFormat = readInt(VID_FORMAT);
-    public final int startOffset = readInt(START_OFFSET);
-    public final int size = readInt(SIZE);
-    public final int maxSize = readInt(MAX_SIZE);
-    public final int targetSize = readInt(TARGET_SIZE);
-    public final int factor = readInt(FACTOR);
-    public final int almBitmaskHi = readInt(ALM_BITMASK_HI);
-    public final int status = readInt(STATUS);
-    public final int sessionTime = readInt(SESSION_TIME);
-    public final int milliseconds = readInt(MILLISECONDS);
-    public final byte[] res = read(4, RES);
-    public final byte[] title = read(TITLE_LENGTH + 1, TITLE);
-    public final byte[] alarm = read(TITLE_LENGTH + 1, ALARM);
-
-    public final Picture format = format();
-
-    private final Picture format()
-    {
-        return new Picture(buffer, FORMAT);
-    }
-
-    public final byte[] locale = read(MAX_NAME_LENGTH + 1, LOCALE);
-    public final int utcOffset = readInt(UTC_OFFSET);
-    public final int almBitmask = readInt(ALM_BITMASK);
+    public int getVersion() { return readInt(VERSION); }
+    public int getMode() { return readInt(MODE); }
+    public int getCam() { return readInt(CAM); }
+    public VideoFormat getVidFormat() { return VideoFormat.valueOf(readInt(VID_FORMAT)); }
+    public int getStartOffset() { return readInt(START_OFFSET); }
+    public int getSize() { return readInt(SIZE); }
+    public int getMaxSize() { return readInt(MAX_SIZE); }
+    public int getTargetSize() { return readInt(TARGET_SIZE); }
+    public int getQFactor() { return readInt(Q_FACTOR); }
+    public int getAlmBitmaskHi() { return readInt(ALM_BITMASK_HI); }
+    public int getStatus() { return readInt(STATUS); }
+    public int getSessionTime() { return readInt(SESSION_TIME); }
+    public int getMilliseconds() { return readInt(MILLISECONDS); }
+    public byte[] getRes() { return read(4, RES); }
+    public byte[] getTitle() { return read(TITLE_LENGTH + 1, TITLE); }
+    public byte[] getAlarm() { return read(TITLE_LENGTH + 1, ALARM); }
+    public Picture getFormat() { return new Picture( buffer, FORMAT ); }
+    public byte[] getLocale() { return read(MAX_NAME_LENGTH + 1, LOCALE); }
+    public int getUtcOffset() { return readInt(UTC_OFFSET); }
+    public int getAlmBitmask() { return readInt(ALM_BITMASK); }
 }

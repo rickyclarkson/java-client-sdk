@@ -1,6 +1,6 @@
 package uk.org.netvu.data;
 
-public final class MimeStreamMetadata implements StreamMetadata
+final class MimeStreamMetadata implements StreamMetadata
 {
     private final int length;
 

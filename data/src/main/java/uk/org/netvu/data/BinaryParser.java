@@ -15,9 +15,7 @@ final class BinaryParser implements Parser
         {
             while ( true )
             {
-                System.out.println("Parsing some data");
                 BinaryStreamMetadata metadata = new BinaryStreamMetadata( input );
-                System.out.println("metadata.frameType = " + metadata.frameType);
                 metadata.frameType.deliverTo( input, handler, metadata );
             }
         }

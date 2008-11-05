@@ -3,6 +3,8 @@ package uk.org.netvu.data;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 
 final class IO
 {
@@ -64,5 +66,20 @@ final class IO
         {
             throw new IllegalStateException();
         }
+    }
+
+    public static ByteBuffer readIntoByteBuffer( InputStream input, int bytes ) throws IOException
+    {
+        ByteBuffer buffer = ByteBuffer.allocate( bytes );
+        Channels.newChannel( input ).read( buffer );
+        buffer.position( 0 );
+        return buffer;
+    }
+
+    public static byte[] readIntoByteArray( ByteBuffer buffer, int bytes ) throws IOException
+    {
+        byte[] results = new byte[bytes];
+        buffer.get(results);
+        return results;
     }
 }
