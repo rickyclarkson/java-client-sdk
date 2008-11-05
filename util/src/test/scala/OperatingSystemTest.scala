@@ -3,60 +3,14 @@ package uk.org.netvu.util
 import _root_.org.junit.Test
 import _root_.org.junit.Assert.{assertSame, assertTrue, assertFalse, fail}
 
+import _root_.org.specs._
+import _root_.org.specs.runner.JUnit4
+import _root_.org.specs.util.DataTables
+
 /**
  * Unit tests for the OperatingSystem enum.
  */
 class OperatingSystemTest {
-    /**
-     * Tests the getOperatingSystem() method against all the major operating system names that we
-     * support, may have supported in the past, or may support in the future.
-     */
-    @Test
-    def getOperatingSystem() {
-        System.setProperty( "os.name", "Linux" )
-        assertSame( "Linux should not be a recognized operating system",
-           OperatingSystem.Unknown, OperatingSystem.getOperatingSystem())
-        System.setProperty( "os.name", "Mac OS" )
-        assertSame( "Mac OS (pre OS X) should not be a recognized operating system",
-           OperatingSystem.Unknown, OperatingSystem.getOperatingSystem())
-        System.setProperty( "os.name", "Mac OS X" )
-        assertSame( "Mac OS X should be a recognized operating system",
-           OperatingSystem.MacOSX, OperatingSystem.getOperatingSystem())
-        System.setProperty( "os.name", "Solaris" )
-        assertSame( "Solaris should not be a recognized operating system",
-           OperatingSystem.Unknown, OperatingSystem.getOperatingSystem())
-        System.setProperty( "os.name", "SunOS" )
-        assertSame( "Solaris should not be a recognized operating system",
-           OperatingSystem.Unknown, OperatingSystem.getOperatingSystem())
-        System.setProperty( "os.name", "Windows 2000" )
-        assertSame( "Windows 2000 should not be a recognized operating system",
-           OperatingSystem.Unknown, OperatingSystem.getOperatingSystem())
-        System.setProperty( "os.name", "Windows 95" )
-        assertSame( "Windows 95 should not be a recognized operating system",
-           OperatingSystem.Unknown, OperatingSystem.getOperatingSystem())
-        System.setProperty( "os.name", "Windows 98" )
-        assertSame( "Windows 98 should not be a recognized operating system",
-           OperatingSystem.Unknown, OperatingSystem.getOperatingSystem())
-        System.setProperty( "os.name", "Windows CE" )
-        assertSame( "Windows CE should not be a recognized operating system",
-           OperatingSystem.Unknown, OperatingSystem.getOperatingSystem())
-        System.setProperty( "os.name", "Windows Me" )
-        assertSame( "Windows Me should not be a recognized operating system",
-           OperatingSystem.Unknown, OperatingSystem.getOperatingSystem())
-        System.setProperty( "os.name", "WindowsNT" )
-        assertSame( "Windows NT should not be a recognized operating system",
-           OperatingSystem.Unknown, OperatingSystem.getOperatingSystem())
-        System.setProperty( "os.name", "Windows 2003" )
-        assertSame( "Windows Server 2003 should not be a recognized operating system",
-           OperatingSystem.Unknown, OperatingSystem.getOperatingSystem())
-        System.setProperty( "os.name", "Windows Vista" )
-        assertSame( "Windows Vista should be a recognized operating system",
-            OperatingSystem.WindowsVista, OperatingSystem.getOperatingSystem())
-        System.setProperty( "os.name", "Windows XP" )
-        assertSame( "Windows XP should be a recognized operating system",
-            OperatingSystem.WindowsXP, OperatingSystem.getOperatingSystem())
-    }
-    
     /**
      * Checks that each enum value returns the correct boolean result for isWindows(). This test 
      * will also fail if a new enum value is added and not accounted for here.
@@ -78,3 +32,33 @@ class OperatingSystemTest {
         }
     }
 }
+
+/**
+ * Specification based unit tests for the OperatingSystem enum.
+ */
+class OperatingSystemSpecsTest extends JUnit4(new Specification with DataTables {
+    /**
+     * Tests the getOperatingSystem() method against all the major operating system names that we
+     * support, may have supported in the past, or may support in the future.
+     */
+  "'getOperatingSystem()' must return the correct enum value" in {
+    "os.name"       | "OperatingSystem"     |>
+    "Linux"         ! OperatingSystem.Unknown      |
+    "Mac OS"        ! OperatingSystem.Unknown      |
+    "Mac OS X"      ! OperatingSystem.MacOSX       |
+    "Solaris"       ! OperatingSystem.Unknown      |
+    "SunOS"         ! OperatingSystem.Unknown      |
+    "Windows 2000"  ! OperatingSystem.Unknown      |
+    "Windows 2003"  ! OperatingSystem.Unknown      |
+    "Windows 95"    ! OperatingSystem.Unknown      |
+    "Windows 98"    ! OperatingSystem.Unknown      |
+    "Windows CE"    ! OperatingSystem.Unknown      |
+    "Windows Me"    ! OperatingSystem.Unknown      |
+    "WindowsNT"     ! OperatingSystem.Unknown      |
+    "Windows Vista" ! OperatingSystem.WindowsVista |
+    "Windows XP"    ! OperatingSystem.WindowsXP    | { (osName, os) =>
+      System.setProperty("os.name", osName)
+      OperatingSystem.getOperatingSystem() mustBe os
+    }
+  }
+})
