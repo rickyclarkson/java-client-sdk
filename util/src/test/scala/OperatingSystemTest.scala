@@ -42,7 +42,7 @@ class OperatingSystemSpecsTest extends JUnit4(new Specification with DataTables 
      * support, may have supported in the past, or may support in the future.
      */
   "'getOperatingSystem()' must return the correct enum value" in {
-    "os.name"       | "OperatingSystem"     |>
+    "os.name"       | "OperatingSystem"            |>
     "Linux"         ! OperatingSystem.Unknown      |
     "Mac OS"        ! OperatingSystem.Unknown      |
     "Mac OS X"      ! OperatingSystem.MacOSX       |
