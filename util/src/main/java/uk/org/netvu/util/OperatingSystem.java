@@ -14,31 +14,11 @@ public enum OperatingSystem
     /**
      * Windows Vista.
      */
-    WindowsVista
-    {
-        /**
-         * @inheritDoc
-         */
-        @Override
-        public boolean isWindows()
-        {
-            return true;
-        }
-    },
+    WindowsVista,
     /**
      * Windows XP.
      */
-    WindowsXP
-    {
-        /**
-         * @inheritDoc
-         */
-        @Override
-        public boolean isWindows()
-        {
-            return true;
-        }
-    },
+    WindowsXP,
     /**
      * Mac OS X.
      */
@@ -71,17 +51,5 @@ public enum OperatingSystem
         {
             return Unknown;
         }
-    }
-    
-    /**
-     * Returns {@code true} if the operating system is in the Windows family of operating systems. 
-     * Returns {@code false} otherwise.
-     *
-     * @return {@code true} if the operating system is in the Windows family of operating systems, 
-     * {@code false} otherwise
-     */    
-    public boolean isWindows()
-    {
-        return false;
     }
 }

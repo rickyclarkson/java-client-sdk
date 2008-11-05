@@ -8,32 +8,6 @@ import _root_.org.specs.runner.JUnit4
 import _root_.org.specs.util.DataTables
 
 /**
- * Unit tests for the OperatingSystem enum.
- */
-class OperatingSystemTest {
-    /**
-     * Checks that each enum value returns the correct boolean result for isWindows(). This test 
-     * will also fail if a new enum value is added and not accounted for here.
-     */
-    @Test
-    def isWindows() {
-        OperatingSystem.values().foreach { os =>
-            os match {
-                case OperatingSystem.WindowsXP => assertTrue("Windows XP is a Windows OS", 
-                    OperatingSystem.WindowsXP.isWindows())
-                case OperatingSystem.WindowsVista => assertTrue("Windows Vista is a Windows OS", 
-                    OperatingSystem.WindowsVista.isWindows())
-                case OperatingSystem.MacOSX => assertFalse("Mac OS X is not a Windows OS", 
-                    OperatingSystem.MacOSX.isWindows())
-                case OperatingSystem.Unknown => assertFalse("Unknown is not a Windows OS", 
-                    OperatingSystem.Unknown.isWindows()) 
-                case _ => fail("Not catered for " + os + " in isWindows() test!")
-            }
-        }
-    }
-}
-
-/**
  * Specification based unit tests for the OperatingSystem enum.
  */
 class OperatingSystemSpecsTest extends JUnit4(new Specification with DataTables {
