@@ -80,4 +80,4 @@ Build Decoder Query
 
  The decoders work by storing values in system variables that can be updated via the decoder.frm and decoder.var queries that this API builds and parses.  Based on the values in the system variables, the decoders construct display_pic and replay_pic CGI queries to send on to the cameras identified in the system variables, and decode the returned streams for display on analogue televisions.
 
- See the {{{http://adwiki.ad-group.adh/attachment/wiki/DevelopmentSite/AD/Client/WhiteBoard/DecoderCGIReview/decoder_specification.pdf?format=raw}}Draft Decoder Control Specification} for more details.
+ See the {{{http://adwiki.ad-group.adh/attachment/wiki/DevelopmentSite/AD/Client/WhiteBoard/DecoderCGIReview/decoder_specification.pdf?format=raw}Draft Decoder Control Specification}} for more details.
