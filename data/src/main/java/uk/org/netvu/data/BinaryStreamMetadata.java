@@ -12,7 +12,9 @@ final class BinaryStreamMetadata implements StreamMetadata
 
     public BinaryStreamMetadata( InputStream input ) throws IOException
     {      
-        switch (input.read())
+        int format = input.read();
+
+        switch (format)
         {
         case 0:
             frameType = FrameType.JPEG;
@@ -21,7 +23,7 @@ final class BinaryStreamMetadata implements StreamMetadata
             frameType = FrameType.JFIF;
             break;
         default:
-            frameType = FrameType.UNKNOWN;
+            throw new IllegalArgumentException("Format "+format+" not supported");
         }
 
         channel = input.read() + 1;

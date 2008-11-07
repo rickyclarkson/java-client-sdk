@@ -70,6 +70,7 @@ import java.net.URL
 import java.nio.ByteBuffer
 
 class ParseBinaryStreamsTest extends JUnit4(new Specification {
+/*
  "parsing binary streams containing JFIF" isSpecifiedBy {
   validlyParse("file:testdata/192-168-106-204-binary-jfif", DataType.BINARY)
  }
@@ -107,9 +108,9 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
 
  "parsing binary streams containing JPEG" isSpecifiedBy {
   validlyParse("file:testdata/192-168-106-204-binary-jpeg", DataType.BINARY)
- }
+ }*/
 
- "parsing binary streams containing JPEG" should {
+/* "parsing binary streams containing JPEG" should {
   "give at least two valid JPEG images" in {
    val url = new URL("file:testdata/192-168-106-204-binary-jpeg")
    val connection = url.openConnection
@@ -131,11 +132,11 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
       numInvalidFrames += 1
      
      buffer.position(0)
-/*     import java.io.FileOutputStream
+     import java.io.FileOutputStream
      val out = new FileOutputStream("/home/ricky/deleteme"+index+".jpg");
      index += 1
      out.getChannel.write(buffer);
-     out.close*/
+     out.close
     }
 
     def dataArrived(data: ByteBuffer, metadata: StreamMetadata) = ()
@@ -144,5 +145,5 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
    numValidFrames >= 2 must beTrue
    numInvalidFrames == 0 must beTrue
   }
- }
+ }*/
 })

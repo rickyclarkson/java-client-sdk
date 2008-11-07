@@ -40,15 +40,13 @@ public final class ImageData
             throw null;
 
         this.buffer = buffer;
+        version = readInt(VERSION);
+        if ((version & 0xDECADE00) != 0xDECADE00)
+            throw null;
     }
 
     private int readInt(int where)
     {
-        if (buffer == null)
-            throw null;
-        if (ByteOrder.BIG_ENDIAN == null)
-            throw null;
-
         buffer.order(ByteOrder.BIG_ENDIAN);
         return buffer.getInt(where);
     }
@@ -56,12 +54,12 @@ public final class ImageData
     public byte[] read(int length, int where)
     {
         byte[] result = new byte[length];
-        buffer.get(where -1);
+        buffer.position(where);
         buffer.get(result);
         return result;
     }
 
-    public int getVersion() { return readInt(VERSION); }
+    public final int version;
     public int getMode() { return readInt(MODE); }
     public int getCam() { return readInt(CAM); }
     public VideoFormat getVidFormat() { return VideoFormat.valueOf(readInt(VID_FORMAT)); }

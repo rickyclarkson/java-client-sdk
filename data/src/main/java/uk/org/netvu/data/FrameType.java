@@ -24,7 +24,6 @@ enum FrameType
         public void deliverTo( InputStream input, StreamHandler handler, StreamMetadata metadata ) throws IOException
         {
             ImageData imageData = new ImageData( IO.readIntoByteBuffer( input, ImageData.IMAGE_DATA_SIZE ) );
-            IO.readIntoByteBuffer( input, imageData.getStartOffset() );
             ByteBuffer restOfData = IO.readIntoByteBuffer( input, metadata.getLength() - imageData.getStartOffset() - ImageData.IMAGE_DATA_SIZE );
             handler.jfif( jpegToJfif( restOfData, metadata, imageData ) );
         }
@@ -91,7 +90,8 @@ enum FrameType
 
         byte[] EOI_MARKER = byteArrayLiteral(new int[]{ 0xFF, 0xD9 });
 
-        ByteBuffer comment = getComment(imageData, limit(source.duplicate(), imageData.getStartOffset()));
+        ByteBuffer comment = getComment(imageData, limit(source.duplicate(), imageData.getStartOffset() + 2));
+        System.out.println("comment.limit = " + comment.limit());
         byte[][] qTables = buildQTables(imageData.getQFactor());
         byte[] yqFactors = qTables[0];
         byte[] uvqFactors = qTables[1];
@@ -109,6 +109,7 @@ enum FrameType
                                                HUFFMAN_HEADER.length + SOS_HEADER.length + source.limit() - imageData.getStartOffset() + EOI_MARKER.length );
         jfif.put(JFIF_HEADER);
         jfif.put(SOC_HEADER);
+        System.out.println("The wrong length of the comment is " + comment.limit());
         jfif.putShort((short)(comment.limit() + 2));
         jfif.put(comment);
         jfif.put(YQ_HEADER);
@@ -123,6 +124,9 @@ enum FrameType
         source.position(0);
         jfif.put(EOI_MARKER);
         jfif.position(0);
+        if (jfif.limit() != jfif.capacity())
+            throw null;
+
         return new JFIFPacket( jfif, metadata );
     }
 
@@ -162,6 +166,10 @@ enum FrameType
 
     private static ByteBuffer getComment(ImageData imageData, ByteBuffer commentData)
     {
+        System.out.println("First bytes of comment: ");
+        for (int a=0;a<8;a++)
+            System.out.println((char)commentData.get());
+        commentData.position(0);
         String locale = nullTerminate(imageData.getLocale());
         String alarmText = nullTerminate(imageData.getAlarm());
         String title = nullTerminate(imageData.getTitle());
@@ -187,22 +195,22 @@ enum FrameType
 
     private static void println(ByteBuffer buffer, String string)
     {
-        buffer.put((string + '\n').getBytes(US_ASCII));
+        buffer.put((string + "\0\n").getBytes());
     }
-
-    private static final Charset US_ASCII = Charset.forName("US-ASCII");
 
     private static String nullTerminate(byte[] input)
     {
-        String result = new String(input, US_ASCII);
-        int indexOfNull = result.indexOf('\0');
-        return indexOfNull == -1 ? result : result.substring(0, indexOfNull);
+        String string = new String(input);
+        int indexOfNull = string.indexOf('\0');
+        return indexOfNull == -1 ? string : string.substring(0, indexOfNull);
     }
 
     private static int getCommentByteCount(int camera, int utcOffset, ByteBuffer commentData)
     {
         final int COMMENT_BYTE_TABLE_LENGTH = 9;
-        return COMMENT_BYTE_TABLE_LENGTH + widthOfInt(camera) + widthOfInt(utcOffset) + commentData.limit();
+        int result = COMMENT_BYTE_TABLE_LENGTH + widthOfInt(camera) + widthOfInt(utcOffset) + commentData.limit();
+        System.out.println("Comment byte count = "+result);
+        return result;
     }
 
     private static int widthOfInt(int i)
