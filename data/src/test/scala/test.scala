@@ -133,7 +133,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
      
      buffer.position(0)
      import java.io.FileOutputStream
-     val out = new FileOutputStream("/home/ricky/deleteme"+index+".jpg");
+     val out = new FileOutputStream("/home/ricky/deleteme"+index+".jpg"); 
      index += 1
      out.getChannel.write(buffer);
      out.close

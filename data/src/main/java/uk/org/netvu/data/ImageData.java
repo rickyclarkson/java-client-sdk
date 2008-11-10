@@ -42,7 +42,10 @@ public final class ImageData
         this.buffer = buffer;
         version = readInt(VERSION);
         if ((version & 0xDECADE00) != 0xDECADE00)
+        {
+            FrameType.debugByteBuffer(buffer);
             throw null;
+        }
     }
 
     private int readInt(int where)

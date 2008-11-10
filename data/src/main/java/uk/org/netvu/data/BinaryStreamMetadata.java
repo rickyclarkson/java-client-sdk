@@ -23,7 +23,7 @@ final class BinaryStreamMetadata implements StreamMetadata
             frameType = FrameType.JFIF;
             break;
         default:
-            throw new IllegalArgumentException("Format "+format+" not supported");
+            frameType = FrameType.UNKNOWN;
         }
 
         channel = input.read() + 1;

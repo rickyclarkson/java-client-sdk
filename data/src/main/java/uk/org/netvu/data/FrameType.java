@@ -32,12 +32,50 @@ enum FrameType
     {
         public void deliverTo( InputStream data, StreamHandler handler, StreamMetadata metadata ) throws IOException
         {
+            /*            System.out.println("Metadata length: "+metadata.getLength());
             ByteBuffer buffer = ByteBuffer.allocate( metadata.getLength() );
             Channels.newChannel( data ).read( buffer );
             buffer.position( 0 );
-            handler.dataArrived( IO.readIntoByteBuffer( data, metadata.getLength() ), metadata );
+            handler.dataArrived( IO.readIntoByteBuffer( data, metadata.getLength() ), metadata );*/
         }
     };
+
+    static void debugByteBuffer(ByteBuffer buffer)
+    {
+        int position = buffer.position();
+        buffer.position(0);
+        System.out.println("ByteBuffer with " + buffer.capacity() + " capacity, " + buffer.limit() + " limit, and " + position + " position");
+        for (int a = 0;a<buffer.limit();a++)
+        {
+            System.out.print(padWith0(Integer.toHexString(buffer.get() & 0xFF)));
+            if (a % 4 == 0)
+                System.out.print(" ");
+            if (a % 64 == 0)
+                System.out.println();
+        }
+
+        buffer.position(0);
+
+        for (int a = 0;a<buffer.limit();a++)
+        {
+            System.out.print(sanitise((char)(buffer.get() & 0xFF)));
+            System.out.print(" ");
+            if (a % 64 == 0)
+                System.out.println();
+        }
+
+        buffer.position(position);
+    }
+
+    private static String padWith0(String s)
+    {
+        return s.length() == 1 ? "0" + s : s;            
+    }
+
+    private static String sanitise(char c)
+    {
+        return Character.isLetterOrDigit(c) ? String.valueOf(c) : "\\" + (int)c;
+    }
 
     public abstract void deliverTo( InputStream data, StreamHandler handler, StreamMetadata metadata ) throws IOException;
 
@@ -90,7 +128,13 @@ enum FrameType
 
         byte[] EOI_MARKER = byteArrayLiteral(new int[]{ 0xFF, 0xD9 });
 
-        ByteBuffer comment = getComment(imageData, limit(source.duplicate(), imageData.getStartOffset() + 2));
+        System.out.println("imageData.getStartOffset = " + imageData.getStartOffset());
+        source.position(ImageData.IMAGE_DATA_SIZE);
+        ByteBuffer commentOriginal = source.slice();
+        commentOriginal.limit(imageData.getStartOffset());
+        debugByteBuffer(commentOriginal);
+        ByteBuffer comment = getComment(imageData, commentOriginal);
+        debugByteBuffer(comment);
         System.out.println("comment.limit = " + comment.limit());
         byte[][] qTables = buildQTables(imageData.getQFactor());
         byte[] yqFactors = qTables[0];
@@ -157,6 +201,7 @@ enum FrameType
 
     private static ByteBuffer limit(ByteBuffer buffer, int limit)
     {
+        System.out.println("Limiting to " + limit + " bytes");
         buffer.limit(limit);
         return buffer;
     }
@@ -166,10 +211,6 @@ enum FrameType
 
     private static ByteBuffer getComment(ImageData imageData, ByteBuffer commentData)
     {
-        System.out.println("First bytes of comment: ");
-        for (int a=0;a<8;a++)
-            System.out.println((char)commentData.get());
-        commentData.position(0);
         String locale = nullTerminate(imageData.getLocale());
         String alarmText = nullTerminate(imageData.getAlarm());
         String title = nullTerminate(imageData.getTitle());
@@ -202,11 +243,13 @@ enum FrameType
     {
         String string = new String(input);
         int indexOfNull = string.indexOf('\0');
+        System.out.println("Null terminated " + string + ", discarded " + string.substring(indexOfNull + 1));
         return indexOfNull == -1 ? string : string.substring(0, indexOfNull);
     }
 
     private static int getCommentByteCount(int camera, int utcOffset, ByteBuffer commentData)
     {
+        System.out.println("commentData.limit is " + commentData.limit());
         final int COMMENT_BYTE_TABLE_LENGTH = 9;
         int result = COMMENT_BYTE_TABLE_LENGTH + widthOfInt(camera) + widthOfInt(utcOffset) + commentData.limit();
         System.out.println("Comment byte count = "+result);
@@ -215,6 +258,6 @@ enum FrameType
 
     private static int widthOfInt(int i)
     {
-        return String.valueOf(i).length();
+        return String.valueOf(i).getBytes().length;
     }
 }

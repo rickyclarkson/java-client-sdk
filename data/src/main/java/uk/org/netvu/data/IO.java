@@ -70,6 +70,7 @@ final class IO
 
     public static ByteBuffer readIntoByteBuffer( InputStream input, int bytes ) throws IOException
     {
+        System.out.println("Allocating "+bytes+" bytes");
         ByteBuffer buffer = ByteBuffer.allocate( bytes );
         Channels.newChannel( input ).read( buffer );
         buffer.position( 0 );
