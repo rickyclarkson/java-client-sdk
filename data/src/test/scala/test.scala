@@ -110,9 +110,10 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   validlyParse("file:testdata/192-168-106-204-binary-jpeg", DataType.BINARY)
  }*/
 
-/* "parsing binary streams containing JPEG" should {
+ /*"parsing binary streams containing JPEG" should {
   "give at least two valid JPEG images" in {
    val url = new URL("file:testdata/192-168-106-204-binary-jpeg")
+//   val url = new URL("http://192.168.106.204/display_pic.cgi?txmode=binary&format=jpeg")
    val connection = url.openConnection
    var numValidFrames = 0
    var numInvalidFrames = 0
@@ -133,7 +134,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
      
      buffer.position(0)
      import java.io.FileOutputStream
-     val out = new FileOutputStream("/home/ricky/deleteme"+index+".jpg"); 
+     val out = new FileOutputStream("/home/user/deleteme"+index+".jpg"); 
      index += 1
      out.getChannel.write(buffer);
      out.close

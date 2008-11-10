@@ -48,9 +48,9 @@ enum FrameType
         for (int a = 0;a<buffer.limit();a++)
         {
             System.out.print(padWith0(Integer.toHexString(buffer.get() & 0xFF)));
-            if (a % 4 == 0)
+            if (a % 2 == 0 && a != 0)
                 System.out.print(" ");
-            if (a % 64 == 0)
+            if (a % 32 == 0 && a != 0)
                 System.out.println();
         }
 
