@@ -24,7 +24,9 @@ enum FrameType
         public void deliverTo( InputStream input, StreamHandler handler, StreamMetadata metadata ) throws IOException
         {
             ImageData imageData = new ImageData( IO.readIntoByteBuffer( input, ImageData.IMAGE_DATA_SIZE ) );
-            ByteBuffer restOfData = IO.readIntoByteBuffer( input, metadata.getLength() - imageData.getStartOffset() - ImageData.IMAGE_DATA_SIZE );
+            ByteBuffer restOfData = IO.readIntoByteBuffer( input, metadata.getLength() - ImageData.IMAGE_DATA_SIZE );
+            restOfData.position(restOfData.limit() - 1);
+            restOfData.position(0);
             handler.jfif( jpegToJfif( restOfData, metadata, imageData ) );
         }
     },
@@ -32,40 +34,8 @@ enum FrameType
     {
         public void deliverTo( InputStream data, StreamHandler handler, StreamMetadata metadata ) throws IOException
         {
-            /*            System.out.println("Metadata length: "+metadata.getLength());
-            ByteBuffer buffer = ByteBuffer.allocate( metadata.getLength() );
-            Channels.newChannel( data ).read( buffer );
-            buffer.position( 0 );
-            handler.dataArrived( IO.readIntoByteBuffer( data, metadata.getLength() ), metadata );*/
         }
     };
-
-    static void debugByteBuffer(ByteBuffer buffer)
-    {
-        int position = buffer.position();
-        buffer.position(0);
-        System.out.println("ByteBuffer with " + buffer.capacity() + " capacity, " + buffer.limit() + " limit, and " + position + " position");
-        for (int a = 0;a<buffer.limit();a++)
-        {
-            System.out.print(padWith0(Integer.toHexString(buffer.get() & 0xFF)));
-            if (a % 2 == 0 && a != 0)
-                System.out.print(" ");
-            if (a % 32 == 0 && a != 0)
-                System.out.println();
-        }
-
-        buffer.position(0);
-
-        for (int a = 0;a<buffer.limit();a++)
-        {
-            System.out.print(sanitise((char)(buffer.get() & 0xFF)));
-            System.out.print(" ");
-            if (a % 64 == 0)
-                System.out.println();
-        }
-
-        buffer.position(position);
-    }
 
     private static String padWith0(String s)
     {
@@ -128,14 +98,9 @@ enum FrameType
 
         byte[] EOI_MARKER = byteArrayLiteral(new int[]{ 0xFF, 0xD9 });
 
-        System.out.println("imageData.getStartOffset = " + imageData.getStartOffset());
-        source.position(ImageData.IMAGE_DATA_SIZE);
-        ByteBuffer commentOriginal = source.slice();
+        ByteBuffer commentOriginal = source.duplicate();
         commentOriginal.limit(imageData.getStartOffset());
-        debugByteBuffer(commentOriginal);
         ByteBuffer comment = getComment(imageData, commentOriginal);
-        debugByteBuffer(comment);
-        System.out.println("comment.limit = " + comment.limit());
         byte[][] qTables = buildQTables(imageData.getQFactor());
         byte[] yqFactors = qTables[0];
         byte[] uvqFactors = qTables[1];
@@ -153,7 +118,6 @@ enum FrameType
                                                HUFFMAN_HEADER.length + SOS_HEADER.length + source.limit() - imageData.getStartOffset() + EOI_MARKER.length );
         jfif.put(JFIF_HEADER);
         jfif.put(SOC_HEADER);
-        System.out.println("The wrong length of the comment is " + comment.limit());
         jfif.putShort((short)(comment.limit() + 2));
         jfif.put(comment);
         jfif.put(YQ_HEADER);
@@ -164,12 +128,11 @@ enum FrameType
         jfif.put(HUFFMAN_HEADER);
         jfif.put(SOS_HEADER);
         source.position(imageData.getStartOffset());
-        jfif.put(source.slice());
-        source.position(0);
+        jfif.put(source);
         jfif.put(EOI_MARKER);
         jfif.position(0);
-        if (jfif.limit() != jfif.capacity())
-            throw null;
+        //        if (source.limit() != imageData.getStartOffset() + imageData.getSize())
+        //  throw null;
 
         return new JFIFPacket( jfif, metadata );
     }
@@ -201,7 +164,6 @@ enum FrameType
 
     private static ByteBuffer limit(ByteBuffer buffer, int limit)
     {
-        System.out.println("Limiting to " + limit + " bytes");
         buffer.limit(limit);
         return buffer;
     }
@@ -211,10 +173,10 @@ enum FrameType
 
     private static ByteBuffer getComment(ImageData imageData, ByteBuffer commentData)
     {
-        String locale = nullTerminate(imageData.getLocale());
-        String alarmText = nullTerminate(imageData.getAlarm());
+        String localeNotNullTerminated = new String(imageData.getLocale());
+        String alarmTextNotNullTerminated = new String(imageData.getAlarm());
         String title = nullTerminate(imageData.getTitle());
-        int bufferCapacity = getCommentByteCount(imageData.getCam(), imageData.getUtcOffset(), commentData) + title.length() + alarmText.length() + "dd/MM/yyyy".length() + "HH:mm:ss".length() + 256;
+        int bufferCapacity = getCommentByteCount(imageData.getCam(), imageData.getUtcOffset(), commentData) + title.length() + alarmTextNotNullTerminated.length() + "dd/MM/yyyy".length() + "HH:mm:ss".length() + 256;
         ByteBuffer buffer = ByteBuffer.allocate(bufferCapacity);
         println(buffer, "Version: 00.03");
         println(buffer, "Number: " + imageData.getCam());
@@ -223,11 +185,11 @@ enum FrameType
         println(buffer, "Date: " + dateFormatter.format(date));
         println(buffer, "Time: " + timeFormatter.format(date));
         println(buffer, "MSec: " + imageData.getMilliseconds() % 1000);
-        println(buffer, "Locale: " + locale);
+        println(buffer, "Locale: " + nullTerminate(localeNotNullTerminated));
         println(buffer, "UTCoffset: " + imageData.getUtcOffset());
-        if (alarmText.length() > 0)
+        if (nullTerminate(alarmTextNotNullTerminated).length() > 0)
         {
-            println(buffer, "Alarm-text: " + alarmText);
+            println(buffer, "Alarm-text: " + nullTerminate(alarmTextNotNullTerminated));
         }
         buffer.put(commentData);
         buffer.position(0);
@@ -241,18 +203,19 @@ enum FrameType
 
     private static String nullTerminate(byte[] input)
     {
-        String string = new String(input);
-        int indexOfNull = string.indexOf('\0');
-        System.out.println("Null terminated " + string + ", discarded " + string.substring(indexOfNull + 1));
-        return indexOfNull == -1 ? string : string.substring(0, indexOfNull);
+        return nullTerminate(new String(input));
+    }
+
+    private static String nullTerminate(String input)
+    {
+        int indexOfNull = input.indexOf('\0');
+        return indexOfNull == -1 ? input : input.substring(0, indexOfNull);
     }
 
     private static int getCommentByteCount(int camera, int utcOffset, ByteBuffer commentData)
     {
-        System.out.println("commentData.limit is " + commentData.limit());
         final int COMMENT_BYTE_TABLE_LENGTH = 9;
         int result = COMMENT_BYTE_TABLE_LENGTH + widthOfInt(camera) + widthOfInt(utcOffset) + commentData.limit();
-        System.out.println("Comment byte count = "+result);
         return result;
     }
 

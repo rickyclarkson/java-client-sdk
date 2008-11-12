@@ -7,7 +7,7 @@ public final class ImageData
 {
     private static final int INT = 4;
     private static final int TIME_SIZE = 4;
-    private static final int TITLE_LENGTH = 30;
+    private static final int TITLE_LENGTH = 31;
     private static final int MAX_NAME_LENGTH = 30;
 
     private static final int VERSION = 0;
@@ -25,8 +25,8 @@ public final class ImageData
     private static final int MILLISECONDS = SESSION_TIME + TIME_SIZE;
     private static final int RES = MILLISECONDS + INT;
     private static final int TITLE = RES + 4;
-    private static final int ALARM = TITLE + TITLE_LENGTH + 1;
-    private static final int FORMAT = ALARM + TITLE_LENGTH + 1;
+    private static final int ALARM = TITLE + TITLE_LENGTH;
+    private static final int FORMAT = ALARM + TITLE_LENGTH;
     private static final int LOCALE = FORMAT + Picture.SIZE;
     private static final int UTC_OFFSET = LOCALE + MAX_NAME_LENGTH;
     private static final int ALM_BITMASK = UTC_OFFSET + INT;
@@ -43,7 +43,6 @@ public final class ImageData
         version = readInt(VERSION);
         if ((version & 0xDECADE00) != 0xDECADE00)
         {
-            FrameType.debugByteBuffer(buffer);
             throw null;
         }
     }
@@ -74,12 +73,12 @@ public final class ImageData
     public int getAlmBitmaskHi() { return readInt(ALM_BITMASK_HI); }
     public int getStatus() { return readInt(STATUS); }
     public int getSessionTime() { return readInt(SESSION_TIME); }
-    public int getMilliseconds() { return readInt(MILLISECONDS); }
+    public int getMilliseconds() { return (int)((0xFFFFFFFFL & readInt(MILLISECONDS)) % 1000L); }
     public byte[] getRes() { return read(4, RES); }
-    public byte[] getTitle() { return read(TITLE_LENGTH + 1, TITLE); }
-    public byte[] getAlarm() { return read(TITLE_LENGTH + 1, ALARM); }
+    public byte[] getTitle() { return read(TITLE_LENGTH, TITLE); }
+    public byte[] getAlarm() { return read(TITLE_LENGTH, ALARM); }
     public Picture getFormat() { return new Picture( buffer, FORMAT ); }
-    public byte[] getLocale() { return read(MAX_NAME_LENGTH + 1, LOCALE); }
+    public byte[] getLocale() { return read(MAX_NAME_LENGTH, LOCALE); }
     public int getUtcOffset() { return readInt(UTC_OFFSET); }
     public int getAlmBitmask() { return readInt(ALM_BITMASK); }
 }
