@@ -5,14 +5,14 @@ import java.nio.channels.Channels;
 import java.io.InputStream;
 import java.io.IOException;
 
-public enum DataType
+public enum StreamType
 {
     BINARY(new BinaryParser()),
     MIME(new MimeParser());
     
     final Parser parser;
 
-    DataType(Parser parser)
+    StreamType(Parser parser)
     {
         this.parser = parser;
     }

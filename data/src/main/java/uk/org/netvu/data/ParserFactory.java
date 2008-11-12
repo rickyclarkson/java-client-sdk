@@ -2,8 +2,8 @@ package uk.org.netvu.data;
 
 public final class ParserFactory
 {
-    public static Parser parserFor(DataType dataType)
+    public static Parser parserFor(StreamType streamType)
     {
-        return dataType.parser;
+        return streamType.parser;
     }
 }

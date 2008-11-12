@@ -36,7 +36,9 @@ class MimeParser implements Parser
     private ByteBuffer jpegParse( final InputStream input, final int length ) throws IOException
     {
         ByteBuffer buffer = ByteBuffer.allocate( length );
-        Channels.newChannel( input ).read(buffer);
+        int read = Channels.newChannel( input ).read(buffer);
+        if (read != length)
+            throw new EOFException();
         buffer.position(0);
         return buffer;
     }

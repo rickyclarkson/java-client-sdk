@@ -70,30 +70,34 @@ import java.net.URL
 import java.nio.ByteBuffer
 
 class ParseBinaryStreamsTest extends JUnit4(new Specification {
- "parsing binary streams containing JFIF" isSpecifiedBy {
-  validlyParse("file:testdata/192-168-106-204-binary-jfif", DataType.BINARY)
- }
+/* "parsing binary streams containing JFIF" isSpecifiedBy {
+  validlyParse("file:testdata/192-168-106-204-binary-jfif", StreamType.BINARY)
+ }*/
 
  "parsing mime streams containing JFIF" isSpecifiedBy {
-  validlyParse("file:testdata/192-168-106-204-mime-jfif", DataType.MIME)
+  validlyParse("file:testdata/192-168-106-204-mime-jfif", StreamType.MIME)
  }
 
- def validlyParse(filename: String, dataType: DataType) = new Specification {
-  "reading a " + dataType.toString.toLowerCase( java.util.Locale.ENGLISH ) + " stream containing JFIFs" should {
+ def validlyParse(filename: String, streamType: StreamType) = new Specification {
+  "reading a " + streamType.toString.toLowerCase( java.util.Locale.ENGLISH ) + " stream containing JFIFs" should {
    "parse out at least two valid JFIF images" in {
     val url = new URL(filename)
     val connection = url.openConnection
     var numValidFrames = 0
     var numInvalidFrames = 0
     
-    ParserFactory parserFor dataType parse (connection.getInputStream, new StreamHandler {
+    ParserFactory parserFor streamType parse (connection.getInputStream, new StreamHandler {
      def jfif(packet: JFIFPacket) = {
       val buffer = packet.byteBuffer
       def next = buffer.get & 0xFF
-      if (next == 0xFF && next == 0xD8 && next == 0xFF)
-       numValidFrames += 1
-      else
-       numInvalidFrames += 1
+      val first = (next, next)
+      buffer.position(buffer.limit - 2)
+      val last = (next, next)
+   
+      (first, last) match {
+       case ((0xFF, 0xD8), (0xFF, 0xD9)) => numValidFrames += 1
+       case _ => numInvalidFrames += 1
+      }
      }
 
      def dataArrived(byteBuffer: ByteBuffer, metadata: StreamMetadata) = ()
@@ -105,35 +109,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   }
  }
 
- "parsing binary streams containing JPEG" isSpecifiedBy {
-  validlyParse("file:testdata/192-168-106-204-binary-jpeg", DataType.BINARY)
- }
-
- "parsing binary streams containing JPEG" should {
-  "give at least two valid JPEG images" in {
-   val url = new URL("file:testdata/192-168-106-204-binary-jpeg")
-   val connection = url.openConnection
-   var numValidFrames = 0
-   var numInvalidFrames = 0
-
-   ParserFactory parserFor DataType.BINARY parse (connection.getInputStream, new StreamHandler {
-    def jfif(packet: JFIFPacket) = {
-     val buffer = packet.byteBuffer
-     def next = buffer.get & 0xFF
-     val (a, b, c) = (next, next, next)
-     buffer.position(buffer.limit - 2)
-     val (y, z) = (next, next)
-     if (a == 0xFF && b == 0xD8 && c == 0xFF && y == 0xFF && z == 0xD9)
-      numValidFrames += 1
-     else
-      numInvalidFrames += 1
-    }
-
-    def dataArrived(data: ByteBuffer, metadata: StreamMetadata) = ()
-   })
-
-   numValidFrames >= 2 must beTrue
-   numInvalidFrames == 0 must beTrue
-  }
- }
+/* "parsing binary streams containing JPEG" isSpecifiedBy {
+  validlyParse("file:testdata/192-168-106-204-binary-jpeg", StreamType.BINARY)
+ }*/
 })

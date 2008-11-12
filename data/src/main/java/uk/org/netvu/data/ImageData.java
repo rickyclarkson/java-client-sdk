@@ -41,6 +41,26 @@ public final class ImageData
 
         this.buffer = buffer;
         version = readInt(VERSION);
+        mode = readInt(MODE);
+        camera = readInt(CAM);
+        videoFormat = VideoFormat.valueOf(readInt(VID_FORMAT));
+        startOffset = readInt(START_OFFSET);
+        size = readInt(SIZE);
+        maxSize = readInt(MAX_SIZE);
+        targetSize = readInt(TARGET_SIZE);
+        qFactor = readInt(Q_FACTOR);
+        alarmBitmaskHigh = readInt(ALM_BITMASK_HI);
+        status = readInt(STATUS);
+        sessionTime = readInt(SESSION_TIME);
+        milliseconds = (int)((0xFFFFFFFFL & readInt(MILLISECONDS)) % 1000L);
+        res = read(4, RES);
+        title = nullTerminate(read(TITLE_LENGTH, TITLE));
+        alarm = nullTerminate(read(TITLE_LENGTH, ALARM));
+        format = new Picture(buffer, FORMAT);
+        locale = nullTerminate(read(MAX_NAME_LENGTH, LOCALE));
+        utcOffset = readInt(UTC_OFFSET);
+        alarmBitmask = readInt(ALM_BITMASK);
+
         if ((version & 0xDECADE00) != 0xDECADE00)
         {
             throw null;
@@ -62,23 +82,35 @@ public final class ImageData
     }
 
     public final int version;
-    public int getMode() { return readInt(MODE); }
-    public int getCam() { return readInt(CAM); }
-    public VideoFormat getVidFormat() { return VideoFormat.valueOf(readInt(VID_FORMAT)); }
-    public int getStartOffset() { return readInt(START_OFFSET); }
-    public int getSize() { return readInt(SIZE); }
-    public int getMaxSize() { return readInt(MAX_SIZE); }
-    public int getTargetSize() { return readInt(TARGET_SIZE); }
-    public int getQFactor() { return readInt(Q_FACTOR); }
-    public int getAlmBitmaskHi() { return readInt(ALM_BITMASK_HI); }
-    public int getStatus() { return readInt(STATUS); }
-    public int getSessionTime() { return readInt(SESSION_TIME); }
-    public int getMilliseconds() { return (int)((0xFFFFFFFFL & readInt(MILLISECONDS)) % 1000L); }
-    public byte[] getRes() { return read(4, RES); }
-    public byte[] getTitle() { return read(TITLE_LENGTH, TITLE); }
-    public byte[] getAlarm() { return read(TITLE_LENGTH, ALARM); }
-    public Picture getFormat() { return new Picture( buffer, FORMAT ); }
-    public byte[] getLocale() { return read(MAX_NAME_LENGTH, LOCALE); }
-    public int getUtcOffset() { return readInt(UTC_OFFSET); }
-    public int getAlmBitmask() { return readInt(ALM_BITMASK); }
+    public final int mode;
+    public final int camera;
+    public final VideoFormat videoFormat;
+    public final int startOffset;
+    public final int size;
+    public final int maxSize;
+    public final int targetSize;
+    public final int qFactor;
+    public final int alarmBitmaskHigh;
+    public final int status;
+    public final int sessionTime;
+    public final int milliseconds;
+    public final byte[] res;
+    public final String title;
+    public final String alarm;
+    public final Picture format;
+    public final String locale;
+    public final int utcOffset;
+    public final int alarmBitmask;
+
+    private static String nullTerminate(byte[] input)
+    {
+        return nullTerminate(new String(input));
+    }
+
+
+    private static String nullTerminate(String input)
+    {
+        int indexOfNull = input.indexOf('\0');
+        return indexOfNull == -1 ? input : input.substring(0, indexOfNull);
+    }
 }
