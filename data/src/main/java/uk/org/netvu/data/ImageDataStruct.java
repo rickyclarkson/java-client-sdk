@@ -3,7 +3,7 @@ package uk.org.netvu.data;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public final class ImageData
+public final class ImageDataStruct
 {
     private static final int INT = 4;
     private static final int TIME_SIZE = 4;
@@ -30,11 +30,12 @@ public final class ImageData
     private static final int LOCALE = FORMAT + Picture.SIZE;
     private static final int UTC_OFFSET = LOCALE + MAX_NAME_LENGTH;
     private static final int ALM_BITMASK = UTC_OFFSET + INT;
-    public static final int IMAGE_DATA_SIZE = ALM_BITMASK + INT;
+
+    public static final int IMAGE_DATA_STRUCT_SIZE = ALM_BITMASK + INT;
 
     private final ByteBuffer buffer;
 
-    public ImageData(ByteBuffer buffer)
+    public ImageDataStruct(ByteBuffer buffer)
     {
         if (buffer == null)
             throw null;

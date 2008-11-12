@@ -11,7 +11,7 @@ final class BinaryStreamMetadata implements StreamMetadata
     private final int length;
 
     public BinaryStreamMetadata( InputStream input ) throws IOException
-    {      
+    {
         int format = input.read();
 
         switch (format)
