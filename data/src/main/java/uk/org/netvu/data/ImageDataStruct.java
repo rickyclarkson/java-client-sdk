@@ -64,7 +64,7 @@ public final class ImageDataStruct
 
         if ((version & 0xDECADE00) != 0xDECADE00)
         {
-            throw null;
+            throw new IllegalArgumentException("version is "+Integer.toHexString(version));
         }
     }
 

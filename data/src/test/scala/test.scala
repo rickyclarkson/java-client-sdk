@@ -70,9 +70,9 @@ import java.net.URL
 import java.nio.ByteBuffer
 
 class ParseBinaryStreamsTest extends JUnit4(new Specification {
-/* "parsing binary streams containing JFIF" isSpecifiedBy {
+ "parsing binary streams containing JFIF" isSpecifiedBy {
   validlyParse("file:testdata/192-168-106-204-binary-jfif", StreamType.BINARY)
- }*/
+ }
 
  "parsing mime streams containing JFIF" isSpecifiedBy {
   validlyParse("file:testdata/192-168-106-204-mime-jfif", StreamType.MIME)
@@ -103,13 +103,21 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
      def dataArrived(byteBuffer: ByteBuffer, metadata: StreamMetadata) = ()
     })
 
-    numValidFrames >= 2 must beTrue
     numInvalidFrames == 0 must beTrue
+    numValidFrames >= 2 must beTrue
    }
   }
  }
 
-/* "parsing binary streams containing JPEG" isSpecifiedBy {
+ "parsing binary streams containing JPEG" isSpecifiedBy {
   validlyParse("file:testdata/192-168-106-204-binary-jpeg", StreamType.BINARY)
- }*/
+ }
+
+ "parsing minimal streams containing JPEG" isSpecifiedBy {
+  validlyParse("file:testdata/192-168-106-204-minimal-jpeg", StreamType.MINIMAL)
+ }
+
+ "parsing minimal streams containing JFIF" isSpecifiedBy {
+  validlyParse("file:testdata/192-168-106-204-minimal-jfif", StreamType.MINIMAL)
+ }
 })

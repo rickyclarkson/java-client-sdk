@@ -8,7 +8,8 @@ import java.io.IOException;
 public enum StreamType
 {
     BINARY(new BinaryParser()),
-    MIME(new MimeParser());
+    MIME(new MimeParser()),
+    MINIMAL(new MinimalParser());
     
     final Parser parser;
 
