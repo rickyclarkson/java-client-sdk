@@ -23,6 +23,6 @@ public enum VideoFormat
                         if (format.index == i)
                             return format;
                     }
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException(Integer.toHexString(i)+" is not a supported video format");
             }
 }

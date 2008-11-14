@@ -101,6 +101,8 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
      }
 
      def dataArrived(byteBuffer: ByteBuffer, metadata: StreamMetadata) = ()
+     def mpeg4(packet: MPEG4Packet) = ()
+     def info(byteBuffer: ByteBuffer) = ()
     })
 
     numInvalidFrames == 0 must beTrue
@@ -119,5 +121,31 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
 
  "parsing minimal streams containing JFIF" isSpecifiedBy {
   validlyParse("file:testdata/192-168-106-204-minimal-jfif", StreamType.MINIMAL)
+ }
+
+ "parsing an MPEG4 stream" should {
+  "fail miserably" in {
+   val url = new URL("file:testdata/192-168-106-206-binary-mp4")
+   val connection = url.openConnection
+   var numValidFrames = 0
+   var numInvalidFrames = 0
+   
+   ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
+    def jfif(packet: JFIFPacket) = ()
+    def dataArrived(buffer: ByteBuffer, metadata: StreamMetadata) = {
+     buffer.position(buffer.limit - 1)
+     println("unknown data, last byte = " + (buffer.get & 0xFF).toHexString)
+    }
+    def mpeg4(packet: MPEG4Packet) = {
+     numValidFrames += 1
+    }
+    def info(buffer: ByteBuffer) = {
+     buffer.position(buffer.limit() - 1);
+     println("last byte = " + (buffer.get & 0xFF).toHexString)
+    }
+   })
+   
+   numValidFrames >= 2 must beTrue                                                       
+  }
  }
 })

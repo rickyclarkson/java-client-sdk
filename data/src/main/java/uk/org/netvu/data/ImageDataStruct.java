@@ -42,6 +42,12 @@ public final class ImageDataStruct
 
         this.buffer = buffer;
         version = readInt(VERSION);
+
+        if ((version & 0xDECADE00) != 0xDECADE00)
+        {
+            throw new IllegalArgumentException("version is "+Integer.toHexString(version));
+        }
+
         mode = readInt(MODE);
         camera = readInt(CAM);
         videoFormat = VideoFormat.valueOf(readInt(VID_FORMAT));
@@ -61,11 +67,6 @@ public final class ImageDataStruct
         locale = nullTerminate(read(MAX_NAME_LENGTH, LOCALE));
         utcOffset = readInt(UTC_OFFSET);
         alarmBitmask = readInt(ALM_BITMASK);
-
-        if ((version & 0xDECADE00) != 0xDECADE00)
-        {
-            throw new IllegalArgumentException("version is "+Integer.toHexString(version));
-        }
     }
 
     private int readInt(int where)

@@ -12,7 +12,7 @@ final class BinaryStreamMetadata implements StreamMetadata
 
     public BinaryStreamMetadata( InputStream input ) throws IOException
     {
-        int format = input.read();
+        int format = input.read() & 0xFF;
 
         switch (format)
         {
@@ -21,6 +21,13 @@ final class BinaryStreamMetadata implements StreamMetadata
             break;
         case 1:
             frameType = FrameType.JFIF;
+            break;
+        case 2:
+        case 3:
+            frameType = FrameType.MPEG4;
+            break;
+        case 9:
+            frameType = FrameType.INFO;
             break;
         default:
             frameType = FrameType.UNKNOWN;

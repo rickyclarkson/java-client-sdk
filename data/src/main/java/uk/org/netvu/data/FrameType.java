@@ -28,10 +28,29 @@ enum FrameType
             handler.jfif( JFIFHeader.jpegToJfif( restOfData, metadata, imageDataStruct ) );
         }
     },
+    MPEG4
+    {
+        public void deliverTo( InputStream input, StreamHandler handler, StreamMetadata metadata) throws IOException
+        {
+            ImageDataStruct imageDataStruct = new ImageDataStruct( IO.readIntoByteBuffer( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE));
+            ByteBuffer restOfData = IO.readIntoByteBuffer( input, metadata.getLength() - ImageDataStruct.IMAGE_DATA_STRUCT_SIZE);
+            handler.mpeg4(new MPEG4Packet(restOfData, metadata, imageDataStruct));
+        }
+    },
+    INFO
+    {
+        public void deliverTo( InputStream data, StreamHandler handler, StreamMetadata metadata) throws IOException
+        {
+            System.out.println("Reading " + metadata.getLength()+" bytes");
+            handler.info( IO.readIntoByteBuffer(data, metadata.getLength()) );
+        }
+    },
     UNKNOWN
     {
         public void deliverTo( InputStream data, StreamHandler handler, StreamMetadata metadata ) throws IOException
         {
+            System.out.println("Reading " + metadata.getLength() + " bytes");
+            handler.dataArrived( IO.readIntoByteBuffer(data, metadata.getLength()), metadata);
         }
     };
 
