@@ -4,6 +4,7 @@ import _root_.org.{scalacheck, specs}
 import specs.runner.JUnit4
 import specs.Specification
 import java.io.FileInputStream
+import java.nio.BufferUnderflowException
 
 object Support {
  def asInputStream(strings: List[String]) = {
@@ -134,18 +135,29 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
 
    ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
     def jfif(packet: JFIFPacket) = ()
-    def dataArrived(buffer: ByteBuffer, metadata: StreamMetadata) = {
-     buffer.position(buffer.limit - 1)
-     println("unknown data, last byte = " + (buffer.get & 0xFF).toHexString)
-    }
+    def dataArrived(buffer: ByteBuffer, metadata: StreamMetadata) = ()
     def mpeg4(packet: MPEG4Packet) = {
-     numValidFrames += 1
+     val isIFrame: Boolean = {
+      var foundVOP = false
+      try {
+       while (!foundVOP) {
+        val anInt = packet.data.getInt
+        if (anInt == 0x000001B6) {
+         foundVOP = true
+        }
+       }
+       packet.data.get
+       packet.data.getShort
+       ((packet.data.get >> 6) & 0xFF) == 0
+      } catch { case e: BufferUnderflowException => false }
+     }
+
+     if (isIFrame)
+      numValidFrames += 1
+
      index += 1
     }
-    def info(buffer: ByteBuffer) = {
-     buffer.position(buffer.limit() - 1);
-     println("last byte = " + (buffer.get & 0xFF).toHexString)
-    }
+    def info(buffer: ByteBuffer) = buffer.position(buffer.limit() - 1)
    })
    
    numValidFrames >= 2 must beTrue                                                       
