@@ -3,6 +3,7 @@ package uk.org.netvu.data
 import _root_.org.{scalacheck, specs}
 import specs.runner.JUnit4
 import specs.Specification
+import java.io.FileInputStream
 
 object Support {
  def asInputStream(strings: List[String]) = {
@@ -124,12 +125,13 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
  }
 
  "parsing an MPEG4 stream" should {
-  "fail miserably" in {
+  "produce at least two valid MPEG frames" in {
    val url = new URL("file:testdata/192-168-106-206-binary-mp4")
    val connection = url.openConnection
    var numValidFrames = 0
    var numInvalidFrames = 0
-   
+   var index = 0
+
    ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
     def jfif(packet: JFIFPacket) = ()
     def dataArrived(buffer: ByteBuffer, metadata: StreamMetadata) = {
@@ -138,6 +140,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     }
     def mpeg4(packet: MPEG4Packet) = {
      numValidFrames += 1
+     index += 1
     }
     def info(buffer: ByteBuffer) = {
      buffer.position(buffer.limit() - 1);
@@ -148,4 +151,39 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
    numValidFrames >= 2 must beTrue                                                       
   }
  }
+
+ "parsing a binary stream containing JPEGs" should {
+  "produce identical JFIFs to GenericVideoHeader" in {
+   val url = new URL("file:testdata/192-168-106-204-binary-jpeg")
+   val connection = url.openConnection
+   var index = 0
+   var success = 0
+   var fail = 0  
+
+   ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
+    def jfif(packet: JFIFPacket) = {
+     if (diff(packet.byteBuffer, mapFile("testdata/expected-192-168-106-204-binary-jpeg/" + index + ".jpg")))
+      fail += 1
+     else
+      success += 1
+     index += 1
+    }
+
+    def dataArrived(buffer: ByteBuffer, metadata: StreamMetadata) = ()
+    def info(buffer: ByteBuffer) = ()
+    def mpeg4(packet: MPEG4Packet) = ()
+   })
+
+   fail mustEqual 0
+   success mustEqual 30
+  }
+ }
+
+ def diff(one: ByteBuffer, two: ByteBuffer): Boolean =
+  if (one.position<one.limit) one.get == two.get && diff(one, two) else two.position == two.limit
+
+ import java.nio.channels.FileChannel.MapMode
+ import java.io.File
+ def mapFile(name: String) = new FileInputStream(name).getChannel.map(MapMode.READ_ONLY, 0, new File(name).length())
 })
+
