@@ -25,6 +25,8 @@ final class MinimalStreamMetadata implements StreamMetadata
             frameType = FrameType.UNKNOWN;
         }
 
+        System.out.println("MinimalStreamMetadata skips over some useful data");
+
         input.read();
         input.read();
         input.read();

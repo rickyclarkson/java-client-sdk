@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import static uk.org.netvu.data.ImageDataStruct.IMAGE_DATA_STRUCT_SIZE;
 
 enum FrameType
 {
@@ -23,19 +24,19 @@ enum FrameType
     {
         public void deliverTo( InputStream input, StreamHandler handler, StreamMetadata metadata ) throws IOException
         {
-            ImageDataStruct imageDataStruct = new ImageDataStruct( IO.readIntoByteBuffer( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE ) );
-            ByteBuffer restOfData = IO.readIntoByteBuffer( input, metadata.getLength() - ImageDataStruct.IMAGE_DATA_STRUCT_SIZE );
-            handler.jfif( JFIFHeader.jpegToJfif( restOfData, metadata, imageDataStruct ) );
+            ImageDataStruct imageHeader = new ImageDataStruct( IO.readIntoByteBuffer( input, IMAGE_DATA_STRUCT_SIZE ) );
+            ByteBuffer restOfData = IO.readIntoByteBuffer( input, metadata.getLength() - IMAGE_DATA_STRUCT_SIZE );
+            handler.jfif( JFIFHeader.jpegToJfif( restOfData, metadata, imageHeader ) );
         }
     },
     MPEG4
     {
         public void deliverTo( InputStream input, StreamHandler handler, StreamMetadata metadata) throws IOException
         {
-            ImageDataStruct imageDataStruct = new ImageDataStruct( IO.readIntoByteBuffer( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE));
-            IO.readIntoByteBuffer( input, imageDataStruct.startOffset );
-            ByteBuffer restOfData = IO.readIntoByteBuffer( input, metadata.getLength() - ImageDataStruct.IMAGE_DATA_STRUCT_SIZE - imageDataStruct.startOffset);
-            handler.mpeg4(new MPEG4Packet(restOfData, metadata, imageDataStruct));
+            ImageDataStruct imageHeader = new ImageDataStruct( IO.readIntoByteBuffer( input, IMAGE_DATA_STRUCT_SIZE));
+            ByteBuffer commentData = IO.readIntoByteBuffer( input, imageHeader.startOffset );
+            ByteBuffer restOfData = IO.readIntoByteBuffer( input, metadata.getLength() - ImageDataStruct.IMAGE_DATA_STRUCT_SIZE - imageHeader.startOffset);
+            handler.mpeg4(new MPEG4Packet(restOfData, metadata, imageHeader, commentData));
         }
     },
     INFO

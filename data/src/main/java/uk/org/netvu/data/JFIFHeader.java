@@ -88,8 +88,11 @@ final class JFIFHeader
                                             0x11, 0x01, 0x03, 0x11, 0x01 }));
         sof.position(0);
         
-        ByteBuffer jfif = ByteBuffer.allocate( JFIF_HEADER.length + SOC_HEADER.length + 2 + comment.limit() + YQ_HEADER.length + yqFactors.length + UVQ_HEADER.length + uvqFactors.length + sof.limit() +
-                                               HUFFMAN_HEADER.length + SOS_HEADER.length + source.limit() - imageDataStruct.startOffset + EOI_MARKER.length );
+        ByteBuffer jfif = ByteBuffer.allocate( JFIF_HEADER.length + SOC_HEADER.length + 2 + comment.limit() +
+                                               YQ_HEADER.length + yqFactors.length + UVQ_HEADER.length +
+                                               uvqFactors.length + sof.limit() + HUFFMAN_HEADER.length +
+                                               SOS_HEADER.length + source.limit() - imageDataStruct.startOffset +
+                                               EOI_MARKER.length );
         jfif.put(JFIF_HEADER);
         jfif.put(SOC_HEADER);
         jfif.putShort((short)(comment.limit() + 2));
@@ -150,7 +153,10 @@ final class JFIFHeader
 
     private static ByteBuffer getComment(ImageDataStruct imageDataStruct, ByteBuffer commentData)
     {
-        int bufferCapacity = getCommentByteCount(imageDataStruct.camera, imageDataStruct.utcOffset, commentData) + imageDataStruct.title.length() + imageDataStruct.alarm.length() + "dd/MM/yyyy".length() + "HH:mm:ss".length() + 256;
+        int bufferCapacity = getCommentByteCount(imageDataStruct.camera, imageDataStruct.utcOffset, commentData) +
+            imageDataStruct.title.length() + imageDataStruct.alarm.length() + "dd/MM/yyyy".length() +
+            "HH:mm:ss".length() + 256;
+
         ByteBuffer buffer = ByteBuffer.allocate(bufferCapacity);
         println(buffer, "Version: 00.03");
         println(buffer, "Number: " + imageDataStruct.camera);
@@ -161,10 +167,12 @@ final class JFIFHeader
         println(buffer, "MSec: " + imageDataStruct.milliseconds % 1000);
         println(buffer, "Locale: " + imageDataStruct.locale);
         println(buffer, "UTCoffset: " + imageDataStruct.utcOffset);
+
         if (imageDataStruct.alarm.length() > 0)
         {
             println(buffer, "Alarm-text: " + imageDataStruct.alarm);
         }
+
         buffer.put(commentData);
         buffer.position(0);
         return buffer;
