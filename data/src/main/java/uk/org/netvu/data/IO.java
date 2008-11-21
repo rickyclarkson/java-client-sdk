@@ -78,11 +78,4 @@ final class IO
         buffer.position( 0 );
         return buffer;
     }
-
-    /*    public static byte[] readIntoByteArray( ByteBuffer buffer, int bytes ) throws IOException
-    {
-        byte[] results = new byte[bytes];
-        buffer.get(results);
-        return results;
-        }*/
 }

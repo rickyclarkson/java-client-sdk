@@ -3,7 +3,7 @@ package uk.org.netvu.data
 import _root_.org.{scalacheck, specs}
 import specs.runner.JUnit4
 import specs.Specification
-import java.io.FileInputStream
+import java.io.{FileInputStream, ByteArrayInputStream, EOFException}
 import java.nio.BufferUnderflowException
 
 object Support {
@@ -35,6 +35,9 @@ class IOTest extends JUnit4(new Specification {
   }
   "throw an IllegalStateException when the expected string is not found" in {
    IO.expectLine(asInputStream(List("foo", "bar")), "fop") must throwA(new IllegalStateException)                       
+  }
+  "throw an EOFException when there is no end of line marker" in {
+   IO.expectLine(new ByteArrayInputStream("foo".getBytes("US-ASCII")), "foo") must throwA(new EOFException)
   }
  }
 
