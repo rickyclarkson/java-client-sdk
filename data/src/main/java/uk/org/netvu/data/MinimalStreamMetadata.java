@@ -9,11 +9,11 @@ final class MinimalStreamMetadata implements StreamMetadata
     public final FrameType frameType;
 
     private final int length;
+    private final int channel;
 
     public MinimalStreamMetadata( InputStream input ) throws IOException
     {
-        int format = input.read();
-        switch (format)
+        switch (input.read())
         {
         case 0:
             frameType = FrameType.JPEG;
@@ -25,12 +25,9 @@ final class MinimalStreamMetadata implements StreamMetadata
             frameType = FrameType.UNKNOWN;
         }
 
-        System.out.println("MinimalStreamMetadata skips over some useful data");
-
-        input.read();
-        input.read();
-        input.read();
-        length = new DataInputStream(input).readShort();
+        DataInputStream data = new DataInputStream(input);
+        channel = data.read();
+        length = data.readInt();
     }
 
     public int getLength()
