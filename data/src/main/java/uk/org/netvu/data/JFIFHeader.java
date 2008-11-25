@@ -74,24 +74,24 @@ final class JFIFHeader
     static JFIFPacket jpegToJfif( ByteBuffer source, StreamMetadata metadata, ImageDataStruct imageDataStruct )
     {
         ByteBuffer commentOriginal = source.duplicate();
-        commentOriginal.limit(imageDataStruct.startOffset);
+        commentOriginal.limit(imageDataStruct.getStartOffset());
         ByteBuffer comment = getComment(imageDataStruct, commentOriginal);
-        byte[] yqFactors = getYQFactors(imageDataStruct.qFactor);
-        byte[] uvqFactors = getUVQFactors(imageDataStruct.qFactor);
+        byte[] yqFactors = getYQFactors(imageDataStruct.getQFactor());
+        byte[] uvqFactors = getUVQFactors(imageDataStruct.getQFactor());
         ByteBuffer sof = ByteBuffer.allocate(19);
         sof.put(byteArrayLiteral(new int[]{ 0xFF, 0xC0, 0x00, 0x11, 0x08 }));
         sof.order(ByteOrder.LITTLE_ENDIAN);
-        sof.putShort(imageDataStruct.format.targetLines);
-        sof.putShort(imageDataStruct.format.targetPixels);
+        sof.putShort(imageDataStruct.getFormat().targetLines);
+        sof.putShort(imageDataStruct.getFormat().targetPixels);
         sof.order(ByteOrder.BIG_ENDIAN);
-        sof.put(byteArrayLiteral(new int[]{ 0x03, 0x01, imageDataStruct.videoFormat == VideoFormat.JPEG_411 ? 0x22 : 0x21, 0x00, 0x02,
+        sof.put(byteArrayLiteral(new int[]{ 0x03, 0x01, imageDataStruct.getVideoFormat() == VideoFormat.JPEG_411 ? 0x22 : 0x21, 0x00, 0x02,
                                             0x11, 0x01, 0x03, 0x11, 0x01 }));
         sof.position(0);
         
         ByteBuffer jfif = ByteBuffer.allocate( JFIF_HEADER.length + SOC_HEADER.length + 2 + comment.limit() +
                                                YQ_HEADER.length + yqFactors.length + UVQ_HEADER.length +
                                                uvqFactors.length + sof.limit() + HUFFMAN_HEADER.length +
-                                               SOS_HEADER.length + source.limit() - imageDataStruct.startOffset +
+                                               SOS_HEADER.length + source.limit() - imageDataStruct.getStartOffset() +
                                                EOI_MARKER.length );
         jfif.put(JFIF_HEADER);
         jfif.put(SOC_HEADER);
@@ -104,7 +104,7 @@ final class JFIFHeader
         jfif.put(sof);
         jfif.put(HUFFMAN_HEADER);
         jfif.put(SOS_HEADER);
-        source.position(imageDataStruct.startOffset);
+        source.position(imageDataStruct.getStartOffset());
         jfif.put(source);
         jfif.put(EOI_MARKER);
         jfif.position(0);
@@ -153,24 +153,24 @@ final class JFIFHeader
 
     private static ByteBuffer getComment(ImageDataStruct imageDataStruct, ByteBuffer commentData)
     {
-        int bufferCapacity = getCommentByteCount(imageDataStruct.camera, imageDataStruct.utcOffset, commentData) +
-            imageDataStruct.title.length() + imageDataStruct.alarm.length() + "dd/MM/yyyy".length() +
+        int bufferCapacity = getCommentByteCount(imageDataStruct.getCamera(), imageDataStruct.getUtcOffset(), commentData) +
+            imageDataStruct.getTitle().length() + imageDataStruct.getAlarm().length() + "dd/MM/yyyy".length() +
             "HH:mm:ss".length() + 256;
 
         ByteBuffer buffer = ByteBuffer.allocate(bufferCapacity);
         println(buffer, "Version: 00.03");
-        println(buffer, "Number: " + imageDataStruct.camera);
-        println(buffer, "Name: " + imageDataStruct.title);
-        Date date = new Date(imageDataStruct.sessionTime * 1000L);
+        println(buffer, "Number: " + imageDataStruct.getCamera());
+        println(buffer, "Name: " + imageDataStruct.getTitle());
+        Date date = new Date(imageDataStruct.getSessionTime() * 1000L);
         println(buffer, "Date: " + dateFormatter.format(date));
         println(buffer, "Time: " + timeFormatter.format(date));
-        println(buffer, "MSec: " + imageDataStruct.milliseconds % 1000);
-        println(buffer, "Locale: " + imageDataStruct.locale);
-        println(buffer, "UTCoffset: " + imageDataStruct.utcOffset);
+        println(buffer, "MSec: " + imageDataStruct.getMilliseconds() % 1000);
+        println(buffer, "Locale: " + imageDataStruct.getLocale());
+        println(buffer, "UTCoffset: " + imageDataStruct.getUtcOffset());
 
-        if (imageDataStruct.alarm.length() > 0)
+        if (imageDataStruct.getAlarm().length() > 0)
         {
-            println(buffer, "Alarm-text: " + imageDataStruct.alarm);
+            println(buffer, "Alarm-text: " + imageDataStruct.getAlarm());
         }
 
         buffer.put(commentData);

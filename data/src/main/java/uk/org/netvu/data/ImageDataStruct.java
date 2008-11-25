@@ -84,32 +84,150 @@ public final class ImageDataStruct
         return result;
     }
 
-    public final int version;
-    public final int mode;
-    public final int camera;
-    public final VideoFormat videoFormat;
-    public final int startOffset;
-    public final int size;
-    public final int maxSize;
-    public final int targetSize;
-    public final int qFactor;
-    public final int alarmBitmaskHigh;
-    public final int status;
-    public final int sessionTime;
-    public final int milliseconds;
-    public final byte[] res;
-    public final String title;
-    public final String alarm;
-    public final Picture format;
-    public final String locale;
-    public final int utcOffset;
-    public final int alarmBitmask;
+    private final int version;
+
+    public int getVersion()
+    {
+        return version;
+    }
+
+    private final int mode;
+
+    public int getMode()
+    {
+        return mode;
+    }
+
+    private final int camera;
+
+    public int getCamera()
+    {
+        return camera;
+    }
+
+    private final VideoFormat videoFormat;
+
+    public VideoFormat getVideoFormat()
+    {
+        return videoFormat;
+    }
+
+    private final int startOffset;
+
+    public int getStartOffset()
+    {
+        return startOffset;
+    }
+
+    private final int size;
+
+    public int getSize()
+    {
+        return size;
+    }
+
+    private final int maxSize;
+
+    public int getMaxSize()
+    {
+        return maxSize;
+    }
+
+    private final int targetSize;
+
+    public int getTargetSize()
+    {
+        return targetSize;
+    }
+
+    private final int qFactor;
+
+    public int getQFactor()
+    {
+        return qFactor;
+    }
+
+    private final int alarmBitmaskHigh;
+
+    public int getAlarmBitmaskHigh()
+    {
+        return alarmBitmaskHigh;
+    }
+
+    private final int status;
+
+    public int getStatus()
+    {
+        return status;
+    }
+
+    private final int sessionTime;
+
+    public int getSessionTime()
+    {
+        return sessionTime;
+    }
+
+    private final int milliseconds;
+
+    public int getMilliseconds()
+    {
+        return milliseconds;
+    }
+
+    private final byte[] res;
+
+    public byte[] getRes()
+    {
+        return res;
+    }
+
+    private final String title;
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    private final String alarm;
+
+    public String getAlarm()
+    {
+        return alarm;
+    }
+
+    private final Picture format;
+
+    public Picture getFormat()
+    {
+        return format;
+    }
+
+    private final String locale;
+
+    public String getLocale()
+    {
+        return locale;
+    }
+
+    private final int utcOffset;
+
+    public int getUtcOffset()
+    {
+        return utcOffset;
+    }
+
+    private final int alarmBitmask;
+
+    public int getAlarmBitmask()
+    {
+        return alarmBitmask;
+    }
 
     private static String nullTerminate(byte[] input)
     {
         return nullTerminate(new String(input));
     }
-
 
     private static String nullTerminate(String input)
     {

@@ -34,8 +34,8 @@ enum FrameType
         public void deliverTo( StreamHandler handler, InputStream input, StreamMetadata metadata) throws IOException
         {
             ImageDataStruct imageHeader = new ImageDataStruct( IO.readIntoByteBuffer( input, IMAGE_DATA_STRUCT_SIZE));
-            ByteBuffer commentData = IO.readIntoByteBuffer( input, imageHeader.startOffset );
-            ByteBuffer restOfData = IO.readIntoByteBuffer( input, metadata.getLength() - ImageDataStruct.IMAGE_DATA_STRUCT_SIZE - imageHeader.startOffset);
+            ByteBuffer commentData = IO.readIntoByteBuffer( input, imageHeader.getStartOffset() );
+            ByteBuffer restOfData = IO.readIntoByteBuffer( input, metadata.getLength() - ImageDataStruct.IMAGE_DATA_STRUCT_SIZE - imageHeader.getStartOffset());
             handler.mpeg4(new MPEG4Packet(restOfData, metadata, imageHeader, commentData));
         }
     },
