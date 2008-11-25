@@ -11,4 +11,14 @@ object Utilities {
       case e: NullPointerException => (true, "the method doesn't accept null", "should not be seen")
     }
   }
+
+  def notAcceptNulls[T <: AnyRef, R] = new Matcher[Function[T, R]] {
+    def apply(conversion: => Function[T, R]) =
+      try {
+        conversion(null.asInstanceOf[T])
+        (false, "should not be seen", "the method accepts null")
+      } catch {
+        case e: NullPointerException => (true, "the method doesn't accept null", "should not be seen")
+      }
+  }
 }
