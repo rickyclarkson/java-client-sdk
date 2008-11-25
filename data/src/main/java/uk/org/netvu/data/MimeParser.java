@@ -5,11 +5,23 @@ import java.io.IOException;
 import java.io.EOFException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import uk.org.netvu.util.CheckParameters;
 
+/**
+ * A parse for MIME streams containing JFIF images.
+ */
 class MimeParser implements Parser
 {
+    /**
+     * Parses a MIME stream from the specified InputStream, delivering data as it arrives to the specified StreamHandler.
+     * @param input the InputStream where the MIME data is to be read from.
+     * @param handler the StreamHandler to deliver data to.
+     * @throws IOException if an I/O error occurs.
+     * @throws NullPointerException if either parameter are null.
+     */
     public void parse( final InputStream input, final StreamHandler handler ) throws IOException
     {    
+        CheckParameters.areNotNull(input, handler);
         IO.expectLine( input, "" );
         try
         {
@@ -22,8 +34,8 @@ class MimeParser implements Parser
                 IO.expectString( input, "Content-length: " );
                 final int length = IO.expectIntFromRestOfLine(input);
                 IO.expectLine( input, "" );
-                ByteBuffer jpeg = jpegParse( input, length );
-                handler.jfif(new JFIFPacket(jpeg, new MimeStreamMetadata(length)));
+                ByteBuffer jpeg = IO.readIntoByteBuffer( input, length );
+                handler.jfif(jpeg);
                 IO.expectLine( input, "" );
             }
         }
@@ -31,15 +43,5 @@ class MimeParser implements Parser
         {
             return;
         }
-    }
-
-    private ByteBuffer jpegParse( final InputStream input, final int length ) throws IOException
-    {
-        ByteBuffer buffer = ByteBuffer.allocate( length );
-        int read = Channels.newChannel( input ).read(buffer);
-        if (read != length)
-            throw new EOFException();
-        buffer.position(0);
-        return buffer;
     }
 }

@@ -96,8 +96,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     var numInvalidFrames = 0
     
     ParserFactory parserFor streamType parse (connection.getInputStream, new StreamHandler {
-     def jfif(packet: JFIFPacket) = {
-      val buffer = packet.byteBuffer
+     def jfif(buffer: ByteBuffer) = {
       def next = buffer.get & 0xFF
       val first = (next, next)
       buffer.position(buffer.limit - 2)
@@ -141,21 +140,21 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
    var index = 0
 
    ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
-    def jfif(packet: JFIFPacket) = ()
+    def jfif(buffer: ByteBuffer) = ()
     def dataArrived(buffer: ByteBuffer, metadata: StreamMetadata) = ()
     def mpeg4(packet: MPEG4Packet) = {
      val isIFrame: Boolean = {
       var foundVOP = false
       try {
        while (!foundVOP) {
-        val anInt = packet.data.getInt
+        val anInt = packet.getData.getInt
         if (anInt == 0x000001B6) {
          foundVOP = true
         }
        }
-       packet.data.get
-       packet.data.getShort
-       ((packet.data.get >> 6) & 0xFF) == 0
+       packet.getData.get
+       packet.getData.getShort
+       ((packet.getData.get >> 6) & 0xFF) == 0
       } catch { case e: BufferUnderflowException => false }
      }
 
@@ -180,8 +179,8 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
    var fail = 0  
 
    ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
-    def jfif(packet: JFIFPacket) = {
-     if (diff(packet.byteBuffer, mapFile("testdata/expected-192-168-106-204-binary-jpeg/" + index + ".jpg")))
+    def jfif(buffer: ByteBuffer) = {
+     if (diff(buffer, mapFile("testdata/expected-192-168-106-204-binary-jpeg/" + index + ".jpg")))
       fail += 1
      else
       success += 1

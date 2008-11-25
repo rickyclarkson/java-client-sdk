@@ -5,11 +5,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import uk.org.netvu.util.CheckParameters;
 
+/**
+ * A utility class for dealing with reading values from InputStreams.
+ */
 final class IO
 {
+    /**
+     * Asserts that the next line read from the specified InputStream matches the specified String.
+     * @param input the InputStream to read a line of text from.
+     * @param string the expected line.
+     * @throws IllegalStateException if the expected line is not found.
+     * @throws IOException if any I/O errors occur.
+     * @throws NullPointerException if either of the parameters are null.
+     */
     public static void expectLine(InputStream input, String string) throws IOException
     {
+        CheckParameters.areNotNull(input, string);
         String line = readLine(input);
         if (!string.equals(line))
         {
@@ -17,8 +30,17 @@ final class IO
         }
     }
 
+    /**
+     * Reads a line of text from the specified InputStream.
+     * @param input the InputStream to read a line of text from.
+     * @throws EOFException if the end of the InputStream is reached before the end of the line is reached.
+     * @throws IOException if an I/O error occurs.
+     * @throws NullPointerException if input is null.
+     * @return a line of text read from the specified InputStream.
+     */
     private static String readLine(InputStream input) throws IOException
     {
+        CheckParameters.areNotNull(input);
         final int b = input.read();
         switch (b)
         {
@@ -29,8 +51,17 @@ final class IO
         }
     }
 
+    /**
+     * Asserts that the next line read from the specified InputStream matches the specified regular expression.
+     * @param input the InputStream to read a line of text from.
+     * @param regex the regex the line should match.
+     * @throws IllegalStateException if the line doesn't match the regex.
+     * @throws IOException if an I/O error occurs.
+     * @throws NullPointerException if either of the parameters are null.
+     */
     public static void expectLineMatching(InputStream input, final String regex) throws IOException
     {
+        CheckParameters.areNotNull(input, regex);
         final String line = readLine(input);
         if (!line.matches(regex))
         {
@@ -38,8 +69,17 @@ final class IO
         }
     }
 
+    /**
+     * Asserts that the specified String is the next text read from the specified InputStream.  Note that this method does not read to the end of the line.
+     * @param input the InputStream to read text from.
+     * @param string the expected text.
+     * @throws IllegalStateException if the text read doesn't match the passed-in String.
+     * @throws IOException if an I/O error occurs.
+     * @throws NullPointerException if either of the parameters are null.
+     */
     public static void expectString(final InputStream input,final String string) throws IOException
     {
+        CheckParameters.areNotNull(input, string);
         if (string.equals(""))
         {
             return;
@@ -56,8 +96,16 @@ final class IO
         }
     }
 
+    /**
+     * Reads the next line from the specified InputStream and returns it as an int.
+     * @param input the InputStream to read an int from.
+     * @throws IllegalStateException if the line read doesn't parse as an int.
+     * @throws IOException if an I/O error occurs.
+     * @throws NullPointerException if input is null.
+     */
     public static int expectIntFromRestOfLine(InputStream input) throws IOException
     {
+        CheckParameters.areNotNull(input);
         try
         {
             return Integer.parseInt(IO.readLine(input));
@@ -68,8 +116,18 @@ final class IO
         }
     }
 
+    /**
+     * Reads the specified number of bytes from the specified InputStream into a ByteBuffer.
+     * @param input the InputStream to read bytes from.
+     * @param bytes the number of bytes to read.
+     * @return a ByteBuffer containing the specified number of bytes read from the specified InputStream.
+     * @throws EOFException if the number of bytes read is not the same as the number of bytes specified.
+     * @throws IOException if an I/O error occurs.
+     * @throws NullPointerException if input is null.
+     */
     public static ByteBuffer readIntoByteBuffer( InputStream input, int bytes ) throws IOException
     {
+        CheckParameters.areNotNull(input);
         ByteBuffer buffer = ByteBuffer.allocate( bytes );
         int read = Channels.newChannel( input ).read( buffer );
         if (read != bytes)

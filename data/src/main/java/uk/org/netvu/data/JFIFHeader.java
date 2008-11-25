@@ -6,7 +6,11 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import uk.org.netvu.util.CheckParameters;
 
+/**
+ * A class for converting the minimised JFIF header into a valid JFIF header.
+ */
 final class JFIFHeader
 {
     private static final byte[] YVIS = { 16, 11, 12, 14, 12, 10, 16, 14, 13, 14, 18,
@@ -20,6 +24,9 @@ final class JFIFHeader
                                           99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
                                           99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99 };
 
+    /**
+     * The JFIF header to begin all JFIFs with.
+     */
     private static final byte[] JFIF_HEADER = byteArrayLiteral(new int[]
     {
         0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46,
@@ -27,11 +34,17 @@ final class JFIFHeader
         0x00, 0x01, 0x00, 0x00
     });
 
+    /**
+     * The start of a comment field.
+     */
     private static final byte[] SOC_HEADER = byteArrayLiteral(new int[]{ 0xFF, 0xFE });
 
     private static final byte[] YQ_HEADER = byteArrayLiteral(new int[]{ 0xFF, 0xDB, 0x00, 0x43, 0x00 });
     private static final byte[] UVQ_HEADER = byteArrayLiteral(new int[]{ 0xFF, 0xDB, 0x00, 0x43, 0x01 });
 
+    /**
+     * The Huffman table to use in the generated JFIF.
+     */
     private static final byte[] HUFFMAN_HEADER = byteArrayLiteral(new int[]
     {
         0xFF, 0xC4, 0x00, 0x1F, 0x00, 0x00, 0x01, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00,
@@ -63,16 +76,30 @@ final class JFIFHeader
         0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xEA, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA
     });
 
+    /**
+     * The start-of-scan header.
+     */
     private static final byte[] SOS_HEADER = byteArrayLiteral(new int[]
     {
         0xFF, 0xDA, 0x00, 0x0C, 0x03, 0x01, 0x00, 0x02,
         0x11, 0x03, 0x11, 0x00, 0x3F, 0x00
     });
 
+    /**
+     * The end-of-image marker.
+     */
     private static final byte[] EOI_MARKER = byteArrayLiteral(new int[]{ 0xFF, 0xD9 });
 
-    static JFIFPacket jpegToJfif( ByteBuffer source, StreamMetadata metadata, ImageDataStruct imageDataStruct )
+    /**
+     * Given a ByteBuffer containing JPEG data, and an ImageDataStruct containing a minimised JPEG header, constructs a JFIF packet containing that data.
+     * @param source the ByteBuffer containing JPEG data.
+     * @param imageDataStruct the ImageDataStruct containing a minimised JPEG header.
+     * @return a JFIFPacket.
+     * @throws NullPointerException if either of the parameters are null.
+     */
+    static ByteBuffer jpegToJfif( ByteBuffer source, ImageDataStruct imageDataStruct )
     {
+        CheckParameters.areNotNull(source, imageDataStruct);
         ByteBuffer commentOriginal = source.duplicate();
         commentOriginal.limit(imageDataStruct.getStartOffset());
         ByteBuffer comment = getComment(imageDataStruct, commentOriginal);
@@ -109,7 +136,7 @@ final class JFIFHeader
         jfif.put(EOI_MARKER);
         jfif.position(0);
 
-        return new JFIFPacket( jfif, metadata );
+        return jfif;
     }
 
     private static byte[] getYQFactors(int qFactor)
@@ -124,8 +151,9 @@ final class JFIFHeader
 
     private static byte[] getQFactors(int qFactor, byte[] constants)
     {
+        CheckParameters.areNotNull(constants);
         if (qFactor < 1 || qFactor > 255)
-            throw null;
+            throw new IllegalArgumentException("qFactor must be between 1 and 255 inclusive");
 
         byte[] results = new byte[constants.length];
         for (int a=0;a<constants.length;a++)
@@ -134,6 +162,12 @@ final class JFIFHeader
         return results;
     }
 
+    /**
+     * Copies the specified int[] into a byte[] of the same length, discarding all but the least significant byte of each int.
+     * It is used to provide a more readable literal byte array syntax.
+     * @param literals the int[] to copy.
+     * @return a byte[] of the same length as literals, containing the least significant bytes of each int.
+     */
     private static byte[] byteArrayLiteral(int[] literals)
     {
         byte[] results = new byte[literals.length];
@@ -142,15 +176,22 @@ final class JFIFHeader
         return results;
     }
 
-    private static ByteBuffer limit(ByteBuffer buffer, int limit)
-    {
-        buffer.limit(limit);
-        return buffer;
-    }
-
+    /**
+     * A SimpleDateFormat using the dd/MM/yyyy format.
+     */
     private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+
+    /**
+     * A SimpleDateFormat using the HH:mm:ss format.
+     */
     private static final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
 
+    /**
+     * Constructs a valid JFIF comment block, given an ImageDataStruct and other comment data to append.
+     * @param imageDataStruct the minimised JFIF header.
+     * @param commentData other comment data to append.
+     * @return a ByteBuffer containing a JFIF comment block.
+     */
     private static ByteBuffer getComment(ImageDataStruct imageDataStruct, ByteBuffer commentData)
     {
         int bufferCapacity = getCommentByteCount(imageDataStruct.getCamera(), imageDataStruct.getUtcOffset(), commentData) +
@@ -178,18 +219,29 @@ final class JFIFHeader
         return buffer;
     }
 
+    /**
+     * Writes the specified String to the specified ByteBuffer, followed by a null character then a newline.
+     * @param buffer the ByteBuffer to write to.
+     * @param string the String to write.
+     * @throws NullPointerException if either parameter are null.
+     */
     private static void println(ByteBuffer buffer, String string)
     {
+        CheckParameters.areNotNull(buffer, string);
         buffer.put((string + "\0\n").getBytes());
     }
 
     private static int getCommentByteCount(int camera, int utcOffset, ByteBuffer commentData)
     {
-        final int COMMENT_BYTE_TABLE_LENGTH = 9;
-        int result = COMMENT_BYTE_TABLE_LENGTH + widthOfInt(camera) + widthOfInt(utcOffset) + commentData.limit();
-        return result;
+        CheckParameters.areNotNull(commentData);
+        return 9 + widthOfInt(camera) + widthOfInt(utcOffset) + commentData.limit();
     }
 
+    /**
+     * Gets the number of characters the specified int takes up when converted to a String.
+     * @param i the value to find the 'width' of.
+     * @return the number of characters the specified int takes up when converted to a String.
+     */
     private static int widthOfInt(int i)
     {
         return String.valueOf(i).getBytes().length;
