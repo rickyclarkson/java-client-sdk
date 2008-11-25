@@ -13,7 +13,7 @@ public class MinimalParser implements Parser
             while (true)
             {
                 MinimalStreamMetadata metadata = new MinimalStreamMetadata( input );
-                metadata.frameType.deliverTo( input, handler, metadata);
+                metadata.frameType.deliverTo( handler, input, metadata);
             }
         }
         catch (EOFException e)

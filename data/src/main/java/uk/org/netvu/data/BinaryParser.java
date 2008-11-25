@@ -16,7 +16,7 @@ final class BinaryParser implements Parser
             while ( true )
             {
                 BinaryStreamMetadata metadata = new BinaryStreamMetadata( input );
-                metadata.frameType.deliverTo( input, handler, metadata );
+                metadata.getFrameType().deliverTo( handler, input, metadata );
             }
         }
         catch (EOFException e)

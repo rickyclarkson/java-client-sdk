@@ -6,33 +6,13 @@ import java.io.IOException;
 
 final class BinaryStreamMetadata implements StreamMetadata
 {
-    public final FrameType frameType;
-    public final int channel;
+    private final FrameType frameType;
+    private final int channel;
     private final int length;
 
     public BinaryStreamMetadata( InputStream input ) throws IOException
     {
-        int format = input.read() & 0xFF;
-
-        switch (format)
-        {
-        case 0:
-            frameType = FrameType.JPEG;
-            break;
-        case 1:
-            frameType = FrameType.JFIF;
-            break;
-        case 2:
-        case 3:
-            frameType = FrameType.MPEG4;
-            break;
-        case 9:
-            frameType = FrameType.INFO;
-            break;
-        default:
-            frameType = FrameType.UNKNOWN;
-        }
-
+        frameType = FrameType.frameTypeFor(input.read() & 0xFF);
         channel = input.read() + 1;
         length = new DataInputStream( input ).readInt();
     }
@@ -40,5 +20,15 @@ final class BinaryStreamMetadata implements StreamMetadata
     public int getLength()
     {
         return length;
+    }
+
+    public int getChannel()
+    {
+        return channel;
+    }
+
+    public FrameType getFrameType()
+    {
+        return frameType;
     }
 }

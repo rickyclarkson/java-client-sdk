@@ -15,14 +15,14 @@ enum FrameType
 {
     JFIF
     {
-        public void deliverTo( InputStream input, StreamHandler handler, StreamMetadata metadata ) throws IOException
+        public void deliverTo( StreamHandler handler, InputStream input, StreamMetadata metadata ) throws IOException
         {
             handler.jfif( new JFIFPacket( IO.readIntoByteBuffer( input, metadata.getLength() ), metadata ) );
         }
     },
     JPEG
     {
-        public void deliverTo( InputStream input, StreamHandler handler, StreamMetadata metadata ) throws IOException
+        public void deliverTo( StreamHandler handler, InputStream input, StreamMetadata metadata ) throws IOException
         {
             ImageDataStruct imageHeader = new ImageDataStruct( IO.readIntoByteBuffer( input, IMAGE_DATA_STRUCT_SIZE ) );
             ByteBuffer restOfData = IO.readIntoByteBuffer( input, metadata.getLength() - IMAGE_DATA_STRUCT_SIZE );
@@ -31,7 +31,7 @@ enum FrameType
     },
     MPEG4
     {
-        public void deliverTo( InputStream input, StreamHandler handler, StreamMetadata metadata) throws IOException
+        public void deliverTo( StreamHandler handler, InputStream input, StreamMetadata metadata) throws IOException
         {
             ImageDataStruct imageHeader = new ImageDataStruct( IO.readIntoByteBuffer( input, IMAGE_DATA_STRUCT_SIZE));
             ByteBuffer commentData = IO.readIntoByteBuffer( input, imageHeader.startOffset );
@@ -41,18 +41,36 @@ enum FrameType
     },
     INFO
     {
-        public void deliverTo( InputStream data, StreamHandler handler, StreamMetadata metadata) throws IOException
+        public void deliverTo( StreamHandler handler, InputStream data, StreamMetadata metadata) throws IOException
         {
             handler.info( IO.readIntoByteBuffer(data, metadata.getLength()) );
         }
     },
     UNKNOWN
     {
-        public void deliverTo( InputStream data, StreamHandler handler, StreamMetadata metadata ) throws IOException
+        public void deliverTo( StreamHandler handler, InputStream data, StreamMetadata metadata ) throws IOException
         {
             handler.dataArrived( IO.readIntoByteBuffer(data, metadata.getLength()), metadata);
         }
     };
 
-    public abstract void deliverTo( InputStream data, StreamHandler handler, StreamMetadata metadata ) throws IOException;
+    public abstract void deliverTo( StreamHandler handler, InputStream data, StreamMetadata metadata ) throws IOException;
+
+    static FrameType frameTypeFor(int value)
+    {
+        switch (value)
+        {
+        case 0:
+            return FrameType.JPEG;
+        case 1:
+            return FrameType.JFIF;
+        case 2:
+        case 3:
+            return FrameType.MPEG4;
+        case 9:
+            return FrameType.INFO;
+        default:
+            return FrameType.UNKNOWN;
+        }
+    }
 }
