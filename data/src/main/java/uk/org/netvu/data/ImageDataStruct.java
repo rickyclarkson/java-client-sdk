@@ -3,6 +3,8 @@ package uk.org.netvu.data;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import uk.org.netvu.util.CheckParameters;
+
 public final class ImageDataStruct
 {
     private static final int INT = 4;

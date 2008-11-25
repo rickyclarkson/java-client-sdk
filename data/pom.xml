@@ -11,4 +11,11 @@
     <build>
         <finalName>data-${project.version}</finalName>
     </build>
+    <dependencies>
+        <dependency>
+            <groupId>uk.org.netvu</groupId>
+            <artifactId>java-client-sdk-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>
