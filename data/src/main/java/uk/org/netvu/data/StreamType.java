@@ -1,5 +1,6 @@
 package uk.org.netvu.data;
 
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * An enumeration of the supported StreamTypes.

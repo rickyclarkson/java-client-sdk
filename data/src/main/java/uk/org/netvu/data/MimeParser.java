@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A parse for MIME streams containing JFIF images.

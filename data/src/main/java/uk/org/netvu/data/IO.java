@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A utility class for dealing with reading values from InputStreams.

@@ -5,6 +5,7 @@ import static uk.org.netvu.data.ImageDataStruct.IMAGE_DATA_STRUCT_SIZE;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * An enumeration of the supported frame types from binary, minimal and mime

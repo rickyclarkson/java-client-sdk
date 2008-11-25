@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A class for converting the minimised JFIF header into a valid JFIF header.

@@ -73,6 +73,7 @@ class ImageDataStructTest extends JUnit4(new Specification {
    val struct = new ImageDataStruct(b)
    import struct._
    getVersion mustEqual version
+   getMode mustEqual mode
    getCamera mustEqual camera
    getVideoFormat mustEqual videoFormat
    getStartOffset mustEqual startOffset

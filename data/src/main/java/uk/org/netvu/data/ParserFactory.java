@@ -1,5 +1,6 @@
 package uk.org.netvu.data;
 
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A factory that, given a StreamType, gives a Parser that can parse it.

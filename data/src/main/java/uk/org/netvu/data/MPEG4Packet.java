@@ -1,6 +1,7 @@
 package uk.org.netvu.data;
 
 import java.nio.ByteBuffer;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * An MPEG-4 packet plus metadata and the comment block.

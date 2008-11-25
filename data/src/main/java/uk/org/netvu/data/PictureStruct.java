@@ -2,6 +2,7 @@ package uk.org.netvu.data;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A representation of the 'picture' part of the ImageDataStruct.

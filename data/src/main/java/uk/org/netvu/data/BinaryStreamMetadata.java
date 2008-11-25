@@ -3,6 +3,7 @@ package uk.org.netvu.data;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * Data about an individual packet of data obtained from a 'binary' stream.
