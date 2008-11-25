@@ -1,5 +1,7 @@
 package uk.org.netvu.protocol;
 
+import uk.org.netvu.util.CheckParameters;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

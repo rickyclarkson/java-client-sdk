@@ -1,6 +1,7 @@
 package uk.org.netvu.protocol;
 
 import java.math.BigInteger;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A function from objects of type T to those of type R.

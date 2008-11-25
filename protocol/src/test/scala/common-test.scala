@@ -620,14 +620,15 @@ class NullTest extends JUnit4(new Specification {
  implicit val aParameterDescription = ParameterDescription.parameterWithoutDefault(string, twoWayFunction)
  implicit val unit = ()
 
- def notAcceptNull[T <: AnyRef, R] = new specs.matcher.Matcher[T => R] {
+ import util.Utilities.notAcceptNull
+ /*def notAcceptNull[T <: AnyRef, R] = new specs.matcher.Matcher[T => R] {
   def apply(f: => T => R) = try {
    f(null.asInstanceOf[T])
    (false, "should not be seen", "the method accepts null")
   } catch {
    case e: NullPointerException => (true, "the method doesn't accept null", "should not be seen")
   }
- }
+ }*/
 
  def notAcceptNulls[T <: AnyRef, R] = new specs.matcher.Matcher[Function[T, R]] {
   def apply(conversion: => Function[T, R]) =
@@ -638,8 +639,6 @@ class NullTest extends JUnit4(new Specification {
     case e: NullPointerException => (true, "the method doesn't accept null", "should not be seen")
    }
  }
-
- "CheckParameters.areNotNull" should { "not accept null" in { CheckParameters.areNotNull _ must notAcceptNull[Nothing, CheckParameters] } }
 
  def noNull[T <: AnyRef, R](f: T => R, desc: String) =
   "annoying" should { desc + " should not accept null" in { f must notAcceptNull[T, R] } }

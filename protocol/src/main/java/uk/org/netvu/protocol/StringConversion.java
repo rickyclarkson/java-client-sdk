@@ -1,5 +1,7 @@
 package uk.org.netvu.protocol;
 
+import uk.org.netvu.util.CheckParameters;
+
 /**
  * A StringConversion can convert between Strings and a given type, T, though
  * the conversion can be partial, which is represented by an Option in the

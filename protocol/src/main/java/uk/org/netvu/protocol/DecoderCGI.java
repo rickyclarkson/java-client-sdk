@@ -1,5 +1,6 @@
 package uk.org.netvu.protocol;
 
+import uk.org.netvu.util.CheckParameters;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;

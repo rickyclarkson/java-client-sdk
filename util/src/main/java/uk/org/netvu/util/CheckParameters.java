@@ -1,4 +1,4 @@
-package uk.org.netvu.protocol;
+package uk.org.netvu.util;
 
 /**
  * A utility class for checking constraints about method parameters.
@@ -50,7 +50,7 @@ public final class CheckParameters
      * @throws IllegalArgumentException
      *         if any of the arguments passed are negative.
      */
-    CheckParameters areNotNegative( final int... args )
+    public CheckParameters areNotNegative( final int... args )
     {
         CheckParameters.areNotNull( args );
         int a = 0;

@@ -37,8 +37,7 @@ public final class ImageDataStruct
 
     public ImageDataStruct(ByteBuffer buffer)
     {
-        if (buffer == null)
-            throw null;
+        CheckParameters.areNotNull(buffer);
 
         this.buffer = buffer;
         version = readInt(VERSION);

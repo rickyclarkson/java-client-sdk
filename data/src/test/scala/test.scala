@@ -59,6 +59,10 @@ class IOTest extends JUnit4(new Specification {
   "throw an IllegalStateException when the expected String is not found" in {
    IO.expectString(asInputStream(List("foo", "bar")), "oo") must throwA(new IllegalStateException)
   }
+  "complete normally on an empty String" in {
+   IO.expectString(asInputStream(List("foo", "bar")), "")
+   true must beTrue
+  }
  }
 
  "IO.expectIntFromRestOfLine" should {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A set of utility methods for operating on Lists.

@@ -1,6 +1,7 @@
 package uk.org.netvu.protocol;
 
 import java.util.ArrayList;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * Builds and parses the results from vparts.cgi requests.
