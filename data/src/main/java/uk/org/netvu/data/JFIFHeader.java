@@ -81,8 +81,8 @@ final class JFIFHeader
         ByteBuffer sof = ByteBuffer.allocate(19);
         sof.put(byteArrayLiteral(new int[]{ 0xFF, 0xC0, 0x00, 0x11, 0x08 }));
         sof.order(ByteOrder.LITTLE_ENDIAN);
-        sof.putShort(imageDataStruct.getFormat().targetLines);
-        sof.putShort(imageDataStruct.getFormat().targetPixels);
+        sof.putShort(imageDataStruct.getFormat().getTargetLines());
+        sof.putShort(imageDataStruct.getFormat().getTargetPixels());
         sof.order(ByteOrder.BIG_ENDIAN);
         sof.put(byteArrayLiteral(new int[]{ 0x03, 0x01, imageDataStruct.getVideoFormat() == VideoFormat.JPEG_411 ? 0x22 : 0x21, 0x00, 0x02,
                                             0x11, 0x01, 0x03, 0x11, 0x01 }));

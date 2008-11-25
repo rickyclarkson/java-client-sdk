@@ -34,4 +34,9 @@ final class MinimalStreamMetadata implements StreamMetadata
     {
         return length;
     }
+
+    public int getChannel()
+    {
+        return channel;
+    }
 }

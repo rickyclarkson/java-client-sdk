@@ -29,7 +29,7 @@ public final class ImageDataStruct
     private static final int TITLE = RES + 4;
     private static final int ALARM = TITLE + TITLE_LENGTH;
     private static final int FORMAT = ALARM + TITLE_LENGTH;
-    private static final int LOCALE = FORMAT + Picture.SIZE;
+    private static final int LOCALE = FORMAT + PictureStruct.SIZE;
     private static final int UTC_OFFSET = LOCALE + MAX_NAME_LENGTH;
     private static final int ALM_BITMASK = UTC_OFFSET + INT;
 
@@ -64,7 +64,7 @@ public final class ImageDataStruct
         res = read(4, RES);
         title = nullTerminate(read(TITLE_LENGTH, TITLE));
         alarm = nullTerminate(read(TITLE_LENGTH, ALARM));
-        format = new Picture(buffer, FORMAT);
+        format = new PictureStruct(buffer, FORMAT);
         locale = nullTerminate(read(MAX_NAME_LENGTH, LOCALE));
         utcOffset = readInt(UTC_OFFSET);
         alarmBitmask = readInt(ALM_BITMASK);
@@ -196,9 +196,9 @@ public final class ImageDataStruct
         return alarm;
     }
 
-    private final Picture format;
+    private final PictureStruct format;
 
-    public Picture getFormat()
+    public PictureStruct getFormat()
     {
         return format;
     }

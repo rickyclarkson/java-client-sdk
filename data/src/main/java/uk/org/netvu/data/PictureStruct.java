@@ -3,7 +3,7 @@ package uk.org.netvu.data;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public final class Picture
+public final class PictureStruct
 {
     private static final int INT16 = 2;
 
@@ -16,7 +16,7 @@ public final class Picture
 
     public static final int SIZE = LINE_OFFSET + INT16;
 
-    public Picture(ByteBuffer buffer, int offset)
+    public PictureStruct(ByteBuffer buffer, int offset)
     {
         this.buffer = buffer;
         this.offset = offset;
@@ -38,10 +38,45 @@ public final class Picture
     private final ByteBuffer buffer;
     private final int offset;
 
-    public final short srcPixels;
-    public final short srcLines;
-    public final short targetPixels;
-    public final short targetLines;
-    public final short pixelOffset;
-    public final short lineOffset;
+    private final short srcPixels;
+
+    public short getsrcPixels()
+    {
+        return srcPixels;
+    }
+
+    private final short srcLines;
+
+    public short getsrcLines()
+    {
+        return srcLines;
+    }
+
+    private final short targetPixels;
+
+    public short getTargetPixels()
+    {
+        return targetPixels;
+    }
+
+    private final short targetLines;
+
+    public short getTargetLines()
+    {
+        return targetLines;
+    }
+
+    private final short pixelOffset;
+
+    public short getPixelOffset()
+    {
+        return pixelOffset;
+    }
+
+    private final short lineOffset;
+
+    public short getLineOffset()
+    {
+        return lineOffset;
+    }
 }
