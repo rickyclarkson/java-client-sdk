@@ -65,4 +65,47 @@ public final class CheckParameters
 
         return this;
     }
+
+    public static From from(int lower)
+    {
+        return new From(lower);
+    }
+
+    public static final class From
+    {
+        private final int lower;
+
+        From(int lower)
+        {
+            this.lower=lower;
+        }
+
+        public FromTo to(int upper)
+        {
+            return new FromTo(lower, upper);
+        }
+    }
+
+    public static final class FromTo
+    {
+        private final int lower;
+        private final int upper;
+
+        public FromTo(int lower, int upper)
+        {
+            this.lower = lower;
+            this.upper = upper;
+        }
+
+        public void bounds(int... ints)
+        {
+            for (int i: ints)
+            {
+                if (i < lower || i > upper)
+                {
+                    throw new IllegalArgumentException(i+" is outside the valid range ("+lower+" to "+upper+")");
+                }
+            }
+        }
+    }
 }

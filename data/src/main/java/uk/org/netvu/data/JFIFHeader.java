@@ -152,8 +152,7 @@ final class JFIFHeader
     private static byte[] getQFactors(int qFactor, byte[] constants)
     {
         CheckParameters.areNotNull(constants);
-        if (qFactor < 1 || qFactor > 255)
-            throw new IllegalArgumentException("qFactor must be between 1 and 255 inclusive");
+        CheckParameters.from(1).to(255).bounds(qFactor);
 
         byte[] results = new byte[constants.length];
         for (int a=0;a<constants.length;a++)

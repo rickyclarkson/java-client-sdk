@@ -13,6 +13,13 @@ import uk.org.netvu.util.CheckParameters;
 final class IO
 {
     /**
+     * Private to prevent instantiation.
+     */
+    private IO()
+    {
+    }
+
+    /**
      * Asserts that the next line read from the specified InputStream matches the specified String.
      * @param input the InputStream to read a line of text from.
      * @param string the expected line.

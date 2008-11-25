@@ -92,14 +92,14 @@ public final class PictureStruct
 
     private final short srcPixels;
 
-    public short getsrcPixels()
+    public short getSrcPixels()
     {
         return srcPixels;
     }
 
     private final short srcLines;
 
-    public short getsrcLines()
+    public short getSrcLines()
     {
         return srcLines;
     }

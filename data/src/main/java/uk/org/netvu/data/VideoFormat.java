@@ -27,7 +27,7 @@ public enum VideoFormat
     /**
      * The numerical value associated with this VideoFormat.
      */
-    private final int index;
+    final int index;
 
     /**
      * Constructs a VideoFormat with the specified index as its numerical value.
