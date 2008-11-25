@@ -31,6 +31,11 @@ public final class CheckParameters
         return new CheckParameters();
     }
 
+    public static From from( final int lower )
+    {
+        return new From( lower );
+    }
+
     /**
      * This is private to prevent uncontrolled instantiation.
      */
@@ -66,23 +71,18 @@ public final class CheckParameters
         return this;
     }
 
-    public static From from(int lower)
-    {
-        return new From(lower);
-    }
-
     public static final class From
     {
         private final int lower;
 
-        From(int lower)
+        From( final int lower )
         {
-            this.lower=lower;
+            this.lower = lower;
         }
 
-        public FromTo to(int upper)
+        public FromTo to( final int upper )
         {
-            return new FromTo(lower, upper);
+            return new FromTo( lower, upper );
         }
     }
 
@@ -91,19 +91,20 @@ public final class CheckParameters
         private final int lower;
         private final int upper;
 
-        public FromTo(int lower, int upper)
+        public FromTo( final int lower, final int upper )
         {
             this.lower = lower;
             this.upper = upper;
         }
 
-        public void bounds(int... ints)
+        public void bounds( final int... ints )
         {
-            for (int i: ints)
+            for ( final int i : ints )
             {
-                if (i < lower || i > upper)
+                if ( i < lower || i > upper )
                 {
-                    throw new IllegalArgumentException(i+" is outside the valid range ("+lower+" to "+upper+")");
+                    throw new IllegalArgumentException( i + " is outside the valid range (" + lower + " to " + upper
+                            + ")" );
                 }
             }
         }

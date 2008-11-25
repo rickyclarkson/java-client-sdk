@@ -7,7 +7,7 @@ public interface StreamMetadata
 {
     /**
      * Gets the length of the packet.
-     *
+     * 
      * @return the length of the packet.
      */
     public int getLength();

@@ -1,9 +1,8 @@
 package uk.org.netvu.data;
 
-import java.io.InputStream;
-import java.io.IOException;
 import java.io.EOFException;
-import uk.org.netvu.util.CheckParameters;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * A parser for the 'minimal' stream format.
@@ -11,24 +10,30 @@ import uk.org.netvu.util.CheckParameters;
 public class MinimalParser implements Parser
 {
     /**
-     * Parses a minimal stream from the specified InputStream, delivering data as it arrives to the specified StreamHandler.
-     * @param input the InputStream to read from.
-     * @param handler the StreamHandler to deliver data to.
-     * @throws IOException if an error occurs.
-     * @throws NullPointerException if either of the parameters are null.
+     * Parses a minimal stream from the specified InputStream, delivering data
+     * as it arrives to the specified StreamHandler.
+     * 
+     * @param input
+     *        the InputStream to read from.
+     * @param handler
+     *        the StreamHandler to deliver data to.
+     * @throws IOException
+     *         if an error occurs.
+     * @throws NullPointerException
+     *         if either of the parameters are null.
      */
-    public void parse( final InputStream input, final StreamHandler handler) throws IOException
+    public void parse( final InputStream input, final StreamHandler handler ) throws IOException
     {
-        CheckParameters.areNotNull(input, handler);
+        CheckParameters.areNotNull( input, handler );
         try
         {
-            while (true)
+            while ( true )
             {
-                MinimalStreamMetadata metadata = new MinimalStreamMetadata( input );
-                metadata.getFrameType().deliverTo( handler, input, metadata);
+                final MinimalStreamMetadata metadata = new MinimalStreamMetadata( input );
+                metadata.getFrameType().deliverTo( handler, input, metadata );
             }
         }
-        catch (EOFException e)
+        catch ( final EOFException e )
         {
             return;
         }
