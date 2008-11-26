@@ -54,6 +54,8 @@ public final class PictureStruct
      */
     private final ByteBuffer buffer;
 
+    private final ByteOrder order;
+
     /**
      * The point in the ByteBuffer at which to begin from.
      */
@@ -82,10 +84,11 @@ public final class PictureStruct
      * @throws NullPointerException
      *         if buffer is null.
      */
-    public PictureStruct( final ByteBuffer buffer, final int offset )
+    public PictureStruct( final ByteBuffer buffer, final ByteOrder order, final int offset )
     {
-        CheckParameters.areNotNull( buffer );
+        CheckParameters.areNotNull( buffer, order );
         this.buffer = buffer;
+        this.order = order;
         this.offset = offset;
 
         srcPixels = readShort( SRC_PIXELS );
@@ -142,7 +145,7 @@ public final class PictureStruct
      */
     private short readShort( final int where )
     {
-        buffer.order( ByteOrder.LITTLE_ENDIAN );
+        buffer.order( order );
         return buffer.getShort( offset + where );
     }
 }

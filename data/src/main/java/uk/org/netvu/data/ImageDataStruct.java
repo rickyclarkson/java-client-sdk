@@ -311,7 +311,7 @@ public final class ImageDataStruct
         res = read( buffer, 4, RES );
         title = nullTerminate( read( buffer, TITLE_LENGTH, TITLE ) );
         alarm = nullTerminate( read( buffer, TITLE_LENGTH, ALARM ) );
-        format = new PictureStruct( buffer, FORMAT );
+        format = new PictureStruct( buffer, ByteOrder.BIG_ENDIAN, FORMAT );
         locale = nullTerminate( read( buffer, MAX_NAME_LENGTH, LOCALE ) );
         utcOffset = readInt( buffer, UTC_OFFSET );
         alarmBitmask = readInt( buffer, ALM_BITMASK );

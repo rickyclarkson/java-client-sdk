@@ -4,6 +4,7 @@ import uk.org.netvu.util.ParameterMap;
 import uk.org.netvu.util.ParameterDescription;
 import uk.org.netvu.util.ParameterDescription.ParameterDescriptionWithoutDefault;
 import uk.org.netvu.util.StringConversion;
+import uk.org.netvu.util.CheckParameters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,32 +52,6 @@ public final class ImageDataStructBuilder
     private static final ParameterDescriptionWithoutDefault<Integer> VERSION = ParameterDescription.parameterWithoutDefault("version", StringConversion.integer() );
 
     private static final ParameterDescriptionWithoutDefault<VideoFormat> VIDEO_FORMAT = ParameterDescription.parameterWithoutDefault( "videoFormat", StringConversion.<VideoFormat>none("Unsupported") );
-
-    private static final List<ParameterDescriptionWithoutDefault<?>> params = new ArrayList<ParameterDescriptionWithoutDefault<?>>()
-    {
-        {
-            // this is an anonymous initialiser - it creates a new ArrayList
-            // and adds values to it inline.
-            add( ALARM );
-            add( ALARM_BITMASK );
-            add( ALARM_BITMASK_HIGH );
-            add( CAMERA );
-            add( FORMAT );
-            add( LOCALE );
-            add( MAX_SIZE );
-            add( MILLISECONDS );
-            add( MODE );
-            add( Q_FACTOR );
-            add( RES );
-            add( SESSION_TIME );
-            add( START_OFFSET );
-            add( STATUS );
-            add( TARGET_SIZE );
-            add( TITLE );
-            add( UTC_OFFSET );
-            add( VIDEO_FORMAT );
-        }
-    };
 
     private Option<ParameterMap> parameterMap = Option.getFullOption(new ParameterMap( ) );
 
@@ -186,7 +161,7 @@ public final class ImageDataStructBuilder
 
     /**
      * Sets the value of a parameter to a given value, and returns the
-     * Builder.
+     * ImageDataStructBuilder.
      * 
      * @param <T>
      *        the input type of the specified parameter.
@@ -194,9 +169,9 @@ public final class ImageDataStructBuilder
      *        the parameter to set a value for.
      * @param value
      *        the value to give that parameter.
-     * @return the Builder.
+     * @return the ImageDataStructBuilder.
      * @throws IllegalStateException
-     *         if the Builder has already been built once.
+     *         if the ImageDataStructBuilder has already been built once.
      * @throws NullPointerException
      *         if parameter or value are null.
      */
@@ -245,11 +220,21 @@ public final class ImageDataStructBuilder
         buffer.putInt(map.get( UTC_OFFSET ).get());
         buffer.putInt(map.get( ALARM_BITMASK).get());
         buffer.position(0);
-        return new ImageDataStruct(buffer);
+        
+        try
+        {
+            return new ImageDataStruct(buffer);
+        }
+        finally
+        {
+            parameterMap = Option.getEmptyOption("The ImageDataStructBuilder has already had build() called on it");
+        }
     }
 
     private static byte[] nullPad(String text, int length)
     {
+        CheckParameters.areNotNull(text);
+
         if (text.length() > length)
         {
             throw new IllegalArgumentException("text must be no more than "+length+" characters");
