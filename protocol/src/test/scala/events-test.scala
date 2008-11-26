@@ -9,6 +9,8 @@ import specs.{Specification, Scalacheck}
 
 import Implicits.arbFormat
 
+import uk.org.netvu.util._
+
 class AlarmTypeTest extends JUnit4(new Specification with Scalacheck {
  import EventsCGIResult.AlarmType
  import Integer.{MIN_VALUE => MIN_INT, MAX_VALUE => MAX_INT}

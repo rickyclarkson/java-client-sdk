@@ -11,6 +11,7 @@ import Prop.property
 import java.util.{Arrays, Random, List => JavaList, ArrayList => JavaArrayList, TreeMap => JavaTreeMap}
 import java.lang.{Boolean => JavaBoolean}
 
+import uk.org.netvu.util._
 import ParameterMap.Validator
 
 object Implicits {

@@ -1,0 +1,47 @@
+Build ImageDataStruct
+
+  Provide a programmatic way of building an ImageDataStruct from its parts.
+
+* Summary:
+
+  When writing end-user programs, some programs will need to be able to construct an ImageDataStruct to be able to write out a valid stream.  Constructing it directly with a ByteBuffer would be quite error-prone, as it is a largely undocumented byte format.
+
+* Related ticket(s):
+
+  {{{http://adwiki.ad-group.adh/ticket/2928}#2928 Provide a programmatic way of building an ImageDataStruct from its parts.
+
+* Goal:
+
+  To provide a programmatic way of building an ImageDataStruct from its parts.
+
+* Actors:
+
+  NetVu ObserVer.
+
+* Preconditions:
+
+  None.
+
+* Triggers:
+
+  The client calls a function to build an ImageDataStruct.
+
+* Basic success path:
+
+  The ImageDataStruct is constructed.
+
+* Other success paths:
+
+  None.
+
+* Exception paths:
+
+  An IllegalStateException should be thrown if any required information is missing.
+
+* Post-conditions:
+
+  None.
+
+* Notes:
+
+  None.

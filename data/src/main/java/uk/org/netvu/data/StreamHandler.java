@@ -19,12 +19,12 @@ public interface StreamHandler
     void dataArrived( ByteBuffer buffer, StreamMetadata metadata );
 
     /**
-     * Signals the arrival of an information packet to the client.
+     * Signals the arrival of textual information to the client.
      * 
-     * @param buffer
-     *        the data in the packet.
+     * @param text
+     *        the text read from the stream.
      */
-    void info( ByteBuffer buffer );
+    void info( String text );
 
     /**
      * Signals the arrival of a JFIF packet to the client.

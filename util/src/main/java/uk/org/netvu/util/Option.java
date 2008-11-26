@@ -1,4 +1,4 @@
-package uk.org.netvu.protocol;
+package uk.org.netvu.util;
 
 import uk.org.netvu.util.CheckParameters;
 
@@ -11,7 +11,7 @@ import java.util.Iterator;
  * @param <T>
  *        the type of the object.
  */
-abstract class Option<T> implements Iterable<T>
+public abstract class Option<T> implements Iterable<T>
 {
     /**
      * Creates an Option holding no elements.
@@ -228,7 +228,7 @@ abstract class Option<T> implements Iterable<T>
      * @return an Option holding the result of binding the specified Function to
      *         this Option.
      */
-    abstract <U> Option<U> bind( Function<T, Option<U>> function );
+    public abstract <U> Option<U> bind( Function<T, Option<U>> function );
 
     /**
      * Folds an Option, producing one value.
@@ -244,7 +244,7 @@ abstract class Option<T> implements Iterable<T>
      * @return a folded version of this Option according to the specified
      *         parameters.
      */
-    abstract <U> U fold( U ifEmpty, Function<T, U> ifFull );
+    public abstract <U> U fold( U ifEmpty, Function<T, U> ifFull );
 
     /**
      * An Option that does not hold a value.
@@ -304,7 +304,7 @@ abstract class Option<T> implements Iterable<T>
         }
 
         @Override
-        <U> U fold( final U ifEmpty, final Function<T, U> ifFull )
+        public <U> U fold( final U ifEmpty, final Function<T, U> ifFull )
         {
             CheckParameters.areNotNull( ifEmpty, ifFull );
 
@@ -364,7 +364,7 @@ abstract class Option<T> implements Iterable<T>
         }
 
         @Override
-        <U> U fold( final U ifEmpty, final Function<T, U> ifFull )
+        public <U> U fold( final U ifEmpty, final Function<T, U> ifFull )
         {
             CheckParameters.areNotNull( ifEmpty );
 

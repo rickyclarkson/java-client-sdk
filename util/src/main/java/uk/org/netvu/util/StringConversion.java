@@ -1,6 +1,4 @@
-package uk.org.netvu.protocol;
-
-import uk.org.netvu.util.CheckParameters;
+package uk.org.netvu.util;
 
 /**
  * A StringConversion can convert between Strings and a given type, T, though
@@ -17,7 +15,7 @@ import uk.org.netvu.util.CheckParameters;
  * @param <T>
  *        the type that this StringConversion can convert Strings to and from.
  */
-final class StringConversion<T>
+public final class StringConversion<T>
 {
     /**
      * A StringConversion that converts between Strings containing 'true' or

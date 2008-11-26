@@ -9,7 +9,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import uk.org.netvu.protocol.ParameterDescription.SparseArrayParameterDescription;
+import uk.org.netvu.util.ParameterDescription.SparseArrayParameterDescription;
+import uk.org.netvu.util.ParameterDescription;
+import uk.org.netvu.util.Option;
+import uk.org.netvu.util.ParameterMap;
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.StringConversion;
+import uk.org.netvu.util.Strings;
+import uk.org.netvu.util.URLEncoder;
+import uk.org.netvu.util.Lists;
+import uk.org.netvu.util.Reduction;
+import uk.org.netvu.util.Pair;
 
 /**
  * A parameter list for a decoder query. Use {@link DecoderCGI.Builder} to

@@ -1,6 +1,8 @@
 package uk.org.netvu.protocol;
 
 import java.util.Locale;
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Option;
 
 /**
  * The return type of the variable.

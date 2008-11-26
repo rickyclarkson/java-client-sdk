@@ -1,6 +1,8 @@
 package uk.org.netvu.protocol;
 
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Strings;
 
 /**
  * An enumeration of supported system variables.

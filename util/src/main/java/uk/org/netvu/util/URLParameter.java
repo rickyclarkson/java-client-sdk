@@ -1,11 +1,9 @@
-package uk.org.netvu.protocol;
-
-import uk.org.netvu.util.CheckParameters;
+package uk.org.netvu.util;
 
 /**
  * A representation of a URL Parameter (foo=bar).
  */
-final class URLParameter
+public final class URLParameter
 {
     /**
      * The name of this parameter.
@@ -22,7 +20,7 @@ final class URLParameter
      * the first String corresponds to the key, and the second String
      * corresponds to the value.
      */
-    static final Function<Pair<String, String>, URLParameter> fromPair =
+    public static final Function<Pair<String, String>, URLParameter> fromPair =
             new Function<Pair<String, String>, URLParameter>()
             {
                 @Override

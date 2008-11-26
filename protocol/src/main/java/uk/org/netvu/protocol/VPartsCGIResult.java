@@ -2,6 +2,12 @@ package uk.org.netvu.protocol;
 
 import java.util.ArrayList;
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.ParameterDescription;
+import uk.org.netvu.util.Option;
+import uk.org.netvu.util.ParameterMap;
+import uk.org.netvu.util.StringConversion;
+import uk.org.netvu.util.Strings;
+import uk.org.netvu.util.URLParameter;
 
 /**
  * Builds and parses the results from vparts.cgi requests.

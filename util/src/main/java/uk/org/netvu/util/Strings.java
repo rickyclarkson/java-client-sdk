@@ -1,6 +1,4 @@
-package uk.org.netvu.protocol;
-
-import uk.org.netvu.util.CheckParameters;
+package uk.org.netvu.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +7,7 @@ import java.util.List;
 /**
  * Utility methods for dealing with Strings.
  */
-final class Strings
+public final class Strings
 {
     /**
      * A named String literal, used to improve the readability of uses of double
@@ -148,7 +146,7 @@ final class Strings
      *         the given separator, or the whole String if the separator isn't
      *         found in the String.
      */
-    static String afterFirstLeniently( final String string, final String separator )
+    public static String afterFirstLeniently( final String string, final String separator )
     {
         final List<String> list = partitionLeniently( string, separator );
         return list.get( list.size() > 1 ? 1 : 0 );
@@ -169,7 +167,7 @@ final class Strings
      *         the given separator, or the whole string if the separator isn't
      *         found in the string.
      */
-    static String afterLastLeniently( final String string, final String separator )
+    public static String afterLastLeniently( final String string, final String separator )
     {
         final List<String> list = partitionLeniently( string, separator );
         return list.get( list.size() - 1 );
@@ -190,7 +188,7 @@ final class Strings
      *         the given separator, or the whole string if the separator isn't
      *         found in the String.
      */
-    static String beforeFirstLeniently( final String string, final String separator )
+    public static String beforeFirstLeniently( final String string, final String separator )
     {
         return partitionLeniently( string, separator ).get( 0 );
     }
@@ -204,7 +202,7 @@ final class Strings
      * @return a Function that can split a given String into two parts around
      *         the given separator.
      */
-    static Function<String, Pair<String, String>> partition( final char separator )
+    public static Function<String, Pair<String, String>> partition( final char separator )
     {
         return new Function<String, Pair<String, String>>()
         {
@@ -225,7 +223,7 @@ final class Strings
      *        the String to trim double quotes from.
      * @return a String without leading and trailing double quotes.
      */
-    static String removeSurroundingQuotesLeniently( final String value )
+    public static String removeSurroundingQuotesLeniently( final String value )
     {
         return value.startsWith( DOUBLE_QUOTES ) && value.endsWith( DOUBLE_QUOTES ) ? value.substring( 1,
                 value.length() - 1 ) : value;

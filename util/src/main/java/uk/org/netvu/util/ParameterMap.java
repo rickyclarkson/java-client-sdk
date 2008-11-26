@@ -1,6 +1,4 @@
-package uk.org.netvu.protocol;
-
-import uk.org.netvu.util.CheckParameters;
+package uk.org.netvu.util;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,7 +9,7 @@ import java.util.Map;
  * An immutable object that stores the values associated with parameters and
  * provides an interface to retrieving those values.
  */
-final class ParameterMap
+public final class ParameterMap
 {
     /**
      * Parses each of the specified Strings and gives it to the corresponding
@@ -254,7 +252,7 @@ final class ParameterMap
         /**
          * A Validator that accepts any ParameterMap.
          */
-        static final Validator ACCEPT_ALL = new Validator()
+        public static final Validator ACCEPT_ALL = new Validator()
         {
             @Override
             public boolean isValid( final ParameterMap parameterMap )

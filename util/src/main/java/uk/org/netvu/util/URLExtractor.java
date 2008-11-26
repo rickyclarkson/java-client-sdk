@@ -1,4 +1,4 @@
-package uk.org.netvu.protocol;
+package uk.org.netvu.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * A utility class for parsing Strings into URL parts.
  */
-final class URLExtractor
+public final class URLExtractor
 {
     /**
      * Parses key-value pairs separated by &, and internally separated by =,
@@ -16,7 +16,7 @@ final class URLExtractor
      *        the URL or URL-part to parse.
      * @return a List of URLParameters parsed from the given String.
      */
-    static List<URLParameter> nameValuePairs( final String url )
+    public static List<URLParameter> nameValuePairs( final String url )
     {
         if ( url.indexOf( '=' ) < 0 )
         {
@@ -39,7 +39,7 @@ final class URLExtractor
      *        the URL to split.
      * @return a List containing each parameter as a String.
      */
-    static List<String> parameters( final String url )
+    public static List<String> parameters( final String url )
     {
         final String afterFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists =
                 Strings.afterFirstLeniently( url, "?" );
@@ -56,7 +56,7 @@ final class URLExtractor
      *        the URL to parse.
      * @return the name of the query that the URL points to.
      */
-    static String queryName( final String url )
+    public static String queryName( final String url )
     {
         final String beforeFirstQuestionMarkOrTheWholeStringIfNoQuestionMarkExists =
                 Strings.beforeFirstLeniently( url, "?" );

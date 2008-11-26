@@ -1,6 +1,4 @@
-package uk.org.netvu.protocol;
-
-import uk.org.netvu.util.CheckParameters;
+package uk.org.netvu.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +16,7 @@ import java.util.TreeMap;
  *        the output type of the parameter that the ParameterDescription
  *        describes.
  */
-abstract class ParameterDescription<T, R>
+public abstract class ParameterDescription<T, R>
 {
     /**
      * Constructs a ParameterDescription that describes a parameter that accepts
@@ -238,7 +236,7 @@ abstract class ParameterDescription<T, R>
      * @return a URLParameter representing the specified value for this
      *         ParameterDescription.
      */
-    abstract Option<String> toURLParameter( R value );
+    public abstract Option<String> toURLParameter( R value );
 
     /**
      * A ParameterDescription for parameters that represent one-dimensional
@@ -247,7 +245,7 @@ abstract class ParameterDescription<T, R>
      * @param <T>
      *        the element type of this SparseArrayParameterDescription.
      */
-    static final class SparseArrayParameterDescription<T>
+    public static final class SparseArrayParameterDescription<T>
             extends ParameterDescription<List<Pair<Integer, T>>, TreeMap<Integer, T>>
     {
         /**
@@ -313,7 +311,7 @@ abstract class ParameterDescription<T, R>
         }
 
         @Override
-        Option<String> toURLParameter( final TreeMap<Integer, T> map )
+        public Option<String> toURLParameter( final TreeMap<Integer, T> map )
         {
             final StringBuilder result = new StringBuilder();
 
@@ -373,7 +371,7 @@ abstract class ParameterDescription<T, R>
         }
 
         @Override
-        Option<String> toURLParameter( final U valuePair )
+        public Option<String> toURLParameter( final U valuePair )
         {
             return delegate.toURLParameter( valuePair );
         }
@@ -444,7 +442,7 @@ abstract class ParameterDescription<T, R>
         }
 
         @Override
-        Option<String> toURLParameter( final U value )
+        public Option<String> toURLParameter( final U value )
         {
             return delegate.toURLParameter( value );
         }
@@ -503,7 +501,7 @@ abstract class ParameterDescription<T, R>
         }
 
         @Override
-        Option<String> toURLParameter( final T value )
+        public Option<String> toURLParameter( final T value )
         {
             return conversions.toString( value ).map( new Function<String, String>()
             {
@@ -563,7 +561,7 @@ abstract class ParameterDescription<T, R>
         }
 
         @Override
-        Option<String> toURLParameter( final Option<T> value )
+        public Option<String> toURLParameter( final Option<T> value )
         {
             return value.bind( new Function<T, Option<String>>()
             {

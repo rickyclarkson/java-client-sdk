@@ -1,15 +1,14 @@
-package uk.org.netvu.protocol;
+package uk.org.netvu.util;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
-import uk.org.netvu.util.CheckParameters;
 
 /**
  * A set of utility methods for operating on Lists.
  */
-final class Lists
+public final class Lists
 {
     /**
      * Given a List and a predicate, constructs a List consisting of only the
@@ -170,7 +169,7 @@ final class Lists
      * @return a new List containing Paris each consisting of one element from
      *         each List, in order.
      */
-    static <T, U> List<Pair<T, U>> zip( final List<T> ts, final List<U> us )
+    public static <T, U> List<Pair<T, U>> zip( final List<T> ts, final List<U> us )
     {
         final Iterator<T> tIterator = ts.iterator();
         final Iterator<U> uIterator = us.iterator();

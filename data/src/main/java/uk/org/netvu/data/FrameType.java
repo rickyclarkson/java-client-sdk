@@ -72,7 +72,7 @@ public enum FrameType
                 throws IOException
         {
             CheckParameters.areNotNull( handler, data, metadata );
-            handler.info( IO.readIntoByteBuffer( data, metadata.getLength() ) );
+            handler.info( new String(IO.readIntoByteBuffer( data, metadata.getLength() ).array()) );
         }
     },
     /**

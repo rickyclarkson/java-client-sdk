@@ -1,6 +1,4 @@
-package uk.org.netvu.protocol;
-
-import uk.org.netvu.util.CheckParameters;
+package uk.org.netvu.util;
 
 /**
  * A transformation from 2 values to 1 value, that can be used across many
@@ -12,7 +10,7 @@ import uk.org.netvu.util.CheckParameters;
  * @param <R>
  *        the type of the accumulator.
  */
-abstract class Reduction<T, R>
+public abstract class Reduction<T, R>
 {
     /**
      * A Reduction that, given two Strings, constructs a new String containing

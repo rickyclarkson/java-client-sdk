@@ -110,7 +110,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
 
      def dataArrived(byteBuffer: ByteBuffer, metadata: StreamMetadata) = ()
      def mpeg4(packet: MPEG4Packet) = ()
-     def info(byteBuffer: ByteBuffer) = ()
+     def info(text: String) = ()
     })
 
     numInvalidFrames == 0 must beTrue
@@ -163,7 +163,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
 
      index += 1
     }
-    def info(buffer: ByteBuffer) = buffer.position(buffer.limit() - 1)
+    def info(text: String) = ()
    })
    
    numValidFrames >= 2 must beTrue                                                       
@@ -188,7 +188,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     }
 
     def dataArrived(buffer: ByteBuffer, metadata: StreamMetadata) = ()
-    def info(buffer: ByteBuffer) = ()
+    def info(text: String) = ()
     def mpeg4(packet: MPEG4Packet) = ()
    })
 

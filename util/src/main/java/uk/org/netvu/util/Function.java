@@ -1,7 +1,6 @@
-package uk.org.netvu.protocol;
+package uk.org.netvu.util;
 
 import java.math.BigInteger;
-import uk.org.netvu.util.CheckParameters;
 
 /**
  * A function from objects of type T to those of type R.
@@ -11,7 +10,7 @@ import uk.org.netvu.util.CheckParameters;
  * @param <R>
  *        the type of object to convert to.
  */
-abstract class Function<T, R>
+public abstract class Function<T, R>
 {
     /**
      * A Function that returns true if the value it receives is the same as the
