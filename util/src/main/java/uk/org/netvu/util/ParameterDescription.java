@@ -121,7 +121,7 @@ public abstract class ParameterDescription<T, R>
      * @return a parameter that can take 0 or 1 values of type T, yielding them
      *         as an Option<T>.
      */
-    public static <T> ParameterDescription<T, Option<T>> parameterWithoutDefault( final String name,
+    public static <T> ParameterDescriptionWithoutDefault<T> parameterWithoutDefault( final String name,
             final StringConversion<T> conversion )
     {
         CheckParameters.areNotNull( name, conversion );
@@ -521,7 +521,7 @@ public abstract class ParameterDescription<T, R>
      * @param <T>
      *        The input type of this ParameterDescription.
      */
-    private static final class ParameterDescriptionWithoutDefault<T>
+    public static final class ParameterDescriptionWithoutDefault<T>
             extends ParameterDescription<T, Option<T>>
     {
         /**

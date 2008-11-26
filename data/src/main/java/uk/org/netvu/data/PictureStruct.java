@@ -96,6 +96,11 @@ public final class PictureStruct
         lineOffset = readShort( LINE_OFFSET );
     }
 
+    public ByteBuffer getByteBuffer()
+    {
+        return buffer;
+    }
+
     public short getLineOffset()
     {
         return lineOffset;

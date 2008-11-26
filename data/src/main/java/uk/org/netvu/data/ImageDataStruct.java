@@ -24,13 +24,13 @@ public final class ImageDataStruct
      * The length of the title (the title may be smaller than this and
      * null-terminated, but the number of bytes used is constant).
      */
-    private static final int TITLE_LENGTH = 31;
+    static final int TITLE_LENGTH = 31;
 
     /**
      * The length of the name (the name may be smaller than this and
      * null-terminated, but the number of bytes used is constant).
      */
-    private static final int MAX_NAME_LENGTH = 30;
+    static final int MAX_NAME_LENGTH = 30;
 
     /**
      * The position of the VERSION field in the image data.

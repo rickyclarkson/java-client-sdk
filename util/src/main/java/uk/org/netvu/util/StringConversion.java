@@ -141,6 +141,19 @@ public final class StringConversion<T>
     }
 
     /**
+     * A StringConversion that always yields an empty Option in either direction.
+     *
+     * @param reason the reason the Option is empty.
+     * @return a StringConversion that always yields an empty Option in either direction.
+     * @throws NullPointerException if reason is null.
+     */
+    public static <T> StringConversion<T> none( String reason )
+    {
+        CheckParameters.areNotNull( reason );
+        return new StringConversion<T>( Option.<String, T>getFunctionToEmptyOption( reason ), Option.<T, String>getFunctionToEmptyOption( reason ) );
+    }
+
+    /**
      * Constructs a StringConversion from a Function from Strings to Ts, and a
      * Function from Ts to Strings.
      * 

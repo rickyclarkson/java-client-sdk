@@ -204,4 +204,3 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
  import java.io.File
  def mapFile(name: String) = new FileInputStream(name).getChannel.map(MapMode.READ_ONLY, 0, new File(name).length())
 })
-
