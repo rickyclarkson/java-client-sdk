@@ -32,7 +32,7 @@ final class BinaryParser implements Parser
         {
             while ( true )
             {
-                final BinaryStreamMetadata metadata = new BinaryStreamMetadata( input );
+                final StreamMetadata metadata = StreamMetadata.fromBinaryOrMinimalStream( input );
                 metadata.getFrameType().deliverTo( handler, input, metadata );
             }
         }
