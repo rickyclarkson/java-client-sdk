@@ -263,4 +263,24 @@ final class JFIFHeader
     {
         return String.valueOf( i ).getBytes().length;
     }
+
+    static String getComments(ByteBuffer jfif)
+    {
+        if ((jfif.get() & 0xFF) == 0xFF && (jfif.get() & 0xFF) == 0xFE)
+        {
+            short commentLength = jfif.getShort();
+            byte[] comment = new byte[commentLength];
+            jfif.get(comment);
+            try
+            {
+                return new String(comment);
+            }
+            finally
+            {
+                jfif.position(0);
+            }
+        }
+
+        return getComments(jfif);
+    }
 }

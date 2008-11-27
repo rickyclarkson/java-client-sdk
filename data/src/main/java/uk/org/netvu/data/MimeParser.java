@@ -40,7 +40,14 @@ class MimeParser implements Parser
                 final int length = IO.expectIntFromRestOfLine( input );
                 IO.expectLine( input, "" );
                 final ByteBuffer jpeg = IO.readIntoByteBuffer( input, length );
-                handler.jfif( jpeg );
+                
+                String comments = JFIFHeader.getComments(jpeg);
+                int numberStart = comments.indexOf("Number:");
+                int numberEnd = comments.indexOf("\r\n", numberStart);
+                int channel = Integer.parseInt(comments.substring(numberStart+"Number: ".length(), numberEnd));
+                                                             
+                PacketMetadata metadata = new PacketMetadata(length, channel, FrameType.JFIF);
+                handler.jfif( Packet.jfifPacket(jpeg, metadata) );
                 IO.expectLine( input, "" );
             }
         }

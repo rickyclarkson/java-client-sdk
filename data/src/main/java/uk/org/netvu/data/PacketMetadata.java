@@ -7,13 +7,13 @@ import java.io.IOException;
 /**
  * Information about a single packet retrieved while parsing a stream.
  */
-public final class StreamMetadata
+public final class PacketMetadata
 {
     private final int length;
     private final int channel;
     private final FrameType frameType;
 
-    public StreamMetadata(int length, int channel, FrameType frameType)
+    public PacketMetadata(int length, int channel, FrameType frameType)
     {
         this.length = length;
         this.channel = channel;
@@ -45,12 +45,12 @@ public final class StreamMetadata
         return frameType;
     }
 
-    public static StreamMetadata fromBinaryOrMinimalStream(InputStream input) throws IOException
+    public static PacketMetadata fromBinaryOrMinimalStream(InputStream input) throws IOException
     {
         FrameType frameType = FrameType.frameTypeFor(input.read() & 0xFF);
         int channel = input.read() + 1;
         int length = new DataInputStream( input ).readInt();
         
-        return new StreamMetadata(length, channel, frameType);
+        return new PacketMetadata(length, channel, frameType);
     }
 }

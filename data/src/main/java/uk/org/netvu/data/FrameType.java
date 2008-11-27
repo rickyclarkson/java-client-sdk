@@ -20,11 +20,11 @@ public enum FrameType
     JFIF
     {
         @Override
-        public void deliverTo( final StreamHandler handler, final InputStream input, final StreamMetadata metadata )
+        public void deliverTo( final StreamHandler handler, final InputStream input, final PacketMetadata metadata )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, input, metadata );
-            handler.jfif( IO.readIntoByteBuffer( input, metadata.getLength() ) );
+            handler.jfif( Packet.jfifPacket(IO.readIntoByteBuffer( input, metadata.getLength() ), metadata ));
         }
     },
     /**
@@ -33,14 +33,14 @@ public enum FrameType
     JPEG
     {
         @Override
-        public void deliverTo( final StreamHandler handler, final InputStream input, final StreamMetadata metadata )
+        public void deliverTo( final StreamHandler handler, final InputStream input, final PacketMetadata metadata )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, input, metadata );
             final ImageDataStruct imageHeader =
                     new ImageDataStruct( IO.readIntoByteBuffer( input, IMAGE_DATA_STRUCT_SIZE ) );
             final ByteBuffer restOfData = IO.readIntoByteBuffer( input, metadata.getLength() - IMAGE_DATA_STRUCT_SIZE );
-            handler.jfif( JFIFHeader.jpegToJfif( restOfData, /* metadata, */imageHeader ) );
+            handler.jfif( Packet.jfifPacket(JFIFHeader.jpegToJfif( restOfData, imageHeader ), metadata ));
         }
     },
     /**
@@ -49,7 +49,7 @@ public enum FrameType
     MPEG4
     {
         @Override
-        public void deliverTo( final StreamHandler handler, final InputStream input, final StreamMetadata metadata )
+        public void deliverTo( final StreamHandler handler, final InputStream input, final PacketMetadata metadata )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, input, metadata );
@@ -68,11 +68,11 @@ public enum FrameType
     INFO
     {
         @Override
-        public void deliverTo( final StreamHandler handler, final InputStream data, final StreamMetadata metadata )
+        public void deliverTo( final StreamHandler handler, final InputStream data, final PacketMetadata metadata )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, data, metadata );
-            handler.info( new String(IO.readIntoByteBuffer( data, metadata.getLength() ).array()) );
+            handler.info( Packet.infoPacket(new String(IO.readIntoByteBuffer( data, metadata.getLength() ).array()), metadata) );
         }
     },
     /**
@@ -81,11 +81,11 @@ public enum FrameType
     UNKNOWN
     {
         @Override
-        public void deliverTo( final StreamHandler handler, final InputStream data, final StreamMetadata metadata )
+        public void deliverTo( final StreamHandler handler, final InputStream data, final PacketMetadata metadata )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, data, metadata );
-            handler.dataArrived( IO.readIntoByteBuffer( data, metadata.getLength() ), metadata );
+            handler.dataArrived( Packet.unknownPacket(IO.readIntoByteBuffer( data, metadata.getLength() ), metadata ));
         }
     };
 
@@ -130,6 +130,6 @@ public enum FrameType
      * @throws NullPointerException
      *         if any of the parameters are null.
      */
-    public abstract void deliverTo( StreamHandler handler, InputStream data, StreamMetadata metadata )
+    public abstract void deliverTo( StreamHandler handler, InputStream data, PacketMetadata metadata )
             throws IOException;
 }

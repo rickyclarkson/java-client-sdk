@@ -6,7 +6,7 @@ import uk.org.netvu.util.CheckParameters;
 /**
  * An MPEG-4 packet plus metadata and the comment block.
  */
-public final class MPEG4Packet
+public final class MPEG4Packet extends Packet
 {
     /**
      * The data part of the MPEG-4 packet.
@@ -16,7 +16,7 @@ public final class MPEG4Packet
     /**
      * The stream metadata for the stream the current packet was read from.
      */
-    private final StreamMetadata metadata;
+    private final PacketMetadata metadata;
 
     /**
      * The ImageDataStruct associated with this MPEG4Packet.
@@ -43,7 +43,7 @@ public final class MPEG4Packet
      * @throws NullPointerException
      *         if any of the values are null.
      */
-    public MPEG4Packet( final ByteBuffer data, final StreamMetadata metadata, final ImageDataStruct imageDataStruct,
+    public MPEG4Packet( final ByteBuffer data, final PacketMetadata metadata, final ImageDataStruct imageDataStruct,
             final ByteBuffer commentData )
     {
         CheckParameters.areNotNull( data, metadata, imageDataStruct, commentData );
@@ -89,7 +89,7 @@ public final class MPEG4Packet
      * @return the stream metadata for the stream the current packet was read
      *         from.
      */
-    public StreamMetadata getMetadata()
+    public PacketMetadata getMetadata()
     {
         return metadata;
     }

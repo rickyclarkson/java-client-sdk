@@ -31,7 +31,7 @@ public class MinimalParser implements Parser
         {
             while ( true )
             {
-                StreamMetadata metadata = StreamMetadata.fromBinaryOrMinimalStream(input);
+                PacketMetadata metadata = PacketMetadata.fromBinaryOrMinimalStream(input);
 
                 metadata.getFrameType().deliverTo(handler, input, metadata);
             }
