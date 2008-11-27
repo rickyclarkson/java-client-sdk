@@ -32,8 +32,11 @@ public final class CheckParameters
     }
 
     /**
-     * To bounds-check integers, use CheckParameters.from(lower).to(upper).bounds(the, integers, here);
-     * @param lower the lower bound.
+     * To bounds-check integers, use
+     * CheckParameters.from(lower).to(upper).bounds(the, integers, here);
+     * 
+     * @param lower
+     *        the lower bound.
      * @return a From to call .to on.
      */
     public static From from( final int lower )
@@ -78,6 +81,7 @@ public final class CheckParameters
 
     /**
      * The second step in a fluent interface for bounds-checking integers.
+     * 
      * @see CheckParameters#from(int)
      */
     public static final class From
@@ -89,7 +93,9 @@ public final class CheckParameters
 
         /**
          * Constructs a From with the specified lower bound.
-         * @param lower the lower bound.
+         * 
+         * @param lower
+         *        the lower bound.
          */
         From( final int lower )
         {
@@ -98,7 +104,9 @@ public final class CheckParameters
 
         /**
          * Constructs a FromTo ready to bounds-check integers.
-         * @param upper the upper bound.
+         * 
+         * @param upper
+         *        the upper bound.
          */
         public FromTo to( final int upper )
         {
@@ -108,6 +116,7 @@ public final class CheckParameters
 
     /**
      * The final step in a fluent interface for bounds-checking integers.
+     * 
      * @see CheckParameters#from(int)
      */
     public static final class FromTo
@@ -133,13 +142,17 @@ public final class CheckParameters
 
         /**
          * Asserts that this FromTo bounds all the specified ints.
-         * @param ints the ints to check.
-         * @throws IllegalArgumentException if any of the ints are outside the valid range.
-         * @throws NullPointerException if ints is null.
+         * 
+         * @param ints
+         *        the ints to check.
+         * @throws IllegalArgumentException
+         *         if any of the ints are outside the valid range.
+         * @throws NullPointerException
+         *         if ints is null.
          */
         public void bounds( final int... ints )
         {
-            areNotNull(ints);
+            areNotNull( ints );
 
             for ( final int i : ints )
             {

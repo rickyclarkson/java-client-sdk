@@ -3,7 +3,7 @@ package uk.org.netvu.data;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.DataInputStream;
+
 import uk.org.netvu.util.CheckParameters;
 
 /**
@@ -31,9 +31,9 @@ public class MinimalParser implements Parser
         {
             while ( true )
             {
-                PacketMetadata metadata = PacketMetadata.fromBinaryOrMinimalStream(input);
+                final PacketMetadata metadata = PacketMetadata.fromBinaryOrMinimalStream( input );
 
-                metadata.getFrameType().deliverTo(handler, input, metadata);
+                metadata.getFrameType().deliverTo( handler, input, metadata );
             }
         }
         catch ( final EOFException e )

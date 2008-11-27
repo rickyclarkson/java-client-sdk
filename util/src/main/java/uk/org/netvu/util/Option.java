@@ -1,7 +1,5 @@
 package uk.org.netvu.util;
 
-import uk.org.netvu.util.CheckParameters;
-
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -134,6 +132,23 @@ public abstract class Option<T> implements Iterable<T>
     }
 
     /**
+     * Applies the specified Function to a value held by this Option.
+     * Specifically, if this Option is empty, the Function is not invoked - an
+     * empty Option is returned. If this Option is full, the Function is
+     * invoked, and its result is returned.
+     * 
+     * @param <U>
+     *        the type of the Option to convert this Option to.
+     * @param function
+     *        the Function to apply to a value held by this Option.
+     * @throws NullPointerException
+     *         if conversion is null.
+     * @return an Option holding the result of binding the specified Function to
+     *         this Option.
+     */
+    public abstract <U> Option<U> bind( Function<T, Option<U>> function );
+
+    /**
      * Throws an UnsupportedOperationException to catch any accidental
      * badly-typed equals comparisons early.
      * 
@@ -146,6 +161,22 @@ public abstract class Option<T> implements Iterable<T>
         throw new UnsupportedOperationException(
                 "equals(Object) not supported, to catch any accidental badly-typed equals comparisons early" );
     }
+
+    /**
+     * Folds an Option, producing one value.
+     * 
+     * @param <U>
+     *        the type of the value to return.
+     * @param ifEmpty
+     *        the U to return if the Option holds no value.
+     * @param ifFull
+     *        the Function to apply if the Option has a value.
+     * @throws NullPointerException
+     *         if ifEmpty or ifFull are null.
+     * @return a folded version of this Option according to the specified
+     *         parameters.
+     */
+    public abstract <U> U fold( U ifEmpty, Function<T, U> ifFull );
 
     /**
      * Gets the element held by this Option, or throws an IllegalStateException
@@ -214,39 +245,6 @@ public abstract class Option<T> implements Iterable<T>
     }
 
     /**
-     * Applies the specified Function to a value held by this Option.
-     * Specifically, if this Option is empty, the Function is not invoked - an
-     * empty Option is returned. If this Option is full, the Function is
-     * invoked, and its result is returned.
-     * 
-     * @param <U>
-     *        the type of the Option to convert this Option to.
-     * @param function
-     *        the Function to apply to a value held by this Option.
-     * @throws NullPointerException
-     *         if conversion is null.
-     * @return an Option holding the result of binding the specified Function to
-     *         this Option.
-     */
-    public abstract <U> Option<U> bind( Function<T, Option<U>> function );
-
-    /**
-     * Folds an Option, producing one value.
-     * 
-     * @param <U>
-     *        the type of the value to return.
-     * @param ifEmpty
-     *        the U to return if the Option holds no value.
-     * @param ifFull
-     *        the Function to apply if the Option has a value.
-     * @throws NullPointerException
-     *         if ifEmpty or ifFull are null.
-     * @return a folded version of this Option according to the specified
-     *         parameters.
-     */
-    public abstract <U> U fold( U ifEmpty, Function<T, U> ifFull );
-
-    /**
      * An Option that does not hold a value.
      * 
      * @param <T>
@@ -268,6 +266,14 @@ public abstract class Option<T> implements Iterable<T>
             CheckParameters.areNotNull( function );
 
             return Option.getEmptyOption( reason );
+        }
+
+        @Override
+        public <U> U fold( final U ifEmpty, final Function<T, U> ifFull )
+        {
+            CheckParameters.areNotNull( ifEmpty, ifFull );
+
+            return ifEmpty;
         }
 
         @Override
@@ -302,14 +308,6 @@ public abstract class Option<T> implements Iterable<T>
         {
             return reason;
         }
-
-        @Override
-        public <U> U fold( final U ifEmpty, final Function<T, U> ifFull )
-        {
-            CheckParameters.areNotNull( ifEmpty, ifFull );
-
-            return ifEmpty;
-        }
     }
 
     /**
@@ -332,6 +330,14 @@ public abstract class Option<T> implements Iterable<T>
         public <U> Option<U> bind( final Function<T, Option<U>> conversion )
         {
             return conversion.apply( t );
+        }
+
+        @Override
+        public <U> U fold( final U ifEmpty, final Function<T, U> ifFull )
+        {
+            CheckParameters.areNotNull( ifEmpty );
+
+            return ifFull.apply( t );
         }
 
         @Override
@@ -361,14 +367,6 @@ public abstract class Option<T> implements Iterable<T>
         public String reason()
         {
             throw new IllegalStateException( "This Option has a value; reason() is only valid on an empty Option" );
-        }
-
-        @Override
-        public <U> U fold( final U ifEmpty, final Function<T, U> ifFull )
-        {
-            CheckParameters.areNotNull( ifEmpty );
-
-            return ifFull.apply( t );
         }
     }
 }

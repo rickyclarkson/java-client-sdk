@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+
 import uk.org.netvu.util.CheckParameters;
 
 /**
@@ -40,14 +41,15 @@ class MimeParser implements Parser
                 final int length = IO.expectIntFromRestOfLine( input );
                 IO.expectLine( input, "" );
                 final ByteBuffer jpeg = IO.readIntoByteBuffer( input, length );
-                
-                String comments = JFIFHeader.getComments(jpeg);
-                int numberStart = comments.indexOf("Number:");
-                int numberEnd = comments.indexOf("\r\n", numberStart);
-                int channel = Integer.parseInt(comments.substring(numberStart+"Number: ".length(), numberEnd));
-                                                             
-                PacketMetadata metadata = new PacketMetadata(length, channel, FrameType.JFIF);
-                handler.jfif( Packet.jfifPacket(jpeg, metadata) );
+
+                final String comments = JFIFHeader.getComments( jpeg );
+                final int numberStart = comments.indexOf( "Number:" );
+                final int numberEnd = comments.indexOf( "\r\n", numberStart );
+                final int channel =
+                        Integer.parseInt( comments.substring( numberStart + "Number: ".length(), numberEnd ) );
+
+                final PacketMetadata metadata = new PacketMetadata( length, channel, FrameType.JFIF );
+                handler.jfif( Packet.jfifPacket( jpeg, metadata ) );
                 IO.expectLine( input, "" );
             }
         }

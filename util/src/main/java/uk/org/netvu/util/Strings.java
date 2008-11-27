@@ -16,6 +16,68 @@ public final class Strings
     private static final String DOUBLE_QUOTES = "\"";
 
     /**
+     * Gives the part of the given String that is after the first instance of
+     * the given separator, or the whole String if the separator isn't found in
+     * the String.
+     * 
+     * @param string
+     *        the String to parse.
+     * @param separator
+     *        the separator to split on.
+     * @throws NullPointerException
+     *         if string or separator are null.
+     * @return the part of the given String that is after the first instance of
+     *         the given separator, or the whole String if the separator isn't
+     *         found in the String.
+     */
+    public static String afterFirstLeniently( final String string, final String separator )
+    {
+        final List<String> list = partitionLeniently( string, separator );
+        return list.get( list.size() > 1 ? 1 : 0 );
+    }
+
+    /**
+     * Gives the part of the given String that is after the last instance of the
+     * given separator, or the whole string if the separator isn't found in the
+     * String.
+     * 
+     * @param string
+     *        the String to parse.
+     * @param separator
+     *        the separator to split on.
+     * @throws NullPointerException
+     *         if string or separator are null.
+     * @return the part of the given String that is after the last instance of
+     *         the given separator, or the whole string if the separator isn't
+     *         found in the string.
+     */
+    public static String afterLastLeniently( final String string, final String separator )
+    {
+        final List<String> list = partitionLeniently( string, separator );
+        return list.get( list.size() - 1 );
+    }
+
+    /**
+     * Gives the part of the given String that is before the first instance of
+     * the given separator, or the whole string if the separator isn't found in
+     * the String.
+     * 
+     * @param string
+     *        the String to parse.
+     * @param separator
+     *        the separator to split on.
+     * @throws NullPointerException
+     *         if string or separator are null.
+     * @return the part of the given String that is before the first instance of
+     *         the given separator, or the whole string if the separator isn't
+     *         found in the String.
+     */
+    public static String beforeFirstLeniently( final String string, final String separator )
+    {
+        return partitionLeniently( string, separator ).get( 0 );
+    }
+
+    /**
      * Gives the substring of the specified String after the specified char.
      * 
      * @param c
@@ -64,6 +126,42 @@ public final class Strings
         }
 
         return builder.toString();
+    }
+
+    /**
+     * Gives a Function that can split a given String into two parts around the
+     * given separator.
+     * 
+     * @param separator
+     *        the separator to use.
+     * @return a Function that can split a given String into two parts around
+     *         the given separator.
+     */
+    public static Function<String, Pair<String, String>> partition( final char separator )
+    {
+        return new Function<String, Pair<String, String>>()
+        {
+            @Override
+            public Pair<String, String> apply( final String param )
+            {
+                return new Pair<String, String>( param.substring( 0, param.indexOf( separator ) ),
+                        param.substring( param.indexOf( separator ) + 1 ) );
+            }
+        };
+    }
+
+    /**
+     * Removes leading and trailing double quotes from a String. If they don't
+     * exist then it returns the original String.
+     * 
+     * @param value
+     *        the String to trim double quotes from.
+     * @return a String without leading and trailing double quotes.
+     */
+    public static String removeSurroundingQuotesLeniently( final String value )
+    {
+        return value.startsWith( DOUBLE_QUOTES ) && value.endsWith( DOUBLE_QUOTES ) ? value.substring( 1,
+                value.length() - 1 ) : value;
     }
 
     /**
@@ -129,104 +227,6 @@ public final class Strings
     public static Function<String, String> surroundWithQuotes()
     {
         return prepend( DOUBLE_QUOTES ).andThen( append( DOUBLE_QUOTES ) );
-    }
-
-    /**
-     * Gives the part of the given String that is after the first instance of
-     * the given separator, or the whole String if the separator isn't found in
-     * the String.
-     * 
-     * @param string
-     *        the String to parse.
-     * @param separator
-     *        the separator to split on.
-     * @throws NullPointerException
-     *         if string or separator are null.
-     * @return the part of the given String that is after the first instance of
-     *         the given separator, or the whole String if the separator isn't
-     *         found in the String.
-     */
-    public static String afterFirstLeniently( final String string, final String separator )
-    {
-        final List<String> list = partitionLeniently( string, separator );
-        return list.get( list.size() > 1 ? 1 : 0 );
-    }
-
-    /**
-     * Gives the part of the given String that is after the last instance of the
-     * given separator, or the whole string if the separator isn't found in the
-     * String.
-     * 
-     * @param string
-     *        the String to parse.
-     * @param separator
-     *        the separator to split on.
-     * @throws NullPointerException
-     *         if string or separator are null.
-     * @return the part of the given String that is after the last instance of
-     *         the given separator, or the whole string if the separator isn't
-     *         found in the string.
-     */
-    public static String afterLastLeniently( final String string, final String separator )
-    {
-        final List<String> list = partitionLeniently( string, separator );
-        return list.get( list.size() - 1 );
-    }
-
-    /**
-     * Gives the part of the given String that is before the first instance of
-     * the given separator, or the whole string if the separator isn't found in
-     * the String.
-     * 
-     * @param string
-     *        the String to parse.
-     * @param separator
-     *        the separator to split on.
-     * @throws NullPointerException
-     *         if string or separator are null.
-     * @return the part of the given String that is before the first instance of
-     *         the given separator, or the whole string if the separator isn't
-     *         found in the String.
-     */
-    public static String beforeFirstLeniently( final String string, final String separator )
-    {
-        return partitionLeniently( string, separator ).get( 0 );
-    }
-
-    /**
-     * Gives a Function that can split a given String into two parts around the
-     * given separator.
-     * 
-     * @param separator
-     *        the separator to use.
-     * @return a Function that can split a given String into two parts around
-     *         the given separator.
-     */
-    public static Function<String, Pair<String, String>> partition( final char separator )
-    {
-        return new Function<String, Pair<String, String>>()
-        {
-            @Override
-            public Pair<String, String> apply( final String param )
-            {
-                return new Pair<String, String>( param.substring( 0, param.indexOf( separator ) ),
-                        param.substring( param.indexOf( separator ) + 1 ) );
-            }
-        };
-    }
-
-    /**
-     * Removes leading and trailing double quotes from a String. If they don't
-     * exist then it returns the original String.
-     * 
-     * @param value
-     *        the String to trim double quotes from.
-     * @return a String without leading and trailing double quotes.
-     */
-    public static String removeSurroundingQuotesLeniently( final String value )
-    {
-        return value.startsWith( DOUBLE_QUOTES ) && value.endsWith( DOUBLE_QUOTES ) ? value.substring( 1,
-                value.length() - 1 ) : value;
     }
 
     /**

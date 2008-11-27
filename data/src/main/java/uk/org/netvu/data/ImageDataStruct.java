@@ -3,6 +3,7 @@ package uk.org.netvu.data;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
 import uk.org.netvu.util.CheckParameters;
 
 /**

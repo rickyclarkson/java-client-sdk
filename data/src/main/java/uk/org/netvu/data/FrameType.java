@@ -5,6 +5,7 @@ import static uk.org.netvu.data.ImageDataStruct.IMAGE_DATA_STRUCT_SIZE;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+
 import uk.org.netvu.util.CheckParameters;
 
 /**
@@ -24,7 +25,7 @@ public enum FrameType
                 throws IOException
         {
             CheckParameters.areNotNull( handler, input, metadata );
-            handler.jfif( Packet.jfifPacket(IO.readIntoByteBuffer( input, metadata.getLength() ), metadata ));
+            handler.jfif( Packet.jfifPacket( IO.readIntoByteBuffer( input, metadata.getLength() ), metadata ) );
         }
     },
     /**
@@ -40,7 +41,7 @@ public enum FrameType
             final ImageDataStruct imageHeader =
                     new ImageDataStruct( IO.readIntoByteBuffer( input, IMAGE_DATA_STRUCT_SIZE ) );
             final ByteBuffer restOfData = IO.readIntoByteBuffer( input, metadata.getLength() - IMAGE_DATA_STRUCT_SIZE );
-            handler.jfif( Packet.jfifPacket(JFIFHeader.jpegToJfif( restOfData, imageHeader ), metadata ));
+            handler.jfif( Packet.jfifPacket( JFIFHeader.jpegToJfif( restOfData, imageHeader ), metadata ) );
         }
     },
     /**
@@ -72,7 +73,8 @@ public enum FrameType
                 throws IOException
         {
             CheckParameters.areNotNull( handler, data, metadata );
-            handler.info( Packet.infoPacket(new String(IO.readIntoByteBuffer( data, metadata.getLength() ).array()), metadata) );
+            handler.info( Packet.infoPacket(
+                    new String( IO.readIntoByteBuffer( data, metadata.getLength() ).array() ), metadata ) );
         }
     },
     /**
@@ -85,7 +87,7 @@ public enum FrameType
                 throws IOException
         {
             CheckParameters.areNotNull( handler, data, metadata );
-            handler.dataArrived( Packet.unknownPacket(IO.readIntoByteBuffer( data, metadata.getLength() ), metadata ));
+            handler.dataArrived( Packet.unknownPacket( IO.readIntoByteBuffer( data, metadata.getLength() ), metadata ) );
         }
     };
 

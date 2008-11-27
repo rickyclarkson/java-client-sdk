@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import uk.org.netvu.util.CheckParameters;
 
 /**
@@ -88,6 +89,26 @@ final class JFIFHeader
      * A SimpleDateFormat using the HH:mm:ss format.
      */
     private static final SimpleDateFormat timeFormatter = new SimpleDateFormat( "HH:mm:ss" );
+
+    static String getComments( final ByteBuffer jfif )
+    {
+        if ( ( jfif.get() & 0xFF ) == 0xFF && ( jfif.get() & 0xFF ) == 0xFE )
+        {
+            final short commentLength = jfif.getShort();
+            final byte[] comment = new byte[commentLength];
+            jfif.get( comment );
+            try
+            {
+                return new String( comment );
+            }
+            finally
+            {
+                jfif.position( 0 );
+            }
+        }
+
+        return getComments( jfif );
+    }
 
     /**
      * Given a ByteBuffer containing JPEG data, and an ImageDataStruct
@@ -262,25 +283,5 @@ final class JFIFHeader
     private static int widthOfInt( final int i )
     {
         return String.valueOf( i ).getBytes().length;
-    }
-
-    static String getComments(ByteBuffer jfif)
-    {
-        if ((jfif.get() & 0xFF) == 0xFF && (jfif.get() & 0xFF) == 0xFE)
-        {
-            short commentLength = jfif.getShort();
-            byte[] comment = new byte[commentLength];
-            jfif.get(comment);
-            try
-            {
-                return new String(comment);
-            }
-            finally
-            {
-                jfif.position(0);
-            }
-        }
-
-        return getComments(jfif);
     }
 }

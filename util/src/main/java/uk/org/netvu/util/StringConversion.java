@@ -107,6 +107,24 @@ public final class StringConversion<T>
     }
 
     /**
+     * A StringConversion that always yields an empty Option in either
+     * direction.
+     * 
+     * @param reason
+     *        the reason the Option is empty.
+     * @return a StringConversion that always yields an empty Option in either
+     *         direction.
+     * @throws NullPointerException
+     *         if reason is null.
+     */
+    public static <T> StringConversion<T> none( final String reason )
+    {
+        CheckParameters.areNotNull( reason );
+        return new StringConversion<T>( Option.<String, T> getFunctionToEmptyOption( reason ),
+                Option.<T, String> getFunctionToEmptyOption( reason ) );
+    }
+
+    /**
      * Constructs a StringConversion from a partial Function from Strings to Ts,
      * and a partial Function from Ts to Strings.
      * 
@@ -138,19 +156,6 @@ public final class StringConversion<T>
     public static StringConversion<String> string()
     {
         return convenientTotal( Function.<String> getIdentityFunction() );
-    }
-
-    /**
-     * A StringConversion that always yields an empty Option in either direction.
-     *
-     * @param reason the reason the Option is empty.
-     * @return a StringConversion that always yields an empty Option in either direction.
-     * @throws NullPointerException if reason is null.
-     */
-    public static <T> StringConversion<T> none( String reason )
-    {
-        CheckParameters.areNotNull( reason );
-        return new StringConversion<T>( Option.<String, T>getFunctionToEmptyOption( reason ), Option.<T, String>getFunctionToEmptyOption( reason ) );
     }
 
     /**

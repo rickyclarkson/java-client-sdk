@@ -3,6 +3,7 @@ package uk.org.netvu.data;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+
 import uk.org.netvu.util.CheckParameters;
 
 /**

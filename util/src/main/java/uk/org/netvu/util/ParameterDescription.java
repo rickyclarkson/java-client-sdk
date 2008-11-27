@@ -210,6 +210,20 @@ public abstract class ParameterDescription<T, R>
     }
 
     /**
+     * Converts a value into a URLParameter, placing it in an Option if that
+     * succeeds, or giving an empty Option if that is an unsupported operation
+     * for this ParameterDescription.
+     * 
+     * @param value
+     *        the value to store in the URLParameter.
+     * @throws NullPointerException
+     *         is value is null.
+     * @return a URLParameter representing the specified value for this
+     *         ParameterDescription.
+     */
+    public abstract Option<String> toURLParameter( R value );
+
+    /**
      * Takes in a new value and an original value and produces a new value from
      * merging them. What this actually does depends on the particular
      * ParameterDescription implementation.
@@ -225,18 +239,72 @@ public abstract class ParameterDescription<T, R>
     abstract R reduce( final T newValue, final R original );
 
     /**
-     * Converts a value into a URLParameter, placing it in an Option if that
-     * succeeds, or giving an empty Option if that is an unsupported operation
-     * for this ParameterDescription.
+     * A ParameterDescription for parameters that do not have a default, or
+     * initial, value.
      * 
-     * @param value
-     *        the value to store in the URLParameter.
-     * @throws NullPointerException
-     *         is value is null.
-     * @return a URLParameter representing the specified value for this
-     *         ParameterDescription.
+     * @param <T>
+     *        The input type of this ParameterDescription.
      */
-    public abstract Option<String> toURLParameter( R value );
+    public static final class ParameterDescriptionWithoutDefault<T>
+            extends ParameterDescription<T, Option<T>>
+    {
+        /**
+         * The conversions between values of type T and Strings.
+         */
+        private final StringConversion<T> conversion;
+
+        /**
+         * Constructs a ParameterDescriptionWithoutDefault.
+         * 
+         * @param name
+         *        the name of the parameter.
+         * @param conversion
+         *        the conversions between values of type T and Strings.
+         */
+        private ParameterDescriptionWithoutDefault( final String name, final StringConversion<T> conversion )
+        {
+            super( name, Option.<T> getEmptyOption( "The value for the " + name + " parameter has not been set yet" ) );
+            this.conversion = conversion;
+        }
+
+        @Override
+        public Option<T> fromURLParameter( final URLParameter nameAndValue )
+        {
+            return conversion.fromString( nameAndValue.value );
+        }
+
+        @Override
+        public Option<T> reduce( final T newValue, final Option<T> original )
+        {
+            if ( original.isEmpty() )
+            {
+                return Option.getFullOption( newValue );
+            }
+
+            throw new IllegalStateException( "The " + name + " parameter has already been set to a value." );
+        }
+
+        @Override
+        public Option<String> toURLParameter( final Option<T> value )
+        {
+            return value.bind( new Function<T, Option<String>>()
+            {
+                @Override
+                public Option<String> apply( final T value )
+                {
+                    return conversion.toString( value ).map( new Function<String, String>()
+                    {
+                        @Override
+                        public String apply( final String valuePart )
+                        {
+                            return name + '=' + valuePart;
+                        }
+
+                    } );
+                }
+            } );
+        }
+    }
 
     /**
      * A ParameterDescription for parameters that represent one-dimensional
@@ -509,74 +577,6 @@ public abstract class ParameterDescription<T, R>
                 public String apply( final String t )
                 {
                     return name + '=' + new URLEncoder().apply( t );
-                }
-            } );
-        }
-    }
-
-    /**
-     * A ParameterDescription for parameters that do not have a default, or
-     * initial, value.
-     * 
-     * @param <T>
-     *        The input type of this ParameterDescription.
-     */
-    public static final class ParameterDescriptionWithoutDefault<T>
-            extends ParameterDescription<T, Option<T>>
-    {
-        /**
-         * The conversions between values of type T and Strings.
-         */
-        private final StringConversion<T> conversion;
-
-        /**
-         * Constructs a ParameterDescriptionWithoutDefault.
-         * 
-         * @param name
-         *        the name of the parameter.
-         * @param conversion
-         *        the conversions between values of type T and Strings.
-         */
-        private ParameterDescriptionWithoutDefault( final String name, final StringConversion<T> conversion )
-        {
-            super( name, Option.<T> getEmptyOption( "The value for the " + name + " parameter has not been set yet" ) );
-            this.conversion = conversion;
-        }
-
-        @Override
-        public Option<T> fromURLParameter( final URLParameter nameAndValue )
-        {
-            return conversion.fromString( nameAndValue.value );
-        }
-
-        @Override
-        public Option<T> reduce( final T newValue, final Option<T> original )
-        {
-            if ( original.isEmpty() )
-            {
-                return Option.getFullOption( newValue );
-            }
-
-            throw new IllegalStateException( "The " + name + " parameter has already been set to a value." );
-        }
-
-        @Override
-        public Option<String> toURLParameter( final Option<T> value )
-        {
-            return value.bind( new Function<T, Option<String>>()
-            {
-                @Override
-                public Option<String> apply( final T value )
-                {
-                    return conversion.toString( value ).map( new Function<String, String>()
-                    {
-                        @Override
-                        public String apply( final String valuePart )
-                        {
-                            return name + '=' + valuePart;
-                        }
-
-                    } );
                 }
             } );
         }

@@ -1,12 +1,14 @@
 package uk.org.netvu.data;
 
 import java.nio.ByteBuffer;
+
 import uk.org.netvu.util.CheckParameters;
 
 /**
  * An MPEG-4 packet plus metadata and the comment block.
  */
-public final class MPEG4Packet extends Packet
+public final class MPEG4Packet
+        extends Packet
 {
     /**
      * The data part of the MPEG-4 packet.
@@ -68,6 +70,7 @@ public final class MPEG4Packet extends Packet
      * 
      * @return the data part of the MPEG-4 packet.
      */
+    @Override
     public ByteBuffer getData()
     {
         return data;
@@ -89,6 +92,7 @@ public final class MPEG4Packet extends Packet
      * @return the stream metadata for the stream the current packet was read
      *         from.
      */
+    @Override
     public PacketMetadata getMetadata()
     {
         return metadata;

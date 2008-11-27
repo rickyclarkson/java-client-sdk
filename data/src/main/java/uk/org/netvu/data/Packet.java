@@ -4,22 +4,32 @@ import java.nio.ByteBuffer;
 
 public abstract class Packet<T>
 {
-    Packet()
+    static Packet<String> infoPacket( final String text, final PacketMetadata metadata )
     {
+        return packet( text, metadata );
     }
 
-    public abstract T getData();
-    public abstract PacketMetadata getMetadata();
+    static Packet<ByteBuffer> jfifPacket( final ByteBuffer data, final PacketMetadata metadata )
+    {
+        return packet( data, metadata );
+    }
 
-    private static <T> Packet<T> packet(final T t, final PacketMetadata metadata)
+    static Packet unknownPacket( final ByteBuffer data, final PacketMetadata metadata )
+    {
+        return packet( data, metadata );
+    }
+
+    private static <T> Packet<T> packet( final T t, final PacketMetadata metadata )
     {
         return new Packet<T>()
         {
+            @Override
             public T getData()
             {
                 return t;
             }
 
+            @Override
             public PacketMetadata getMetadata()
             {
                 return metadata;
@@ -27,18 +37,11 @@ public abstract class Packet<T>
         };
     }
 
-    static Packet<ByteBuffer> jfifPacket(final ByteBuffer data, final PacketMetadata metadata)
+    Packet()
     {
-        return packet(data, metadata);
     }
 
-    static Packet<String> infoPacket(final String text, final PacketMetadata metadata)
-    {
-        return packet(text, metadata);
-    }
+    public abstract T getData();
 
-    static Packet unknownPacket(final ByteBuffer data, final PacketMetadata metadata)
-    {
-        return packet(data, metadata);
-    }
+    public abstract PacketMetadata getMetadata();
 }
