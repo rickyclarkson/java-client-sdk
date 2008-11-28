@@ -12,7 +12,7 @@ import uk.org.netvu.util.CheckParameters;
  * An enumeration of the supported frame types from binary, minimal and mime
  * streams.
  */
-public enum FrameType
+enum FrameType
 {
     /**
      * A complete JFIF, compatible with most display and image manipulation
@@ -21,7 +21,7 @@ public enum FrameType
     JFIF
     {
         @Override
-        public void deliverTo( final StreamHandler handler, final InputStream input, final PacketMetadata metadata )
+        void deliverTo( final StreamHandler handler, final InputStream input, final PacketMetadata metadata )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, input, metadata );
@@ -34,7 +34,7 @@ public enum FrameType
     JPEG
     {
         @Override
-        public void deliverTo( final StreamHandler handler, final InputStream input, final PacketMetadata metadata )
+        void deliverTo( final StreamHandler handler, final InputStream input, final PacketMetadata metadata )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, input, metadata );
@@ -50,12 +50,15 @@ public enum FrameType
     MPEG4
     {
         @Override
-        public void deliverTo( final StreamHandler handler, final InputStream input, final PacketMetadata metadata )
+        void deliverTo( final StreamHandler handler, final InputStream input, final PacketMetadata metadata )
                 throws IOException
         {
+            System.out.println("Trying to deliver an MPEG4");
             CheckParameters.areNotNull( handler, input, metadata );
             final ImageDataStruct imageHeader =
                     new ImageDataStruct( IO.readIntoByteBuffer( input, IMAGE_DATA_STRUCT_SIZE ) );
+            System.out.println("Read the ImageDataStruct");
+
             final ByteBuffer commentData = IO.readIntoByteBuffer( input, imageHeader.getStartOffset() );
             final ByteBuffer restOfData =
                     IO.readIntoByteBuffer( input, metadata.getLength() - ImageDataStruct.IMAGE_DATA_STRUCT_SIZE
@@ -69,7 +72,7 @@ public enum FrameType
     INFO
     {
         @Override
-        public void deliverTo( final StreamHandler handler, final InputStream data, final PacketMetadata metadata )
+        void deliverTo( final StreamHandler handler, final InputStream data, final PacketMetadata metadata )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, data, metadata );
@@ -83,7 +86,7 @@ public enum FrameType
     UNKNOWN
     {
         @Override
-        public void deliverTo( final StreamHandler handler, final InputStream data, final PacketMetadata metadata )
+        void deliverTo( final StreamHandler handler, final InputStream data, final PacketMetadata metadata )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, data, metadata );
@@ -132,6 +135,6 @@ public enum FrameType
      * @throws NullPointerException
      *         if any of the parameters are null.
      */
-    public abstract void deliverTo( StreamHandler handler, InputStream data, PacketMetadata metadata )
+    abstract void deliverTo( StreamHandler handler, InputStream data, PacketMetadata metadata )
             throws IOException;
 }

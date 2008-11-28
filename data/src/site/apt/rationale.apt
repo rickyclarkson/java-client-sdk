@@ -1,0 +1,45 @@
+Rationale
+
+* BinaryParser
+
+ BinaryParser is a package private class that implements parsing of the 'binary' stream format, and delivers packets of data to the StreamHandler.
+
+* FrameType
+
+ FrameType is a package private enumeration of the various forms of data that the StreamHandler can see.  Each constant has some implementation code to decide how to deliver data to the StreamHandler.  For example, JPEG, which decribes an AD-stripped JFIF, calls a method that constructs and adds a JFIF header, then delivers the resulting complete JFIF to the StreamHandler.
+
+* IO
+
+ IO is a package private utility class, used for parsing mime streams and for reading from InputStreams into ByteBuffers.
+
+* ImageDataStruct
+
+ ImageDataStruct is a straightforward read-only view of the corresponding struct from C, except that it null-terminates Strings that are read from the data.  It uses ByteBuffer for its storage, for flexibility.  It has no methods that alter the data.
+
+* ImageDataStructBuilder
+
+ This is an implementation of the Builder pattern particularly for building ImageDataStructs.  It uses the same Builder framework as the protocol/ module's Builders do.
+
+* JFIFHeader
+
+ This takes an AD-stripped JFIF header into a valid JFIF header, which is useful when parsing a JPEG stream, as JFIF is more interoperable than the AD-specific format.
+
+* MPEG4Packet
+
+ This extends Packet to provide some extra data: the comment data and the ImageDataStruct associated with the MPEG-4 data in the stream.  Note that Packet does not provide these, as they don't exist for all streams.
+
+* MimeParser
+
+  MimeParser is a package private class that implements parsing of mime streams, and delivers packets of data to the StreamHandler.  It currently only supports JFIF data, pending obtaining test data for MPEG-4.  JPEG is not intended to be supported, as the servers don't support emitting JPEG in a mime stream.
+
+* PacketMetadata
+
+ PacketMetadata describes the length of a packet, the channel it arrived on and the type of frame it holds (though the type of frame is package-private).  The data in it could feasibly be copied into Packet and PacketMetadata be made package-private.
+
+* Packet
+
+ A Packet has data of a certain type, according to its type parameter.  It is usually a ByteBuffer but for an 'info' packet it is a String.  It also holds metadata about the data in the form of a PacketMetadata.
+
+ Making Packet generic might not be the best approach; we might consider InfoPacket, JFIFPacket, etc.
+
+* 

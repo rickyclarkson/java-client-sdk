@@ -132,42 +132,58 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   validlyParse("file:testdata/192-168-106-204-minimal-jfif", StreamType.MINIMAL)
  }
 
- "parsing an MPEG4 stream" should {
-  "produce at least two valid MPEG frames" in {
-   val url = new URL("file:testdata/192-168-106-206-binary-mp4")
-   val connection = url.openConnection
-   var numValidFrames = 0
-   var numInvalidFrames = 0
-   var index = 0
+ "parsing binary streams containing MPEG4" isSpecifiedBy {
+  validlyParseMPEG4("file:testdata/192-168-106-206-binary-mp4", StreamType.BINARY)
+ }
 
-   ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
-    def jfif(packet: Packet[ByteBuffer]) = ()
-    def dataArrived(packet: Packet[ByteBuffer]) = ()
-    def mpeg4(packet: MPEG4Packet) = {
-     val isIFrame: Boolean = {
-      var foundVOP = false
-      try {
-       while (!foundVOP) {
-        val anInt = packet.getData.getInt
-        if (anInt == 0x000001B6) {
-         foundVOP = true
+/* "parsing 207's binary/mp4" isSpecifiedBy {
+  validlyParseMPEG4("file:testdata/192-168-106-207-binary-mp4", StreamType.BINARY)
+ }
+
+ "parsing 207's minimal/mp4" isSpecifiedBy {
+  validlyParseMPEG4("file:testdata/192-168-106-207-minimal-mp4", StreamType.MINIMAL)
+   }*/
+
+ def validlyParseMPEG4(filename: String, streamType: StreamType) = new Specification {
+  "parsing an MPEG4 stream" should {
+   "produce at least two valid MPEG frames" in {
+    println("validlyParseMPEG4!")
+    val url = new URL(filename)
+    val connection = url.openConnection
+    var numValidFrames = 0
+    var numInvalidFrames = 0
+    var index = 0
+    
+    ParserFactory parserFor streamType parse (connection.getInputStream, new StreamHandler {
+     def jfif(packet: Packet[ByteBuffer]) = ()
+     def dataArrived(packet: Packet[ByteBuffer]) = println("Unknown data")
+     def mpeg4(packet: MPEG4Packet) = {
+      val isIFrame: Boolean = {
+       var foundVOP = false
+       try {
+        while (!foundVOP) {
+         val anInt = packet.getData.getInt
+         if (anInt == 0x000001B6) {
+          foundVOP = true
+         }
         }
-       }
-       packet.getData.get
-       packet.getData.getShort
-       ((packet.getData.get >> 6) & 0xFF) == 0
-      } catch { case e: BufferUnderflowException => false }
+        packet.getData.get
+        packet.getData.getShort
+        ((packet.getData.get >> 6) & 0xFF) == 0
+       } catch { case e: BufferUnderflowException => false }
+      }
+      
+      if (isIFrame)
+       numValidFrames += 1
+      
+      index += 1
      }
-
-     if (isIFrame)
-      numValidFrames += 1
-
-     index += 1
-    }
-    def info(packet: Packet[String]) = ()
-   })
-   
-   numValidFrames >= 2 must beTrue                                                       
+     def info(packet: Packet[String]) = ()
+    })
+    
+    numValidFrames >= 2 must beTrue                                                       
+    println("End validlyParseMPEG4!")
+   }
   }
  }
 

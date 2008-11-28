@@ -9,7 +9,7 @@ import java.io.InputStream;
  */
 public final class PacketMetadata
 {
-    public static PacketMetadata fromBinaryOrMinimalStream( final InputStream input ) throws IOException
+    static PacketMetadata fromBinaryOrMinimalStream( final InputStream input ) throws IOException
     {
         final FrameType frameType = FrameType.frameTypeFor( input.read() & 0xFF );
         final int channel = input.read() + 1;
@@ -17,12 +17,13 @@ public final class PacketMetadata
 
         return new PacketMetadata( length, channel, frameType );
     }
+
     private final int length;
     private final int channel;
 
     private final FrameType frameType;
 
-    public PacketMetadata( final int length, final int channel, final FrameType frameType )
+    PacketMetadata( final int length, final int channel, final FrameType frameType )
     {
         this.length = length;
         this.channel = channel;
@@ -38,8 +39,8 @@ public final class PacketMetadata
     {
         return channel;
     }
-
-    public FrameType getFrameType()
+    
+    FrameType getFrameType()
     {
         return frameType;
     }
