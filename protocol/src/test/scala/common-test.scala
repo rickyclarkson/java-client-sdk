@@ -2,7 +2,7 @@ package uk.org.netvu.protocol
 
 import _root_.org.{specs, scalacheck}
 
-import specs.{Specification, Scalacheck}
+import specs.{Specification, ScalaCheck => Scalacheck}
 import specs.util.DataTables
 import specs.runner.JUnit4
 import scalacheck.{Arbitrary, Gen, Prop}
@@ -29,6 +29,7 @@ object Implicits {
 }
 
 import Implicits._
+import scala.collection.jcl.Conversions.convertList
 
 class URLEncoderTest extends JUnit4(new Specification with Scalacheck {
  "Values encoded with URLBuilder" should {
@@ -58,7 +59,7 @@ class ParameterDescriptionTest extends JUnit4(new Specification with Scalacheck 
  
  "Supplying a value to an ordinary ParameterDescription twice" should {
   "cause an IllegalStateException" in {
-   new ParameterMap set (parameterDescription, 4) set (parameterDescription, 5) must throwA(new IllegalStateException)
+   new ParameterMap set (parameterDescription, 4) set (parameterDescription, 5) must throwA[IllegalStateException]
   }
  }
 
@@ -84,8 +85,8 @@ class ParameterDescriptionTest extends JUnit4(new Specification with Scalacheck 
    new ParameterMap().set[Integer, Integer](boundParam, 4) get boundParam mustEqual 4
   }
   "reject values outside its bounds" in {
-   new ParameterMap().set[Integer, Integer](boundParam, 140) must throwA(new IllegalArgumentException)
-   new ParameterMap().set[Integer, Integer](boundParam, 0) must throwA(new IllegalArgumentException)
+   new ParameterMap().set[Integer, Integer](boundParam, 140) must throwA[IllegalArgumentException]
+   new ParameterMap().set[Integer, Integer](boundParam, 0) must throwA[IllegalArgumentException]
   }
  }
 
@@ -93,7 +94,7 @@ class ParameterDescriptionTest extends JUnit4(new Specification with Scalacheck 
   val nested = parameterWithDefault("foo", 3, StringConversion.partial(from, to))
   val theNot = ParameterDescription.parameterDisallowing(5, nested)
   "allow unbanned values" in { new ParameterMap set (theNot, 2) get theNot mustEqual 2 }
-  "reject banned values" in { new ParameterMap set (theNot, 5) must throwA(new IllegalArgumentException) }
+  "reject banned values" in { new ParameterMap set (theNot, 5) must throwA[IllegalArgumentException] }
   "delegate toURLParameter() calls to the nested Parameter" in {
    theNot.toURLParameter(6).get mustEqual nested.toURLParameter(6).get
   }
@@ -156,32 +157,32 @@ class OptionTest extends JUnit4(new Specification with Scalacheck {
 
  "toString" should {
   "throw an UnsupportedOperationException" in {
-   getEmptyOption[Int]("foo").toString must throwA(new UnsupportedOperationException)
-   getFullOption(5).toString must throwA(new UnsupportedOperationException)
+   getEmptyOption[Int]("foo").toString must throwA[UnsupportedOperationException]
+   getFullOption(5).toString must throwA[UnsupportedOperationException]
   }
  }
 
  "reason" should {
-  "throw an IllegalStateException" in { getFullOption(5).reason must throwA(new IllegalStateException) }
+  "throw an IllegalStateException" in { getFullOption(5).reason must throwA[IllegalStateException] }
   "give a String" in { getEmptyOption("foo").reason mustEqual "foo" }
  }
 
  "equals" should {
   "cause an UnsupportedOperationException" in {
-   getFullOption(5) == getFullOption(5) must throwA(new UnsupportedOperationException)
+   getFullOption(5) == getFullOption(5) must throwA[UnsupportedOperationException]
   }
  }
 
  "hashCode" should {
   "cause an UnsupportedOperationException" in {
-   getFullOption(5).hashCode must throwA(new UnsupportedOperationException)
+   getFullOption(5).hashCode must throwA[UnsupportedOperationException]
   }
  }
 
  "get" should {
   "give the stored value for an Option that contains a value" in { getFullOption(5).get mustEqual 5 }
   "throw an IllegalStateException for an empty Option" in {
-   getEmptyOption[Integer]("foo").get must throwA(new IllegalStateException)
+   getEmptyOption[Integer]("foo").get must throwA[IllegalStateException]
   }
  }
 
@@ -230,7 +231,7 @@ class StringsTest extends JUnit4(new Specification with Scalacheck {
 
  "split" should {
   "split a comma-separated String into an array of Strings, ignoring whitespace after commas" in {
-   Arrays.asList(Strings.splitCSV("oh, my,word")) mustEqual Arrays.asList(Array("oh", "my", "word"))
+   Arrays.asList(Strings.splitCSV("oh, my,word"): _*) mustEqual Arrays.asList("oh", "my", "word")
   }
  }
  "splitIgnoringQuotedSections with a comma separator" should {
@@ -273,20 +274,20 @@ class ListsTest extends JUnit4(new Specification with Scalacheck {
 
  "reduce" should {
   "be able to sum a List containing 1, 2 and 3 to yield 6" in {
-   Lists.reduce[Integer](Arrays.asList(Array[Integer](1, 2, 3)),
+   Lists.reduce[Integer](Arrays.asList(1, 2, 3),
                          ((x: Integer), (y: Integer)) => Integer.valueOf(x.intValue + y.intValue)) mustEqual 6
   }
  }
  
  "remove" should {
   "be able to remove 3 from the list 1, 2, 3" in {
-   Lists.remove[Integer](Arrays.asList(Array[Integer](1, 2, 3)), Array(3)) == Arrays.asList(Array[Integer](1, 2))
+   Lists.remove[Integer](Arrays.asList[Integer](1, 2, 3), 3) sameElements Arrays.asList[Integer](1, 2) mustEqual true
   }
  }
 
  "removeIndices" should {
   "be able to remove the elements with indices 1 and 3 from 0, 1, 2, 3, 4" in {
-   Lists.removeByIndices(Arrays.asList(Array[Integer](0, 1, 2, 3, 4)), Array(1, 3)) == Arrays.asList(Array[Integer](0, 2, 4))
+   Lists.removeByIndices(Arrays.asList[Integer](0, 1, 2, 3, 4), 1, 3) sameElements Arrays.asList[Integer](0, 2, 4) mustEqual true
   }
  }
 })
@@ -434,14 +435,14 @@ class StringConversionTest extends JUnit4(new Specification {
  import Implicits.function1ToFunction
 
  "total" should {
-  "reject null parameters" in { total[Int](null, null) must throwA(new NullPointerException)
-                                total[Int](null, String valueOf (_: Int)) must throwA(new NullPointerException)
-                                total[Int](Integer parseInt (_: String), null) must throwA(new NullPointerException) }
+  "reject null parameters" in { total[Int](null, null) must throwA[NullPointerException]
+                                total[Int](null, String valueOf (_: Int)) must throwA[NullPointerException]
+                                total[Int](Integer parseInt (_: String), null) must throwA[NullPointerException] }
   "give a non-empty Option in both directions" in { val conversions = total( { x: String => 5 }, { x: Int => "foo" })
                                                     conversions.fromString("bah").isEmpty mustEqual false
                                                     conversions.toString(10).isEmpty mustEqual false } }
  "convenientTotal" should {
-  "reject null parameters" in { convenientTotal[Int](null) must throwA(new NullPointerException) }
+  "reject null parameters" in { convenientTotal[Int](null) must throwA[NullPointerException] }
   "be able to convert from a String using the specified conversion" in {
    convenientTotal[Int]{ x: String => 5 }.fromString("foo").get mustEqual 5 }
   "be able to convert to a String using Object's toString()" in {
@@ -460,12 +461,12 @@ class PairTest extends JUnit4(new Specification {
 class ValidatorTest extends JUnit4(new Specification {
  val nameParam = ParameterDescription.parameterWithoutDefault("name", StringConversion.string)
  val addressParam = ParameterDescription.parameterWithoutDefault("address", StringConversion.string)
- val validator = Validator.mutuallyExclusive(Arrays.asList(Array(nameParam, addressParam)))
+ val validator = Validator.mutuallyExclusive(Arrays.asList(nameParam, addressParam))
 
  "mutually exclusive parameters" should {
   "really be mutually exclusive" in {
    val map = new ParameterMap(validator).set(nameParam, "bob")
-   map.set(addressParam, "here") must throwA(new IllegalStateException)
+   map.set(addressParam, "here") must throwA[IllegalStateException]
   }
  }
 })
@@ -477,9 +478,9 @@ class ParameterMapTest extends JUnit4(new Specification {
   "store the passed-in values in each Parameter" in {
    val forename = parameterWithDefault("name", "Bob", StringConversion.string)
    val surname = parameterWithDefault("surname", "Hope", StringConversion.string)
-   val params: java.util.List[ParameterDescription[_, _]] = Arrays.asList(Array(forename, surname))
+   val params: java.util.List[ParameterDescription[_, _]] = Arrays.asList(forename, surname)
 
-   ParameterMap.fromStrings(params, Arrays.asList(Array[String]("John", "Major"))).get.get(surname) mustEqual "Major"
+   ParameterMap.fromStrings(params, Arrays.asList("John", "Major")).get.get(surname) mustEqual "Major"
   }
  }
  
@@ -495,8 +496,8 @@ class ParameterMapTest extends JUnit4(new Specification {
 
  "A null input" should {
   "be rejected" in {
-   new ParameterMap().set(null, "foo") must throwA(new NullPointerException)
-   new ParameterMap().set(param, null) must throwA(new NullPointerException)
+   new ParameterMap().set(null, "foo") must throwA[NullPointerException]
+   new ParameterMap().set(param, null) must throwA[NullPointerException]
   }
  }
                     
@@ -519,7 +520,7 @@ class ParameterMapTest extends JUnit4(new Specification {
 
  "Setting the same once-only Parameter twice" should {
   "result in an IllegalStateException" in {
-   new ParameterMap().set(param, "10").set(param, "10") must throwA(new IllegalStateException)
+   new ParameterMap().set(param, "10").set(param, "10") must throwA[IllegalStateException]
   }
  }
 
@@ -552,7 +553,7 @@ class ParameterMapTest extends JUnit4(new Specification {
      })
     }
    }).set[Integer, Option[Integer]](time, 2000000000).set[Integer, Option[Integer]](range, 2000000000) must {
-    throwA(new IllegalStateException)
+    throwA[IllegalStateException]
    }
   }
  }

@@ -34,10 +34,10 @@ class IOTest extends JUnit4(new Specification {
    true must beTrue
   }
   "throw an IllegalStateException when the expected string is not found" in {
-   IO.expectLine(asInputStream(List("foo", "bar")), "fop") must throwA(new IllegalStateException)                       
+   IO.expectLine(asInputStream(List("foo", "bar")), "fop") must throwA[IllegalStateException]
   }
   "throw an EOFException when there is no end of line marker" in {
-   IO.expectLine(new ByteArrayInputStream("foo".getBytes("US-ASCII")), "foo") must throwA(new EOFException)
+   IO.expectLine(new ByteArrayInputStream("foo".getBytes("US-ASCII")), "foo") must throwA[EOFException]
   }
  }
 
@@ -47,7 +47,7 @@ class IOTest extends JUnit4(new Specification {
    true must beTrue
   }
   "throw an IllegalStateException when the regex is not matched" in {
-   IO.expectLineMatching(asInputStream(List("foo", "bar")), "g.o") must throwA(new IllegalStateException)
+   IO.expectLineMatching(asInputStream(List("foo", "bar")), "g.o") must throwA[IllegalStateException]
   }
  }
 
@@ -57,7 +57,7 @@ class IOTest extends JUnit4(new Specification {
    true must beTrue
   }
   "throw an IllegalStateException when the expected String is not found" in {
-   IO.expectString(asInputStream(List("foo", "bar")), "oo") must throwA(new IllegalStateException)
+   IO.expectString(asInputStream(List("foo", "bar")), "oo") must throwA[IllegalStateException]
   }
   "complete normally on an empty String" in {
    IO.expectString(asInputStream(List("foo", "bar")), "")
@@ -70,7 +70,7 @@ class IOTest extends JUnit4(new Specification {
    IO.expectIntFromRestOfLine(asInputStream(List("123", "bar"))) mustEqual 123
   }
   "throw an IllegalStateException when the rest of the line does not contain an int" in {
-   IO.expectIntFromRestOfLine(asInputStream(List("23a", "bar"))) must throwA(new IllegalStateException)
+   IO.expectIntFromRestOfLine(asInputStream(List("23a", "bar"))) must throwA[IllegalStateException]
   }
  }
 })

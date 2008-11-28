@@ -284,4 +284,11 @@ final class JFIFHeader
     {
         return String.valueOf( i ).getBytes().length;
     }
+
+    /**
+     * Private to prevent instantiation.
+     */
+    private JFIFHeader()
+    {
+    }
 }

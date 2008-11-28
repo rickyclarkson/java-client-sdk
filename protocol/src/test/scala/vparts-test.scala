@@ -2,7 +2,7 @@ package uk.org.netvu.protocol
 
 import _root_.org.{scalacheck, specs, junit}
 import specs.runner.JUnit4
-import specs.{Specification, Scalacheck}
+import specs.{Specification, ScalaCheck => Scalacheck}
 import scalacheck.{Arbitrary,Prop,Shrink}
 import Prop.{property, extendedBoolean}
 import java.util.EnumSet
@@ -12,21 +12,21 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
  import VPartsCGI.Mode
  "Parsing an invalid URL" should {
   "cause an IllegalArgumentException" in {
-   VPartsCGI.fromURL("vparts.cgi?foo=bar") must throwA(new IllegalArgumentException)
+   VPartsCGI.fromURL("vparts.cgi?foo=bar") must throwA[IllegalArgumentException]
   }
  }
  "Building a VPartsCGI.Builder twice" should {
   "cause an IllegalStateException" in {
    val builder = new VPartsCGI.Builder()
    builder.build
-   builder.build must throwA(new IllegalStateException)
+   builder.build must throwA[IllegalStateException]
   }
  }
  "Setting a parameter on a VPartsCGI.Builder after it has been built" should {
   "cause an IllegalStateException" in {
    val builder = new VPartsCGI.Builder()
    builder.build
-   builder.mode(Mode.PROTECT) must throwA(new IllegalStateException)
+   builder.mode(Mode.PROTECT) must throwA[IllegalStateException]
   }
  }
 
@@ -44,7 +44,7 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
 
  "Setting the format to HTML" should {
   "cause an IllegalArgumentException" in {
-   new VPartsCGI.Builder().format(Format.HTML).build must throwA(new IllegalArgumentException)
+   new VPartsCGI.Builder().format(Format.HTML).build must throwA[IllegalArgumentException]
   }
  }
 
@@ -62,13 +62,13 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
 
  "Setting the time to a negative value" should {
   "cause an IllegalArgumentException" in {
-   new VPartsCGI.Builder() time -10 must throwA(new IllegalArgumentException)
+   new VPartsCGI.Builder() time -10 must throwA[IllegalArgumentException]
   }
  }
 
  "Setting the watermark step to an invalid value" should {
   "cause an IllegalArgumentException" in {
-   new VPartsCGI.Builder() watermarkStep 1000 must throwA(new IllegalArgumentException)
+   new VPartsCGI.Builder() watermarkStep 1000 must throwA[IllegalArgumentException]
   }
  }
 
@@ -103,9 +103,9 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
 
  "Building a VPartsCGI with expiry set but not protect set" should {
   "cause an IllegalStateException" in {
-   new VPartsCGI.Builder().expiry(4).build must throwA(new IllegalStateException)
+   new VPartsCGI.Builder().expiry(4).build must throwA[IllegalStateException]
    List(Mode.READ, Mode.REINITIALISE) foreach {
-    mode => new VPartsCGI.Builder().expiry(4).mode(mode).build must throwA(new IllegalStateException)
+    mode => new VPartsCGI.Builder().expiry(4).mode(mode).build must throwA[IllegalStateException]
    }
   }
  }
@@ -113,14 +113,14 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
  "Building a VPartsCGI with watermark set but not read set" should {
   "cause an IllegalStateException" in {
    List(Mode.PROTECT, Mode.REINITIALISE) foreach {
-    mode => new VPartsCGI.Builder().watermark(true).mode(mode).build must throwA(new IllegalStateException)
+    mode => new VPartsCGI.Builder().watermark(true).mode(mode).build must throwA[IllegalStateException]
    }
   }
  }
 
  "Building a VPartsCGI with the watermark step set but without watermark set" should {
   "cause an IllegalStateException" in {
-   new VPartsCGI.Builder().watermarkStep(4).build must throwA(new IllegalStateException)
+   new VPartsCGI.Builder().watermarkStep(4).build must throwA[IllegalStateException]
   }
  }
 })
@@ -133,7 +133,7 @@ class VPartsCGIResultTest extends JUnit4(new Specification with Scalacheck {
 
  "An end time less than the start time" should {
   "cause an IllegalStateException when build() is called" in {
-   builder(50).build must throwA(new IllegalStateException)
+   builder(50).build must throwA[IllegalStateException]
   }
  }
 
@@ -146,7 +146,7 @@ class VPartsCGIResultTest extends JUnit4(new Specification with Scalacheck {
 
  "Constructing an incomplete VPartsCGIResult" should {
   "cause an IllegalStateException" in {
-   new VPartsCGIResult.Builder().build must throwA(new IllegalStateException)
+   new VPartsCGIResult.Builder().build must throwA[IllegalStateException]
   }
  }
 
@@ -173,6 +173,8 @@ class VPartsCGIResultTest extends JUnit4(new Specification with Scalacheck {
      })) must pass
   }
  }
+
+ import uk.org.netvu.util.BuildersTests
 
  import VPartsCGIResult.Builder
  val setters = List[Builder => Builder](_ startTime 4, _ numberOfEntries 4, _ index 4, _ camMask 4,

@@ -1,13 +1,15 @@
 package uk.org.netvu.protocol
 
 import _root_.org.{specs, scalacheck}
-import specs.{Specification, Scalacheck}
+import specs.{Specification, ScalaCheck => Scalacheck}
 import specs.runner.JUnit4
+
+import uk.org.netvu.util.BuildersTests
 
 class DecoderCGITest extends JUnit4(new Specification with Scalacheck {
  "A DecoderCGI with output titles" should {
   "be properly converted to URL parameters" in {
-   var builder = new DecoderCGI.Builder outputTitles(Array("foo", "bar", "baz")) command(2, "blah")
+   var builder = new DecoderCGI.Builder outputTitles("foo", "bar", "baz") command(2, "blah")
    val url = "decoder.var?layouts[1]=1&output_titles=\"foo\",\"bar\",\"baz\"&commands[2]=%22blah%22"
    builder.layout(1, DecoderCGI.Layout.FOUR_WAY).build.toURLParameters mustEqual url
   }
@@ -34,7 +36,7 @@ class DecoderCGITest extends JUnit4(new Specification with Scalacheck {
  "Parsing a Decoder request whose output titles are not quoted" should {
   "cause an IllegalArgumentException" in {
    for { item <- List("foo", "\"foo", "bar\"","\"\"") } {
-    DecoderCGI.fromURL("decoder.frm?output_titles=" + item) must throwA(new IllegalArgumentException)
+    DecoderCGI.fromURL("decoder.frm?output_titles=" + item) must throwA[IllegalArgumentException]
    }
   }
  }
@@ -62,7 +64,7 @@ class DecoderCGITest extends JUnit4(new Specification with Scalacheck {
 
  import DecoderCGI.{Builder, Persistence}
  val setters = List[Builder => Builder](_ connection (1, new Connection.Builder().camera(2).build), _ command (3, "foo"), _ layout (4, Layout.NINE_WAY),
-                                        _ outputTitles Array("bar", "baz", "spam", "eggs"), _ persistence Persistence.PERSISTENT)
+                                        _ outputTitles ("bar", "baz", "spam", "eggs"), _ persistence Persistence.PERSISTENT)
  "DecoderCGI.Builder" isSpecifiedBy BuildersTests.testBuilder[DecoderCGI, Builder](new Builder, new Builder, setters, "DecoderCGITest")
 })
 
@@ -115,7 +117,7 @@ class ConnectionTest extends JUnit4(new Specification {
 
  "Parsing an invalid URL" should {
   "cause an IllegalArgumentException" in {
-   new DecoderCGI.Connection.FromURLToConnection()("dwell=foo") must throwA(new IllegalArgumentException)
+   new DecoderCGI.Connection.FromURLToConnection()("dwell=foo") must throwA[IllegalArgumentException]
   }
  }
 
@@ -127,7 +129,7 @@ class ConnectionTest extends JUnit4(new Specification {
           if one != two } {
            val connection = t
            val part1 = one(connection)
-           two(part1) must throwA(new IllegalStateException)
+           two(part1) must throwA[IllegalStateException]
           }
    }
   }
@@ -147,7 +149,7 @@ class LayoutTest extends JUnit4(new Specification {
 
  "Invalid values in Layout.fromURLFunction" should {
   "cause an IllegalArgumentException" in {
-   Layout.fromURLFunction()("10") must throwA(new IllegalArgumentException)
+   Layout.fromURLFunction()("10") must throwA[IllegalArgumentException]
   }
  }
 })

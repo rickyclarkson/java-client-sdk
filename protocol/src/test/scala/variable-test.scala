@@ -49,15 +49,15 @@ class VariableCGITest extends JUnit4(new Specification {
  import VariableCGI._
  "fromURL" should {
   "throw an IllegalArgumentException when passed an invalid String" in {
-   fromURL("foo") must throwA(new IllegalArgumentException)
-   fromURL("foo=bar") must throwA(new IllegalArgumentException)
+   fromURL("foo") must throwA[IllegalArgumentException]
+   fromURL("foo=bar") must throwA[IllegalArgumentException]
   }
  }
  "Calling build() on a VariableCGI.Builder twice" should { 
   "cause an IllegalStateException" in {
    val builder = new VariableCGI.Builder() variable Variable.UTC_OFFSET
    builder.build
-   builder.build must throwA(new IllegalStateException)
+   builder.build must throwA[IllegalStateException]
   }
  }
 
@@ -83,7 +83,7 @@ class VariableCGITest extends JUnit4(new Specification {
 
  "Building a VariableCGI with no 'variable' parameter" should {
   "cause an IllegalStateException" in {
-   new VariableCGI.Builder().build must throwA(new IllegalStateException)
+   new VariableCGI.Builder().build must throwA[IllegalStateException]
   }
  }
 
@@ -106,13 +106,13 @@ class VariableCGITest extends JUnit4(new Specification {
     b
    }
                    
-   setters foreach { setter => setter(builder) must throwA(new IllegalStateException) }
+   setters foreach { setter => setter(builder) must throwA[IllegalStateException] }
   }
  }
 
  "Setting a Builder's value twice" should {
   "cause an IllegalStateException" in {
-   setters foreach { setter => setter(setter(new Builder)) must throwA(new IllegalStateException) }
+   setters foreach { setter => setter(setter(new Builder)) must throwA[IllegalStateException] }
   }
  }
 })
