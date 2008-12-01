@@ -9,7 +9,7 @@ import uk.org.netvu.util.CheckParameters;
 /**
  * A parser for the 'minimal' stream format.
  */
-public class MinimalParser implements Parser
+public final class MinimalParser implements Parser
 {
     /**
      * Parses a minimal stream from the specified InputStream, delivering data
