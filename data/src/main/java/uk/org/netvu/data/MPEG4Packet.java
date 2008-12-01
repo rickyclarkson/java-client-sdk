@@ -48,7 +48,7 @@ public final class MPEG4Packet
     public MPEG4Packet( final ByteBuffer data, final PacketMetadata metadata, final ImageDataStruct imageDataStruct,
             final ByteBuffer commentData )
     {
-        CheckParameters.areNotNull( data, metadata, imageDataStruct, commentData );
+        //        CheckParameters.areNotNull( data, metadata, imageDataStruct, commentData );
         this.data = data;
         this.metadata = metadata;
         this.imageDataStruct = imageDataStruct;

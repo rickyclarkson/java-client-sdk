@@ -24,8 +24,8 @@ class FrameTypeTest extends JUnit4(new Specification {
 
  "FrameType.frameTypeFor" should {
   import FrameType._
-  val known = List(0 -> JPEG, 1 -> JFIF, 2 -> MPEG4, 3 -> MPEG4, 9 -> INFO)
-  val unknown = List(-1, 4, 5, 6, 7, 8, 10, 11, 12) map (x => x -> UNKNOWN)
+  val known = List(0 -> JPEG, 1 -> JFIF, 2 -> MPEG4, 3 -> MPEG4, 6 -> MPEG4_WITHOUT_IMAGE_DATA_STRUCT, 9 -> INFO)
+  val unknown = List(-1, 4, 5, 7, 8, 10, 11, 12) map (x => x -> UNKNOWN)
   
   for ((index, frameType) <- known ++ unknown) { "give " + frameType + " for " + index in { frameTypeFor(index) mustEqual frameType } }
  }

@@ -136,18 +136,17 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   validlyParseMPEG4("file:testdata/192-168-106-206-binary-mp4", StreamType.BINARY)
  }
 
-/* "parsing 207's binary/mp4" isSpecifiedBy {
+ "parsing 207's binary/mp4" isSpecifiedBy {
   validlyParseMPEG4("file:testdata/192-168-106-207-binary-mp4", StreamType.BINARY)
  }
 
  "parsing 207's minimal/mp4" isSpecifiedBy {
   validlyParseMPEG4("file:testdata/192-168-106-207-minimal-mp4", StreamType.MINIMAL)
-   }*/
+ }
 
  def validlyParseMPEG4(filename: String, streamType: StreamType) = new Specification {
   "parsing an MPEG4 stream" should {
    "produce at least two valid MPEG frames" in {
-    println("validlyParseMPEG4!")
     val url = new URL(filename)
     val connection = url.openConnection
     var numValidFrames = 0
@@ -156,20 +155,21 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     
     ParserFactory parserFor streamType parse (connection.getInputStream, new StreamHandler {
      def jfif(packet: Packet[ByteBuffer]) = ()
-     def dataArrived(packet: Packet[ByteBuffer]) = println("Unknown data")
+     def dataArrived(packet: Packet[ByteBuffer]) = ()
      def mpeg4(packet: MPEG4Packet) = {
       val isIFrame: Boolean = {
        var foundVOP = false
+       var last = 0xFFFF
        try {
         while (!foundVOP) {
-         val anInt = packet.getData.getInt
-         if (anInt == 0x000001B6) {
+         val current = packet.getData.getShort
+         val joined = ((last & 0xFFFF) << 16) | current
+         if (joined == 0x000001B6) { //vop start
           foundVOP = true
          }
+         last=current
         }
-        packet.getData.get
-        packet.getData.getShort
-        ((packet.getData.get >> 6) & 0xFF) == 0
+        foundVOP
        } catch { case e: BufferUnderflowException => false }
       }
       
@@ -182,7 +182,6 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     })
     
     numValidFrames >= 2 must beTrue                                                       
-    println("End validlyParseMPEG4!")
    }
   }
  }

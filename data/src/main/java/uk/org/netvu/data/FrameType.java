@@ -53,17 +53,26 @@ enum FrameType
         void deliverTo( final StreamHandler handler, final InputStream input, final PacketMetadata metadata )
                 throws IOException
         {
-            System.out.println("Trying to deliver an MPEG4");
             CheckParameters.areNotNull( handler, input, metadata );
             final ImageDataStruct imageHeader =
                     new ImageDataStruct( IO.readIntoByteBuffer( input, IMAGE_DATA_STRUCT_SIZE ) );
-            System.out.println("Read the ImageDataStruct");
 
             final ByteBuffer commentData = IO.readIntoByteBuffer( input, imageHeader.getStartOffset() );
             final ByteBuffer restOfData =
                     IO.readIntoByteBuffer( input, metadata.getLength() - ImageDataStruct.IMAGE_DATA_STRUCT_SIZE
                             - imageHeader.getStartOffset() );
             handler.mpeg4( new MPEG4Packet( restOfData, metadata, imageHeader, commentData ) );
+        }
+    },
+    MPEG4_WITHOUT_IMAGE_DATA_STRUCT
+    {
+        @Override
+        void deliverTo(final StreamHandler handler, final InputStream input, final PacketMetadata metadata)
+            throws IOException
+        {
+            CheckParameters.areNotNull(handler, input, metadata);
+            final ByteBuffer mpeg = IO.readIntoByteBuffer(input, metadata.getLength());
+            handler.mpeg4(new MPEG4Packet(mpeg, metadata, null, null));
         }
     },
     /**
@@ -114,6 +123,8 @@ enum FrameType
             case 2:
             case 3:
                 return FrameType.MPEG4;
+            case 6:
+                return FrameType.MPEG4_WITHOUT_IMAGE_DATA_STRUCT;
             case 9:
                 return FrameType.INFO;
             default:
