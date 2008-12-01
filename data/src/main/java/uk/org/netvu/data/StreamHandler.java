@@ -11,34 +11,32 @@ public interface StreamHandler
     /**
      * Signals the arrival of data of an unknown type to the client.
      * 
-     * @param buffer
-     *        the data in the packet.
-     * @param metadata
-     *        information about the packet.
+     * @param packet
+     *        the Packet of data that has arrived.
      */
     void dataArrived( Packet<ByteBuffer> packet );
 
     /**
      * Signals the arrival of textual information to the client.
      * 
-     * @param text
-     *        the text read from the stream.
+     * @param packet
+     *        the Packet of data that has arrived.
      */
     void info( Packet<String> packet );
 
     /**
      * Signals the arrival of a JFIF packet to the client.
      * 
-     * @param buffer
-     *        the JFIF data.
+     * @param packet
+     *        the Packet of data that has arrived.
      */
     void jfif( Packet<ByteBuffer> packet );
 
     /**
      * Signals the arrival of a MPEG-4 packet to the client.
      * 
-     * @param MPEG4Packet
-     *        the MPEG-4 data and metadata.
+     * @param packet
+     *        the MPEG4Packet that has arrived.
      */
     void mpeg4( MPEG4Packet packet );
 }

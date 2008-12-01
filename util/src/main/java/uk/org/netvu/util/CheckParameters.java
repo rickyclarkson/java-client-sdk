@@ -107,6 +107,7 @@ public final class CheckParameters
          * 
          * @param upper
          *        the upper bound.
+         * @return a FromTo ready to bounds-check integers.
          */
         public FromTo to( final int upper )
         {
@@ -133,6 +134,11 @@ public final class CheckParameters
 
         /**
          * Constructs a FromTo with the specified lower and upper bounds.
+         * 
+         * @param lower
+         *        the lower bound.
+         * @param upper
+         *        the upper bound.
          */
         public FromTo( final int lower, final int upper )
         {

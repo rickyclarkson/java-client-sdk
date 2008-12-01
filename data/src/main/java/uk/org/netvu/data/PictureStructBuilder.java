@@ -12,6 +12,10 @@ import uk.org.netvu.util.ParameterMap;
 import uk.org.netvu.util.StringConversion;
 import uk.org.netvu.util.ParameterDescription.ParameterDescriptionWithoutDefault;
 
+/**
+ * A Builder for building PictureStructs. All parameters are mandatory. Call
+ * build() to get a PictureStruct.
+ */
 public final class PictureStructBuilder
 {
     private static final StringConversion<Short> none = StringConversion.none( "Unsupported" );
@@ -32,12 +36,30 @@ public final class PictureStructBuilder
 
     private final ByteOrder byteOrder;
 
+    /**
+     * Constructs a PictureStructBuilder ready to be given parameters to build a
+     * PictureStruct.
+     * 
+     * @param byteOrder
+     *        whether to use big-endian or little-endian in the ByteBuffer that
+     *        the PictureStruct holds.
+     * @throws NullPointerException
+     *         if byteOrder is null.
+     */
     public PictureStructBuilder( final ByteOrder byteOrder )
     {
         CheckParameters.areNotNull( byteOrder );
         this.byteOrder = byteOrder;
     }
 
+    /**
+     * Builds the PictureStruct, if all the parameters are set. build() can only
+     * be called once per PictureStructBuilder.
+     * 
+     * @return a PictureStruct.
+     * @throws IllegalStateException
+     *         if any of the parameters are unset.
+     */
     public PictureStruct build()
     {
         final ParameterMap map = parameterMap.get();
@@ -64,31 +86,73 @@ public final class PictureStructBuilder
         }
     }
 
+    /**
+     * Sets the lineOffset parameter of the PictureStruct.
+     * 
+     * @param lineOffset
+     *        the lineOffset to use in the PictureStruct.
+     * @return the PictureStructBuilder.
+     */
     public PictureStructBuilder lineOffset( final short lineOffset )
     {
         return set( LINE_OFFSET, lineOffset );
     }
 
+    /**
+     * Sets the pixelOffset parameter of the PictureStruct.
+     * 
+     * @param pixelOffset
+     *        the pixelOffset to use in the PictureStruct.
+     * @return the PictureStructBuilder.
+     */
     public PictureStructBuilder pixelOffset( final short pixelOffset )
     {
         return set( PIXEL_OFFSET, pixelOffset );
     }
 
+    /**
+     * Sets the srcLines parameter of the PictureStruct.
+     * 
+     * @param srcLines
+     *        the srcLines to use in the PictureStruct.
+     * @return the PictureStructBuilder.
+     */
     public PictureStructBuilder srcLines( final short srcLines )
     {
         return set( SRC_LINES, srcLines );
     }
 
+    /**
+     * Sets the srcPixels parameter of the PictureStruct.
+     * 
+     * @param srcPixels
+     *        the srcPixels to use in the PictureStruct.
+     * @return the PictureStructBuilder.
+     */
     public PictureStructBuilder srcPixels( final short srcPixels )
     {
         return set( SRC_PIXELS, srcPixels );
     }
 
+    /**
+     * Sets the targetLines parameter of the PictureStruct.
+     * 
+     * @param targetLines
+     *        the targetLines to use in the PictureStruct.
+     * @return the PictureStructBuilder.
+     */
     public PictureStructBuilder targetLines( final short targetLines )
     {
         return set( TARGET_LINES, targetLines );
     }
 
+    /**
+     * Sets the targetPixels parameter of the PictureStruct.
+     * 
+     * @param targetPixels
+     *        the targetPixels to use in the PictureStruct.
+     * @return the PictureStructBuilder.
+     */
     public PictureStructBuilder targetPixels( final short targetPixels )
     {
         return set( TARGET_PIXELS, targetPixels );

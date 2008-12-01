@@ -64,15 +64,18 @@ enum FrameType
             handler.mpeg4( new MPEG4Packet( restOfData, metadata, imageHeader, commentData ) );
         }
     },
-    MPEG4_WITHOUT_IMAGE_DATA_STRUCT
+    /**
+     * An MPEG-4 frame read from a minimal stream.  It does the same as MPEG4, but omits the ImageDataStruct and comment field.
+     */
+    MPEG4_MINIMAL
     {
         @Override
-        void deliverTo(final StreamHandler handler, final InputStream input, final PacketMetadata metadata)
-            throws IOException
+        void deliverTo( final StreamHandler handler, final InputStream input, final PacketMetadata metadata )
+                throws IOException
         {
-            CheckParameters.areNotNull(handler, input, metadata);
-            final ByteBuffer mpeg = IO.readIntoByteBuffer(input, metadata.getLength());
-            handler.mpeg4(new MPEG4Packet(mpeg, metadata, null, null));
+            CheckParameters.areNotNull( handler, input, metadata );
+            final ByteBuffer mpeg = IO.readIntoByteBuffer( input, metadata.getLength() );
+            handler.mpeg4( new MPEG4Packet( mpeg, metadata, null, null ) );
         }
     },
     /**
@@ -124,7 +127,7 @@ enum FrameType
             case 3:
                 return FrameType.MPEG4;
             case 6:
-                return FrameType.MPEG4_WITHOUT_IMAGE_DATA_STRUCT;
+                return FrameType.MPEG4_MINIMAL;
             case 9:
                 return FrameType.INFO;
             default:
@@ -146,6 +149,5 @@ enum FrameType
      * @throws NullPointerException
      *         if any of the parameters are null.
      */
-    abstract void deliverTo( StreamHandler handler, InputStream data, PacketMetadata metadata )
-            throws IOException;
+    abstract void deliverTo( StreamHandler handler, InputStream data, PacketMetadata metadata ) throws IOException;
 }

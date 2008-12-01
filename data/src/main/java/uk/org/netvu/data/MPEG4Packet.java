@@ -2,13 +2,11 @@ package uk.org.netvu.data;
 
 import java.nio.ByteBuffer;
 
-import uk.org.netvu.util.CheckParameters;
-
 /**
  * An MPEG-4 packet plus metadata and the comment block.
  */
 public final class MPEG4Packet
-        extends Packet
+        extends Packet<ByteBuffer>
 {
     /**
      * The data part of the MPEG-4 packet.
@@ -48,7 +46,8 @@ public final class MPEG4Packet
     public MPEG4Packet( final ByteBuffer data, final PacketMetadata metadata, final ImageDataStruct imageDataStruct,
             final ByteBuffer commentData )
     {
-        //        CheckParameters.areNotNull( data, metadata, imageDataStruct, commentData );
+        // CheckParameters.areNotNull( data, metadata, imageDataStruct,
+        // commentData );
         this.data = data;
         this.metadata = metadata;
         this.imageDataStruct = imageDataStruct;

@@ -90,6 +90,15 @@ final class JFIFHeader
      */
     private static final SimpleDateFormat timeFormatter = new SimpleDateFormat( "HH:mm:ss" );
 
+    /**
+     * Parses out a comment field from JFIF data.
+     * 
+     * @param jfif
+     *        the raw JFIF bytes.
+     * @return a String containing the comments.
+     * @throws a
+     *         BufferUnderflowException if no comment field is found.
+     */
     static String getComments( final ByteBuffer jfif )
     {
         if ( ( jfif.get() & 0xFF ) == 0xFF && ( jfif.get() & 0xFF ) == 0xFE )

@@ -19,6 +19,7 @@ final class IO
      * 
      * @param input
      *        the InputStream to read an int from.
+     * @return the next line from the specified InputStream, as an int.
      * @throws IllegalStateException
      *         if the line read doesn't parse as an int.
      * @throws IOException

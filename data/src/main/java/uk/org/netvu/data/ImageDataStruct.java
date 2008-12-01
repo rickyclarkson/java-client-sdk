@@ -528,6 +528,8 @@ public final class ImageDataStruct
      *        the number of bytes to read.
      * @param where
      *        the position in the ByteBuffer to read from.
+     * @return an array of bytes containing the specified number of bytes read
+     *         from the specified ByteBuffer, at the specified position.
      * @throws NullPointerException
      *         if buffer is null.
      */
@@ -548,6 +550,8 @@ public final class ImageDataStruct
      *        the ByteBuffer to read an int from.
      * @param where
      *        the position to read from.
+     * @return a big-endian int read from the specified position in the
+     *         specified ByteBuffer.
      * @throws NullPointerException
      *         if buffer is null.
      */

@@ -20,7 +20,15 @@ public enum VideoFormat
     /**
      * An MPEG-4 I-frame.
      */
-    MPEG4_I_FRAME( 3 ), MPEG4_GOV_P_FRAME( 4 ), MPEG4_GOV_I_FRAME( 5 );
+    MPEG4_I_FRAME( 3 ),
+    /**
+     * An MPEG-4 P-frame with GOV (Group of Video) data.
+     */
+    MPEG4_GOV_P_FRAME( 4 ),
+    /**
+     * An MPEG-4 I-frame with GOV (Group of Video) data.
+     */
+    MPEG4_GOV_I_FRAME( 5 );
 
     /**
      * Finds a VideoFormat whose value is the same as the specified value.

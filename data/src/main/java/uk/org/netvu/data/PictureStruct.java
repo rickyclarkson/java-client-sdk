@@ -62,24 +62,14 @@ public final class PictureStruct
      */
     private final int offset;
 
-    private final short srcPixels;
-
-    private final short srcLines;
-
-    private final short targetPixels;
-
-    private final short targetLines;
-
-    private final short pixelOffset;
-
-    private final short lineOffset;
-
     /**
      * Constructs a PictureStruct with data from the specified ByteBuffer,
      * beginning at the specified offset in the ByteBuffer.
      * 
      * @param buffer
      *        the ByteBuffer to parse data from.
+     * @param order
+     *        the ByteOrder to use for reading and writing the ByteBuffer.
      * @param offset
      *        the offset within the ByteBuffer to begin at.
      * @throws NullPointerException
@@ -91,48 +81,82 @@ public final class PictureStruct
         this.buffer = buffer;
         this.order = order;
         this.offset = offset;
-
-        srcPixels = readShort( SRC_PIXELS );
-        srcLines = readShort( SRC_LINES );
-        targetPixels = readShort( TARGET_PIXELS );
-        targetLines = readShort( TARGET_LINES );
-        pixelOffset = readShort( PIXEL_OFFSET );
-        lineOffset = readShort( LINE_OFFSET );
     }
 
+    /**
+     * @return the ByteBuffer backing this PictureStruct.
+     */
     public ByteBuffer getByteBuffer()
     {
         return buffer;
     }
 
+    /**
+     * Gets the line offset of this PictureStruct. The line offset parameter is
+     * unused as of this writing, but it originally meant the y position in the
+     * camera's original image that the frame of data began at.
+     * 
+     * @return the line offset of this PictureStruct.
+     */
     public short getLineOffset()
     {
-        return lineOffset;
+        return readShort( LINE_OFFSET );
     }
 
+    /**
+     * Gets the pixel offset of this PictureStruct. The pixel offset parameter
+     * is unused as of this writing, but it originally meant the x position in
+     * the camera's original image that the frame of data began at.
+     * 
+     * @return the pixel offset of this PictureStruct.
+     */
     public short getPixelOffset()
     {
-        return pixelOffset;
+        return readShort( PIXEL_OFFSET );
     }
 
+    /**
+     * Gets the source lines of this PictureStruct. The source lines parameter
+     * is unused as of this writing, but it originally meant the height of the
+     * camera's original image.
+     * 
+     * @return the source lines of this PictureStruct.
+     */
     public short getSrcLines()
     {
-        return srcLines;
+        return readShort( SRC_LINES );
     }
 
+    /**
+     * Gets the source pixels of this PictureStruct. The source pixels parameter
+     * is unused as of this writing, but it originally meant the width of the
+     * camera's original image.
+     * 
+     * @return the source pixels of this PictureStruct.
+     */
     public short getSrcPixels()
     {
-        return srcPixels;
+        return readShort( SRC_PIXELS );
     }
 
+    /**
+     * Gets the target lines (the picture height) of this PictureStruct.
+     * 
+     * @return the target lines of this PictureStruct.
+     */
     public short getTargetLines()
     {
-        return targetLines;
+        return readShort( TARGET_LINES );
     }
 
+    /**
+     * Gets the target pixels (the picture width) of this PictureStruct.
+     * 
+     * @return the target pixels of this PictureStruct.
+     */
     public short getTargetPixels()
     {
-        return targetPixels;
+        return readShort( TARGET_PIXELS );
     }
 
     /**

@@ -110,6 +110,8 @@ public final class StringConversion<T>
      * A StringConversion that always yields an empty Option in either
      * direction.
      * 
+     * @param <T>
+     *        the type to convert Strings to and from.
      * @param reason
      *        the reason the Option is empty.
      * @return a StringConversion that always yields an empty Option in either

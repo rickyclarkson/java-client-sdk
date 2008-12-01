@@ -9,6 +9,9 @@ import uk.org.netvu.util.ParameterMap;
 import uk.org.netvu.util.StringConversion;
 import uk.org.netvu.util.ParameterDescription.ParameterDescriptionWithoutDefault;
 
+/**
+ * A Builder for ImageDataStruct objects.
+ */
 public final class ImageDataStructBuilder
 {
     private static final ParameterDescriptionWithoutDefault<String> ALARM =
@@ -89,25 +92,54 @@ public final class ImageDataStructBuilder
 
     private Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
 
+    /**
+     * Constructs an ImageDataStructBuilder ready to add parameters to.
+     */
     public ImageDataStructBuilder()
     {
     }
 
+    /**
+     * Sets the alarm parameter for the built ImageDataStruct.
+     * 
+     * @param alarm
+     *        the alarm parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder alarm( final String alarm )
     {
         return set( ALARM, alarm );
     }
 
+    /**
+     * Sets the alarmBitmask parameter for the built ImageDataStruct.
+     * 
+     * @param alarmBitmask
+     *        the alarmBitmask parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder alarmBitmask( final int alarmBitmask )
     {
         return set( ALARM_BITMASK, alarmBitmask );
     }
 
+    /**
+     * Sets the alarmBitmaskHigh parameter for the built ImageDataStruct.
+     * 
+     * @param alarmBitmaskHigh
+     *        the alarmBitmaskHigh parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder alarmBitmaskHigh( final int alarmBitmaskHigh )
     {
         return set( ALARM_BITMASK_HIGH, alarmBitmaskHigh );
     }
 
+    /**
+     * Builds an ImageDataStruct using the supplied parameters.
+     * 
+     * @return an ImageDataStruct built using the supplied parameters.
+     */
     public ImageDataStruct build()
     {
         final ByteBuffer buffer = ByteBuffer.wrap( new byte[ImageDataStruct.IMAGE_DATA_STRUCT_SIZE] );
@@ -152,86 +184,205 @@ public final class ImageDataStructBuilder
         }
     }
 
+    /**
+     * Sets the camera parameter for the built ImageDataStruct.
+     * 
+     * @param camera
+     *        the camera parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder camera( final int camera )
     {
         return set( CAMERA, camera );
     }
 
+    /**
+     * Sets the format parameter for the built ImageDataStruct.
+     * 
+     * @param format
+     *        the format parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder format( final PictureStruct format )
     {
         return set( FORMAT, format );
     }
 
+    /**
+     * Sets the locale parameter for the built ImageDataStruct.
+     * 
+     * @param locale
+     *        the locale parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder locale( final String locale )
     {
         return set( LOCALE, locale );
     }
 
+    /**
+     * Sets the maxSize parameter for the built ImageDataStruct.
+     * 
+     * @param maxSize
+     *        the maxSize parameter for the build ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder maxSize( final int maxSize )
     {
         return set( MAX_SIZE, maxSize );
     }
 
+    /**
+     * Sets the milliseconds parameter for the built ImageDataStruct.
+     * 
+     * @param milliseconds
+     *        the milliseconds parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder milliseconds( final int milliseconds )
     {
         return set( MILLISECONDS, milliseconds );
     }
 
+    /**
+     * Sets the mode parameter for the built ImageDataStruct.
+     * 
+     * @param mode
+     *        the mode parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder mode( final int mode )
     {
         return set( MODE, mode );
     }
 
+    /**
+     * Sets the qFactor parameter for the built ImageDataStruct.
+     * 
+     * @param qFactor
+     *        the qFactor parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder qFactor( final int qFactor )
     {
         return set( Q_FACTOR, qFactor );
     }
 
+    /**
+     * Sets the res parameter for the built ImageDataStruct.
+     * 
+     * @param res
+     *        the res parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder res( final byte[] res )
     {
         return set( RES, res );
     }
 
+    /**
+     * Sets the sessionTime parameter for the built ImageDataStruct.
+     * 
+     * @param sessionTime
+     *        the sessionTime parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder sessionTime( final int sessionTime )
     {
         return set( SESSION_TIME, sessionTime );
     }
 
+    /**
+     * Sets the size parameter for the built ImageDataStruct.
+     * 
+     * @param size
+     *        the size parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder size( final int size )
     {
         return set( SIZE, size );
     }
 
+    /**
+     * Sets the startOffset parameter for the built ImageDataStruct.
+     * 
+     * @param startOffset
+     *        the startOffset parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder startOffset( final int startOffset )
     {
         return set( START_OFFSET, startOffset );
     }
 
+    /**
+     * Sets the status parameter for the built ImageDataStruct.
+     * 
+     * @param status
+     *        the status parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder status( final int status )
     {
         return set( STATUS, status );
     }
 
+    /**
+     * Sets the targetSize parameter for the built ImageDataStruct.
+     * 
+     * @param targetSize
+     *        the targetSize parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder targetSize( final int targetSize )
     {
         return set( TARGET_SIZE, targetSize );
     }
 
+    /**
+     * Sets the title parameter for the built ImageDataStruct.
+     * 
+     * @param title
+     *        the title parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder title( final String title )
     {
         return set( TITLE, title );
     }
 
+    /**
+     * Sets the utcOffset parameter for the built ImageDataStruct.
+     * 
+     * @param utcOffset
+     *        the utcOffset parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder utcOffset( final int utcOffset )
     {
         return set( UTC_OFFSET, utcOffset );
     }
 
+    /**
+     * Sets the version parameter for the built ImageDataStruct.
+     * 
+     * @param version
+     *        the version parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder version( final int version )
     {
         return set( VERSION, version );
     }
 
+    /**
+     * Sets the videoFormat parameter for the built ImageDataStruct.
+     * 
+     * @param format
+     *        the videoFormat parameter for the built ImageDataStruct.
+     * @return the ImageDataStructBuilder.
+     */
     public ImageDataStructBuilder videoFormat( final VideoFormat format )
     {
         return set( VIDEO_FORMAT, format );
