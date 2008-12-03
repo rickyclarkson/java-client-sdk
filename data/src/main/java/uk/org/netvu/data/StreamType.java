@@ -15,12 +15,7 @@ public enum StreamType
     /**
      * A StreamType representing 'mime' streams.
      */
-    MIME( new MimeParser() ),
-
-    /**
-     * A StreamType representing 'minimal' streams.
-     */
-    MINIMAL( new MinimalParser() );
+      MIME( new MimeParser() );
 
     /**
      * The Parser for this StreamType.

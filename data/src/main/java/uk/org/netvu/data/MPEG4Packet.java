@@ -6,17 +6,12 @@ import java.nio.ByteBuffer;
  * An MPEG-4 packet plus metadata and the comment block.
  */
 public final class MPEG4Packet
-        extends Packet<ByteBuffer>
+        extends Packet
 {
     /**
      * The data part of the MPEG-4 packet.
      */
     private final ByteBuffer data;
-
-    /**
-     * The stream metadata for the stream the current packet was read from.
-     */
-    private final PacketMetadata metadata;
 
     /**
      * The ImageDataStruct associated with this MPEG4Packet.
@@ -43,13 +38,13 @@ public final class MPEG4Packet
      * @throws NullPointerException
      *         if any of the values are null.
      */
-    public MPEG4Packet( final ByteBuffer data, final PacketMetadata metadata, final ImageDataStruct imageDataStruct,
+  public MPEG4Packet( final ByteBuffer data, final int channel, final int length, final FrameType frameType, final ImageDataStruct imageDataStruct,
             final ByteBuffer commentData )
     {
+      super(channel, length, frameType);
         // CheckParameters.areNotNull( data, metadata, imageDataStruct,
         // commentData );
         this.data = data;
-        this.metadata = metadata;
         this.imageDataStruct = imageDataStruct;
         this.commentData = commentData;
     }
@@ -69,7 +64,6 @@ public final class MPEG4Packet
      * 
      * @return the data part of the MPEG-4 packet.
      */
-    @Override
     public ByteBuffer getData()
     {
         return data;
@@ -83,17 +77,5 @@ public final class MPEG4Packet
     public ImageDataStruct getImageDataStruct()
     {
         return imageDataStruct;
-    }
-
-    /**
-     * Gets the stream metadata for the stream the current packet was read from.
-     * 
-     * @return the stream metadata for the stream the current packet was read
-     *         from.
-     */
-    @Override
-    public PacketMetadata getMetadata()
-    {
-        return metadata;
     }
 }

@@ -48,8 +48,7 @@ class MimeParser implements Parser
                 final int channel =
                         Integer.parseInt( comments.substring( numberStart + "Number: ".length(), numberEnd ) );
 
-                final PacketMetadata metadata = new PacketMetadata( length, channel, FrameType.JFIF );
-                handler.jfif( Packet.jfifPacket( jpeg, metadata ) );
+                handler.jfif( new JFIFPacket( jpeg, length, channel, FrameType.JFIF ) );
                 IO.expectLine( input, "" );
             }
         }

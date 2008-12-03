@@ -96,7 +96,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     var numInvalidFrames = 0
     
     ParserFactory parserFor streamType parse (connection.getInputStream, new StreamHandler {
-     def jfif(packet: Packet[ByteBuffer]) = {
+     def jfif(packet: JFIFPacket) = {
       val buffer = packet.getData
       def next = buffer.get & 0xFF
       val first = (next, next)
@@ -109,9 +109,9 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
       }
      }
 
-     def dataArrived(packet: Packet[ByteBuffer]) = ()
+     def dataArrived(packet: UnknownPacket) = ()
      def mpeg4(packet: MPEG4Packet) = ()
-     def info(packet: Packet[String]) = ()
+     def info(packet: InfoPacket) = ()
     })
 
     numInvalidFrames == 0 must beTrue
@@ -125,11 +125,11 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
  }
 
  "parsing minimal streams containing JPEG" isSpecifiedBy {
-  validlyParse("file:testdata/192-168-106-204-minimal-jpeg", StreamType.MINIMAL)
+  validlyParse("file:testdata/192-168-106-204-minimal-jpeg", StreamType.BINARY)
  }
 
  "parsing minimal streams containing JFIF" isSpecifiedBy {
-  validlyParse("file:testdata/192-168-106-204-minimal-jfif", StreamType.MINIMAL)
+  validlyParse("file:testdata/192-168-106-204-minimal-jfif", StreamType.BINARY)
  }
 
  "parsing binary streams containing MPEG4" isSpecifiedBy {
@@ -141,7 +141,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
  }
 
  "parsing 207's minimal/mp4" isSpecifiedBy {
-  validlyParseMPEG4("file:testdata/192-168-106-207-minimal-mp4", StreamType.MINIMAL)
+  validlyParseMPEG4("file:testdata/192-168-106-207-minimal-mp4", StreamType.BINARY)
  }
 
  def validlyParseMPEG4(filename: String, streamType: StreamType) = new Specification {
@@ -154,8 +154,8 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     var index = 0
     
     ParserFactory parserFor streamType parse (connection.getInputStream, new StreamHandler {
-     def jfif(packet: Packet[ByteBuffer]) = ()
-     def dataArrived(packet: Packet[ByteBuffer]) = ()
+     def jfif(packet: JFIFPacket) = ()
+     def dataArrived(packet: UnknownPacket) = ()
      def mpeg4(packet: MPEG4Packet) = {
       val isIFrame: Boolean = {
        var foundVOP = false
@@ -178,10 +178,10 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
       
       index += 1
      }
-     def info(packet: Packet[String]) = ()
+     def info(packet: InfoPacket) = ()
     })
     
-    numValidFrames >= 2 must beTrue                                                       
+    numValidFrames >= 2 must beTrue
    }
   }
  }
@@ -195,7 +195,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
    var fail = 0  
 
    ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
-    def jfif(packet: Packet[ByteBuffer]) = {
+    def jfif(packet: JFIFPacket) = {
      val buffer = packet.getData
      if (diff(buffer, mapFile("testdata/expected-192-168-106-204-binary-jpeg/" + index + ".jpg")))
       fail += 1
@@ -204,8 +204,8 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
      index += 1
     }
 
-    def dataArrived(packet: Packet[ByteBuffer]) = ()
-    def info(packet: Packet[String]) = ()
+    def dataArrived(packet: UnknownPacket) = ()
+    def info(packet: InfoPacket) = ()
     def mpeg4(packet: MPEG4Packet) = ()
    })
 

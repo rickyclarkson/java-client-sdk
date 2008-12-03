@@ -12,11 +12,17 @@ import uk.org.netvu.util.CheckParameters;
  */
 final class JFIFHeader
 {
+  /**
+   * Colorspace information that is constant for every JFIF frame generated.
+   */
     private static final byte[] YVIS =
             { 16, 11, 12, 14, 12, 10, 16, 14, 13, 14, 18, 17, 16, 19, 24, 40, 26, 24, 22, 22, 24, 49, 35, 37, 29, 40,
                 58, 51, 61, 60, 57, 51, 56, 55, 64, 72, 92, 78, 64, 68, 87, 69, 55, 56, 80, 109, 81, 87, 95, 98, 103,
                 104, 103, 62, 77, 113, 121, 112, 100, 120, 92, 101, 103, 99 };
 
+  /**
+   * Colorspace information that is constant for every JFIF frame generated.
+   */
     private static final byte[] UVVIS =
             { 17, 18, 18, 24, 21, 24, 47, 26, 26, 47, 99, 66, 56, 66, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
                 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
@@ -34,7 +40,14 @@ final class JFIFHeader
      */
     private static final byte[] SOC_HEADER = byteArrayLiteral( new int[] { 0xFF, 0xFE } );
 
+  /**
+   * Quantisation information that is constant for every JFIF frame generated.
+   */
     private static final byte[] YQ_HEADER = byteArrayLiteral( new int[] { 0xFF, 0xDB, 0x00, 0x43, 0x00 } );
+
+  /**
+   * Quantisation information that is constant for every JFIF frame generated.
+   */
     private static final byte[] UVQ_HEADER = byteArrayLiteral( new int[] { 0xFF, 0xDB, 0x00, 0x43, 0x01 } );
 
     /**
@@ -79,16 +92,6 @@ final class JFIFHeader
      * The end-of-image marker.
      */
     private static final byte[] EOI_MARKER = byteArrayLiteral( new int[] { 0xFF, 0xD9 } );
-
-    /**
-     * A SimpleDateFormat using the dd/MM/yyyy format.
-     */
-    private static final SimpleDateFormat dateFormatter = new SimpleDateFormat( "dd/MM/yyyy" );
-
-    /**
-     * A SimpleDateFormat using the HH:mm:ss format.
-     */
-    private static final SimpleDateFormat timeFormatter = new SimpleDateFormat( "HH:mm:ss" );
 
     /**
      * Parses out a comment field from JFIF data.
@@ -140,6 +143,7 @@ final class JFIFHeader
         final ByteBuffer comment = getComment( imageDataStruct, commentOriginal );
         final byte[] yqFactors = getYQFactors( imageDataStruct.getQFactor() );
         final byte[] uvqFactors = getUVQFactors( imageDataStruct.getQFactor() );
+
         final ByteBuffer sof = ByteBuffer.allocate( 19 );
         sof.put( byteArrayLiteral( new int[] { 0xFF, 0xC0, 0x00, 0x11, 0x08 } ) );
         sof.order( ByteOrder.LITTLE_ENDIAN );
@@ -207,10 +211,16 @@ final class JFIFHeader
      */
     private static ByteBuffer getComment( final ImageDataStruct imageDataStruct, final ByteBuffer commentData )
     {
+      final String DATE_FORMAT = "dd/MM/yyyy";
+      final String TIME_FORMAT = "HH:mm:ss";
+
+      final SimpleDateFormat dateFormatter = new SimpleDateFormat( DATE_FORMAT );
+      final SimpleDateFormat timeFormatter = new SimpleDateFormat( TIME_FORMAT );
+
         final int bufferCapacity =
                 getCommentByteCount( imageDataStruct.getCamera(), imageDataStruct.getUtcOffset(), commentData )
                         + imageDataStruct.getTitle().length() + imageDataStruct.getAlarm().length()
-                        + "dd/MM/yyyy".length() + "HH:mm:ss".length() + 256;
+                        + DATE_FORMAT.length() + TIME_FORMAT.length() + 256;
 
         final ByteBuffer buffer = ByteBuffer.allocate( bufferCapacity );
         println( buffer, "Version: 00.03" );
@@ -233,12 +243,29 @@ final class JFIFHeader
         return buffer;
     }
 
+  /**
+   * Calculates the amount of space to reserve for the generated comment block.
+   * @param camera the camera or channel number to include in the output.
+   * @param utcOffset the offset from UTC representing the timezone that the data was recorded in.
+   * @param commentData the comment data read from the stream.
+   * @return the amount of space the generated comment block must take.
+   */
     private static int getCommentByteCount( final int camera, final int utcOffset, final ByteBuffer commentData )
     {
         CheckParameters.areNotNull( commentData );
         return 9 + widthOfInt( camera ) + widthOfInt( utcOffset ) + commentData.limit();
     }
 
+  /**
+   * Calculates the quantisation data to use in the generated JFIF header.  There are two sets of quantisation factors;
+   * which one to use is decided by the 'constants' parameter.
+   *
+   * @param qFactor the quantisation factor to calculate the quantisation data for.
+   * @param constants the set of quantisation constants to use in the calculation.
+   * @return the quantisation data to use in the generated JFIF header.
+   * @throws NullPointerException if constants is null.
+   * @throws IllegalArgumentException if qFactor is not between 1 and 255 inclusive.
+   */
     private static byte[] getQFactors( final int qFactor, final byte[] constants )
     {
         CheckParameters.areNotNull( constants );
@@ -253,11 +280,23 @@ final class JFIFHeader
         return results;
     }
 
+  /**
+   * Calculates the UV quantisation data given the specified quantisation factor.
+   * @param qFactor the quantisation factor to calculate UV quantisation data for.
+   * @return the UV quantisation data for the specified quantisation factor.
+   * @throws IllegalArgumentException if qFactor is not between 1 and 255 inclusive.
+   */
     private static byte[] getUVQFactors( final int qFactor )
     {
         return getQFactors( qFactor, UVVIS );
     }
 
+  /**
+   * Calculates the Y quantisation data given the specified quantisation factor.
+   * @param qFactor the quantisation factor to calculate Y quantisation data for.
+   * @return the Y quantisation data for the specified quantisation factor.
+   * @throws IllegalArgumentException if qFactor is not between 1 and 255 inclusive.
+   */
     private static byte[] getYQFactors( final int qFactor )
     {
         return getQFactors( qFactor, YVIS );

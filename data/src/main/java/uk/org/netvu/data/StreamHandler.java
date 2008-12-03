@@ -14,7 +14,7 @@ public interface StreamHandler
      * @param packet
      *        the Packet of data that has arrived.
      */
-    void dataArrived( Packet<ByteBuffer> packet );
+    void dataArrived( UnknownPacket packet );
 
     /**
      * Signals the arrival of textual information to the client.
@@ -22,7 +22,7 @@ public interface StreamHandler
      * @param packet
      *        the Packet of data that has arrived.
      */
-    void info( Packet<String> packet );
+    void info( InfoPacket packet );
 
     /**
      * Signals the arrival of a JFIF packet to the client.
@@ -30,7 +30,7 @@ public interface StreamHandler
      * @param packet
      *        the Packet of data that has arrived.
      */
-    void jfif( Packet<ByteBuffer> packet );
+    void jfif( JFIFPacket packet );
 
     /**
      * Signals the arrival of a MPEG-4 packet to the client.

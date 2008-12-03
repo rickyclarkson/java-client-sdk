@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import uk.org.netvu.util.CheckParameters;
+import java.io.DataInputStream;
 
 /**
  * A parser for the 'binary' stream format.
@@ -33,8 +34,11 @@ final class BinaryParser implements Parser
         {
             while ( true )
             {
-                final PacketMetadata metadata = PacketMetadata.fromBinaryOrMinimalStream( input );
-                metadata.getFrameType().deliverTo( handler, input, metadata );
+              final FrameType frameType = FrameType.frameTypeFor( input.read() );
+              final int channel = input.read() + 1;
+              final int length = new DataInputStream( input ).readInt();
+
+              frameType.deliverTo( handler, input, channel, length, frameType );
             }
         }
         catch ( final EOFException e )

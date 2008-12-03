@@ -10,13 +10,13 @@ class FrameTypeTest extends JUnit4(new Specification {
  "FrameType.UNKNOWN.deliverTo" should {
   "deliver the input to the StreamHandler" in {
    var pass = false
-   FrameType.UNKNOWN.deliverTo(new StreamHandler { def dataArrived(packet: Packet[ByteBuffer]) = pass = true
-                                                   def info(packet: Packet[String]) = ()
-                                                   def jfif(packet: Packet[ByteBuffer]) = ()
+   FrameType.UNKNOWN.deliverTo(new StreamHandler { def dataArrived(packet: UnknownPacket) = pass = true
+                                                   def info(packet: InfoPacket) = ()
+                                                   def jfif(packet: JFIFPacket) = ()
                                                    def mpeg4(packet: MPEG4Packet) = ()
                                                  },
                                new ByteArrayInputStream(Array(1, 2, 3, 4, 5)),
-                               new PacketMetadata(5, 3, FrameType.UNKNOWN))
+                               5, 3, FrameType.UNKNOWN)
 
    pass mustBe true
   }

@@ -178,105 +178,7 @@ public final class ImageDataStruct
         return indexOfNull == -1 ? input : input.substring( 0, indexOfNull );
     }
 
-    /**
-     * The version of the image data header.
-     */
-    private final int version;
-
-    /**
-     * The mode contained in the image data header.
-     */
-    private final int mode;
-
-    /**
-     * The camera contained in the image data header.
-     */
-    private final int camera;
-
-    /**
-     * The videoFormat contained in the image data header.
-     */
-    private final VideoFormat videoFormat;
-
-    /**
-     * The startOffset contained in the image data header.
-     */
-    private final int startOffset;
-
-    /**
-     * The size contained in the image data header.
-     */
-    private final int size;
-
-    /**
-     * The maxSize contained in the image data header.
-     */
-    private final int maxSize;
-
-    /**
-     * The targetSize contained in the image data header.
-     */
-    private final int targetSize;
-
-    /**
-     * The qFactor contained in the image data header.
-     */
-    private final int qFactor;
-
-    /**
-     * The alarmBitmaskHigh contained in the image data header.
-     */
-    private final int alarmBitmaskHigh;
-
-    /**
-     * The status contained in the image data header.
-     */
-    private final int status;
-
-    /**
-     * The sessionTime contained in the image data header.
-     */
-    private final int sessionTime;
-
-    /**
-     * The milliseconds contained in the image data header.
-     */
-    private final int milliseconds;
-
-    /**
-     * The res contained in the image data header.
-     */
-    private final byte[] res;
-
-    /**
-     * The title contained in the image data header.
-     */
-    private final String title;
-
-    /**
-     * The alarm contained in the image data header.
-     */
-    private final String alarm;
-
-    /**
-     * The format contained in the image data header.
-     */
-    private final PictureStruct format;
-
-    /**
-     * The locale contained in the image data header.
-     */
-    private final String locale;
-
-    /**
-     * The utcOffset contained in the image data header.
-     */
-    private final int utcOffset;
-
-    /**
-     * The alarmBitmask contained in the image data header.
-     */
-    private final int alarmBitmask;
+  private final ByteBuffer buffer;
 
     /**
      * Constructs an ImageDataStruct with data from the specified ByteBuffer.
@@ -289,33 +191,14 @@ public final class ImageDataStruct
     public ImageDataStruct( final ByteBuffer buffer )
     {
         CheckParameters.areNotNull( buffer );
+        this.buffer = buffer;
 
-        version = readInt( buffer, VERSION );
+        int version = readInt( buffer, VERSION );
 
         if ( ( version & 0xDECADE00 ) != 0xDECADE00 )
         {
             throw new IllegalArgumentException( "version is " + Integer.toHexString( version ) );
         }
-
-        mode = readInt( buffer, MODE );
-        camera = readInt( buffer, CAM );
-        videoFormat = VideoFormat.valueOf( readInt( buffer, VID_FORMAT ) );
-        startOffset = readInt( buffer, START_OFFSET );
-        size = readInt( buffer, SIZE );
-        maxSize = readInt( buffer, MAX_SIZE );
-        targetSize = readInt( buffer, TARGET_SIZE );
-        qFactor = readInt( buffer, Q_FACTOR );
-        alarmBitmaskHigh = readInt( buffer, ALM_BITMASK_HI );
-        status = readInt( buffer, STATUS );
-        sessionTime = readInt( buffer, SESSION_TIME );
-        milliseconds = (int) ( ( 0xFFFFFFFFL & readInt( buffer, MILLISECONDS ) ) % 1000L );
-        res = read( buffer, 4, RES );
-        title = nullTerminate( read( buffer, TITLE_LENGTH, TITLE ) );
-        alarm = nullTerminate( read( buffer, TITLE_LENGTH, ALARM ) );
-        format = new PictureStruct( buffer, ByteOrder.BIG_ENDIAN, FORMAT );
-        locale = nullTerminate( read( buffer, MAX_NAME_LENGTH, LOCALE ) );
-        utcOffset = readInt( buffer, UTC_OFFSET );
-        alarmBitmask = readInt( buffer, ALM_BITMASK );
     }
 
     /**
@@ -325,7 +208,7 @@ public final class ImageDataStruct
      */
     public String getAlarm()
     {
-        return alarm;
+      return nullTerminate( read( buffer, TITLE_LENGTH, ALARM) );
     }
 
     /**
@@ -335,7 +218,7 @@ public final class ImageDataStruct
      */
     public int getAlarmBitmask()
     {
-        return alarmBitmask;
+      return readInt( buffer, ALM_BITMASK );
     }
 
     /**
@@ -345,7 +228,7 @@ public final class ImageDataStruct
      */
     public int getAlarmBitmaskHigh()
     {
-        return alarmBitmaskHigh;
+      return readInt( buffer, ALM_BITMASK_HI);
     }
 
     /**
@@ -355,7 +238,7 @@ public final class ImageDataStruct
      */
     public int getCamera()
     {
-        return camera;
+      return readInt( buffer, CAM);
     }
 
     /**
@@ -365,7 +248,7 @@ public final class ImageDataStruct
      */
     public PictureStruct getFormat()
     {
-        return format;
+      return new PictureStruct( buffer, ByteOrder.BIG_ENDIAN, FORMAT);
     }
 
     /**
@@ -375,7 +258,7 @@ public final class ImageDataStruct
      */
     public String getLocale()
     {
-        return locale;
+      return nullTerminate( read( buffer, MAX_NAME_LENGTH, LOCALE));
     }
 
     /**
@@ -385,7 +268,7 @@ public final class ImageDataStruct
      */
     public int getMaxSize()
     {
-        return maxSize;
+      return readInt(buffer, MAX_SIZE);
     }
 
     /**
@@ -395,7 +278,7 @@ public final class ImageDataStruct
      */
     public int getMilliseconds()
     {
-        return milliseconds;
+      return (int)((0xFFFFFFFFL & readInt(buffer, MILLISECONDS)) % 1000L);
     }
 
     /**
@@ -405,7 +288,7 @@ public final class ImageDataStruct
      */
     public int getMode()
     {
-        return mode;
+      return readInt(buffer, MODE);
     }
 
     /**
@@ -415,7 +298,7 @@ public final class ImageDataStruct
      */
     public int getQFactor()
     {
-        return qFactor;
+      return readInt(buffer, Q_FACTOR);
     }
 
     /**
@@ -425,7 +308,7 @@ public final class ImageDataStruct
      */
     public byte[] getRes()
     {
-        return res;
+      return read(buffer, 4, RES);
     }
 
     /**
@@ -435,7 +318,7 @@ public final class ImageDataStruct
      */
     public int getSessionTime()
     {
-        return sessionTime;
+      return readInt(buffer, SESSION_TIME);
     }
 
     /**
@@ -445,7 +328,7 @@ public final class ImageDataStruct
      */
     public int getSize()
     {
-        return size;
+      return readInt(buffer, SIZE);
     }
 
     /**
@@ -455,7 +338,7 @@ public final class ImageDataStruct
      */
     public int getStartOffset()
     {
-        return startOffset;
+      return readInt(buffer, START_OFFSET);
     }
 
     /**
@@ -465,7 +348,7 @@ public final class ImageDataStruct
      */
     public int getStatus()
     {
-        return status;
+      return readInt(buffer, STATUS);
     }
 
     /**
@@ -475,7 +358,7 @@ public final class ImageDataStruct
      */
     public int getTargetSize()
     {
-        return targetSize;
+      return readInt(buffer, TARGET_SIZE);
     }
 
     /**
@@ -485,7 +368,7 @@ public final class ImageDataStruct
      */
     public String getTitle()
     {
-        return title;
+      return nullTerminate( read( buffer, TITLE_LENGTH, TITLE) );
     }
 
     /**
@@ -495,7 +378,7 @@ public final class ImageDataStruct
      */
     public int getUtcOffset()
     {
-        return utcOffset;
+      return readInt(buffer, UTC_OFFSET);
     }
 
     /**
@@ -505,7 +388,7 @@ public final class ImageDataStruct
      */
     public int getVersion()
     {
-        return version;
+      return readInt(buffer, VERSION);
     }
 
     /**
@@ -515,7 +398,7 @@ public final class ImageDataStruct
      */
     public VideoFormat getVideoFormat()
     {
-        return videoFormat;
+      return VideoFormat.valueOf(readInt(buffer, VID_FORMAT));
     }
 
     /**
@@ -533,7 +416,7 @@ public final class ImageDataStruct
      * @throws NullPointerException
      *         if buffer is null.
      */
-    public byte[] read( final ByteBuffer buffer, final int length, final int where )
+    private byte[] read( final ByteBuffer buffer, final int length, final int where )
     {
         CheckParameters.areNotNull( buffer );
         final byte[] result = new byte[length];

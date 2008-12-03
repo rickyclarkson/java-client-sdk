@@ -1,94 +1,41 @@
 package uk.org.netvu.data;
 
 import java.nio.ByteBuffer;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A Packet represents a single piece of data read from a stream, such as a JFIF
  * frame, or an MPEG-4 i-frame.
- * 
- * @param <T>
- *        the type of data held by the Packet.
  */
-public abstract class Packet<T>
+public abstract class Packet
 {
-    /**
-     * Constructs a Packet with the specified data and metadata.
-     * 
-     * @param text
-     *        the textual information that the constructed Packet contains.
-     * @param metadata
-     *        data about the Packet.
-     * @return a Packet holding the passed-in text and metadata.
-     */
-    static Packet<String> infoPacket( final String text, final PacketMetadata metadata )
-    {
-        return packet( text, metadata );
-    }
-
-    /**
-     * Constructs a Packet with the specified data and metadata.
-     * 
-     * @param data
-     *        the JFIF data that the constructed Packet contains.
-     * @param metadata
-     *        data about the Packet.
-     * @return a Packet holding the passed-in JFIF data and metadata.
-     */
-    static Packet<ByteBuffer> jfifPacket( final ByteBuffer data, final PacketMetadata metadata )
-    {
-        return packet( data, metadata );
-    }
-
-    /**
-     * Constructs a Packet with the specified data and metadata.
-     * 
-     * @param data
-     *        the bytes that the constructed Packet contains.
-     * @param metadata
-     *        data about the Packet.
-     * @return a Packet holding the passed-in data and metadata.
-     */
-    static Packet<ByteBuffer> unknownPacket( final ByteBuffer data, final PacketMetadata metadata )
-    {
-        return packet( data, metadata );
-    }
-
-    private static <T> Packet<T> packet( final T t, final PacketMetadata metadata )
-    {
-        return new Packet<T>()
-        {
-            @Override
-            public T getData()
-            {
-                return t;
-            }
-
-            @Override
-            public PacketMetadata getMetadata()
-            {
-                return metadata;
-            }
-        };
-    }
+  private final int channel;
+  private final int length;
+  private final FrameType frameType;
 
     /**
      * Constructs a Packet.
      */
-    Packet()
+  Packet(int channel, int length, FrameType frameType)
     {
+      CheckParameters.areNotNull(frameType);
+      this.channel = channel;
+      this.length = length;
+      this.frameType = frameType;
     }
 
-    /**
-     * Gets the data held by this Packet.
-     * 
-     * @return the data held by this Packet.
-     */
-    public abstract T getData();
+  public int getChannel()
+  {
+    return channel;
+  }
 
-    /**
-     * Gets the metadata held by this Packet.
-     * 
-     * @return the metadata held by this Packet.
-     */
-    public abstract PacketMetadata getMetadata();
+  public int getLength()
+  {
+    return length;
+  }
+
+  public FrameType getFrameType()
+  {
+    return frameType;
+  }
 }
