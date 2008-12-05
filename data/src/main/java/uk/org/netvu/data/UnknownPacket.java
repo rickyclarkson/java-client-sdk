@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 /**
  * An UnknownPacket represents a single packet of data of an unknown or unsupported type read from a stream.
  */
-public final class UnknownPacket extends Packet
+final class UnknownPacket extends Packet
 {
   /**
    * The data stored in the packet.
@@ -30,6 +30,11 @@ public final class UnknownPacket extends Packet
    * @return the data stored in the packet.
    */
   public ByteBuffer getData()
+  {
+    return data;
+  }
+
+  public ByteBuffer getOnWireFormat()
   {
     return data;
   }

@@ -69,6 +69,11 @@ public final class MPEG4Packet
         return data;
     }
 
+  public ByteBuffer getOnWireFormat()
+  {
+    return data;
+  }
+
     /**
      * Gets the ImageDataStruct associated with this MPEG4Packet.
      * 

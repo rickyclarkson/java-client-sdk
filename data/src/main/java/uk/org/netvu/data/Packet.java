@@ -38,4 +38,7 @@ public abstract class Packet
   {
     return frameType;
   }
+
+  public abstract ByteBuffer getData();
+  public abstract ByteBuffer getOnWireFormat();
 }

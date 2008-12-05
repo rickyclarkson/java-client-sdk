@@ -188,6 +188,22 @@ final class IO
         }
     }
 
+  static ByteBuffer from(ByteBuffer b, int position)
+  {
+    ByteBuffer result = b.duplicate();
+    result.position(position);
+    result = result.slice();
+    result.position(0);
+    return result;
+  }
+
+  static ByteBuffer slice(ByteBuffer b, int from, int length)
+  {
+    ByteBuffer result = from(b, from);
+    result.limit(length);
+    return result;
+  }
+
   /**
      * Private to prevent instantiation.
      */

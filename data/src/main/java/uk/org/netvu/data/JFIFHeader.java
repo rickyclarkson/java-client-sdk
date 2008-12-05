@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import uk.org.netvu.util.CheckParameters;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class for converting the minimised JFIF header into a valid JFIF header.
@@ -135,10 +137,15 @@ final class JFIFHeader
      * @throws NullPointerException
      *         if either of the parameters are null.
      */
-    static ByteBuffer jpegToJfif( final ByteBuffer source, final ImageDataStruct imageDataStruct )
+    static ByteBuffer jpegToJfif( ByteBuffer source )
     {
-        CheckParameters.areNotNull( source, imageDataStruct );
-        final ByteBuffer commentOriginal = source.duplicate();
+      source = source.duplicate();
+      source.position(0);
+        CheckParameters.areNotNull( source );
+        ImageDataStruct imageDataStruct = new ImageDataStruct( source );
+        final ByteBuffer commentOriginal = IO.slice( source, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE, imageDataStruct.getStartOffset() );
+        final ByteBuffer restOfData = IO.from( source, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + imageDataStruct.getStartOffset() );
+        restOfData.position(0);
         commentOriginal.limit( imageDataStruct.getStartOffset() );
         final ByteBuffer comment = getComment( imageDataStruct, commentOriginal );
         final byte[] yqFactors = getYQFactors( imageDataStruct.getQFactor() );
@@ -155,11 +162,33 @@ final class JFIFHeader
             0x11, 0x01 } ) );
         sof.position( 0 );
 
-        final ByteBuffer jfif =
+        /*final ByteBuffer jfif =
                 ByteBuffer.allocate( JFIF_HEADER.length + SOC_HEADER.length + 2 + comment.limit() + YQ_HEADER.length
                         + yqFactors.length + UVQ_HEADER.length + uvqFactors.length + sof.limit()
-                        + HUFFMAN_HEADER.length + SOS_HEADER.length + source.limit()
-                        - imageDataStruct.getStartOffset() + EOI_MARKER.length );
+                        + HUFFMAN_HEADER.length + SOS_HEADER.length + restOfData.limit()
+                        - imageDataStruct.getStartOffset() + EOI_MARKER.length ); */
+        class Fake
+        {
+          List<Byte> list = new ArrayList<Byte>();
+          void put( byte[] toPut )
+          {
+            for (byte b: toPut)
+              list.add(b);
+          }
+
+          void putShort(short s)
+          {
+            put(new byte[]{(byte)(s >> 16), (byte)(s & 0xFF)});
+          }
+
+          void put(ByteBuffer b)
+          {
+            put(b.array());
+          }
+        }
+         
+        Fake jfif = new Fake();
+
         jfif.put( JFIF_HEADER );
         jfif.put( SOC_HEADER );
         jfif.putShort( (short) ( comment.limit() + 2 ) );
@@ -171,12 +200,20 @@ final class JFIFHeader
         jfif.put( sof );
         jfif.put( HUFFMAN_HEADER );
         jfif.put( SOS_HEADER );
-        source.position( imageDataStruct.getStartOffset() );
-        jfif.put( source );
+        jfif.put( restOfData );
         jfif.put( EOI_MARKER );
-        jfif.position( 0 );
 
-        return jfif;
+        /*        if (jfif.position() != jfif.limit())
+          throw null;
+
+          jfif.position( 0 );*/
+
+        byte[] res = new byte[jfif.list.size()];
+        int i = 0;
+        for (byte b: jfif.list)
+          res[i++] = b;
+
+        return ByteBuffer.wrap(res);
     }
 
     /**

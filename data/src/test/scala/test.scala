@@ -73,6 +73,27 @@ class IOTest extends JUnit4(new Specification {
    IO.expectIntFromRestOfLine(asInputStream(List("23a", "bar"))) must throwA[IllegalStateException]
   }
  }
+ 
+ import java.nio.ByteBuffer
+
+ "IO.from" should {
+  "give a ByteBuffer with position 0 and starting at the specified index in the original." in {
+   val bb = IO.from(ByteBuffer.wrap(Array(1,2,3)), 1)
+   bb.position mustEqual 0
+   bb.get mustEqual 2
+   bb.limit mustEqual 2
+  }
+ }
+
+ "IO.slice" should {
+  "give a ByteBuffer with position 0 and containing the specified range of bytes." in {
+   val bb = IO.slice(ByteBuffer.wrap(Array(1,2,3,4)), 1, 2)
+   bb.limit mustEqual 2
+   bb.position mustEqual 0
+   bb.get mustEqual 2
+   bb.get mustEqual 3
+  }
+ }
 })
 
 import java.net.URL
@@ -88,7 +109,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
  }
 
  def validlyParse(filename: String, streamType: StreamType) = new Specification {
-  "reading a " + streamType.toString.toLowerCase( java.util.Locale.ENGLISH ) + " stream containing JFIFs" should {
+  "reading "+filename+", a " + streamType.toString.toLowerCase( java.util.Locale.ENGLISH ) + " stream containing JFIFs" should {
    "parse out at least two valid JFIF images" in {
     val url = new URL(filename)
     val connection = url.openConnection
@@ -98,8 +119,10 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     ParserFactory parserFor streamType parse (connection.getInputStream, new StreamHandler {
      def jfif(packet: JFIFPacket) = {
       val buffer = packet.getData
+      
       def next = buffer.get & 0xFF
       val first = (next, next)
+
       buffer.position(buffer.limit - 2)
       val last = (next, next)
    

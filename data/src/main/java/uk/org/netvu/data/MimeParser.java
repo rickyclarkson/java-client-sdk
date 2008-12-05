@@ -39,6 +39,9 @@ class MimeParser implements Parser
                 IO.expectLine( input, "Content-type: image/jpeg" );
                 IO.expectString( input, "Content-length: " );
                 final int length = IO.expectIntFromRestOfLine( input );
+                if (length == 1)
+                  throw null;
+
                 IO.expectLine( input, "" );
                 final ByteBuffer jpeg = IO.readIntoByteBuffer( input, length );
 
@@ -48,7 +51,7 @@ class MimeParser implements Parser
                 final int channel =
                         Integer.parseInt( comments.substring( numberStart + "Number: ".length(), numberEnd ) );
 
-                handler.jfif( new JFIFPacket( jpeg, length, channel, FrameType.JFIF ) );
+                handler.jfif( new JFIFPacket( jpeg, channel, length, FrameType.JFIF ) );
                 IO.expectLine( input, "" );
             }
         }

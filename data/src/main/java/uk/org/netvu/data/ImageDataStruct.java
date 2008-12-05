@@ -191,9 +191,9 @@ public final class ImageDataStruct
     public ImageDataStruct( final ByteBuffer buffer )
     {
         CheckParameters.areNotNull( buffer );
-        this.buffer = buffer;
-
-        int version = readInt( buffer, VERSION );
+        this.buffer = buffer.duplicate();
+        
+        int version = readInt( this.buffer, VERSION );
 
         if ( ( version & 0xDECADE00 ) != 0xDECADE00 )
         {
