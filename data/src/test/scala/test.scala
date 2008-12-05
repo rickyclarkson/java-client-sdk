@@ -117,7 +117,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     var numInvalidFrames = 0
     
     ParserFactory parserFor streamType parse (connection.getInputStream, new StreamHandler {
-     def jfif(packet: JFIFPacket) = {
+     def jpegFrameArrived(packet: JFIFPacket) = {
       val buffer = packet.getData
       
       def next = buffer.get & 0xFF
@@ -132,9 +132,9 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
       }
      }
 
-     def dataArrived(packet: UnknownPacket) = ()
-     def mpeg4(packet: MPEG4Packet) = ()
-     def info(packet: InfoPacket) = ()
+     def unknownDataArrived(packet: UnknownPacket) = ()
+     def mpeg4FrameArrived(packet: MPEG4Packet) = ()
+     def infoArrived(packet: InfoPacket) = ()
     })
 
     numInvalidFrames == 0 must beTrue
@@ -181,9 +181,9 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     var index = 0
     
     ParserFactory parserFor streamType parse (connection.getInputStream, new StreamHandler {
-     def jfif(packet: JFIFPacket) = ()
-     def dataArrived(packet: UnknownPacket) = ()
-     def mpeg4(packet: MPEG4Packet) = {
+     def jpegFrameArrived(packet: JFIFPacket) = ()
+     def unknownDataArrived(packet: UnknownPacket) = ()
+     def mpeg4FrameArrived(packet: MPEG4Packet) = {
       val isIFrame: Boolean = {
        var foundVOP = false
        var last = 0xFFFF
@@ -205,7 +205,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
       
       index += 1
      }
-     def info(packet: InfoPacket) = ()
+     def infoArrived(packet: InfoPacket) = ()
     })
     
     numValidFrames >= 2 must beTrue
@@ -222,7 +222,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
    var fail = 0  
 
    ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
-    def jfif(packet: JFIFPacket) = {
+    def jpegFrameArrived(packet: JFIFPacket) = {
      val buffer = packet.getData
      if (diff(buffer, mapFile("testdata/expected-192-168-106-204-binary-jpeg/" + index + ".jpg")))
       fail += 1
@@ -231,9 +231,9 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
      index += 1
     }
 
-    def dataArrived(packet: UnknownPacket) = ()
-    def info(packet: InfoPacket) = ()
-    def mpeg4(packet: MPEG4Packet) = ()
+    def unknownDataArrived(packet: UnknownPacket) = ()
+    def infoArrived(packet: InfoPacket) = ()
+    def mpeg4FrameArrived(packet: MPEG4Packet) = ()
    })
 
    fail mustEqual 0

@@ -54,7 +54,7 @@ class MimeParser implements Parser
                 String comment = new String(next.data.array(), "US-ASCII");
                 int channel = getChannelFromCommentBlock(comment);
 
-                handler.mpeg4( new MPEG4Packet( packet.data, channel ) );
+                handler.mpeg4FrameArrived( new MPEG4Packet( packet.data, channel ) );
               }
               else
                 throw null;
@@ -65,7 +65,7 @@ class MimeParser implements Parser
               final String comments = JFIFHeader.getComments(jpeg);
               
               int channel = getChannelFromCommentBlock( comments);
-              handler.jfif( new JFIFPacket( jpeg, channel, false) );
+              handler.jpegFrameArrived( new JFIFPacket( jpeg, channel, false) );
               //IO.expectLine(input, "");
             }    
         }

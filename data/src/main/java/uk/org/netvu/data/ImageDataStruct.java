@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import uk.org.netvu.util.CheckParameters;
+import java.io.UnsupportedEncodingException;
 
 /**
  * A representation of the 'image data' part of a minimised-JFIF.
@@ -211,6 +212,31 @@ public final class ImageDataStruct
       return nullTerminate( read( buffer, TITLE_LENGTH, ALARM) );
     }
 
+  public void setAlarm(String s)
+  {
+    write( nullPad(s, TITLE_LENGTH), ALARM );
+  }
+
+  void write( byte[] bytes, int position)
+  {
+    buffer.position(position);
+    buffer.put(bytes);
+  }
+
+  byte[] nullPad(String string, int length)
+  {
+    try
+    {
+      byte[] bytes = new byte[length];
+      System.arraycopy(string.getBytes("US-ASCII"), 0, bytes, 0, string.length());
+      return bytes;
+    }
+    catch (UnsupportedEncodingException e)
+      {
+        throw new RuntimeException(e);
+      }
+  }
+
     /**
      * Gets the alarmBitmask contained in the image data header.
      * 
@@ -220,6 +246,8 @@ public final class ImageDataStruct
     {
       return readInt( buffer, ALM_BITMASK );
     }
+
+  public void setAlarmBitmask(int alarmBitmask) { buffer.putInt(ALM_BITMASK, alarmBitmask); }
 
     /**
      * Gets the alarmBitmaskHigh contained in the image data header.
@@ -231,6 +259,8 @@ public final class ImageDataStruct
       return readInt( buffer, ALM_BITMASK_HI);
     }
 
+  public void setAlarmBitmaskHigh(int alarmBitmaskHigh) { buffer.putInt(ALM_BITMASK_HI, alarmBitmaskHigh); }
+
     /**
      * Gets the camera contained in the image data header.
      * 
@@ -240,6 +270,8 @@ public final class ImageDataStruct
     {
       return readInt( buffer, CAM);
     }
+
+  public void setCamera(int camera) { buffer.putInt(CAM, camera); }
 
     /**
      * Gets the format contained in the image data header.
@@ -260,6 +292,11 @@ public final class ImageDataStruct
     {
       return nullTerminate( read( buffer, MAX_NAME_LENGTH, LOCALE));
     }
+
+  public void setLocale(String locale)
+  {
+    write( nullPad(locale, MAX_NAME_LENGTH), LOCALE);
+  }
 
     /**
      * Gets the maxSize contained in the image data header.
@@ -306,9 +343,10 @@ public final class ImageDataStruct
      * 
      * @return the res contained in the image data header.
      */
-    public byte[] getRes()
+    public String getRes()
     {
-      return read(buffer, 4, RES);
+      String res = nullTerminate(read(buffer, 4, RES));
+      return res.length() > 4 ? res.substring(0, 4) : res;
     }
 
     /**
