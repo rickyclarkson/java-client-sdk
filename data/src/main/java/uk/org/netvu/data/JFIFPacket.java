@@ -23,7 +23,7 @@ final class JFIFPacket extends Packet
    */
   JFIFPacket(ByteBuffer data, int channel, int length, boolean truncated )
   {
-    super(channel, length);
+    super(channel);
     this.truncated = truncated;
 
     if (length == 1)

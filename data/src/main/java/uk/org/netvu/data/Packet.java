@@ -10,25 +10,18 @@ import uk.org.netvu.util.CheckParameters;
 public abstract class Packet
 {
   private final int channel;
-  private final int length;
 
     /**
      * Constructs a Packet.
      */
-  Packet(int channel, int length)
+  Packet(int channel)
     {
       this.channel = channel;
-      this.length = length;
     }
 
   public int getChannel()
   {
     return channel;
-  }
-
-  public int getLength()
-  {
-    return length;
   }
 
   public abstract ByteBuffer getData();

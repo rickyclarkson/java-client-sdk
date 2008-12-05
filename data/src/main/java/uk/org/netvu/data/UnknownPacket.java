@@ -20,7 +20,7 @@ final class UnknownPacket extends Packet
    */
   public UnknownPacket(ByteBuffer data, int channel, int length )
   {
-    super(channel, length);
+    super(channel);
     this.data = data;
   }
 
