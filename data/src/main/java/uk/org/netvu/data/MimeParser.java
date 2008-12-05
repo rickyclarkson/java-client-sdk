@@ -12,6 +12,18 @@ import uk.org.netvu.util.CheckParameters;
  */
 class MimeParser implements Parser
 {
+  private static class RawPacket
+  {
+    final String contentType;
+    final ByteBuffer data;
+
+    RawPacket(String contentType, ByteBuffer data)
+    {
+      this.contentType=contentType;
+      this.data=data;
+    }
+  }
+
     /**
      * Parses a MIME stream from the specified InputStream, delivering data as
      * it arrives to the specified StreamHandler.
@@ -27,37 +39,68 @@ class MimeParser implements Parser
      */
     public void parse( final InputStream input, final StreamHandler handler ) throws IOException
     {
-        CheckParameters.areNotNull( input, handler );
-        IO.expectLine( input, "" );
+      while (true)
+      {
         try
         {
-            while ( true )
+          CheckParameters.areNotNull( input, handler );
+          RawPacket packet = readRawPacket(input);
+
+          if (packet.contentType.startsWith("image/admp4"))
             {
-                IO.expectLineMatching( input, "--.*" );
-                IO.expectLineMatching( input, "HTTP/1\\.[01] 200 .*" );
-                IO.expectLine( input, "Server: ADH-Web" );
-                IO.expectLine( input, "Content-type: image/jpeg" );
-                IO.expectString( input, "Content-length: " );
-                final int length = IO.expectIntFromRestOfLine( input );
-                if (length == 1)
-                  throw null;
+              RawPacket next = readRawPacket(input);
+              if (next.contentType.equals("text/plain"))
+              {
+                String comment = new String(next.data.array(), "US-ASCII");
+                int channel = getChannelFromCommentBlock(comment);
 
-                IO.expectLine( input, "" );
-                final ByteBuffer jpeg = IO.readIntoByteBuffer( input, length );
-
-                final String comments = JFIFHeader.getComments( jpeg );
-                final int numberStart = comments.indexOf( "Number:" );
-                final int numberEnd = comments.indexOf( "\r\n", numberStart );
-                final int channel =
-                        Integer.parseInt( comments.substring( numberStart + "Number: ".length(), numberEnd ) );
-
-                handler.jfif( new JFIFPacket( jpeg, channel, length, false ) );
-                IO.expectLine( input, "" );
+                handler.mpeg4( new MPEG4Packet( packet.data, channel ) );
+              }
+              else
+                throw null;
             }
+          else
+            {
+              ByteBuffer jpeg = packet.data;
+              final String comments = JFIFHeader.getComments(jpeg);
+              
+              int channel = getChannelFromCommentBlock( comments);
+              handler.jfif( new JFIFPacket( jpeg, channel, false) );
+              //IO.expectLine(input, "");
+            }    
         }
-        catch ( final EOFException e )
-        {
+        catch (EOFException e)
+          {
             return;
-        }
+          }
+        //        IO.expectLine( input, "" );
+      }
+    }
+
+  private int getChannelFromCommentBlock(String comments)
+  {
+              final int numberStart = comments.indexOf("Number:");
+              final int numberEnd = comments.indexOf("\r\n", numberStart);
+              return Integer.parseInt(comments.substring(numberStart+"Number: ".length(), numberEnd));
+  }
+
+  private RawPacket readRawPacket(InputStream input) throws IOException
+  {
+    IO.expectLineMatching(input,"");
+          IO.expectLineMatching( input, "--.*" );
+          IO.expectLineMatching( input, "HTTP/1\\.[01] 200 .*" );
+          IO.expectLine( input, "Server: ADH-Web" );
+          
+          IO.expectString(input, "Content-type: ");
+          String contentType = IO.readLine( input );
+          IO.expectString( input, "Content-length: " );
+          final int length = IO.expectIntFromRestOfLine( input );
+          if (length == 1)
+                  throw null;
+          
+          IO.expectLine( input, "" );
+          final ByteBuffer data = IO.readIntoByteBuffer( input, length );
+          
+          return new RawPacket(contentType, data);
     }
 }

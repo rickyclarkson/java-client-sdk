@@ -27,7 +27,7 @@ abstract class FrameType
         throws IOException
       {
         CheckParameters.areNotNull( handler, input );
-        handler.jfif( new JFIFPacket( input, channel, length, truncated ) );
+        handler.jfif( new JFIFPacket( input, channel, truncated ) );
       }
     };
   }
@@ -42,7 +42,7 @@ abstract class FrameType
             ImageDataStruct imageHeader = new ImageDataStruct( input );
             ByteBuffer commentData = IO.slice( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE, imageHeader.getStartOffset() );
             ByteBuffer restOfData = IO.from( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + imageHeader.getStartOffset() );
-            handler.mpeg4( new MPEG4Packet( restOfData, channel, length, imageHeader, commentData ) );
+            handler.mpeg4( new MPEG4Packet( restOfData, channel ) );
         }
     };
 
@@ -56,7 +56,7 @@ abstract class FrameType
                 throws IOException
         {
             CheckParameters.areNotNull( handler, input, frameType );
-            handler.mpeg4( new MPEG4Packet( input, length, channel, null, null ) );
+            handler.mpeg4( new MPEG4Packet( input, channel ) );
         }
     };
     /**

@@ -167,6 +167,10 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   validlyParseMPEG4("file:testdata/192-168-106-207-minimal-mp4", StreamType.BINARY)
  }
 
+ "parsing 206's mime/mp4" isSpecifiedBy {
+  validlyParseMPEG4("file:testdata/192-168-106-206-mime-mp4", StreamType.MIME)
+ }
+
  def validlyParseMPEG4(filename: String, streamType: StreamType) = new Specification {
   "parsing an MPEG4 stream" should {
    "produce at least two valid MPEG frames" in {

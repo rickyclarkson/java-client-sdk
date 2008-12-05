@@ -171,21 +171,27 @@ final class IO
      *         if input is null.
      * @return a line of text read from the specified InputStream.
      */
-    private static String readLine( final InputStream input ) throws IOException
+    public static String readLine( final InputStream input ) throws IOException
     {
-        CheckParameters.areNotNull( input );
+      CheckParameters.areNotNull( input );
+
+      final StringBuilder soFar = new StringBuilder();
+
+      for (;;)
+      {
         final int b = input.read();
         switch ( b )
         {
             case '\n':
-                return "";
+              return soFar.toString();
             case '\r':
-                return readLine( input );
+              break;
             case -1:
-                throw new EOFException();
+              throw new EOFException();
             default:
-                return String.valueOf( (char) b ) + readLine( input );
+              soFar.append((char) b );
         }
+    }
     }
 
   static ByteBuffer from(ByteBuffer b, int position)

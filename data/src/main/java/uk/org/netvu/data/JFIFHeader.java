@@ -9,6 +9,7 @@ import uk.org.netvu.util.CheckParameters;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.BufferUnderflowException;
 
 /**
  * A class for converting the minimised JFIF header into a valid JFIF header.
@@ -107,7 +108,8 @@ final class JFIFHeader
      */
     static String getComments( final ByteBuffer jfif )
     {
-        if ( ( jfif.get() & 0xFF ) == 0xFF && ( jfif.get() & 0xFF ) == 0xFE )
+      while ( true )
+        if (( jfif.get() & 0xFF ) == 0xFF && ( jfif.get() & 0xFF ) == 0xFE )
         {
             final short commentLength = jfif.getShort();
             final byte[] comment = new byte[commentLength];
@@ -121,8 +123,6 @@ final class JFIFHeader
                 jfif.position( 0 );
             }
         }
-
-        return getComments( jfif );
     }
 
     /**

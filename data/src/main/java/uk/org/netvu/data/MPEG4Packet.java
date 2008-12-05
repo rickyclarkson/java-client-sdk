@@ -14,16 +14,6 @@ public final class MPEG4Packet
     private final ByteBuffer data;
 
     /**
-     * The ImageDataStruct associated with this MPEG4Packet.
-     */
-    private final ImageDataStruct imageDataStruct;
-
-    /**
-     * The comment data associated with this MPEG4Packet.
-     */
-    private final ByteBuffer commentData;
-
-    /**
      * Constructs an MPEG4Packet with the specified data, stream metadata,
      * ImageDataStruct and comment data.
      * 
@@ -38,25 +28,12 @@ public final class MPEG4Packet
      * @throws NullPointerException
      *         if any of the values are null.
      */
-  public MPEG4Packet( final ByteBuffer data, final int channel, final int length, final ImageDataStruct imageDataStruct,
-            final ByteBuffer commentData )
+  public MPEG4Packet( final ByteBuffer data, final int channel )
     {
       super(channel);
         // CheckParameters.areNotNull( data, metadata, imageDataStruct,
         // commentData );
         this.data = data;
-        this.imageDataStruct = imageDataStruct;
-        this.commentData = commentData;
-    }
-
-    /**
-     * Gets the comment data associated with this MPEG4Packet.
-     * 
-     * @return the comment data associated with this MPEG4Packet.
-     */
-    public ByteBuffer getCommentData()
-    {
-        return commentData;
     }
 
     /**
@@ -73,14 +50,4 @@ public final class MPEG4Packet
   {
     return data;
   }
-
-    /**
-     * Gets the ImageDataStruct associated with this MPEG4Packet.
-     * 
-     * @return the ImageDataStruct associated with this MPEG4Packet.
-     */
-    public ImageDataStruct getImageDataStruct()
-    {
-        return imageDataStruct;
-    }
 }

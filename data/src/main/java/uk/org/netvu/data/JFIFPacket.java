@@ -21,13 +21,11 @@ final class JFIFPacket extends Packet
    * @param metadata the metadata about the JFIFPacket.
    * @throws NullPointerException if data or metadata are null.
    */
-  JFIFPacket(ByteBuffer data, int channel, int length, boolean truncated )
+  JFIFPacket(ByteBuffer data, int channel, boolean truncated )
   {
     super(channel);
     this.truncated = truncated;
 
-    if (length == 1)
-      throw null;
     CheckParameters.areNotNull(data);
     this.data = data;
   }
