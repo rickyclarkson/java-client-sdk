@@ -38,10 +38,10 @@ public final class MPEG4Packet
      * @throws NullPointerException
      *         if any of the values are null.
      */
-  public MPEG4Packet( final ByteBuffer data, final int channel, final int length, final FrameType frameType, final ImageDataStruct imageDataStruct,
+  public MPEG4Packet( final ByteBuffer data, final int channel, final int length, final ImageDataStruct imageDataStruct,
             final ByteBuffer commentData )
     {
-      super(channel, length, frameType);
+      super(channel, length, FrameType.MPEG4);
         // CheckParameters.areNotNull( data, metadata, imageDataStruct,
         // commentData );
         this.data = data;

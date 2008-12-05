@@ -18,9 +18,9 @@ final class UnknownPacket extends Packet
    * @param data the single packet of data.
    * @param metadata the metadata about the packet.
    */
-  public UnknownPacket(ByteBuffer data, int channel, int length, FrameType frameType )
+  public UnknownPacket(ByteBuffer data, int channel, int length )
   {
-    super(channel, length, frameType);
+    super(channel, length, FrameType.UNKNOWN);
     this.data = data;
   }
 

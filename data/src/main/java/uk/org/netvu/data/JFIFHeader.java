@@ -6,8 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import uk.org.netvu.util.CheckParameters;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 /**
  * A class for converting the minimised JFIF header into a valid JFIF header.
@@ -167,53 +168,31 @@ final class JFIFHeader
                         + yqFactors.length + UVQ_HEADER.length + uvqFactors.length + sof.limit()
                         + HUFFMAN_HEADER.length + SOS_HEADER.length + restOfData.limit()
                         - imageDataStruct.getStartOffset() + EOI_MARKER.length ); */
-        class Fake
+        try
         {
-          List<Byte> list = new ArrayList<Byte>();
-          void put( byte[] toPut )
-          {
-            for (byte b: toPut)
-              list.add(b);
-          }
-
-          void putShort(short s)
-          {
-            put(new byte[]{(byte)(s >> 16), (byte)(s & 0xFF)});
-          }
-
-          void put(ByteBuffer b)
-          {
-            put(b.array());
-          }
-        }
+          ByteArrayOutputStream baos = new ByteArrayOutputStream();
+          DataOutputStream jfif = new DataOutputStream(baos);
          
-        Fake jfif = new Fake();
+          jfif.write( JFIF_HEADER );
+          jfif.write( SOC_HEADER );
+          jfif.writeShort( (short) ( comment.limit() + 2 ) );
+          jfif.write( comment.array() );
+          jfif.write( YQ_HEADER );
+          jfif.write( yqFactors );
+          jfif.write( UVQ_HEADER );
+          jfif.write( uvqFactors );
+          jfif.write( sof.array() );
+          jfif.write( HUFFMAN_HEADER );
+          jfif.write( SOS_HEADER );
+          jfif.write( restOfData.array() );
+          jfif.write( EOI_MARKER );
 
-        jfif.put( JFIF_HEADER );
-        jfif.put( SOC_HEADER );
-        jfif.putShort( (short) ( comment.limit() + 2 ) );
-        jfif.put( comment );
-        jfif.put( YQ_HEADER );
-        jfif.put( yqFactors );
-        jfif.put( UVQ_HEADER );
-        jfif.put( uvqFactors );
-        jfif.put( sof );
-        jfif.put( HUFFMAN_HEADER );
-        jfif.put( SOS_HEADER );
-        jfif.put( restOfData );
-        jfif.put( EOI_MARKER );
-
-        /*        if (jfif.position() != jfif.limit())
-          throw null;
-
-          jfif.position( 0 );*/
-
-        byte[] res = new byte[jfif.list.size()];
-        int i = 0;
-        for (byte b: jfif.list)
-          res[i++] = b;
-
-        return ByteBuffer.wrap(res);
+          return ByteBuffer.wrap(baos.toByteArray());
+        }
+        catch (IOException e)
+          {
+            throw new RuntimeException(e);
+          }
     }
 
     /**

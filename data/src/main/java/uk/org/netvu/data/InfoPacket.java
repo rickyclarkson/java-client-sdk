@@ -20,9 +20,9 @@ public final class InfoPacket extends Packet
    * @param metadata the metadata about the InfoPacket.
    * @throws NullPointerException if data or metadata are null.
    */
-  InfoPacket(ByteBuffer data, int channel, int length, FrameType frameType)
+  InfoPacket(ByteBuffer data, int channel, int length)
   {
-    super(channel, length, frameType);
+    super(channel, length, FrameType.INFO);
     CheckParameters.areNotNull(data);
     this.data = data;
   }

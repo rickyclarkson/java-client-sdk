@@ -35,7 +35,9 @@ final class BinaryParser implements Parser
         {
             while ( true )
             {
-              final FrameType frameType = FrameType.frameTypeFor( input.read() );
+              final int frameTypeInt = input.read();
+              final FrameType frameType = FrameType.frameTypeFor(frameTypeInt);
+
               final int channel = input.read() + 1;
               final int length = new DataInputStream( input ).readInt();
               ByteBuffer data = IO.readIntoByteBuffer( input, length );
@@ -43,7 +45,7 @@ final class BinaryParser implements Parser
               if (data.limit() != length)
                 throw new IllegalStateException("data.limit() is "+data.limit()+", should be "+length);
 
-              frameType.deliverTo( handler, data, channel, length, frameType );
+              frameType.deliverTo( handler, data, channel, length, frameTypeInt );
             }
         }
         catch ( final EOFException e )

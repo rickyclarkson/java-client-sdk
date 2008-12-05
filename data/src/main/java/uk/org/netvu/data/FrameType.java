@@ -21,40 +21,24 @@ enum FrameType
     JFIF
     {
         @Override
-          void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final FrameType frameType )
+          void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int frameType )
                 throws IOException
         {
-          if (frameType != JFIF)
-            throw null;
-
-            CheckParameters.areNotNull( handler, input, frameType );
+            CheckParameters.areNotNull( handler, input );
             handler.jfif( new JFIFPacket( input, channel, length, frameType ) );
-        }
-    },
-    JPEG
-    {
-      @Override
-        void deliverTo(final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final FrameType frameType)
-        {
-          if (input.limit() != length) throw null;
-          if (input.position() != 0) throw null;
-          if (frameType != JPEG) throw null;
-
-          CheckParameters.areNotNull( handler, input, frameType );
-          handler.jfif( new JFIFPacket( input, channel, length, frameType ) );
         }
     },
     MPEG4
     {
         @Override
-          void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final FrameType frameType )
+          void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int frameType )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, input, frameType );
             ImageDataStruct imageHeader = new ImageDataStruct( input );
             ByteBuffer commentData = IO.slice( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE, imageHeader.getStartOffset() );
             ByteBuffer restOfData = IO.from( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + imageHeader.getStartOffset() );
-            handler.mpeg4( new MPEG4Packet( restOfData, channel, length, frameType, imageHeader, commentData ) );
+            handler.mpeg4( new MPEG4Packet( restOfData, channel, length, imageHeader, commentData ) );
         }
     },
     /**
@@ -63,11 +47,11 @@ enum FrameType
     MPEG4_MINIMAL
     {
         @Override
-          void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final FrameType frameType )
+          void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int frameType )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, input, frameType );
-            handler.mpeg4( new MPEG4Packet( input, length, channel, frameType, null, null ) );
+            handler.mpeg4( new MPEG4Packet( input, length, channel, null, null ) );
         }
     },
     /**
@@ -76,11 +60,11 @@ enum FrameType
     INFO
     {
         @Override
-          void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length, final FrameType frameType )
+          void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length, final int frameType )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, data, frameType );
-            handler.info( new InfoPacket( data, channel, length, frameType ) );
+            handler.info( new InfoPacket( data, channel, length ) );
         }
     },
     /**
@@ -89,11 +73,11 @@ enum FrameType
     UNKNOWN
     {
         @Override
-          void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length, final FrameType frameType )
+          void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length, final int frameType )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, data, frameType );
-            handler.dataArrived( new UnknownPacket( data, channel, length, frameType ) );
+            handler.dataArrived( new UnknownPacket( data, channel, length ) );
         }
     };
 
@@ -113,7 +97,7 @@ enum FrameType
             case 1:
                 return FrameType.JFIF;
             case 0:
-                return FrameType.JPEG;
+                return FrameType.JFIF;
             case 2:
             case 3:
                 return FrameType.MPEG4;
@@ -140,5 +124,5 @@ enum FrameType
      * @throws NullPointerException
      *         if any of the parameters are null.
      */
-    abstract void deliverTo( StreamHandler handler, ByteBuffer data, int channel, int length, FrameType frameType ) throws IOException;
+    abstract void deliverTo( StreamHandler handler, ByteBuffer data, int channel, int length, int frameType ) throws IOException;
 }
