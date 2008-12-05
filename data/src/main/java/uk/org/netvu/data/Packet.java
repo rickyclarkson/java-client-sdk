@@ -11,17 +11,14 @@ public abstract class Packet
 {
   private final int channel;
   private final int length;
-  private final FrameType frameType;
 
     /**
      * Constructs a Packet.
      */
-  Packet(int channel, int length, FrameType frameType)
+  Packet(int channel, int length)
     {
-      CheckParameters.areNotNull(frameType);
       this.channel = channel;
       this.length = length;
-      this.frameType = frameType;
     }
 
   public int getChannel()
@@ -32,11 +29,6 @@ public abstract class Packet
   public int getLength()
   {
     return length;
-  }
-
-  public FrameType getFrameType()
-  {
-    return frameType;
   }
 
   public abstract ByteBuffer getData();

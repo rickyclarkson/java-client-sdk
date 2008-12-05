@@ -41,7 +41,7 @@ public final class MPEG4Packet
   public MPEG4Packet( final ByteBuffer data, final int channel, final int length, final ImageDataStruct imageDataStruct,
             final ByteBuffer commentData )
     {
-      super(channel, length, FrameType.MPEG4);
+      super(channel, length);
         // CheckParameters.areNotNull( data, metadata, imageDataStruct,
         // commentData );
         this.data = data;

@@ -12,23 +12,27 @@ import uk.org.netvu.util.CheckParameters;
  * An enumeration of the supported frame types from binary, minimal and mime
  * streams.
  */
-enum FrameType
+abstract class FrameType
 {
     /**
      * A complete JFIF, compatible with most display and image manipulation
      * programs.
      */
-    JFIF
+  public static FrameType jpeg(final boolean truncated)
+  {
+    return new FrameType()
     {
-        @Override
-          void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int frameType )
-                throws IOException
-        {
-            CheckParameters.areNotNull( handler, input );
-            handler.jfif( new JFIFPacket( input, channel, length, frameType ) );
-        }
-    },
-    MPEG4
+      @Override
+      void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int ignored)
+        throws IOException
+      {
+        CheckParameters.areNotNull( handler, input );
+        handler.jfif( new JFIFPacket( input, channel, length, truncated ) );
+      }
+    };
+  }
+
+  public static final FrameType MPEG4 = new FrameType()
     {
         @Override
           void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int frameType )
@@ -40,11 +44,12 @@ enum FrameType
             ByteBuffer restOfData = IO.from( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + imageHeader.getStartOffset() );
             handler.mpeg4( new MPEG4Packet( restOfData, channel, length, imageHeader, commentData ) );
         }
-    },
+    };
+
     /**
      * An MPEG-4 frame read from a minimal stream.  It does the same as MPEG4, but omits the ImageDataStruct and comment field.
      */
-    MPEG4_MINIMAL
+  public static final FrameType MPEG4_MINIMAL = new FrameType()
     {
         @Override
           void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int frameType )
@@ -53,11 +58,11 @@ enum FrameType
             CheckParameters.areNotNull( handler, input, frameType );
             handler.mpeg4( new MPEG4Packet( input, length, channel, null, null ) );
         }
-    },
+    };
     /**
      * Information (such as comments about the other data).
      */
-    INFO
+  public static final FrameType INFO = new FrameType()
     {
         @Override
           void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length, final int frameType )
@@ -66,11 +71,11 @@ enum FrameType
             CheckParameters.areNotNull( handler, data, frameType );
             handler.info( new InfoPacket( data, channel, length ) );
         }
-    },
+    };
     /**
      * Unknown data. This should not be seen in normal circumstances.
      */
-    UNKNOWN
+  public static final FrameType UNKNOWN = new FrameType()
     {
         @Override
           void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length, final int frameType )
@@ -95,9 +100,9 @@ enum FrameType
         switch ( value )
         {
             case 1:
-                return FrameType.JFIF;
+              return FrameType.jpeg(false);
             case 0:
-                return FrameType.JFIF;
+              return FrameType.jpeg(true);
             case 2:
             case 3:
                 return FrameType.MPEG4;

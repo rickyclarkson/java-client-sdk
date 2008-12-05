@@ -13,7 +13,7 @@ final class JFIFPacket extends Packet
    * The JFIF frame.
    */
   private final ByteBuffer data;
-  private final int realFrameType;
+  private final boolean truncated;
 
   /**
    * Constructs a JFIFPacket with the specified data and metadata.
@@ -21,10 +21,10 @@ final class JFIFPacket extends Packet
    * @param metadata the metadata about the JFIFPacket.
    * @throws NullPointerException if data or metadata are null.
    */
-  JFIFPacket(ByteBuffer data, int channel, int length, int frameType )
+  JFIFPacket(ByteBuffer data, int channel, int length, boolean truncated )
   {
-    super(channel, length, FrameType.JFIF);
-    this.realFrameType = frameType;
+    super(channel, length);
+    this.truncated = truncated;
 
     if (length == 1)
       throw null;
@@ -39,7 +39,7 @@ final class JFIFPacket extends Packet
    */
   public ByteBuffer getData()
   {
-    return realFrameType == 1 ? data : JFIFHeader.jpegToJfif(data);
+    return truncated ? JFIFHeader.jpegToJfif(data) : data;
   }
 
   public ByteBuffer getOnWireFormat()

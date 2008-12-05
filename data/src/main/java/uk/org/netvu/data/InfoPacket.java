@@ -22,7 +22,7 @@ public final class InfoPacket extends Packet
    */
   InfoPacket(ByteBuffer data, int channel, int length)
   {
-    super(channel, length, FrameType.INFO);
+    super(channel, length);
     CheckParameters.areNotNull(data);
     this.data = data;
   }
