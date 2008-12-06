@@ -283,6 +283,11 @@ public final class ImageDataStruct
       return new PictureStruct( buffer, ByteOrder.BIG_ENDIAN, FORMAT);
     }
 
+  public void setFormat(PictureStruct format)
+  {
+    write(format.getByteBuffer().array(), FORMAT);
+  }
+
     /**
      * Gets the locale contained in the image data header.
      * 
@@ -308,6 +313,11 @@ public final class ImageDataStruct
       return readInt(buffer, MAX_SIZE);
     }
 
+  public void setMaxSize(int maxSize)
+  {
+    buffer.putInt(MAX_SIZE, maxSize);
+  }
+
     /**
      * Gets the milliseconds contained in the image data header.
      * 
@@ -317,6 +327,11 @@ public final class ImageDataStruct
     {
       return (int)((0xFFFFFFFFL & readInt(buffer, MILLISECONDS)) % 1000L);
     }
+
+  public void setMilliseconds(int milliseconds)
+  {
+    buffer.putInt(MILLISECONDS, milliseconds);
+  }
 
     /**
      * Gets the mode contained in the image data header.
@@ -328,6 +343,11 @@ public final class ImageDataStruct
       return readInt(buffer, MODE);
     }
 
+  public void setMode(int mode)
+  {
+    buffer.putInt(MODE, mode);
+  }
+
     /**
      * Gets the qFactor contained in the image data header.
      * 
@@ -337,6 +357,12 @@ public final class ImageDataStruct
     {
       return readInt(buffer, Q_FACTOR);
     }
+
+  public void setQFactor(int qFactor)
+  {
+    buffer.putInt(Q_FACTOR, qFactor);
+  }
+
 
     /**
      * Gets the res contained in the image data header.
@@ -349,6 +375,11 @@ public final class ImageDataStruct
       return res.length() > 4 ? res.substring(0, 4) : res;
     }
 
+  public void setRes(String res)
+  {
+    write( nullPad(res, 4), LOCALE);
+  }
+
     /**
      * Gets the sessionTime contained in the image data header.
      * 
@@ -358,6 +389,11 @@ public final class ImageDataStruct
     {
       return readInt(buffer, SESSION_TIME);
     }
+
+  public void setSessionTime(int sessionTime)
+  {
+    buffer.putInt(SESSION_TIME, sessionTime);
+  }
 
     /**
      * Gets the size contained in the image data header.
@@ -369,6 +405,11 @@ public final class ImageDataStruct
       return readInt(buffer, SIZE);
     }
 
+  public void setSize(int size)
+  {
+    buffer.putInt(SIZE, size);
+  }
+
     /**
      * Gets the startOffset contained in the image data header.
      * 
@@ -378,6 +419,11 @@ public final class ImageDataStruct
     {
       return readInt(buffer, START_OFFSET);
     }
+
+  public void setStartOffset(int startOffset)
+  {
+    buffer.putInt(START_OFFSET, startOffset);
+  }
 
     /**
      * Gets the status contained in the image data header.
@@ -389,6 +435,11 @@ public final class ImageDataStruct
       return readInt(buffer, STATUS);
     }
 
+  public void setStatus(int status)
+  {
+    buffer.putInt(STATUS, status);
+  }
+
     /**
      * Gets the targetSize contained in the image data header.
      * 
@@ -398,6 +449,11 @@ public final class ImageDataStruct
     {
       return readInt(buffer, TARGET_SIZE);
     }
+
+  public void setTargetSize(int targetSize)
+  {
+    buffer.putInt(TARGET_SIZE, targetSize);
+  }
 
     /**
      * Gets the title contained in the image data header.
@@ -409,6 +465,11 @@ public final class ImageDataStruct
       return nullTerminate( read( buffer, TITLE_LENGTH, TITLE) );
     }
 
+  public void setTitle(String title)
+  {
+    write( nullPad( title, TITLE_LENGTH), TITLE);
+  }
+
     /**
      * Gets the utcOffset contained in the image data header.
      * 
@@ -418,6 +479,11 @@ public final class ImageDataStruct
     {
       return readInt(buffer, UTC_OFFSET);
     }
+
+  public void setUtcOffset(int utcOffset)
+  {
+    buffer.putInt(UTC_OFFSET, utcOffset);
+  }
 
     /**
      * Gets the version of the image data header.
@@ -429,6 +495,11 @@ public final class ImageDataStruct
       return readInt(buffer, VERSION);
     }
 
+  public void setVersion(int version)
+  {
+    buffer.putInt(VERSION, version);
+  }
+
     /**
      * Gets the videoFormat contained in the image data header.
      * 
@@ -438,6 +509,11 @@ public final class ImageDataStruct
     {
       return VideoFormat.valueOf(readInt(buffer, VID_FORMAT));
     }
+
+  public void setVideoFormat(VideoFormat format)
+  {
+    buffer.putInt(VID_FORMAT, format.index);
+  }
 
     /**
      * Reads the specified number of bytes from the specified ByteBuffer, from
