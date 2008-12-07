@@ -30,7 +30,7 @@ class ImageDataStructTest extends JUnit4(new Specification {
    val status = 200
    val sessionTime = 240
    val milliseconds = 460
-   val res: Array[Byte] = Array(1,3,2,6)
+   val res = "foo"
    val title = "0123456789012345678901234567890"
    val alarm = "9876543210987654321098765432109"
    val format = new PictureStruct(ByteBuffer.allocate(12), java.nio.ByteOrder.BIG_ENDIAN, 0)
@@ -44,12 +44,29 @@ class ImageDataStructTest extends JUnit4(new Specification {
    val utcOffset = 700
    val alarmBitmask = 800
 
-   val struct = (new ImageDataStructBuilder() version version mode mode camera camera
-                 videoFormat videoFormat startOffset startOffset size size maxSize maxSize
-                 targetSize targetSize qFactor qFactor alarmBitmaskHigh alarmBitmaskHigh
-                 status status sessionTime sessionTime milliseconds milliseconds res res
-                 title title alarm alarm format format locale locale utcOffset utcOffset
-                 alarmBitmask alarmBitmask build)
+   val bb = ByteBuffer.allocate(ImageDataStruct.IMAGE_DATA_STRUCT_SIZE)
+   bb.putInt(0xDECADE11)
+   val struct = new ImageDataStruct(bb)
+   struct setVersion version
+   struct setMode mode
+   struct setCamera camera
+   struct setVideoFormat videoFormat
+   struct setStartOffset startOffset
+   struct setSize size
+   struct setMaxSize maxSize
+   struct setTargetSize targetSize
+   struct setQFactor qFactor
+   struct setAlarmBitmaskHigh alarmBitmaskHigh
+   struct setStatus status
+   struct setSessionTime sessionTime
+   struct setMilliseconds milliseconds
+   struct setRes res
+   struct setTitle title
+   struct setAlarm alarm
+   struct setFormat format
+   struct setLocale locale
+   struct setUtcOffset utcOffset
+   struct setAlarmBitmask alarmBitmask
    import struct._
    getVersion mustEqual version
    getMode mustEqual mode
@@ -64,7 +81,7 @@ class ImageDataStructTest extends JUnit4(new Specification {
    getStatus mustEqual status
    getSessionTime mustEqual sessionTime
    getMilliseconds mustEqual milliseconds
-   getRes.sameElements(res) mustEqual true
+   getRes mustEqual res
    getTitle mustEqual title
    getAlarm mustEqual alarm
    getFormat.getSrcPixels mustEqual 10

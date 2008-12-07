@@ -377,7 +377,7 @@ public final class ImageDataStruct
 
   public void setRes(String res)
   {
-    write( nullPad(res, 4), LOCALE);
+    write( nullPad(res, 4), RES);
   }
 
     /**
