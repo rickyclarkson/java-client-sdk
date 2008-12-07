@@ -103,6 +103,11 @@ public final class PictureStruct
         return readShort( LINE_OFFSET );
     }
 
+  public void setLineOffset(short lineOffset)
+  {
+    writeShort( LINE_OFFSET, lineOffset );
+  }
+
     /**
      * Gets the pixel offset of this PictureStruct. The pixel offset parameter
      * is unused as of this writing, but it originally meant the x position in
@@ -114,6 +119,11 @@ public final class PictureStruct
     {
         return readShort( PIXEL_OFFSET );
     }
+
+  public void setPixelOffset(short pixelOffset)
+  {
+    writeShort( PIXEL_OFFSET, pixelOffset);
+  }
 
     /**
      * Gets the source lines of this PictureStruct. The source lines parameter
@@ -127,6 +137,11 @@ public final class PictureStruct
         return readShort( SRC_LINES );
     }
 
+  public void setSrcLines(short srcLines)
+  {
+    writeShort( SRC_LINES, srcLines);
+  }
+
     /**
      * Gets the source pixels of this PictureStruct. The source pixels parameter
      * is unused as of this writing, but it originally meant the width of the
@@ -139,6 +154,11 @@ public final class PictureStruct
         return readShort( SRC_PIXELS );
     }
 
+  public void setSrcPixels(short srcPixels)
+  {
+    writeShort(SRC_PIXELS, srcPixels);
+  }
+
     /**
      * Gets the target lines (the picture height) of this PictureStruct.
      * 
@@ -149,6 +169,11 @@ public final class PictureStruct
         return readShort( TARGET_LINES );
     }
 
+  public void setTargetLines(short targetLines)
+  {
+    writeShort(TARGET_LINES, targetLines);
+  }
+
     /**
      * Gets the target pixels (the picture width) of this PictureStruct.
      * 
@@ -158,6 +183,11 @@ public final class PictureStruct
     {
         return readShort( TARGET_PIXELS );
     }
+
+  public void setTargetPixels(short targetPixels)
+  {
+    writeShort( TARGET_PIXELS, targetPixels);
+  }
 
     /**
      * Reads a little-endian short from the specified position within the
@@ -173,4 +203,10 @@ public final class PictureStruct
         buffer.order( order );
         return buffer.getShort( offset + where );
     }
+
+  private void writeShort(final int position, final short value)
+  {
+    buffer.order(order);
+    buffer.putShort( position, value );
+  }
 }
