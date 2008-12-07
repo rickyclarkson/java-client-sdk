@@ -33,7 +33,13 @@ class ImageDataStructTest extends JUnit4(new Specification {
    val res: Array[Byte] = Array(1,3,2,6)
    val title = "0123456789012345678901234567890"
    val alarm = "9876543210987654321098765432109"
-   val format = new PictureStructBuilder(java.nio.ByteOrder.BIG_ENDIAN) srcPixels 10 srcLines 20 targetPixels 30 targetLines 40 pixelOffset 50 lineOffset 60 build
+   val format = new PictureStruct(ByteBuffer.allocate(12), java.nio.ByteOrder.BIG_ENDIAN, 0)
+   format setSrcPixels 10
+   format setSrcLines 20
+   format setTargetPixels 30
+   format setTargetLines 40
+   format setPixelOffset 50
+   format setLineOffset 60
    val locale = "012345678901234567890123456789"
    val utcOffset = 700
    val alarmBitmask = 800
