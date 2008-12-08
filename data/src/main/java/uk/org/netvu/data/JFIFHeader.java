@@ -163,11 +163,6 @@ final class JFIFHeader
             0x11, 0x01 } ) );
         sof.position( 0 );
 
-        /*final ByteBuffer jfif =
-                ByteBuffer.allocate( JFIF_HEADER.length + SOC_HEADER.length + 2 + comment.limit() + YQ_HEADER.length
-                        + yqFactors.length + UVQ_HEADER.length + uvqFactors.length + sof.limit()
-                        + HUFFMAN_HEADER.length + SOS_HEADER.length + restOfData.limit()
-                        - imageDataStruct.getStartOffset() + EOI_MARKER.length ); */
         try
         {
           ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -205,7 +200,7 @@ final class JFIFHeader
      * @return a byte[] of the same length as literals, containing the least
      *         significant bytes of each int.
      */
-    private static byte[] byteArrayLiteral( final int[] literals )
+    static byte[] byteArrayLiteral( final int[] literals )
     {
         final byte[] results = new byte[literals.length];
         for ( int a = 0; a < literals.length; a++ )
@@ -214,6 +209,20 @@ final class JFIFHeader
         }
         return results;
     }
+
+  public static SimpleDateFormat getDateFormat()
+  {
+    return new SimpleDateFormat( DATE_FORMAT );
+  }
+
+  public static SimpleDateFormat getTimeFormat()
+  {
+    return new SimpleDateFormat( TIME_FORMAT);
+  }
+
+
+  private static final String DATE_FORMAT = "dd/MM/yyyy";
+  private static final String TIME_FORMAT = "HH:mm:ss";
 
     /**
      * Constructs a valid JFIF comment block, given an ImageDataStruct and other
@@ -227,12 +236,6 @@ final class JFIFHeader
      */
     private static ByteBuffer getComment( final ImageDataStruct imageDataStruct, final ByteBuffer commentData )
     {
-      final String DATE_FORMAT = "dd/MM/yyyy";
-      final String TIME_FORMAT = "HH:mm:ss";
-
-      final SimpleDateFormat dateFormatter = new SimpleDateFormat( DATE_FORMAT );
-      final SimpleDateFormat timeFormatter = new SimpleDateFormat( TIME_FORMAT );
-
         final int bufferCapacity =
                 getCommentByteCount( imageDataStruct.getCamera(), imageDataStruct.getUtcOffset(), commentData )
                         + imageDataStruct.getTitle().length() + imageDataStruct.getAlarm().length()
@@ -243,8 +246,8 @@ final class JFIFHeader
         println( buffer, "Number: " + imageDataStruct.getCamera() );
         println( buffer, "Name: " + imageDataStruct.getTitle() );
         final Date date = new Date( imageDataStruct.getSessionTime() * 1000L );
-        println( buffer, "Date: " + dateFormatter.format( date ) );
-        println( buffer, "Time: " + timeFormatter.format( date ) );
+        println( buffer, "Date: " + getDateFormat().format( date ) );
+        println( buffer, "Time: " + getTimeFormat().format( date ) );
         println( buffer, "MSec: " + imageDataStruct.getMilliseconds() % 1000 );
         println( buffer, "Locale: " + imageDataStruct.getLocale() );
         println( buffer, "UTCoffset: " + imageDataStruct.getUtcOffset() );

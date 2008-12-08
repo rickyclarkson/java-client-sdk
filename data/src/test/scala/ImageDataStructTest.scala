@@ -17,7 +17,6 @@ class ImageDataStructTest extends JUnit4(new Specification {
  "An ImageDataStruct" should {
   "have all the values supplied to it by the ByteBuffer" in {
 
-   val version = 0xDECADE10
    val mode = 2
    val camera = 3
    val videoFormat = VideoFormat.JPEG_422
@@ -41,7 +40,6 @@ class ImageDataStructTest extends JUnit4(new Specification {
    bb.putInt(0xDECADE11)
    bb.position(0)
    val struct = new ImageDataStruct(bb)
-   struct setVersion version
    struct setMode mode
    struct setCamera camera
    struct setVideoFormat videoFormat
@@ -68,7 +66,6 @@ class ImageDataStructTest extends JUnit4(new Specification {
    struct setUtcOffset utcOffset
    struct setAlarmBitmask alarmBitmask
    import struct._
-   getVersion.toHexString mustEqual version.toHexString
    getMode mustEqual mode
    getCamera mustEqual camera
    getVideoFormat mustEqual videoFormat

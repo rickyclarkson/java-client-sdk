@@ -216,4 +216,41 @@ final class IO
     private IO()
     {
     }
+
+  public static int searchFor(ByteBuffer in, byte[] toFind)
+  {
+    int i = 0;
+  outer:
+    while (true)
+      {
+        in.position(i++);
+
+        for (byte b: toFind)
+          if (in.get() != b)
+            continue outer;
+
+        return i - 1;
+      }
+  }
+
+  public static byte[] readIntoByteArray(ByteBuffer from, int length)
+  {
+    byte[] bytes = new byte[length];
+    from.get(bytes);
+    return bytes;
+  }
+
+  public static String find(String in, String after)
+  {
+    int index = in.indexOf(after);
+    if (index < 0)
+      throw new IllegalStateException(after + " is not found in " + in );
+    
+    return in.substring(index + after.length(), in.indexOf("\n", index));
+  }
+
+  public static int findInt(String in, String after)
+  {
+    return Integer.parseInt(find(in, after));
+  }
 }

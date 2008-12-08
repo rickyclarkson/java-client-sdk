@@ -189,6 +189,7 @@ public final class ImageDataStruct
         }
     }
 
+  public ByteBuffer getByteBuffer(){ return buffer;}
     /**
      * Takes the part of the specified String before its first '\0', or the
      * whole String if none is found.
@@ -607,11 +608,6 @@ public final class ImageDataStruct
     {
       return readInt(buffer, VERSION);
     }
-
-  public void setVersion(int version)
-  {
-    buffer.putInt(VERSION, version);
-  }
 
     /**
      * Gets the videoFormat contained in the image data header.
