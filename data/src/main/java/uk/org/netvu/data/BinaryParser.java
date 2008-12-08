@@ -42,9 +42,6 @@ final class BinaryParser implements Parser
               final int length = new DataInputStream( input ).readInt();
               ByteBuffer data = IO.readIntoByteBuffer( input, length );
               data.position(0);
-              if (data.limit() != length)
-                throw new IllegalStateException("data.limit() is "+data.limit()+", should be "+length);
-
               frameType.deliverTo( handler, data, channel, length, frameTypeInt );
             }
         }

@@ -33,19 +33,13 @@ class ImageDataStructTest extends JUnit4(new Specification {
    val res = "foo"
    val title = "0123456789012345678901234567890"
    val alarm = "9876543210987654321098765432109"
-   val format = new PictureStruct(ByteBuffer.allocate(12), java.nio.ByteOrder.BIG_ENDIAN, 0)
-   format setSrcPixels 10
-   format setSrcLines 20
-   format setTargetPixels 30
-   format setTargetLines 40
-   format setPixelOffset 50
-   format setLineOffset 60
    val locale = "012345678901234567890123456789"
    val utcOffset = 700
    val alarmBitmask = 800
 
    val bb = ByteBuffer.allocate(ImageDataStruct.IMAGE_DATA_STRUCT_SIZE)
    bb.putInt(0xDECADE11)
+   bb.position(0)
    val struct = new ImageDataStruct(bb)
    struct setVersion version
    struct setMode mode
@@ -63,12 +57,18 @@ class ImageDataStructTest extends JUnit4(new Specification {
    struct setRes res
    struct setTitle title
    struct setAlarm alarm
-   struct setFormat format
+   struct setSrcPixels 10
+   struct setSrcLines 20
+   struct setTargetPixels 30
+   struct setTargetLines 40
+   struct setPixelOffset 50
+   struct setLineOffset 60
+
    struct setLocale locale
    struct setUtcOffset utcOffset
    struct setAlarmBitmask alarmBitmask
    import struct._
-   getVersion mustEqual version
+   getVersion.toHexString mustEqual version.toHexString
    getMode mustEqual mode
    getCamera mustEqual camera
    getVideoFormat mustEqual videoFormat
@@ -84,12 +84,12 @@ class ImageDataStructTest extends JUnit4(new Specification {
    getRes mustEqual res
    getTitle mustEqual title
    getAlarm mustEqual alarm
-   getFormat.getSrcPixels mustEqual 10
-   getFormat.getSrcLines mustEqual 20
-   getFormat.getTargetPixels mustEqual 30
-   getFormat.getTargetLines mustEqual 40
-   getFormat.getPixelOffset mustEqual 50
-   getFormat.getLineOffset mustEqual 60
+   getSrcPixels mustEqual 10
+   getSrcLines mustEqual 20
+   getTargetPixels mustEqual 30
+   getTargetLines mustEqual 40
+   getPixelOffset mustEqual 50
+   getLineOffset mustEqual 60
    getLocale mustEqual locale
    getUtcOffset mustEqual utcOffset
    getAlarmBitmask mustEqual alarmBitmask

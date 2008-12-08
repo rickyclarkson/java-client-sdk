@@ -195,8 +195,8 @@ public final class ImageDataStruct
         this.buffer = buffer.duplicate();
         
         int version = readInt( this.buffer, VERSION );
-
-        if ( ( version & 0xDECADE00 ) != 0xDECADE00 )
+        
+        if (version != 0xDECADE10 && version != 0xDECADE11)
         {
             throw new IllegalArgumentException( "version is " + Integer.toHexString( version ) );
         }
@@ -273,22 +273,258 @@ public final class ImageDataStruct
 
   public void setCamera(int camera) { buffer.putInt(CAM, camera); }
 
-    /**
-     * Gets the format contained in the image data header.
-     * 
-     * @return the format contained in the image data header.
-     */
-    public PictureStruct getFormat()
-    {
-      return new PictureStruct( buffer, ByteOrder.BIG_ENDIAN, FORMAT);
-    }
-
-  public void setFormat(PictureStruct format)
+  private PictureStruct pic()
   {
-    write(format.getByteBuffer().array(), FORMAT);
+    return new PictureStruct();
   }
 
+  public short getLineOffset()
+  {
+    return pic().getLineOffset();
+  }
+
+  public short getPixelOffset()
+  {
+    return pic().getPixelOffset();
+  }
+
+  public short getTargetLines()
+  {
+    return pic().getTargetLines();
+  }
+
+  public short getTargetPixels()
+  {
+    return pic().getTargetPixels();
+  }
+
+  public short getSrcLines()
+  {
+    return pic().getSrcLines();
+  }
+
+  public short getSrcPixels()
+  {
+    return pic().getSrcPixels();
+  }
+
+  public void setSrcPixels(short srcPixels)
+  {
+    pic().setSrcPixels(srcPixels);
+  }
+
+  public void setSrcLines(short srcLines)
+  {
+    pic().setSrcLines(srcLines);
+  }
+
+  public void setTargetPixels(short targetPixels)
+  {
+    pic().setTargetPixels(targetPixels);
+  }
+
+  public void setTargetLines(short targetLines)
+  {
+    pic().setTargetLines(targetLines);
+  }
+
+  public void setPixelOffset(short pixelOffset)
+  {
+    pic().setPixelOffset(pixelOffset);
+  }
+
+  public void setLineOffset(short lineOffset)
+  {
+    pic().setLineOffset(lineOffset);
+  }
+
+  private ByteOrder versionToByteOrder()
+  {
+    return getVersion() == 0xDECADE10 ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
+  }
+
+  
+  /**
+   * A representation of the 'picture' part of the ImageDataStruct.
+   */
+  private final class PictureStruct
+  {
     /**
+     * The size of a short, in bytes.
+     */
+    private static final int INT16 = 2;
+    
+    /**
+     * The position of the SRC_PIXELS field in the picture struct.
+     */
+    private static final int SRC_PIXELS = 0;
+    
+    /**
+     * The position of the SRC_LINES field in the picture struct.
+     */
+    private static final int SRC_LINES = SRC_PIXELS + INT16;
+    
+    /**
+     * The position of the TARGET_PIXELS field in the picture struct.
+     */
+    private static final int TARGET_PIXELS = SRC_LINES + INT16;
+    
+    /**
+     * The position of the TARGET_LINES field in the picture struct.
+     */
+    private static final int TARGET_LINES = TARGET_PIXELS + INT16;
+    
+    /**
+     * The position of the PIXEL_OFFSET field in the picture struct.
+     */
+    private static final int PIXEL_OFFSET = TARGET_LINES + INT16;
+    
+    /**
+     * The position of the LINE_OFFSET field in the picture struct.
+     */
+    private static final int LINE_OFFSET = PIXEL_OFFSET + INT16;
+    
+    /**
+     * The size of the picture struct in bytes.
+     */
+    public static final int SIZE = LINE_OFFSET + INT16;
+    
+    /**
+     * Gets the line offset of this PictureStruct. The line offset parameter is
+     * unused as of this writing, but it originally meant the y position in the
+     * camera's original image that the frame of data began at.
+     * 
+     * @return the line offset of this PictureStruct.
+     */
+    public short getLineOffset()
+    {
+      return readShort( LINE_OFFSET );
+    }
+    
+    public void setLineOffset(short lineOffset)
+    {
+      writeShort( LINE_OFFSET, lineOffset );
+    }
+    
+    /**
+     * Gets the pixel offset of this PictureStruct. The pixel offset parameter
+     * is unused as of this writing, but it originally meant the x position in
+     * the camera's original image that the frame of data began at.
+     * 
+     * @return the pixel offset of this PictureStruct.
+     */
+    public short getPixelOffset()
+    {
+      return readShort( PIXEL_OFFSET );
+    }
+    
+    public void setPixelOffset(short pixelOffset)
+    {
+      writeShort( PIXEL_OFFSET, pixelOffset);
+    }
+    
+    /**
+     * Gets the source lines of this PictureStruct. The source lines parameter
+     * is unused as of this writing, but it originally meant the height of the
+     * camera's original image.
+     * 
+     * @return the source lines of this PictureStruct.
+     */
+    public short getSrcLines()
+    {
+      return readShort( SRC_LINES );
+    }
+    
+  public void setSrcLines(short srcLines)
+    {
+      writeShort( SRC_LINES, srcLines);
+    }
+    
+    /**
+     * Gets the source pixels of this PictureStruct. The source pixels parameter
+     * is unused as of this writing, but it originally meant the width of the
+     * camera's original image.
+     * 
+     * @return the source pixels of this PictureStruct.
+     */
+    public short getSrcPixels()
+    {
+      return readShort( SRC_PIXELS );
+    }
+    
+    public void setSrcPixels(short srcPixels)
+    {
+      writeShort(SRC_PIXELS, srcPixels);
+    }
+    
+    /**
+     * Gets the target lines (the picture height) of this PictureStruct.
+     * 
+     * @return the target lines of this PictureStruct.
+     */
+    public short getTargetLines()
+    {
+      return readShort( TARGET_LINES );
+    }
+    
+    public void setTargetLines(short targetLines)
+    {
+      writeShort(TARGET_LINES, targetLines);
+    }
+    
+    /**
+     * Gets the target pixels (the picture width) of this PictureStruct.
+     * 
+     * @return the target pixels of this PictureStruct.
+     */
+    public short getTargetPixels()
+    {
+      return readShort( TARGET_PIXELS );
+    }
+    
+    public void setTargetPixels(short targetPixels)
+    {
+      writeShort( TARGET_PIXELS, targetPixels);
+    }
+    
+    /**
+     * Reads a little-endian short from the specified position within the
+     * ByteBuffer relative to the offset.
+     * 
+     * @param where
+     *        the position within the ByteBuffer relative to the offset to read
+     *        from.
+     * @return a short read from the ByteBuffer.
+     */
+    private short readShort( final int where )
+    {
+      buffer.order( versionToByteOrder() );
+      try
+      {
+        return buffer.getShort( FORMAT + where );
+      }
+      finally
+      {
+        buffer.order( ByteOrder.BIG_ENDIAN );
+      }
+      
+    }
+    
+    private void writeShort(final int position, final short value)
+    {
+      buffer.order(versionToByteOrder());
+      try
+      {
+        buffer.putShort( FORMAT + position, value );
+      }
+      finally
+      {
+        buffer.order(ByteOrder.BIG_ENDIAN);
+      }
+    }
+  }
+  
+  /**
      * Gets the locale contained in the image data header.
      * 
      * @return the locale contained in the image data header.
