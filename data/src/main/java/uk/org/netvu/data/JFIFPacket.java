@@ -39,13 +39,14 @@ final class JFIFPacket extends Packet
    */
   public ByteBuffer getData()
   {
-    return truncated ? JFIFHeader.jpegToJfif(data) : data;
+    return truncated ? JFIFHeader.jpegToJfif(data) : data.duplicate();
   }
 
   public ByteBuffer getOnWireFormat()
   {
     if (truncated)
-      return data;
+      return data.duplicate();
+
 
     int commentPosition = IO.searchFor(data,JFIFHeader.byteArrayLiteral(new int[]{ 0xFF, 0xFE }) );
     data.position(commentPosition + 2);
@@ -58,6 +59,7 @@ final class JFIFPacket extends Packet
     }
     
     ImageDataStruct imageDataStruct = new ImageDataStruct(ByteBuffer.allocate(ImageDataStruct.IMAGE_DATA_STRUCT_SIZE).putInt(0xDECADE11));
+
 
     final int modeChosenByReadingGenericVideoHeader = 2;
     imageDataStruct.setMode(modeChosenByReadingGenericVideoHeader);
@@ -94,7 +96,7 @@ final class JFIFPacket extends Packet
     imageDataStruct.setRes(resChosenByReadingGenericVideoHeader);
 
     imageDataStruct.setTitle(IO.find(comment, "Name: "));
-    imageDataStruct.setAlarm(IO.find(comment, "Alarm-text: "));
+    imageDataStruct.setAlarm(comment.contains("Alarm-text: ") ? IO.find(comment, "Alarm-text: ") : "");
 
     final short srcPixelsChosenByReadingGenericVideoHeader = 0;
     imageDataStruct.setSrcPixels(srcPixelsChosenByReadingGenericVideoHeader);
@@ -116,6 +118,9 @@ final class JFIFPacket extends Packet
 
     final int alarmBitmaskChosenByReadingGenericVideoHeader = 0;
     imageDataStruct.setAlarmBitmask(alarmBitmaskChosenByReadingGenericVideoHeader);
+
+    if (new ImageDataStruct(imageDataStruct.getByteBuffer()).getVersion() != 0xDECADE11)
+      throw null;
 
     return imageDataStruct.getByteBuffer();
   }

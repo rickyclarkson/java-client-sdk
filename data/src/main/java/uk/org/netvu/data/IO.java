@@ -246,7 +246,7 @@ final class IO
     if (index < 0)
       throw new IllegalStateException(after + " is not found in " + in );
     
-    return in.substring(index + after.length(), in.indexOf("\n", index));
+    return in.substring(index + after.length(), in.indexOf("\r", index));
   }
 
   public static int findInt(String in, String after)

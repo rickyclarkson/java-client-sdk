@@ -125,7 +125,13 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
 
       buffer.position(buffer.limit - 2)
       val last = (next, next)
-   
+
+      val version = packet.getOnWireFormat.getInt
+      if (version != 0xDECADE10 && version != 0xDECADE11 )
+       throw new RuntimeException(version+" :(")
+
+      packet.getOnWireFormat.position(0)
+
       (first, last) match {
        case ((0xFF, 0xD8), (0xFF, 0xD9)) => numValidFrames += 1
        case _ => numInvalidFrames += 1

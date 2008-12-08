@@ -189,7 +189,10 @@ public final class ImageDataStruct
         }
     }
 
-  public ByteBuffer getByteBuffer(){ return buffer;}
+  public ByteBuffer getByteBuffer(){ ByteBuffer result = buffer.duplicate();
+    result.position(0);
+    return result;
+  }
     /**
      * Takes the part of the specified String before its first '\0', or the
      * whole String if none is found.
@@ -221,7 +224,7 @@ public final class ImageDataStruct
     {
         CheckParameters.areNotNull( buffer );
         this.buffer = buffer.duplicate();
-        
+        this.buffer.position(0);
         int version = readInt( this.buffer, VERSION );
         
         if (version != 0xDECADE10 && version != 0xDECADE11)
