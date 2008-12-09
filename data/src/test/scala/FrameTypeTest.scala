@@ -16,7 +16,7 @@ class FrameTypeTest extends JUnit4(new Specification {
                                                    def mpeg4FrameArrived(packet: Packet) = ()
                                                  },
                                ByteBuffer.wrap(Array(1, 2, 3, 4, 5)),
-                               5, 3, -1)
+                               5, 3, -1, null, null)
 
    pass mustBe true
   }

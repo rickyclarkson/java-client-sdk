@@ -57,16 +57,32 @@ final class JFIFPacket extends Packet
       { comment = new String(IO.readIntoByteArray(data, commentLength), "US-ASCII");
       } catch (UnsupportedEncodingException e) { throw new RuntimeException(e);
     }
-    
-    ImageDataStruct imageDataStruct = new ImageDataStruct(ByteBuffer.allocate(ImageDataStruct.IMAGE_DATA_STRUCT_SIZE).putInt(0xDECADE11));
 
+    VideoFormat videoFormat = data.get(IO.searchFor(data, JFIFHeader.byteArrayLiteral(new int[]{ 0xFF, 0xC0}))+11) == 0x22 ? VideoFormat.JPEG_422 : VideoFormat.JPEG_411;
+    short targetPixels = data.getShort(IO.searchFor(data, new byte[]{ (byte)0xFF, (byte)0xC0 }) + 5);
+    short targetLines = data.getShort(IO.searchFor(data, new byte[]{ (byte)0xFF, (byte)0xC0 }) + 7);
+    ImageDataStruct imageDataStruct = createImageDataStruct(data, comment, videoFormat, targetLines, targetPixels);
+    return imageDataStruct.getByteBuffer();
+  }
+
+  static ImageDataStruct createImageDataStruct(ByteBuffer data, String comment, VideoFormat videoFormat, short targetLines, short targetPixels)
+  {
+    ImageDataStruct imageDataStruct = new ImageDataStruct(ByteBuffer.allocate(ImageDataStruct.IMAGE_DATA_STRUCT_SIZE).putInt(0xDECADE11));
 
     final int modeChosenByReadingGenericVideoHeader = 2;
     imageDataStruct.setMode(modeChosenByReadingGenericVideoHeader);
 
-    imageDataStruct.setCamera(IO.findInt(comment, "Number: "));
-    imageDataStruct.setVideoFormat(data.get(IO.searchFor(data, JFIFHeader.byteArrayLiteral(new int[]{ 0xFF, 0xC0}))+11) == 0x22 ? VideoFormat.JPEG_422 : VideoFormat.JPEG_411);
-    imageDataStruct.setStartOffset(commentLength);
+    try
+    {
+      imageDataStruct.setCamera(IO.findInt(comment, "Number: "));
+    }
+    catch (IllegalStateException e)
+    {
+    }
+
+    imageDataStruct.setVideoFormat(videoFormat);
+
+    imageDataStruct.setStartOffset(comment.length());
     imageDataStruct.setSize(data.limit());
 
     final int maxSizeChosenByReadingGenericVideoHeader = 0;
@@ -88,14 +104,14 @@ final class JFIFPacket extends Packet
     {
       imageDataStruct.setSessionTime((int)(JFIFHeader.getDateFormat().parse(IO.find(comment, "Date: ")).getTime() + JFIFHeader.getTimeFormat().parse(IO.find(comment, "Time: ")).getTime()));
     }
+    catch (IllegalStateException e) { }
     catch (ParseException e) { throw new RuntimeException(e); }
 
-    imageDataStruct.setMilliseconds(IO.findInt(comment, "MSec: "));
+    try {  imageDataStruct.setMilliseconds(IO.findInt(comment, "MSec: ")); } catch (IllegalStateException e) { }
 
     final String resChosenByReadingGenericVideoHeader = "";
     imageDataStruct.setRes(resChosenByReadingGenericVideoHeader);
-
-    imageDataStruct.setTitle(IO.find(comment, "Name: "));
+    try { imageDataStruct.setTitle(IO.find(comment, "Name: ")); } catch (IllegalStateException e) { }
     imageDataStruct.setAlarm(comment.contains("Alarm-text: ") ? IO.find(comment, "Alarm-text: ") : "");
 
     final short srcPixelsChosenByReadingGenericVideoHeader = 0;
@@ -104,8 +120,8 @@ final class JFIFPacket extends Packet
     final short srcLinesChosenByReadingGenericVideoHeader = 0;
     imageDataStruct.setSrcLines(srcLinesChosenByReadingGenericVideoHeader);
 
-    imageDataStruct.setTargetPixels(data.getShort(IO.searchFor(data, new byte[]{ (byte)0xFF, (byte)0xC0 }) + 5));
-    imageDataStruct.setTargetLines(data.getShort(IO.searchFor(data, new byte[]{ (byte)0xFF, (byte)0xC0 }) + 7));
+    imageDataStruct.setTargetPixels(targetPixels);
+    imageDataStruct.setTargetLines(targetLines);
 
     final short pixelOffsetChosenByReadingGenericVideoHeader = 0;
     imageDataStruct.setPixelOffset(pixelOffsetChosenByReadingGenericVideoHeader);
@@ -113,15 +129,12 @@ final class JFIFPacket extends Packet
     final short lineOffsetChosenByReadingGenericVideoHeader = 0;
     imageDataStruct.setLineOffset(lineOffsetChosenByReadingGenericVideoHeader);
 
-    imageDataStruct.setLocale(IO.find(comment, "Locale: "));
-    imageDataStruct.setUtcOffset(IO.findInt(comment, "UTCoffset: "));
+    try { imageDataStruct.setLocale(IO.find(comment, "Locale: ")); } catch (IllegalStateException e) { }
+    try { imageDataStruct.setUtcOffset(IO.findInt(comment, "UTCoffset: ")); } catch (IllegalStateException e) { }
 
     final int alarmBitmaskChosenByReadingGenericVideoHeader = 0;
     imageDataStruct.setAlarmBitmask(alarmBitmaskChosenByReadingGenericVideoHeader);
 
-    if (new ImageDataStruct(imageDataStruct.getByteBuffer()).getVersion() != 0xDECADE11)
-      throw null;
-
-    return imageDataStruct.getByteBuffer();
-  }
+    return imageDataStruct;
+   }
 }

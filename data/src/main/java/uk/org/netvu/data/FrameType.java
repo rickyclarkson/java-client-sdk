@@ -5,6 +5,7 @@ import static uk.org.netvu.data.ImageDataStruct.IMAGE_DATA_STRUCT_SIZE;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.io.UnsupportedEncodingException;
 
 import uk.org.netvu.util.CheckParameters;
 
@@ -23,7 +24,7 @@ abstract class FrameType
     return new FrameType()
     {
       @Override
-      void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int ignored)
+      void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int ignored, final Short ignored2, final Short ignored3)
         throws IOException
       {
         CheckParameters.areNotNull( handler, input );
@@ -35,14 +36,26 @@ abstract class FrameType
   public static final FrameType MPEG4 = new FrameType()
     {
         @Override
-          void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int frameType )
+        void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int frameType, Short ignored, Short ignored2 )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, input, frameType );
             ImageDataStruct imageHeader = new ImageDataStruct( input );
             ByteBuffer commentData = IO.slice( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE, imageHeader.getStartOffset() );
-            ByteBuffer restOfData = IO.from( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + imageHeader.getStartOffset() );
-            handler.mpeg4FrameArrived( new MPEG4Packet( restOfData, channel ) );
+            final ByteBuffer restOfData = IO.from( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + imageHeader.getStartOffset() );
+            //            handler.mpeg4FrameArrived( new MPEG4Packet( restOfData, channel ) );
+            handler.mpeg4FrameArrived(new Packet(channel)
+              {
+                public ByteBuffer getData()
+                {
+                  return restOfData.duplicate();
+                }
+
+                public ByteBuffer getOnWireFormat()
+                {
+                  return IO.duplicate(input);
+                }
+              });
         }
     };
 
@@ -52,11 +65,24 @@ abstract class FrameType
   public static final FrameType MPEG4_MINIMAL = new FrameType()
     {
         @Override
-          void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int frameType )
+        void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int frameType, final Short xres, final Short yres )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, input, frameType );
-            handler.mpeg4FrameArrived( new MPEG4Packet( input, channel ) );
+            handler.mpeg4FrameArrived( new Packet( channel )
+              {
+                public ByteBuffer getData()
+                {
+                  return IO.duplicate(input);
+                }
+
+                public ByteBuffer getOnWireFormat()
+                {                  
+                  // TODO implement choosing between frame types.
+
+                  return JFIFPacket.createImageDataStruct(input, "", VideoFormat.MPEG4_P_FRAME, xres, yres).getByteBuffer();
+                }
+              });
         }
     };
     /**
@@ -65,7 +91,7 @@ abstract class FrameType
   public static final FrameType INFO = new FrameType()
     {
         @Override
-          void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length, final int frameType )
+        void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length, final int frameType, final Short ignored, final Short ignored2 )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, data, frameType );
@@ -78,7 +104,7 @@ abstract class FrameType
   public static final FrameType UNKNOWN = new FrameType()
     {
         @Override
-          void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length, final int frameType )
+        void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length, final int frameType, final Short ignored, final Short ignored2 )
                 throws IOException
         {
             CheckParameters.areNotNull( handler, data, frameType );
@@ -129,5 +155,5 @@ abstract class FrameType
      * @throws NullPointerException
      *         if any of the parameters are null.
      */
-    abstract void deliverTo( StreamHandler handler, ByteBuffer data, int channel, int length, int frameType ) throws IOException;
+  abstract void deliverTo( StreamHandler handler, ByteBuffer data, int channel, int length, int frameType, Short xres, Short yres ) throws IOException;
 }

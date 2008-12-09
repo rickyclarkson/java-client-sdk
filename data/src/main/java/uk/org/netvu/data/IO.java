@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.io.UnsupportedEncodingException;
 
 import uk.org.netvu.util.CheckParameters;
 
@@ -252,5 +253,41 @@ final class IO
   public static int findInt(String in, String after)
   {
     return Integer.parseInt(find(in, after));
+  }
+
+  public static ByteBuffer duplicate(ByteBuffer b)
+  {
+    ByteBuffer result = b.duplicate();
+    result.position(0);
+    return result;
+  }
+
+  public static int expectInt(ByteBuffer b)
+  {
+    int position = b.position();
+    int read = b.get() - '0';
+    if (read >= 0 && read <= 9)
+      {
+        int theRest = expectInt(b);
+        return theRest == -1 ? read : read * 10 + theRest;
+      }
+
+    b.position(position);
+    return -1;
+  }
+
+  public static void expectString(ByteBuffer b, String expected)
+  {
+    byte[] bytes = new byte[expected.length()];
+    b.get(bytes);
+    try
+    {
+      if (!expected.equals(new String(bytes, "US-ASCII")))
+        throw new IllegalStateException(expected+" expected.");
+    }
+    catch (UnsupportedEncodingException e)
+      {
+        throw new RuntimeException(e);
+      }
   }
 }

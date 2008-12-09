@@ -130,8 +130,6 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
       if (version != 0xDECADE10 && version != 0xDECADE11 )
        throw new RuntimeException(version+" :(")
 
-      packet.getOnWireFormat.position(0)
-
       (first, last) match {
        case ((0xFF, 0xD8), (0xFF, 0xD9)) => numValidFrames += 1
        case _ => numInvalidFrames += 1
@@ -178,7 +176,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
  }
 
  def validlyParseMPEG4(filename: String, streamType: StreamType) = new Specification {
-  "parsing an MPEG4 stream" should {
+  "parsing an MPEG4 stream ( "+filename+")" should {
    "produce at least two valid MPEG frames" in {
     val url = new URL(filename)
     val connection = url.openConnection
@@ -190,12 +188,18 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
      def jpegFrameArrived(packet: Packet) = ()
      def unknownDataArrived(packet: Packet) = ()
      def mpeg4FrameArrived(packet: Packet) = {
+
+      val version = packet.getOnWireFormat.getInt
+      if (version != 0xDECADE10 && version != 0xDECADE11 )
+       throw new RuntimeException(version+" :(")
+
       val isIFrame: Boolean = {
        var foundVOP = false
        var last = 0xFFFF
+       val data = packet.getData
        try {
         while (!foundVOP) {
-         val current = packet.getData.getShort
+         val current = data.getShort
          val joined = ((last & 0xFFFF) << 16) | current
          if (joined == 0x000001B6) { //vop start
           foundVOP = true

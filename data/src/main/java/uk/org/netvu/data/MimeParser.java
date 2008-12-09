@@ -4,6 +4,8 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Scanner;
+import java.util.regex.MatchResult;
 
 import uk.org.netvu.util.CheckParameters;
 
@@ -39,22 +41,54 @@ class MimeParser implements Parser
      */
     public void parse( final InputStream input, final StreamHandler handler ) throws IOException
     {
+      final Integer[] resolution = { null, null };
+
       while (true)
       {
         try
         {
           CheckParameters.areNotNull( input, handler );
-          RawPacket packet = readRawPacket(input);
+          final RawPacket packet = readRawPacket(input);
+
+
 
           if (packet.contentType.startsWith("image/admp4"))
             {
+              String res = packet.contentType.substring("image/admp4".length());
+
+              if (res.length() != 0)
+                {
+                  Scanner scanner = new Scanner(res);
+                  scanner.findInLine("; xres=(\\d+); yres=(\\d+)");
+                  MatchResult result = scanner.match();
+                  for (int i=1; i<=result.groupCount(); i++)
+                    {
+                    resolution[i-1] = Integer.parseInt(result.group(i));
+                    }
+                }
+
               RawPacket next = readRawPacket(input);
               if (next.contentType.equals("text/plain"))
               {
-                String comment = new String(next.data.array(), "US-ASCII");
+                final String comment = new String(next.data.array(), "US-ASCII");
                 int channel = getChannelFromCommentBlock(comment);
 
-                handler.mpeg4FrameArrived( new MPEG4Packet( packet.data, channel ) );
+                handler.mpeg4FrameArrived( new Packet( channel )
+                  {
+                    public ByteBuffer getData()
+                    {
+                      return IO.duplicate(packet.data);
+                    }
+
+                    public ByteBuffer getOnWireFormat()
+                    {
+                      if (resolution[0] == null) new Exception().printStackTrace();
+                      ImageDataStruct imageDataStruct = JFIFPacket.createImageDataStruct(packet.data, comment, VideoFormat.MPEG4_P_FRAME, resolution[0].shortValue(), resolution[1].shortValue());
+                      // TODO detect what kind of MPEG4 frame it is.
+
+                      return imageDataStruct.getByteBuffer();
+                    }
+                  });
               }
               else
                 throw null;

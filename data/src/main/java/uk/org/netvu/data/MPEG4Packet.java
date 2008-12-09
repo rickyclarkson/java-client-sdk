@@ -28,13 +28,14 @@ public final class MPEG4Packet
      * @throws NullPointerException
      *         if any of the values are null.
      */
-  public MPEG4Packet( final ByteBuffer data, final int channel )
+  public MPEG4Packet( final ByteBuffer data, final int channel, boolean hasIDS )
     {
       super(channel);
-        // CheckParameters.areNotNull( data, metadata, imageDataStruct,
-        // commentData );
-        this.data = data;
+      this.data = data;
+      this.hasIDS = hasIDS;
     }
+
+  private final boolean hasIDS;
 
     /**
      * Gets the data part of the MPEG-4 packet.
@@ -43,11 +44,14 @@ public final class MPEG4Packet
      */
     public ByteBuffer getData()
     {
-        return data;
+      return IO.duplicate(data);
     }
 
   public ByteBuffer getOnWireFormat()
   {
-    return data;
+    if (IO.duplicate(data).getInt() != 0xDECADE10 && IO.duplicate(data).getInt() != 0xDECADE11)
+      throw null;
+
+    return IO.duplicate(data);
   }
 }

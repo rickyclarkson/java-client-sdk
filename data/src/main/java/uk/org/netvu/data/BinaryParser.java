@@ -3,6 +3,7 @@ package uk.org.netvu.data;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.*;
 
 import uk.org.netvu.util.CheckParameters;
 import java.io.DataInputStream;
@@ -33,16 +34,51 @@ final class BinaryParser implements Parser
 
         try
         {
+            final Short[] resolutions = { null, null };
+
             while ( true )
             {
               final int frameTypeInt = input.read();
               final FrameType frameType = FrameType.frameTypeFor(frameTypeInt);
 
+
               final int channel = input.read() + 1;
               final int length = new DataInputStream( input ).readInt();
               ByteBuffer data = IO.readIntoByteBuffer( input, length );
               data.position(0);
-              frameType.deliverTo( handler, data, channel, length, frameTypeInt );
+
+              frameType.deliverTo( new StreamHandler()
+                {
+                  public void unknownDataArrived(Packet packet) {}
+                  public void jpegFrameArrived(Packet packet){}
+                  public void mpeg4FrameArrived(Packet packet) {}
+                  public void infoArrived(Packet packet)
+                  {                   
+                    String s;
+                    try
+                    {
+                      s = new String(packet.getData().array(), "US-ASCII");
+                    }
+                    catch (UnsupportedEncodingException e)
+                      {
+                        throw new RuntimeException(e);
+                      }
+
+                    int index = s.indexOf("IMAGESIZE 0,0:");
+                    if (index != -1)
+                      {
+                        index += "IMAGESIZE 0,0:".length();
+
+                        String theRest = s.substring(index);
+                        int comma = theRest.indexOf(",");
+                        int semi = theRest.indexOf(";");
+                        resolutions[0] = Short.parseShort(theRest.substring(0, comma));
+                        resolutions[1] = Short.parseShort(theRest.substring(comma + 1, semi));
+                      }
+                  }
+                }, IO.duplicate(data), channel, length, frameTypeInt, null, null );
+
+                frameType.deliverTo( handler, IO.duplicate(data), channel, length, frameTypeInt, resolutions[0], resolutions[1] );
             }
         }
         catch ( final EOFException e )
