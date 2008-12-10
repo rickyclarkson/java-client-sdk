@@ -59,6 +59,8 @@ final class BinaryParser implements Parser
 
                 frameType.deliverTo( new StreamHandler()
                 {
+                  public void audioDataArrived(Packet packet) { }
+
                     public void infoArrived( final Packet packet )
                     {
                         String s;

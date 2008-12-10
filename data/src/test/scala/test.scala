@@ -139,6 +139,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
      def unknownDataArrived(packet: Packet) = ()
      def mpeg4FrameArrived(packet: Packet) = ()
      def infoArrived(packet: Packet) = ()
+     def audioDataArrived(packet: Packet) = ()
     })
 
     numInvalidFrames == 0 must beTrue
@@ -185,6 +186,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     var index = 0
     
     ParserFactory parserFor streamType parse (connection.getInputStream, new StreamHandler {
+     def audioDataArrived(packet: Packet) = ()
      def jpegFrameArrived(packet: Packet) = ()
      def unknownDataArrived(packet: Packet) = ()
      def mpeg4FrameArrived(packet: Packet) = {
@@ -232,6 +234,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
    var fail = 0  
 
    ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
+    def audioDataArrived(packet: Packet) = ()
     def jpegFrameArrived(packet: Packet) = {
      val buffer = packet.getData
      if (diff(buffer, mapFile("testdata/expected-192-168-106-204-binary-jpeg/" + index + ".jpg")))

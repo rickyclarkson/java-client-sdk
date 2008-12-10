@@ -7,6 +7,8 @@ package uk.org.netvu.data;
  */
 public interface StreamHandler
 {
+  void audioDataArrived( Packet packet) ;
+
     /**
      * Signals the arrival of textual information to the client.
      * 
