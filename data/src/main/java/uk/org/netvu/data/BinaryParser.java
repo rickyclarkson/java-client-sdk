@@ -47,6 +47,10 @@ final class BinaryParser implements Parser
               ByteBuffer data = IO.readIntoByteBuffer( input, length );
               data.position(0);
 
+              // A minimal stream begins with an info packet containing "IMAGESIZE 0,0:123,456", where 123 and 456 are the
+              // resolution of the frames.  We parse that out and store it in the resolutions array.
+              // An array is used because of Java's 'final' restriction for anonymous classes.
+
               frameType.deliverTo( new StreamHandler()
                 {
                   public void unknownDataArrived(Packet packet) {}
@@ -64,10 +68,11 @@ final class BinaryParser implements Parser
                         throw new RuntimeException(e);
                       }
 
-                    int index = s.indexOf("IMAGESIZE 0,0:");
+                    final String header = "IMAGESIZE 0,0:";
+                    int index = s.indexOf(header);
                     if (index != -1)
                       {
-                        index += "IMAGESIZE 0,0:".length();
+                        index += header.length();
 
                         String theRest = s.substring(index);
                         int comma = theRest.indexOf(",");

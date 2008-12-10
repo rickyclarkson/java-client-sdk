@@ -39,16 +39,15 @@ abstract class FrameType
         void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int frameType, Short ignored, Short ignored2 )
                 throws IOException
         {
-            CheckParameters.areNotNull( handler, input, frameType );
+            CheckParameters.areNotNull( handler, input );
             ImageDataStruct imageHeader = new ImageDataStruct( input );
             ByteBuffer commentData = IO.slice( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE, imageHeader.getStartOffset() );
             final ByteBuffer restOfData = IO.from( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + imageHeader.getStartOffset() );
-            //            handler.mpeg4FrameArrived( new MPEG4Packet( restOfData, channel ) );
             handler.mpeg4FrameArrived(new Packet(channel)
               {
                 public ByteBuffer getData()
                 {
-                  return restOfData.duplicate();
+                  return IO.duplicate(restOfData);
                 }
 
                 public ByteBuffer getOnWireFormat()
@@ -78,7 +77,7 @@ abstract class FrameType
 
                 public ByteBuffer getOnWireFormat()
                 {                  
-                  // TODO implement choosing between frame types.
+                  // TODO implement choosing between frame types.  The frame type is in the stream header.
 
                   return JFIFPacket.createImageDataStruct(input, "", VideoFormat.MPEG4_P_FRAME, xres, yres).getByteBuffer();
                 }

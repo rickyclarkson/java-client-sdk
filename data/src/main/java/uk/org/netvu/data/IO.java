@@ -241,18 +241,16 @@ final class IO
     return bytes;
   }
 
-  public static String find(String in, String after)
+  public static String find(String in, String after, String ifNotFound)
   {
     int index = in.indexOf(after);
-    if (index < 0)
-      throw new IllegalStateException(after + " is not found in " + in );
-    
-    return in.substring(index + after.length(), in.indexOf("\r", index));
+    return index < 0 ? ifNotFound : in.substring(index + after.length(), in.indexOf("\r", index));
   }
 
-  public static int findInt(String in, String after)
+  public static int findInt(String in, String after, int ifNotFound)
   {
-    return Integer.parseInt(find(in, after));
+    String s = find(in, after, null);
+    return s == null ? ifNotFound : Integer.parseInt(s);
   }
 
   public static ByteBuffer duplicate(ByteBuffer b)

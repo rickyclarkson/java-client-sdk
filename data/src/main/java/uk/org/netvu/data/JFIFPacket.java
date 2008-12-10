@@ -72,13 +72,7 @@ final class JFIFPacket extends Packet
     final int modeChosenByReadingGenericVideoHeader = 2;
     imageDataStruct.setMode(modeChosenByReadingGenericVideoHeader);
 
-    try
-    {
-      imageDataStruct.setCamera(IO.findInt(comment, "Number: "));
-    }
-    catch (IllegalStateException e)
-    {
-    }
+    imageDataStruct.setCamera(IO.findInt(comment, "Number: ", 0));
 
     imageDataStruct.setVideoFormat(videoFormat);
 
@@ -102,17 +96,16 @@ final class JFIFPacket extends Packet
 
     try
     {
-      imageDataStruct.setSessionTime((int)(JFIFHeader.getDateFormat().parse(IO.find(comment, "Date: ")).getTime() + JFIFHeader.getTimeFormat().parse(IO.find(comment, "Time: ")).getTime()));
+      imageDataStruct.setSessionTime((int)(JFIFHeader.getDateFormat().parse(IO.find(comment, "Date: ", "01/01/1970")).getTime() + JFIFHeader.getTimeFormat().parse(IO.find(comment, "Time: ", "00:00:00")).getTime()));
     }
-    catch (IllegalStateException e) { }
     catch (ParseException e) { throw new RuntimeException(e); }
 
-    try {  imageDataStruct.setMilliseconds(IO.findInt(comment, "MSec: ")); } catch (IllegalStateException e) { }
+    imageDataStruct.setMilliseconds(IO.findInt(comment, "MSec: ", 0));
 
     final String resChosenByReadingGenericVideoHeader = "";
     imageDataStruct.setRes(resChosenByReadingGenericVideoHeader);
-    try { imageDataStruct.setTitle(IO.find(comment, "Name: ")); } catch (IllegalStateException e) { }
-    imageDataStruct.setAlarm(comment.contains("Alarm-text: ") ? IO.find(comment, "Alarm-text: ") : "");
+    imageDataStruct.setTitle(IO.find(comment, "Name: ", ""));
+    imageDataStruct.setAlarm(IO.find(comment, "Alarm-text: ", ""));
 
     final short srcPixelsChosenByReadingGenericVideoHeader = 0;
     imageDataStruct.setSrcPixels(srcPixelsChosenByReadingGenericVideoHeader);
@@ -129,8 +122,8 @@ final class JFIFPacket extends Packet
     final short lineOffsetChosenByReadingGenericVideoHeader = 0;
     imageDataStruct.setLineOffset(lineOffsetChosenByReadingGenericVideoHeader);
 
-    try { imageDataStruct.setLocale(IO.find(comment, "Locale: ")); } catch (IllegalStateException e) { }
-    try { imageDataStruct.setUtcOffset(IO.findInt(comment, "UTCoffset: ")); } catch (IllegalStateException e) { }
+    imageDataStruct.setLocale(IO.find(comment, "Locale: ", ""));
+    imageDataStruct.setUtcOffset(IO.findInt(comment, "UTCoffset: ", 0));
 
     final int alarmBitmaskChosenByReadingGenericVideoHeader = 0;
     imageDataStruct.setAlarmBitmask(alarmBitmaskChosenByReadingGenericVideoHeader);
