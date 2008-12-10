@@ -219,7 +219,7 @@ public final class ImageDataStruct
         CheckParameters.areNotNull( buffer );
         this.buffer = buffer.duplicate();
         this.buffer.position( 0 );
-        final int version = readInt( this.buffer, VERSION );
+        final int version = IO.readInt( this.buffer, VERSION );
 
         if ( version != 0xDECADE10 && version != 0xDECADE11 )
         {
@@ -244,7 +244,7 @@ public final class ImageDataStruct
      */
     public int getAlarmBitmask()
     {
-        return readInt( buffer, ALM_BITMASK );
+        return IO.readInt( buffer, ALM_BITMASK );
     }
 
     /**
@@ -254,7 +254,7 @@ public final class ImageDataStruct
      */
     public int getAlarmBitmaskHigh()
     {
-        return readInt( buffer, ALM_BITMASK_HI );
+        return IO.readInt( buffer, ALM_BITMASK_HI );
     }
 
     public ByteBuffer getByteBuffer()
@@ -271,7 +271,7 @@ public final class ImageDataStruct
      */
     public int getCamera()
     {
-        return readInt( buffer, CAM );
+        return IO.readInt( buffer, CAM );
     }
 
     public short getLineOffset()
@@ -296,7 +296,7 @@ public final class ImageDataStruct
      */
     public int getMaxSize()
     {
-        return readInt( buffer, MAX_SIZE );
+        return IO.readInt( buffer, MAX_SIZE );
     }
 
     /**
@@ -306,7 +306,7 @@ public final class ImageDataStruct
      */
     public int getMilliseconds()
     {
-        return (int) ( ( 0xFFFFFFFFL & readInt( buffer, MILLISECONDS ) ) % 1000L );
+        return (int) ( ( 0xFFFFFFFFL & IO.readInt( buffer, MILLISECONDS ) ) % 1000L );
     }
 
     /**
@@ -316,7 +316,7 @@ public final class ImageDataStruct
      */
     public int getMode()
     {
-        return readInt( buffer, MODE );
+        return IO.readInt( buffer, MODE );
     }
 
     public short getPixelOffset()
@@ -331,7 +331,7 @@ public final class ImageDataStruct
      */
     public int getQFactor()
     {
-        return readInt( buffer, Q_FACTOR );
+        return IO.readInt( buffer, Q_FACTOR );
     }
 
     /**
@@ -352,7 +352,7 @@ public final class ImageDataStruct
      */
     public int getSessionTime()
     {
-        return readInt( buffer, SESSION_TIME );
+        return IO.readInt( buffer, SESSION_TIME );
     }
 
     /**
@@ -362,7 +362,7 @@ public final class ImageDataStruct
      */
     public int getSize()
     {
-        return readInt( buffer, SIZE );
+        return IO.readInt( buffer, SIZE );
     }
 
     public short getSrcLines()
@@ -382,7 +382,7 @@ public final class ImageDataStruct
      */
     public int getStartOffset()
     {
-        return readInt( buffer, START_OFFSET );
+        return IO.readInt( buffer, START_OFFSET );
     }
 
     /**
@@ -392,7 +392,7 @@ public final class ImageDataStruct
      */
     public int getStatus()
     {
-        return readInt( buffer, STATUS );
+        return IO.readInt( buffer, STATUS );
     }
 
     public short getTargetLines()
@@ -412,7 +412,7 @@ public final class ImageDataStruct
      */
     public int getTargetSize()
     {
-        return readInt( buffer, TARGET_SIZE );
+        return IO.readInt( buffer, TARGET_SIZE );
     }
 
     /**
@@ -432,7 +432,7 @@ public final class ImageDataStruct
      */
     public int getUtcOffset()
     {
-        return readInt( buffer, UTC_OFFSET );
+        return IO.readInt( buffer, UTC_OFFSET );
     }
 
     /**
@@ -442,7 +442,7 @@ public final class ImageDataStruct
      */
     public int getVersion()
     {
-        return readInt( buffer, VERSION );
+        return IO.readInt( buffer, VERSION );
     }
 
     /**
@@ -452,7 +452,7 @@ public final class ImageDataStruct
      */
     public VideoFormat getVideoFormat()
     {
-        return VideoFormat.valueOf( readInt( buffer, VID_FORMAT ) );
+        return VideoFormat.valueOf( IO.readInt( buffer, VID_FORMAT ) );
     }
 
     public void setAlarm( final String s )
@@ -613,25 +613,6 @@ public final class ImageDataStruct
         return result;
     }
 
-    /**
-     * Reads a big-endian int from the specified position in the specified
-     * ByteBuffer.
-     * 
-     * @param buffer
-     *        the ByteBuffer to read an int from.
-     * @param where
-     *        the position to read from.
-     * @return a big-endian int read from the specified position in the
-     *         specified ByteBuffer.
-     * @throws NullPointerException
-     *         if buffer is null.
-     */
-    private int readInt( final ByteBuffer buffer, final int where )
-    {
-        CheckParameters.areNotNull( buffer );
-        buffer.order( ByteOrder.BIG_ENDIAN );
-        return buffer.getInt( where );
-    }
 
     /**
      * Reads a little-endian short from the specified position within the

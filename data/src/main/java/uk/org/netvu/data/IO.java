@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.*;
 import java.nio.channels.Channels;
 
 import uk.org.netvu.util.CheckParameters;
@@ -254,6 +255,27 @@ final class IO
         result.limit( length );
         return result;
     }
+
+    /**
+     * Reads a big-endian int from the specified position in the specified
+     * ByteBuffer.
+     * 
+     * @param buffer
+     *        the ByteBuffer to read an int from.
+     * @param where
+     *        the position to read from.
+     * @return a big-endian int read from the specified position in the
+     *         specified ByteBuffer.
+     * @throws NullPointerException
+     *         if buffer is null.
+     */
+    public static int readInt( final ByteBuffer buffer, final int where )
+    {
+        CheckParameters.areNotNull( buffer );
+        buffer.order( ByteOrder.BIG_ENDIAN );
+        return buffer.getInt( where );
+    }
+
 
     /**
      * Private to prevent instantiation.
