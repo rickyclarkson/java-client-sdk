@@ -135,27 +135,31 @@ abstract class FrameType
             case 2:
             case 3:
                 return FrameType.MPEG4;
-        case 4:
-        case 7:
-          return new FrameType()
-          {
-            public void deliverTo(final StreamHandler handler, final ByteBuffer data, int channel, int length, int frameType, Short ignored, Short ignored2)
-            {
-              CheckParameters.areNotNull( handler, data );
-              handler.audioDataArrived( new Packet(channel)
+            case 4:
+            case 7:
+                return new FrameType()
                 {
-                  public ByteBuffer getData()
-                  {
-                    return data;
-                  }
+                    @Override
+                    public void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel,
+                            final int length, final int frameType, final Short ignored, final Short ignored2 )
+                    {
+                        CheckParameters.areNotNull( handler, data );
+                        handler.audioDataArrived( new Packet( channel )
+                        {
+                            @Override
+                            public ByteBuffer getData()
+                            {
+                                return data;
+                            }
 
-                  public ByteBuffer getOnWireFormat()
-                  {
-                    return data;
-                  }
-                });
-            }
-          };
+                            @Override
+                            public ByteBuffer getOnWireFormat()
+                            {
+                                return data;
+                            }
+                        } );
+                    }
+                };
             case 6:
                 return FrameType.MPEG4_MINIMAL;
             case 9:

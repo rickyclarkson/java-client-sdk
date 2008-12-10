@@ -1,13 +1,12 @@
 package uk.org.netvu.data;
 
-
 /**
  * The interface the client is expected to interface to listen for data packets
  * as they arrive.
  */
 public interface StreamHandler
 {
-  void audioDataArrived( Packet packet) ;
+    void audioDataArrived( Packet packet );
 
     /**
      * Signals the arrival of textual information to the client.

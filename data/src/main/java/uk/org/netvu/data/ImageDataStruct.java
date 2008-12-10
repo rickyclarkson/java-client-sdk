@@ -613,7 +613,6 @@ public final class ImageDataStruct
         return result;
     }
 
-
     /**
      * Reads a little-endian short from the specified position within the
      * ByteBuffer relative to the offset.

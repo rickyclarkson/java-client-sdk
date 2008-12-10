@@ -89,6 +89,41 @@ class MimeParser implements Parser
                         throw null;
                     }
                 }
+                else if ( packet.contentType.startsWith( "audio/adpcm" ) )
+                {
+                    final AudioDataStruct audioDataStruct =
+                            new AudioDataStruct( ByteBuffer.allocate( AudioDataStruct.AUDIO_DATA_STRUCT_SIZE ).putInt(
+                                    AudioDataStruct.VERSION ) );
+
+                    audioDataStruct.setMode( Integer.parseInt( packet.contentType.substring( "audio/adpcm; rate=".length() ) ) );
+                    if ( false )
+                    {
+                        throw null;
+                    }
+                    audioDataStruct.setChannel( 0 );
+                    audioDataStruct.setStartOffset( AudioDataStruct.AUDIO_DATA_STRUCT_SIZE );
+                    audioDataStruct.setSize( packet.data.limit() );
+                    audioDataStruct.setSeconds( 0 ); // because the timestamps
+                    // are unreliable.
+                    audioDataStruct.setMilliseconds( 0 ); // because the
+                    // timestamps are
+                    // unreliable.
+
+                    handler.audioDataArrived( new Packet( audioDataStruct.getChannel() )
+                    {
+                        @Override
+                        public ByteBuffer getData()
+                        {
+                            return packet.data;
+                        }
+
+                        @Override
+                        public ByteBuffer getOnWireFormat()
+                        {
+                            return packet.data;
+                        }
+                    } );
+                }
                 else
                 {
                     final ByteBuffer jpeg = packet.data;
