@@ -1,133 +1,156 @@
 package uk.org.netvu.data;
 
-import java.nio.ByteBuffer;
-
-import uk.org.netvu.util.CheckParameters;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.text.ParseException;
 
+import uk.org.netvu.util.CheckParameters;
+
 /**
- * A JFIFPacket represents a single JFIF frame read from a stream.  The JFIF data is available as a ByteBuffer via the method getData().
+ * A JFIFPacket represents a single JFIF frame read from a stream. The JFIF data
+ * is available as a ByteBuffer via the method getData().
  */
-final class JFIFPacket extends Packet
+final class JFIFPacket
+        extends Packet
 {
-  /**
-   * The JFIF frame.
-   */
-  private final ByteBuffer data;
-  private final boolean truncated;
-
-  /**
-   * Constructs a JFIFPacket with the specified data and metadata.
-   * @param data the JFIF frame to store.
-   * @param metadata the metadata about the JFIFPacket.
-   * @throws NullPointerException if data or metadata are null.
-   */
-  JFIFPacket(ByteBuffer data, int channel, boolean truncated )
-  {
-    super(channel);
-    this.truncated = truncated;
-
-    CheckParameters.areNotNull(data);
-    this.data = data;
-  }
-
-  /**
-   * Gets the JFIF frame held by the JFIFPacket.
-   *
-   * @return the JFIF frame held by the JFIFPacket.
-   */
-  public ByteBuffer getData()
-  {
-    return truncated ? JFIFHeader.jpegToJfif(data) : data.duplicate();
-  }
-
-  public ByteBuffer getOnWireFormat()
-  {
-    if (truncated)
-      return data.duplicate();
-
-
-    int commentPosition = IO.searchFor(data,JFIFHeader.byteArrayLiteral(new int[]{ 0xFF, 0xFE }) );
-    data.position(commentPosition + 2);
-    int commentLength = data.getShort();
-    String comment;
-
-    try
-      { comment = new String(IO.readIntoByteArray(data, commentLength), "US-ASCII");
-      } catch (UnsupportedEncodingException e) { throw new RuntimeException(e);
-    }
-
-    VideoFormat videoFormat = data.get(IO.searchFor(data, JFIFHeader.byteArrayLiteral(new int[]{ 0xFF, 0xC0}))+11) == 0x22 ? VideoFormat.JPEG_422 : VideoFormat.JPEG_411;
-    short targetPixels = data.getShort(IO.searchFor(data, new byte[]{ (byte)0xFF, (byte)0xC0 }) + 5);
-    short targetLines = data.getShort(IO.searchFor(data, new byte[]{ (byte)0xFF, (byte)0xC0 }) + 7);
-    ImageDataStruct imageDataStruct = createImageDataStruct(data, comment, videoFormat, targetLines, targetPixels);
-    return imageDataStruct.getByteBuffer();
-  }
-
-  static ImageDataStruct createImageDataStruct(ByteBuffer data, String comment, VideoFormat videoFormat, short targetLines, short targetPixels)
-  {
-    ImageDataStruct imageDataStruct = new ImageDataStruct(ByteBuffer.allocate(ImageDataStruct.IMAGE_DATA_STRUCT_SIZE).putInt(0xDECADE11));
-
-    final int modeChosenByReadingGenericVideoHeader = 2;
-    imageDataStruct.setMode(modeChosenByReadingGenericVideoHeader);
-
-    imageDataStruct.setCamera(IO.findInt(comment, "Number: ", 0));
-
-    imageDataStruct.setVideoFormat(videoFormat);
-
-    imageDataStruct.setStartOffset(comment.length());
-    imageDataStruct.setSize(data.limit());
-
-    final int maxSizeChosenByReadingGenericVideoHeader = 0;
-    imageDataStruct.setMaxSize(maxSizeChosenByReadingGenericVideoHeader);
-
-    final int targetSizeChosenByReadingGenericVideoHeader = 0;
-    imageDataStruct.setTargetSize(targetSizeChosenByReadingGenericVideoHeader);
-
-    final int qFactorChosenByReadingGenericVideoHeader = -1;
-    imageDataStruct.setQFactor(qFactorChosenByReadingGenericVideoHeader);
-
-    final int alarmBitmaskHighChosenByReadingGenericVideoHeader = 0;
-    imageDataStruct.setAlarmBitmaskHigh(alarmBitmaskHighChosenByReadingGenericVideoHeader);
-
-    final int statusChosenByReadingGenericVideoHeader = 0;
-    imageDataStruct.setStatus(statusChosenByReadingGenericVideoHeader);
-
-    try
+    static ImageDataStruct createImageDataStruct( final ByteBuffer data, final String comment,
+            final VideoFormat videoFormat, final short targetLines, final short targetPixels )
     {
-      imageDataStruct.setSessionTime((int)(JFIFHeader.getDateFormat().parse(IO.find(comment, "Date: ", "01/01/1970")).getTime() + JFIFHeader.getTimeFormat().parse(IO.find(comment, "Time: ", "00:00:00")).getTime()));
+        final ImageDataStruct imageDataStruct =
+                new ImageDataStruct( ByteBuffer.allocate( ImageDataStruct.IMAGE_DATA_STRUCT_SIZE ).putInt( 0xDECADE11 ) );
+
+        final int modeChosenByReadingGenericVideoHeader = 2;
+        imageDataStruct.setMode( modeChosenByReadingGenericVideoHeader );
+
+        imageDataStruct.setCamera( IO.findInt( comment, "Number: ", 0 ) );
+
+        imageDataStruct.setVideoFormat( videoFormat );
+
+        imageDataStruct.setStartOffset( comment.length() );
+        imageDataStruct.setSize( data.limit() );
+
+        final int maxSizeChosenByReadingGenericVideoHeader = 0;
+        imageDataStruct.setMaxSize( maxSizeChosenByReadingGenericVideoHeader );
+
+        final int targetSizeChosenByReadingGenericVideoHeader = 0;
+        imageDataStruct.setTargetSize( targetSizeChosenByReadingGenericVideoHeader );
+
+        final int qFactorChosenByReadingGenericVideoHeader = -1;
+        imageDataStruct.setQFactor( qFactorChosenByReadingGenericVideoHeader );
+
+        final int alarmBitmaskHighChosenByReadingGenericVideoHeader = 0;
+        imageDataStruct.setAlarmBitmaskHigh( alarmBitmaskHighChosenByReadingGenericVideoHeader );
+
+        final int statusChosenByReadingGenericVideoHeader = 0;
+        imageDataStruct.setStatus( statusChosenByReadingGenericVideoHeader );
+
+        try
+        {
+            imageDataStruct.setSessionTime( (int) ( JFIFHeader.getDateFormat().parse(
+                    IO.find( comment, "Date: ", "01/01/1970" ) ).getTime() + JFIFHeader.getTimeFormat().parse(
+                    IO.find( comment, "Time: ", "00:00:00" ) ).getTime() ) );
+        }
+        catch ( final ParseException e )
+        {
+            throw new RuntimeException( e );
+        }
+
+        imageDataStruct.setMilliseconds( IO.findInt( comment, "MSec: ", 0 ) );
+
+        final String resChosenByReadingGenericVideoHeader = "";
+        imageDataStruct.setRes( resChosenByReadingGenericVideoHeader );
+        imageDataStruct.setTitle( IO.find( comment, "Name: ", "" ) );
+        imageDataStruct.setAlarm( IO.find( comment, "Alarm-text: ", "" ) );
+
+        final short srcPixelsChosenByReadingGenericVideoHeader = 0;
+        imageDataStruct.setSrcPixels( srcPixelsChosenByReadingGenericVideoHeader );
+
+        final short srcLinesChosenByReadingGenericVideoHeader = 0;
+        imageDataStruct.setSrcLines( srcLinesChosenByReadingGenericVideoHeader );
+
+        imageDataStruct.setTargetPixels( targetPixels );
+        imageDataStruct.setTargetLines( targetLines );
+
+        final short pixelOffsetChosenByReadingGenericVideoHeader = 0;
+        imageDataStruct.setPixelOffset( pixelOffsetChosenByReadingGenericVideoHeader );
+
+        final short lineOffsetChosenByReadingGenericVideoHeader = 0;
+        imageDataStruct.setLineOffset( lineOffsetChosenByReadingGenericVideoHeader );
+
+        imageDataStruct.setLocale( IO.find( comment, "Locale: ", "" ) );
+        imageDataStruct.setUtcOffset( IO.findInt( comment, "UTCoffset: ", 0 ) );
+
+        final int alarmBitmaskChosenByReadingGenericVideoHeader = 0;
+        imageDataStruct.setAlarmBitmask( alarmBitmaskChosenByReadingGenericVideoHeader );
+
+        return imageDataStruct;
     }
-    catch (ParseException e) { throw new RuntimeException(e); }
+    /**
+     * The JFIF frame.
+     */
+    private final ByteBuffer data;
 
-    imageDataStruct.setMilliseconds(IO.findInt(comment, "MSec: ", 0));
+    private final boolean truncated;
 
-    final String resChosenByReadingGenericVideoHeader = "";
-    imageDataStruct.setRes(resChosenByReadingGenericVideoHeader);
-    imageDataStruct.setTitle(IO.find(comment, "Name: ", ""));
-    imageDataStruct.setAlarm(IO.find(comment, "Alarm-text: ", ""));
+    /**
+     * Constructs a JFIFPacket with the specified data and metadata.
+     * 
+     * @param data
+     *        the JFIF frame to store.
+     * @param metadata
+     *        the metadata about the JFIFPacket.
+     * @throws NullPointerException
+     *         if data or metadata are null.
+     */
+    JFIFPacket( final ByteBuffer data, final int channel, final boolean truncated )
+    {
+        super( channel );
+        this.truncated = truncated;
 
-    final short srcPixelsChosenByReadingGenericVideoHeader = 0;
-    imageDataStruct.setSrcPixels(srcPixelsChosenByReadingGenericVideoHeader);
+        CheckParameters.areNotNull( data );
+        this.data = data;
+    }
 
-    final short srcLinesChosenByReadingGenericVideoHeader = 0;
-    imageDataStruct.setSrcLines(srcLinesChosenByReadingGenericVideoHeader);
+    /**
+     * Gets the JFIF frame held by the JFIFPacket.
+     * 
+     * @return the JFIF frame held by the JFIFPacket.
+     */
+    @Override
+    public ByteBuffer getData()
+    {
+        return truncated ? JFIFHeader.jpegToJfif( data ) : data.duplicate();
+    }
 
-    imageDataStruct.setTargetPixels(targetPixels);
-    imageDataStruct.setTargetLines(targetLines);
+    @Override
+    public ByteBuffer getOnWireFormat()
+    {
+        if ( truncated )
+        {
+            return data.duplicate();
+        }
 
-    final short pixelOffsetChosenByReadingGenericVideoHeader = 0;
-    imageDataStruct.setPixelOffset(pixelOffsetChosenByReadingGenericVideoHeader);
+        final int commentPosition = IO.searchFor( data, JFIFHeader.byteArrayLiteral( new int[] { 0xFF, 0xFE } ) );
+        data.position( commentPosition + 2 );
+        final int commentLength = data.getShort();
+        String comment;
 
-    final short lineOffsetChosenByReadingGenericVideoHeader = 0;
-    imageDataStruct.setLineOffset(lineOffsetChosenByReadingGenericVideoHeader);
+        try
+        {
+            comment = new String( IO.readIntoByteArray( data, commentLength ), "US-ASCII" );
+        }
+        catch ( final UnsupportedEncodingException e )
+        {
+            throw new RuntimeException( e );
+        }
 
-    imageDataStruct.setLocale(IO.find(comment, "Locale: ", ""));
-    imageDataStruct.setUtcOffset(IO.findInt(comment, "UTCoffset: ", 0));
-
-    final int alarmBitmaskChosenByReadingGenericVideoHeader = 0;
-    imageDataStruct.setAlarmBitmask(alarmBitmaskChosenByReadingGenericVideoHeader);
-
-    return imageDataStruct;
-   }
+        final VideoFormat videoFormat =
+                data.get( IO.searchFor( data, JFIFHeader.byteArrayLiteral( new int[] { 0xFF, 0xC0 } ) ) + 11 ) == 0x22 ? VideoFormat.JPEG_422
+                        : VideoFormat.JPEG_411;
+        final short targetPixels = data.getShort( IO.searchFor( data, new byte[] { (byte) 0xFF, (byte) 0xC0 } ) + 5 );
+        final short targetLines = data.getShort( IO.searchFor( data, new byte[] { (byte) 0xFF, (byte) 0xC0 } ) + 7 );
+        final ImageDataStruct imageDataStruct =
+                createImageDataStruct( data, comment, videoFormat, targetLines, targetPixels );
+        return imageDataStruct.getByteBuffer();
+    }
 }

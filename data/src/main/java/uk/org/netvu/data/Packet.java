@@ -1,7 +1,6 @@
 package uk.org.netvu.data;
 
 import java.nio.ByteBuffer;
-import uk.org.netvu.util.CheckParameters;
 
 /**
  * A Packet represents a single piece of data read from a stream, such as a JFIF
@@ -9,21 +8,22 @@ import uk.org.netvu.util.CheckParameters;
  */
 public abstract class Packet
 {
-  private final int channel;
+    private final int channel;
 
     /**
      * Constructs a Packet.
      */
-  Packet(int channel)
+    Packet( final int channel )
     {
-      this.channel = channel;
+        this.channel = channel;
     }
 
-  public int getChannel()
-  {
-    return channel;
-  }
+    public int getChannel()
+    {
+        return channel;
+    }
 
-  public abstract ByteBuffer getData();
-  public abstract ByteBuffer getOnWireFormat();
+    public abstract ByteBuffer getData();
+
+    public abstract ByteBuffer getOnWireFormat();
 }

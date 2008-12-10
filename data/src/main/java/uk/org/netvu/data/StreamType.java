@@ -15,7 +15,7 @@ public enum StreamType
     /**
      * A StreamType representing 'mime' streams.
      */
-      MIME( new MimeParser() );
+    MIME( new MimeParser() );
 
     /**
      * The Parser for this StreamType.

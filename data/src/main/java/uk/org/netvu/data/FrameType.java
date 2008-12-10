@@ -1,11 +1,7 @@
 package uk.org.netvu.data;
 
-import static uk.org.netvu.data.ImageDataStruct.IMAGE_DATA_STRUCT_SIZE;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.io.UnsupportedEncodingException;
 
 import uk.org.netvu.util.CheckParameters;
 
@@ -15,83 +11,73 @@ import uk.org.netvu.util.CheckParameters;
  */
 abstract class FrameType
 {
-    /**
-     * A complete JFIF, compatible with most display and image manipulation
-     * programs.
-     */
-  public static FrameType jpeg(final boolean truncated)
-  {
-    return new FrameType()
-    {
-      @Override
-      void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int ignored, final Short ignored2, final Short ignored3)
-        throws IOException
-      {
-        CheckParameters.areNotNull( handler, input );
-        handler.jpegFrameArrived( new JFIFPacket( input, channel, truncated ) );
-      }
-    };
-  }
-
-  public static final FrameType MPEG4 = new FrameType()
+    public static final FrameType MPEG4 = new FrameType()
     {
         @Override
-        void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int frameType, Short ignored, Short ignored2 )
-                throws IOException
+        void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length,
+                final int frameType, final Short ignored, final Short ignored2 ) throws IOException
         {
             CheckParameters.areNotNull( handler, input );
-            ImageDataStruct imageHeader = new ImageDataStruct( input );
-            ByteBuffer commentData = IO.slice( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE, imageHeader.getStartOffset() );
-            final ByteBuffer restOfData = IO.from( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + imageHeader.getStartOffset() );
-            handler.mpeg4FrameArrived(new Packet(channel)
-              {
+            final ImageDataStruct imageHeader = new ImageDataStruct( input );
+            IO.slice( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE, imageHeader.getStartOffset() );
+            final ByteBuffer restOfData =
+                    IO.from( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + imageHeader.getStartOffset() );
+            handler.mpeg4FrameArrived( new Packet( channel )
+            {
+                @Override
                 public ByteBuffer getData()
                 {
-                  return IO.duplicate(restOfData);
+                    return IO.duplicate( restOfData );
                 }
 
+                @Override
                 public ByteBuffer getOnWireFormat()
                 {
-                  return IO.duplicate(input);
+                    return IO.duplicate( input );
                 }
-              });
+            } );
         }
     };
 
     /**
-     * An MPEG-4 frame read from a minimal stream.  It does the same as MPEG4, but omits the ImageDataStruct and comment field.
+     * An MPEG-4 frame read from a minimal stream. It does the same as MPEG4,
+     * but omits the ImageDataStruct and comment field.
      */
-  public static final FrameType MPEG4_MINIMAL = new FrameType()
+    public static final FrameType MPEG4_MINIMAL = new FrameType()
     {
         @Override
-        void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length, final int frameType, final Short xres, final Short yres )
-                throws IOException
+        void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length,
+                final int frameType, final Short xres, final Short yres ) throws IOException
         {
             CheckParameters.areNotNull( handler, input, frameType );
             handler.mpeg4FrameArrived( new Packet( channel )
-              {
+            {
+                @Override
                 public ByteBuffer getData()
                 {
-                  return IO.duplicate(input);
+                    return IO.duplicate( input );
                 }
 
+                @Override
                 public ByteBuffer getOnWireFormat()
-                {                  
-                  // TODO implement choosing between frame types.  The frame type is in the stream header.
+                {
+                    // TODO implement choosing between frame types. The frame
+                    // type is in the stream header.
 
-                  return JFIFPacket.createImageDataStruct(input, "", VideoFormat.MPEG4_P_FRAME, xres, yres).getByteBuffer();
+                    return JFIFPacket.createImageDataStruct( input, "", VideoFormat.MPEG4_P_FRAME, xres, yres ).getByteBuffer();
                 }
-              });
+            } );
         }
     };
+
     /**
      * Information (such as comments about the other data).
      */
-  public static final FrameType INFO = new FrameType()
+    public static final FrameType INFO = new FrameType()
     {
         @Override
-        void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length, final int frameType, final Short ignored, final Short ignored2 )
-                throws IOException
+        void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length,
+                final int frameType, final Short ignored, final Short ignored2 ) throws IOException
         {
             CheckParameters.areNotNull( handler, data, frameType );
             handler.infoArrived( new InfoPacket( data, channel, length ) );
@@ -100,16 +86,34 @@ abstract class FrameType
     /**
      * Unknown data. This should not be seen in normal circumstances.
      */
-  public static final FrameType UNKNOWN = new FrameType()
+    public static final FrameType UNKNOWN = new FrameType()
     {
         @Override
-        void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length, final int frameType, final Short ignored, final Short ignored2 )
-                throws IOException
+        void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length,
+                final int frameType, final Short ignored, final Short ignored2 ) throws IOException
         {
             CheckParameters.areNotNull( handler, data, frameType );
             handler.unknownDataArrived( new UnknownPacket( data, channel, length ) );
         }
     };
+
+    /**
+     * A complete JFIF, compatible with most display and image manipulation
+     * programs.
+     */
+    public static FrameType jpeg( final boolean truncated )
+    {
+        return new FrameType()
+        {
+            @Override
+            void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length,
+                    final int ignored, final Short ignored2, final Short ignored3 ) throws IOException
+            {
+                CheckParameters.areNotNull( handler, input );
+                handler.jpegFrameArrived( new JFIFPacket( input, channel, truncated ) );
+            }
+        };
+    }
 
     /**
      * Gives the type of frame, according to the numbers used in the minimal and
@@ -125,9 +129,9 @@ abstract class FrameType
         switch ( value )
         {
             case 1:
-              return FrameType.jpeg(false);
+                return FrameType.jpeg( false );
             case 0:
-              return FrameType.jpeg(true);
+                return FrameType.jpeg( true );
             case 2:
             case 3:
                 return FrameType.MPEG4;
@@ -154,5 +158,6 @@ abstract class FrameType
      * @throws NullPointerException
      *         if any of the parameters are null.
      */
-  abstract void deliverTo( StreamHandler handler, ByteBuffer data, int channel, int length, int frameType, Short xres, Short yres ) throws IOException;
+    abstract void deliverTo( StreamHandler handler, ByteBuffer data, int channel, int length, int frameType,
+            Short xres, Short yres ) throws IOException;
 }

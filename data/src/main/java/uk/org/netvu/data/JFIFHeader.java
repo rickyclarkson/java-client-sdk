@@ -1,32 +1,31 @@
 package uk.org.netvu.data;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import uk.org.netvu.util.CheckParameters;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.nio.BufferUnderflowException;
 
 /**
  * A class for converting the minimised JFIF header into a valid JFIF header.
  */
 final class JFIFHeader
 {
-  /**
-   * Colorspace information that is constant for every JFIF frame generated.
-   */
+    /**
+     * Colorspace information that is constant for every JFIF frame generated.
+     */
     private static final byte[] YVIS =
             { 16, 11, 12, 14, 12, 10, 16, 14, 13, 14, 18, 17, 16, 19, 24, 40, 26, 24, 22, 22, 24, 49, 35, 37, 29, 40,
                 58, 51, 61, 60, 57, 51, 56, 55, 64, 72, 92, 78, 64, 68, 87, 69, 55, 56, 80, 109, 81, 87, 95, 98, 103,
                 104, 103, 62, 77, 113, 121, 112, 100, 120, 92, 101, 103, 99 };
 
-  /**
-   * Colorspace information that is constant for every JFIF frame generated.
-   */
+    /**
+     * Colorspace information that is constant for every JFIF frame generated.
+     */
     private static final byte[] UVVIS =
             { 17, 18, 18, 24, 21, 24, 47, 26, 26, 47, 99, 66, 56, 66, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
                 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
@@ -44,14 +43,14 @@ final class JFIFHeader
      */
     private static final byte[] SOC_HEADER = byteArrayLiteral( new int[] { 0xFF, 0xFE } );
 
-  /**
-   * Quantisation information that is constant for every JFIF frame generated.
-   */
+    /**
+     * Quantisation information that is constant for every JFIF frame generated.
+     */
     private static final byte[] YQ_HEADER = byteArrayLiteral( new int[] { 0xFF, 0xDB, 0x00, 0x43, 0x00 } );
 
-  /**
-   * Quantisation information that is constant for every JFIF frame generated.
-   */
+    /**
+     * Quantisation information that is constant for every JFIF frame generated.
+     */
     private static final byte[] UVQ_HEADER = byteArrayLiteral( new int[] { 0xFF, 0xDB, 0x00, 0x43, 0x01 } );
 
     /**
@@ -97,97 +96,18 @@ final class JFIFHeader
      */
     private static final byte[] EOI_MARKER = byteArrayLiteral( new int[] { 0xFF, 0xD9 } );
 
-    /**
-     * Parses out a comment field from JFIF data.
-     * 
-     * @param jfif
-     *        the raw JFIF bytes.
-     * @return a String containing the comments.
-     * @throws a
-     *         BufferUnderflowException if no comment field is found.
-     */
-    static String getComments( final ByteBuffer jfif )
+    private static final String DATE_FORMAT = "dd/MM/yyyy";
+
+    private static final String TIME_FORMAT = "HH:mm:ss";
+
+    public static SimpleDateFormat getDateFormat()
     {
-      while ( true )
-        if (( jfif.get() & 0xFF ) == 0xFF && ( jfif.get() & 0xFF ) == 0xFE )
-        {
-            final short commentLength = jfif.getShort();
-            final byte[] comment = new byte[commentLength];
-            jfif.get( comment );
-            try
-            {
-                return new String( comment );
-            }
-            finally
-            {
-                jfif.position( 0 );
-            }
-        }
+        return new SimpleDateFormat( DATE_FORMAT );
     }
 
-    /**
-     * Given a ByteBuffer containing JPEG data, and an ImageDataStruct
-     * containing a minimised JPEG header, constructs a JFIF packet containing
-     * that data.
-     * 
-     * @param source
-     *        the ByteBuffer containing JPEG data.
-     * @param imageDataStruct
-     *        the ImageDataStruct containing a minimised JPEG header.
-     * @return a JFIFPacket.
-     * @throws NullPointerException
-     *         if either of the parameters are null.
-     */
-    static ByteBuffer jpegToJfif( ByteBuffer source )
+    public static SimpleDateFormat getTimeFormat()
     {
-      source = source.duplicate();
-      source.position(0);
-        CheckParameters.areNotNull( source );
-        ImageDataStruct imageDataStruct = new ImageDataStruct( source );
-        final ByteBuffer commentOriginal = IO.slice( source, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE, imageDataStruct.getStartOffset() );
-        final ByteBuffer restOfData = IO.from( source, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + imageDataStruct.getStartOffset() );
-        restOfData.position(0);
-        commentOriginal.limit( imageDataStruct.getStartOffset() );
-        final ByteBuffer comment = getComment( imageDataStruct, commentOriginal );
-        final byte[] yqFactors = getYQFactors( imageDataStruct.getQFactor() );
-        final byte[] uvqFactors = getUVQFactors( imageDataStruct.getQFactor() );
-
-        final ByteBuffer sof = ByteBuffer.allocate( 19 );
-        sof.put( byteArrayLiteral( new int[] { 0xFF, 0xC0, 0x00, 0x11, 0x08 } ) );
-        sof.order( ByteOrder.LITTLE_ENDIAN );
-        sof.putShort( imageDataStruct.getTargetLines() );
-        sof.putShort( imageDataStruct.getTargetPixels() );
-        sof.order( ByteOrder.BIG_ENDIAN );
-        sof.put( byteArrayLiteral( new int[] { 0x03, 0x01,
-            imageDataStruct.getVideoFormat() == VideoFormat.JPEG_411 ? 0x22 : 0x21, 0x00, 0x02, 0x11, 0x01, 0x03,
-            0x11, 0x01 } ) );
-        sof.position( 0 );
-
-        try
-        {
-          ByteArrayOutputStream baos = new ByteArrayOutputStream();
-          DataOutputStream jfif = new DataOutputStream(baos);
-         
-          jfif.write( JFIF_HEADER );
-          jfif.write( SOC_HEADER );
-          jfif.writeShort( (short) ( comment.limit() + 2 ) );
-          jfif.write( comment.array() );
-          jfif.write( YQ_HEADER );
-          jfif.write( yqFactors );
-          jfif.write( UVQ_HEADER );
-          jfif.write( uvqFactors );
-          jfif.write( sof.array() );
-          jfif.write( HUFFMAN_HEADER );
-          jfif.write( SOS_HEADER );
-          jfif.write( restOfData.array() );
-          jfif.write( EOI_MARKER );
-
-          return ByteBuffer.wrap(baos.toByteArray());
-        }
-        catch (IOException e)
-          {
-            throw new RuntimeException(e);
-          }
+        return new SimpleDateFormat( TIME_FORMAT );
     }
 
     /**
@@ -210,19 +130,102 @@ final class JFIFHeader
         return results;
     }
 
-  public static SimpleDateFormat getDateFormat()
-  {
-    return new SimpleDateFormat( DATE_FORMAT );
-  }
+    /**
+     * Parses out a comment field from JFIF data.
+     * 
+     * @param jfif
+     *        the raw JFIF bytes.
+     * @return a String containing the comments.
+     * @throws a
+     *         BufferUnderflowException if no comment field is found.
+     */
+    static String getComments( final ByteBuffer jfif )
+    {
+        while ( true )
+        {
+            if ( ( jfif.get() & 0xFF ) == 0xFF && ( jfif.get() & 0xFF ) == 0xFE )
+            {
+                final short commentLength = jfif.getShort();
+                final byte[] comment = new byte[commentLength];
+                jfif.get( comment );
+                try
+                {
+                    return new String( comment );
+                }
+                finally
+                {
+                    jfif.position( 0 );
+                }
+            }
+        }
+    }
 
-  public static SimpleDateFormat getTimeFormat()
-  {
-    return new SimpleDateFormat( TIME_FORMAT);
-  }
+    /**
+     * Given a ByteBuffer containing JPEG data, and an ImageDataStruct
+     * containing a minimised JPEG header, constructs a JFIF packet containing
+     * that data.
+     * 
+     * @param source
+     *        the ByteBuffer containing JPEG data.
+     * @param imageDataStruct
+     *        the ImageDataStruct containing a minimised JPEG header.
+     * @return a JFIFPacket.
+     * @throws NullPointerException
+     *         if either of the parameters are null.
+     */
+    static ByteBuffer jpegToJfif( ByteBuffer source )
+    {
+        source = source.duplicate();
+        source.position( 0 );
+        CheckParameters.areNotNull( source );
+        final ImageDataStruct imageDataStruct = new ImageDataStruct( source );
+        final ByteBuffer commentOriginal =
+                IO.slice( source, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE, imageDataStruct.getStartOffset() );
+        final ByteBuffer restOfData =
+                IO.from( source, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + imageDataStruct.getStartOffset() );
+        restOfData.position( 0 );
+        commentOriginal.limit( imageDataStruct.getStartOffset() );
+        final ByteBuffer comment = getComment( imageDataStruct, commentOriginal );
+        final byte[] yqFactors = getYQFactors( imageDataStruct.getQFactor() );
+        final byte[] uvqFactors = getUVQFactors( imageDataStruct.getQFactor() );
 
+        final ByteBuffer sof = ByteBuffer.allocate( 19 );
+        sof.put( byteArrayLiteral( new int[] { 0xFF, 0xC0, 0x00, 0x11, 0x08 } ) );
+        sof.order( ByteOrder.LITTLE_ENDIAN );
+        sof.putShort( imageDataStruct.getTargetLines() );
+        sof.putShort( imageDataStruct.getTargetPixels() );
+        sof.order( ByteOrder.BIG_ENDIAN );
+        sof.put( byteArrayLiteral( new int[] { 0x03, 0x01,
+            imageDataStruct.getVideoFormat() == VideoFormat.JPEG_411 ? 0x22 : 0x21, 0x00, 0x02, 0x11, 0x01, 0x03,
+            0x11, 0x01 } ) );
+        sof.position( 0 );
 
-  private static final String DATE_FORMAT = "dd/MM/yyyy";
-  private static final String TIME_FORMAT = "HH:mm:ss";
+        try
+        {
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final DataOutputStream jfif = new DataOutputStream( baos );
+
+            jfif.write( JFIF_HEADER );
+            jfif.write( SOC_HEADER );
+            jfif.writeShort( (short) ( comment.limit() + 2 ) );
+            jfif.write( comment.array() );
+            jfif.write( YQ_HEADER );
+            jfif.write( yqFactors );
+            jfif.write( UVQ_HEADER );
+            jfif.write( uvqFactors );
+            jfif.write( sof.array() );
+            jfif.write( HUFFMAN_HEADER );
+            jfif.write( SOS_HEADER );
+            jfif.write( restOfData.array() );
+            jfif.write( EOI_MARKER );
+
+            return ByteBuffer.wrap( baos.toByteArray() );
+        }
+        catch ( final IOException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
 
     /**
      * Constructs a valid JFIF comment block, given an ImageDataStruct and other
@@ -262,29 +265,40 @@ final class JFIFHeader
         return buffer;
     }
 
-  /**
-   * Calculates the amount of space to reserve for the generated comment block.
-   * @param camera the camera or channel number to include in the output.
-   * @param utcOffset the offset from UTC representing the timezone that the data was recorded in.
-   * @param commentData the comment data read from the stream.
-   * @return the amount of space the generated comment block must take.
-   */
+    /**
+     * Calculates the amount of space to reserve for the generated comment
+     * block.
+     * 
+     * @param camera
+     *        the camera or channel number to include in the output.
+     * @param utcOffset
+     *        the offset from UTC representing the timezone that the data was
+     *        recorded in.
+     * @param commentData
+     *        the comment data read from the stream.
+     * @return the amount of space the generated comment block must take.
+     */
     private static int getCommentByteCount( final int camera, final int utcOffset, final ByteBuffer commentData )
     {
         CheckParameters.areNotNull( commentData );
         return 9 + widthOfInt( camera ) + widthOfInt( utcOffset ) + commentData.limit();
     }
 
-  /**
-   * Calculates the quantisation data to use in the generated JFIF header.  There are two sets of quantisation factors;
-   * which one to use is decided by the 'constants' parameter.
-   *
-   * @param qFactor the quantisation factor to calculate the quantisation data for.
-   * @param constants the set of quantisation constants to use in the calculation.
-   * @return the quantisation data to use in the generated JFIF header.
-   * @throws NullPointerException if constants is null.
-   * @throws IllegalArgumentException if qFactor is not between 1 and 255 inclusive.
-   */
+    /**
+     * Calculates the quantisation data to use in the generated JFIF header.
+     * There are two sets of quantisation factors; which one to use is decided
+     * by the 'constants' parameter.
+     * 
+     * @param qFactor
+     *        the quantisation factor to calculate the quantisation data for.
+     * @param constants
+     *        the set of quantisation constants to use in the calculation.
+     * @return the quantisation data to use in the generated JFIF header.
+     * @throws NullPointerException
+     *         if constants is null.
+     * @throws IllegalArgumentException
+     *         if qFactor is not between 1 and 255 inclusive.
+     */
     private static byte[] getQFactors( final int qFactor, final byte[] constants )
     {
         CheckParameters.areNotNull( constants );
@@ -299,23 +313,31 @@ final class JFIFHeader
         return results;
     }
 
-  /**
-   * Calculates the UV quantisation data given the specified quantisation factor.
-   * @param qFactor the quantisation factor to calculate UV quantisation data for.
-   * @return the UV quantisation data for the specified quantisation factor.
-   * @throws IllegalArgumentException if qFactor is not between 1 and 255 inclusive.
-   */
+    /**
+     * Calculates the UV quantisation data given the specified quantisation
+     * factor.
+     * 
+     * @param qFactor
+     *        the quantisation factor to calculate UV quantisation data for.
+     * @return the UV quantisation data for the specified quantisation factor.
+     * @throws IllegalArgumentException
+     *         if qFactor is not between 1 and 255 inclusive.
+     */
     private static byte[] getUVQFactors( final int qFactor )
     {
         return getQFactors( qFactor, UVVIS );
     }
 
-  /**
-   * Calculates the Y quantisation data given the specified quantisation factor.
-   * @param qFactor the quantisation factor to calculate Y quantisation data for.
-   * @return the Y quantisation data for the specified quantisation factor.
-   * @throws IllegalArgumentException if qFactor is not between 1 and 255 inclusive.
-   */
+    /**
+     * Calculates the Y quantisation data given the specified quantisation
+     * factor.
+     * 
+     * @param qFactor
+     *        the quantisation factor to calculate Y quantisation data for.
+     * @return the Y quantisation data for the specified quantisation factor.
+     * @throws IllegalArgumentException
+     *         if qFactor is not between 1 and 255 inclusive.
+     */
     private static byte[] getYQFactors( final int qFactor )
     {
         return getQFactors( qFactor, YVIS );

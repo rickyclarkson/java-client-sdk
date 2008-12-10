@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
-import java.io.UnsupportedEncodingException;
 
 import uk.org.netvu.util.CheckParameters;
 
@@ -14,6 +13,13 @@ import uk.org.netvu.util.CheckParameters;
  */
 final class IO
 {
+    public static ByteBuffer duplicate( final ByteBuffer b )
+    {
+        final ByteBuffer result = b.duplicate();
+        result.position( 0 );
+        return result;
+    }
+
     /**
      * Reads the next line from the specified InputStream and returns it as an
      * int.
@@ -126,6 +132,25 @@ final class IO
         }
     }
 
+    public static String find( final String in, final String after, final String ifNotFound )
+    {
+        final int index = in.indexOf( after );
+        return index < 0 ? ifNotFound : in.substring( index + after.length(), in.indexOf( "\r", index ) );
+    }
+
+    public static int findInt( final String in, final String after, final int ifNotFound )
+    {
+        final String s = find( in, after, null );
+        return s == null ? ifNotFound : Integer.parseInt( s );
+    }
+
+    public static byte[] readIntoByteArray( final ByteBuffer from, final int length )
+    {
+        final byte[] bytes = new byte[length];
+        from.get( bytes );
+        return bytes;
+    }
+
     /**
      * Reads the specified number of bytes from the specified InputStream into a
      * ByteBuffer.
@@ -174,89 +199,66 @@ final class IO
      */
     public static String readLine( final InputStream input ) throws IOException
     {
-      CheckParameters.areNotNull( input );
+        CheckParameters.areNotNull( input );
 
-      final StringBuilder soFar = new StringBuilder();
+        final StringBuilder soFar = new StringBuilder();
 
-      for (;;)
-      {
-        final int b = input.read();
-        switch ( b )
+        for ( ;; )
         {
-            case '\n':
-              return soFar.toString();
-            case '\r':
-              break;
-            case -1:
-              throw new EOFException();
-            default:
-              soFar.append((char) b );
+            final int b = input.read();
+            switch ( b )
+            {
+                case '\n':
+                    return soFar.toString();
+                case '\r':
+                    break;
+                case -1:
+                    throw new EOFException();
+                default:
+                    soFar.append( (char) b );
+            }
         }
     }
+
+    public static int searchFor( final ByteBuffer in, final byte[] toFind )
+    {
+        int i = 0;
+        outer: while ( true )
+        {
+            in.position( i++ );
+
+            for ( final byte b : toFind )
+            {
+                if ( in.get() != b )
+                {
+                    continue outer;
+                }
+            }
+
+            return i - 1;
+        }
     }
 
-  static ByteBuffer from(ByteBuffer b, int position)
-  {
-    ByteBuffer result = b.duplicate();
-    result.position(position);
-    result = result.slice();
-    result.position(0);
-    return result;
-  }
+    static ByteBuffer from( final ByteBuffer b, final int position )
+    {
+        ByteBuffer result = b.duplicate();
+        result.position( position );
+        result = result.slice();
+        result.position( 0 );
+        return result;
+    }
 
-  static ByteBuffer slice(ByteBuffer b, int from, int length)
-  {
-    ByteBuffer result = from(b, from);
-    result.limit(length);
-    return result;
-  }
+    static ByteBuffer slice( final ByteBuffer b, final int from, final int length )
+    {
+        final ByteBuffer result = from( b, from );
+        result.limit( length );
+        return result;
+    }
 
-  /**
+    /**
      * Private to prevent instantiation.
      */
     private IO()
     {
     }
-
-  public static int searchFor(ByteBuffer in, byte[] toFind)
-  {
-    int i = 0;
-  outer:
-    while (true)
-      {
-        in.position(i++);
-
-        for (byte b: toFind)
-          if (in.get() != b)
-            continue outer;
-
-        return i - 1;
-      }
-  }
-
-  public static byte[] readIntoByteArray(ByteBuffer from, int length)
-  {
-    byte[] bytes = new byte[length];
-    from.get(bytes);
-    return bytes;
-  }
-
-  public static String find(String in, String after, String ifNotFound)
-  {
-    int index = in.indexOf(after);
-    return index < 0 ? ifNotFound : in.substring(index + after.length(), in.indexOf("\r", index));
-  }
-
-  public static int findInt(String in, String after, int ifNotFound)
-  {
-    String s = find(in, after, null);
-    return s == null ? ifNotFound : Integer.parseInt(s);
-  }
-
-  public static ByteBuffer duplicate(ByteBuffer b)
-  {
-    ByteBuffer result = b.duplicate();
-    result.position(0);
-    return result;
-  }
 }
