@@ -7,7 +7,7 @@
                 <item name="Parse Video Streams"/>
             </item>
             <item name="Supported Platforms"
-            href="supported-platforms.html"/>
+                  href="supported-platforms.html"/>
             <item name="Performance Constraints" href="performance-constraints.html"/>
         </menu>
         <menu name="Design">

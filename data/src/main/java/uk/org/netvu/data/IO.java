@@ -1,6 +1,6 @@
 package uk.org.netvu.data;
 
-import java.io.EOFException;
+import java.io.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -10,10 +10,34 @@ import java.nio.channels.Channels;
 import uk.org.netvu.util.CheckParameters;
 
 /**
- * A utility class for dealing with reading values from InputStreams.
+ * A utility class for dealing with reading values from InputStreams and ByteBuffers.
  */
 final class IO
 {
+  public static String bytesToString(byte[] b)
+  {
+    try
+    {
+      return new String(b, "US-ASCII");
+    }
+    catch (UnsupportedEncodingException e)
+      {
+        throw new RuntimeException(e);
+      }
+  }
+
+  public static byte[] stringToBytes(String s)
+  {
+    try
+    {
+      return s.getBytes("US-ASCII");
+    }
+    catch (UnsupportedEncodingException e)
+      {
+        throw new RuntimeException(e);
+      }
+  }
+
     public static ByteBuffer duplicate( final ByteBuffer b )
     {
         final ByteBuffer result = b.duplicate();

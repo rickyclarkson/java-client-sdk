@@ -56,7 +56,7 @@ class MimeParser implements Parser
                     final RawPacket next = readRawPacket( input );
                     if ( next.contentType.equals( "text/plain" ) )
                     {
-                        final String comment = new String( next.data.array(), "US-ASCII" );
+                      final String comment = IO.bytesToString( next.data.array() );
                         final int channel = getChannelFromCommentBlock( comment );
 
                         handler.mpeg4FrameArrived( new Packet( channel )
@@ -75,7 +75,7 @@ class MimeParser implements Parser
                                     new Exception().printStackTrace();
                                 }
                                 final ImageDataStruct imageDataStruct =
-                                        JFIFPacket.createImageDataStruct( packet.data, comment,
+                                        ImageDataStruct.createImageDataStruct( packet.data, comment,
                                                 VideoFormat.MPEG4_P_FRAME, resolution[0].shortValue(),
                                                 resolution[1].shortValue() );
                                 // TODO detect what kind of MPEG4 frame it is.
@@ -96,10 +96,6 @@ class MimeParser implements Parser
                                     AudioDataStruct.VERSION ) );
 
                     audioDataStruct.setMode( Integer.parseInt( packet.contentType.substring( "audio/adpcm; rate=".length() ) ) );
-                    if ( false )
-                    {
-                        throw null;
-                    }
                     audioDataStruct.setChannel( 0 );
                     audioDataStruct.setStartOffset( AudioDataStruct.AUDIO_DATA_STRUCT_SIZE );
                     audioDataStruct.setSize( packet.data.limit() );
@@ -160,10 +156,6 @@ class MimeParser implements Parser
         final String contentType = IO.readLine( input );
         IO.expectString( input, "Content-length: " );
         final int length = IO.expectIntFromRestOfLine( input );
-        if ( length == 1 )
-        {
-            throw null;
-        }
 
         IO.expectLine( input, "" );
         final ByteBuffer data = IO.readIntoByteBuffer( input, length );

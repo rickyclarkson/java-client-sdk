@@ -40,8 +40,7 @@ abstract class FrameType
     };
 
     /**
-     * An MPEG-4 frame read from a minimal stream. It does the same as MPEG4,
-     * but omits the ImageDataStruct and comment field.
+     * An MPEG-4 frame read from a minimal stream.  An MPEG-4 frame from a minimal stream is the same as from a binary stream, but without an ImageDataStruct and comment block.
      */
     public static final FrameType MPEG4_MINIMAL = new FrameType()
     {
@@ -64,7 +63,7 @@ abstract class FrameType
                     // TODO implement choosing between frame types. The frame
                     // type is in the stream header.
 
-                    return JFIFPacket.createImageDataStruct( input, "", VideoFormat.MPEG4_P_FRAME, xres, yres ).getByteBuffer();
+                    return ImageDataStruct.createImageDataStruct( input, "", VideoFormat.MPEG4_P_FRAME, xres, yres ).getByteBuffer();
                 }
             } );
         }
@@ -136,7 +135,6 @@ abstract class FrameType
             case 3:
                 return FrameType.MPEG4;
             case 4:
-            case 7:
                 return new FrameType()
                 {
                     @Override

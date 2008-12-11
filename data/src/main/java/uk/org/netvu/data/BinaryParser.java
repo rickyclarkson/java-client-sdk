@@ -46,7 +46,7 @@ final class BinaryParser implements Parser
                 final ByteBuffer data = IO.readIntoByteBuffer( input, length );
                 data.position( 0 );
 
-                // A minimal stream begins with an info packet containing
+                // A minimal stream containing MPEG-4 data begins with an info packet containing
                 // "IMAGESIZE 0,0:123,456", where 123 and 456 are the
                 // resolution of the frames. We parse that out and store it in
                 // the resolutions array.
@@ -54,7 +54,7 @@ final class BinaryParser implements Parser
                 // anonymous classes.
                 // The type of it is Short rather than short to catch any
                 // accidental misuses. This means that if the info
-                // packet is missing, a minimal stream will not be parsed (a
+                // packet is missing, a minimal stream containing MPEG-4 will not be parsed (a
                 // NullPointerException will result).
 
                 frameType.deliverTo( new StreamHandler()
@@ -65,15 +65,7 @@ final class BinaryParser implements Parser
 
                     public void infoArrived( final Packet packet )
                     {
-                        String s;
-                        try
-                        {
-                            s = new String( packet.getData().array(), "US-ASCII" );
-                        }
-                        catch ( final UnsupportedEncodingException e )
-                        {
-                            throw new RuntimeException( e );
-                        }
+                      String s = IO.bytesToString( packet.getData().array() );
 
                         final String header = "IMAGESIZE 0,0:";
                         int index = s.indexOf( header );

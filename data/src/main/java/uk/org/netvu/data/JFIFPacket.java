@@ -13,86 +13,6 @@ import uk.org.netvu.util.CheckParameters;
 final class JFIFPacket
         extends Packet
 {
-    static ImageDataStruct createImageDataStruct( final ByteBuffer data, final String comment,
-            final VideoFormat videoFormat, final short targetLines, final short targetPixels )
-    {
-      ByteBuffer imageDataBuffer = ByteBuffer.allocate( ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + comment.length() + data.limit() ).putInt( 0xDECADE11 );
-      imageDataBuffer.position(ImageDataStruct.IMAGE_DATA_STRUCT_SIZE);
-      try
-      {
-        imageDataBuffer.put(comment.getBytes("US-ASCII"));
-      } catch (UnsupportedEncodingException e) { throw new RuntimeException(e); }
-
-      imageDataBuffer.put(data);
-
-      final ImageDataStruct imageDataStruct = new ImageDataStruct( imageDataBuffer );
-
-        final int modeChosenByReadingGenericVideoHeader = 2;
-        imageDataStruct.setMode( modeChosenByReadingGenericVideoHeader );
-
-        imageDataStruct.setCamera( IO.findInt( comment, "Number: ", 0 ) );
-
-        imageDataStruct.setVideoFormat( videoFormat );
-
-        imageDataStruct.setStartOffset( comment.length() );
-        imageDataStruct.setSize( data.limit() );
-
-        final int maxSizeChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setMaxSize( maxSizeChosenByReadingGenericVideoHeader );
-
-        final int targetSizeChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setTargetSize( targetSizeChosenByReadingGenericVideoHeader );
-
-        final int qFactorChosenByReadingGenericVideoHeader = -1;
-        imageDataStruct.setQFactor( qFactorChosenByReadingGenericVideoHeader );
-
-        final int alarmBitmaskHighChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setAlarmBitmaskHigh( alarmBitmaskHighChosenByReadingGenericVideoHeader );
-
-        final int statusChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setStatus( statusChosenByReadingGenericVideoHeader );
-
-        try
-        {
-            imageDataStruct.setSessionTime( (int) ( JFIFHeader.getDateFormat().parse(
-                    IO.find( comment, "Date: ", "01/01/1970" ) ).getTime() + JFIFHeader.getTimeFormat().parse(
-                    IO.find( comment, "Time: ", "00:00:00" ) ).getTime() ) );
-        }
-        catch ( final ParseException e )
-        {
-            throw new RuntimeException( e );
-        }
-
-        imageDataStruct.setMilliseconds( IO.findInt( comment, "MSec: ", 0 ) );
-
-        final String resChosenByReadingGenericVideoHeader = "";
-        imageDataStruct.setRes( resChosenByReadingGenericVideoHeader );
-        imageDataStruct.setTitle( IO.find( comment, "Name: ", "" ) );
-        imageDataStruct.setAlarm( IO.find( comment, "Alarm-text: ", "" ) );
-
-        final short srcPixelsChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setSrcPixels( srcPixelsChosenByReadingGenericVideoHeader );
-
-        final short srcLinesChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setSrcLines( srcLinesChosenByReadingGenericVideoHeader );
-
-        imageDataStruct.setTargetPixels( targetPixels );
-        imageDataStruct.setTargetLines( targetLines );
-
-        final short pixelOffsetChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setPixelOffset( pixelOffsetChosenByReadingGenericVideoHeader );
-
-        final short lineOffsetChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setLineOffset( lineOffsetChosenByReadingGenericVideoHeader );
-
-        imageDataStruct.setLocale( IO.find( comment, "Locale: ", "" ) );
-        imageDataStruct.setUtcOffset( IO.findInt( comment, "UTCoffset: ", 0 ) );
-
-        final int alarmBitmaskChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setAlarmBitmask( alarmBitmaskChosenByReadingGenericVideoHeader );
-
-        return imageDataStruct;
-    }
     /**
      * The JFIF frame.
      */
@@ -141,16 +61,7 @@ final class JFIFPacket
         final int commentPosition = IO.searchFor( data, JFIFHeader.byteArrayLiteral( new int[] { 0xFF, 0xFE } ) );
         data.position( commentPosition + 2 );
         final int commentLength = data.getShort();
-        String comment;
-
-        try
-        {
-            comment = new String( IO.readIntoByteArray( data, commentLength ), "US-ASCII" );
-        }
-        catch ( final UnsupportedEncodingException e )
-        {
-            throw new RuntimeException( e );
-        }
+        String comment = IO.bytesToString( IO.readIntoByteArray( data, commentLength ) );
 
         final VideoFormat videoFormat =
                 data.get( IO.searchFor( data, JFIFHeader.byteArrayLiteral( new int[] { 0xFF, 0xC0 } ) ) + 11 ) == 0x22 ? VideoFormat.JPEG_422
@@ -158,7 +69,7 @@ final class JFIFPacket
         final short targetPixels = data.getShort( IO.searchFor( data, new byte[] { (byte) 0xFF, (byte) 0xC0 } ) + 5 );
         final short targetLines = data.getShort( IO.searchFor( data, new byte[] { (byte) 0xFF, (byte) 0xC0 } ) + 7 );
         final ImageDataStruct imageDataStruct =
-                createImageDataStruct( data, comment, videoFormat, targetLines, targetPixels );
+                ImageDataStruct.createImageDataStruct( data, comment, videoFormat, targetLines, targetPixels );
         return imageDataStruct.getByteBuffer();
     }
 }

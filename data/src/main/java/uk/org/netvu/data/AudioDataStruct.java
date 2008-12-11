@@ -7,8 +7,8 @@ public final class AudioDataStruct
     private static final int VERSION_OFFSET = 0;
     private static final int MODE_OFFSET = VERSION_OFFSET + 4;
     private static final int CHANNEL_OFFSET = MODE_OFFSET + 4;
-    private static final int START_OFFSET_OFFSET = CHANNEL_OFFSET + 4;
-    private static final int SIZE_OFFSET = START_OFFSET_OFFSET + 4;
+    private static final int DATA_POSITION_OFFSET = CHANNEL_OFFSET + 4;
+    private static final int SIZE_OFFSET = DATA_POSITION_OFFSET + 4;
     private static final int SECONDS_OFFSET = SIZE_OFFSET + 4;
     private static final int MILLISECONDS_OFFSET = SECONDS_OFFSET + 4;
 
@@ -55,7 +55,7 @@ public final class AudioDataStruct
 
     public int getStartOffset()
     {
-        return IO.readInt( buffer, START_OFFSET_OFFSET );
+      return IO.readInt( buffer, DATA_POSITION_OFFSET );
     }
 
     public int getVersion()
@@ -90,6 +90,6 @@ public final class AudioDataStruct
 
     public void setStartOffset( final int startOffset )
     {
-        buffer.putInt( START_OFFSET_OFFSET, startOffset );
+        buffer.putInt( DATA_POSITION_OFFSET, startOffset );
     }
 }
