@@ -4,7 +4,7 @@ Parse Video Streams
 
 * Summary:
 
-  When writing end-user programs that depend on parsing video streams, it is better that the program does not have to deal with many special cases, as would be the case without this library.
+  When writing end-user programs that depend on parsing video streams, it is better that the program does not have to deal with many special cases, as would be the case without this library.  The library should provide access to the frames of data in their most useful forms (e.g., construct a JFIF rather than supplying a truncated JPEG), and in forms suitable for writing to disk (video frames should be wrapped in image_data structs for this, and audio packets in audio_data structs, as per the server code).
 
 * Related ticket(s):
 

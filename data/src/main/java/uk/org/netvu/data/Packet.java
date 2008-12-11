@@ -18,7 +18,7 @@ public abstract class Packet
         this.channel = channel;
     }
 
-    public int getChannel()
+    public final int getChannel()
     {
         return channel;
     }
