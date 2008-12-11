@@ -204,6 +204,7 @@ public final class ImageDataStruct
         final int indexOfNull = input.indexOf( '\0' );
         return indexOfNull == -1 ? input : input.substring( 0, indexOfNull );
     }
+
     private final ByteBuffer buffer;
 
     /**

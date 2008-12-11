@@ -16,8 +16,16 @@ final class JFIFPacket
     static ImageDataStruct createImageDataStruct( final ByteBuffer data, final String comment,
             final VideoFormat videoFormat, final short targetLines, final short targetPixels )
     {
-        final ImageDataStruct imageDataStruct =
-                new ImageDataStruct( ByteBuffer.allocate( ImageDataStruct.IMAGE_DATA_STRUCT_SIZE ).putInt( 0xDECADE11 ) );
+      ByteBuffer imageDataBuffer = ByteBuffer.allocate( ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + comment.length() + data.limit() ).putInt( 0xDECADE11 );
+      imageDataBuffer.position(ImageDataStruct.IMAGE_DATA_STRUCT_SIZE);
+      try
+      {
+        imageDataBuffer.put(comment.getBytes("US-ASCII"));
+      } catch (UnsupportedEncodingException e) { throw new RuntimeException(e); }
+
+      imageDataBuffer.put(data);
+
+      final ImageDataStruct imageDataStruct = new ImageDataStruct( imageDataBuffer );
 
         final int modeChosenByReadingGenericVideoHeader = 2;
         imageDataStruct.setMode( modeChosenByReadingGenericVideoHeader );
