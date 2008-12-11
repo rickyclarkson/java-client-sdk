@@ -22,7 +22,7 @@ final class UnknownPacket
      * @param metadata
      *        the metadata about the packet.
      */
-    public UnknownPacket( final ByteBuffer data, final int channel, final int length )
+    public UnknownPacket( final ByteBuffer data, final int channel )
     {
         super( channel );
         this.data = data;

@@ -14,8 +14,8 @@ abstract class FrameType
     public static final FrameType MPEG4 = new FrameType()
     {
         @Override
-        void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length,
-                final int frameType, final Short ignored, final Short ignored2 ) throws IOException
+        void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel,
+                final Short ignored, final Short ignored2 ) throws IOException
         {
             CheckParameters.areNotNull( handler, input );
             final ImageDataStruct imageHeader = new ImageDataStruct( input );
@@ -45,10 +45,10 @@ abstract class FrameType
     public static final FrameType MPEG4_MINIMAL = new FrameType()
     {
         @Override
-        void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length,
-                final int frameType, final Short xres, final Short yres ) throws IOException
+        void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel,
+                final Short xres, final Short yres ) throws IOException
         {
-            CheckParameters.areNotNull( handler, input, frameType );
+            CheckParameters.areNotNull( handler, input);
             handler.mpeg4FrameArrived( new Packet( channel )
             {
                 @Override
@@ -75,11 +75,11 @@ abstract class FrameType
     public static final FrameType INFO = new FrameType()
     {
         @Override
-        void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length,
-                final int frameType, final Short ignored, final Short ignored2 ) throws IOException
+        void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel,
+                final Short ignored, final Short ignored2 ) throws IOException
         {
-            CheckParameters.areNotNull( handler, data, frameType );
-            handler.infoArrived( new InfoPacket( data, channel, length ) );
+            CheckParameters.areNotNull( handler, data );
+            handler.infoArrived( new InfoPacket( data, channel ) );
         }
     };
     /**
@@ -88,11 +88,11 @@ abstract class FrameType
     public static final FrameType UNKNOWN = new FrameType()
     {
         @Override
-        void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel, final int length,
-                final int frameType, final Short ignored, final Short ignored2 ) throws IOException
+        void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel,
+                final Short ignored, final Short ignored2 ) throws IOException
         {
-            CheckParameters.areNotNull( handler, data, frameType );
-            handler.unknownDataArrived( new UnknownPacket( data, channel, length ) );
+            CheckParameters.areNotNull( handler, data );
+            handler.unknownDataArrived( new UnknownPacket( data, channel ) );
         }
     };
 
@@ -105,8 +105,8 @@ abstract class FrameType
         return new FrameType()
         {
             @Override
-            void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel, final int length,
-                    final int ignored, final Short ignored2, final Short ignored3 ) throws IOException
+            void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel,
+                    final Short ignored2, final Short ignored3 ) throws IOException
             {
                 CheckParameters.areNotNull( handler, input );
                 handler.jpegFrameArrived( new JFIFPacket( input, channel, truncated ) );
@@ -139,7 +139,7 @@ abstract class FrameType
                 {
                     @Override
                     public void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel,
-                            final int length, final int frameType, final Short ignored, final Short ignored2 )
+                            final Short ignored, final Short ignored2 )
                     {
                         CheckParameters.areNotNull( handler, data );
                         handler.audioDataArrived( new Packet( channel )
@@ -181,6 +181,5 @@ abstract class FrameType
      * @throws NullPointerException
      *         if any of the parameters are null.
      */
-    abstract void deliverTo( StreamHandler handler, ByteBuffer data, int channel, int length, int frameType,
-            Short xres, Short yres ) throws IOException;
+    abstract void deliverTo( StreamHandler handler, ByteBuffer data, int channel, Short xres, Short yres ) throws IOException;
 }

@@ -92,9 +92,9 @@ final class BinaryParser implements Parser
                     public void unknownDataArrived( final Packet packet )
                     {
                     }
-                }, IO.duplicate( data ), channel, length, frameTypeInt, null, null );
+                }, IO.duplicate( data ), channel, null, null );
 
-                frameType.deliverTo( handler, IO.duplicate( data ), channel, length, frameTypeInt, resolutions[0],
+                frameType.deliverTo( handler, IO.duplicate( data ), channel, resolutions[0],
                         resolutions[1] );
             }
         }

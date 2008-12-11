@@ -26,7 +26,7 @@ public final class InfoPacket
      * @throws NullPointerException
      *         if data or metadata are null.
      */
-    InfoPacket( final ByteBuffer data, final int channel, final int length )
+    InfoPacket( final ByteBuffer data, final int channel )
     {
         super( channel );
         CheckParameters.areNotNull( data );
