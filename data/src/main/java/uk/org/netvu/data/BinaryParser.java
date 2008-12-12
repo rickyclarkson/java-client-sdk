@@ -39,7 +39,7 @@ final class BinaryParser implements Parser
             while ( true )
             {
                 final int frameTypeInt = input.read();
-                final FrameParser frameType = FrameParser.frameTypeFor( frameTypeInt );
+                final FrameParser frameParser = FrameParser.frameParserFor( frameTypeInt );
 
                 final int channel = input.read() + 1;
                 final int length = new DataInputStream( input ).readInt();
@@ -57,7 +57,7 @@ final class BinaryParser implements Parser
                 // packet is missing, a minimal stream containing MPEG-4 will not be parsed (a
                 // NullPointerException will result).
 
-                frameType.deliverTo( new StreamHandler()
+                frameParser.parse( new StreamHandler()
                 {
                     public void audioDataArrived( final Packet packet )
                     {
@@ -94,7 +94,7 @@ final class BinaryParser implements Parser
                     }
                 }, IO.duplicate( data ), channel, null, null );
 
-                frameType.deliverTo( handler, IO.duplicate( data ), channel, resolutions[0],
+                frameParser.parse( handler, IO.duplicate( data ), channel, resolutions[0],
                         resolutions[1] );
             }
         }

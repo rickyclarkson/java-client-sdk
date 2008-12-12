@@ -2,15 +2,16 @@ package uk.org.netvu.data;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.*;
 
 import uk.org.netvu.util.CheckParameters;
 
 abstract class FrameParser
 {
-    public static final FrameParser MPEG4 = new FrameParser()
+    private static final FrameParser MPEG4 = new FrameParser()
     {
         @Override
-        void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel,
+        void parse( final StreamHandler handler, final ByteBuffer input, final int channel,
                 final Short ignored, final Short ignored2 ) throws IOException
         {
             CheckParameters.areNotNull( handler, input );
@@ -38,10 +39,10 @@ abstract class FrameParser
     /**
      * An MPEG-4 frame read from a minimal stream.  An MPEG-4 frame from a minimal stream is the same as from a binary stream, but without an ImageDataStruct and comment block.
      */
-    public static final FrameParser MPEG4_MINIMAL = new FrameParser()
+    private static final FrameParser MPEG4_MINIMAL = new FrameParser()
     {
         @Override
-        void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel,
+        void parse( final StreamHandler handler, final ByteBuffer input, final int channel,
                 final Short xres, final Short yres ) throws IOException
         {
             CheckParameters.areNotNull( handler, input);
@@ -68,10 +69,10 @@ abstract class FrameParser
     /**
      * Information (such as comments about the other data).
      */
-    public static final FrameParser INFO = new FrameParser()
+    private static final FrameParser INFO = new FrameParser()
     {
         @Override
-        void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel,
+        void parse( final StreamHandler handler, final ByteBuffer data, final int channel,
                 final Short ignored, final Short ignored2 ) throws IOException
         {
             CheckParameters.areNotNull( handler, data );
@@ -81,10 +82,10 @@ abstract class FrameParser
     /**
      * Unknown data. This should not be seen in normal circumstances.
      */
-    public static final FrameParser UNKNOWN = new FrameParser()
+    private static final FrameParser UNKNOWN = new FrameParser()
     {
         @Override
-        void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel,
+        void parse( final StreamHandler handler, final ByteBuffer data, final int channel,
                 final Short ignored, final Short ignored2 ) throws IOException
         {
             CheckParameters.areNotNull( handler, data );
@@ -92,23 +93,74 @@ abstract class FrameParser
         }
     };
 
+  private static final FrameParser TRUNCATED_JFIF = new FrameParser()
+    {
+      public void parse( final StreamHandler handler, final ByteBuffer input, final int channel, final Short ignored2, final Short ignored3) throws IOException
+      {
+        CheckParameters.areNotNull(handler, input);
+        
+        handler.jpegFrameArrived(new Packet(channel)
+          {
+            public ByteBuffer getData()
+            {
+              return JFIFHeader.jpegToJfif(input);
+            }
+
+            public ByteBuffer getOnWireFormat()
+            {
+              return IO.duplicate(input);
+            }
+          });
+      }
+    };
+
     /**
      * A complete JFIF, compatible with most display and image manipulation
      * programs.
      */
-    public static FrameParser jpeg( final boolean truncated )
-    {
-        return new FrameParser()
-        {
-            @Override
-            void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel,
+    private static FrameParser JFIF = new FrameParser()
+      {
+        @Override
+        void parse( final StreamHandler handler, final ByteBuffer input, final int channel,
                     final Short ignored2, final Short ignored3 ) throws IOException
+        {
+          CheckParameters.areNotNull( handler, input );
+          handler.jpegFrameArrived( new Packet( channel )
             {
-                CheckParameters.areNotNull( handler, input );
-                handler.jpegFrameArrived( new JFIFPacket( input, channel, truncated ) );
-            }
-        };
+              public ByteBuffer getData()
+              {
+                return IO.duplicate(input);
+              }
+              
+              public ByteBuffer getOnWireFormat()
+              {
+                final int commentPosition = IO.searchFor(input, JFIFHeader.byteArrayLiteral( new int[]{ 0xFF, 0xFE } ));
+                input.position(commentPosition + 2);
+                final int commentLength = input.getShort();
+                String comment = IO.bytesToString(IO.readIntoByteArray(input, commentLength));
+                final VideoFormat videoFormat = input.get(IO.searchFor(input, JFIFHeader.byteArrayLiteral(new int[]{0xFF, 0xC0})) + 11) == 0x22 ? VideoFormat.JPEG_422 : VideoFormat.JPEG_411;
+                final short targetPixels = input.getShort(IO.searchFor(input, new byte[]{(byte)0xFF, (byte)0xC0}) + 5);
+                final short targetLines = input.getShort(IO.searchFor(input, new byte[]{(byte)0xFF, (byte)0xC0})+7);
+                final ImageDataStruct imageDataStruct = ImageDataStruct.createImageDataStruct(input, comment, videoFormat, targetLines, targetPixels);
+                return imageDataStruct.getByteBuffer();
+              }
+            });         
+        }
+      };
+
+  private static final Map<Integer, FrameParser> frameParsers = new HashMap<Integer, FrameParser>()
+  {
+    {
+      // This is an instance initialiser.
+      put(0, TRUNCATED_JFIF);
+      put(1, JFIF);
+      put(2, MPEG4);
+      put(3, MPEG4);
+      put(4, ADPCM);
+      put(6, MPEG4_MINIMAL);
+      put(9, INFO);
     }
+  };
 
     /**
      * Gives the type of frame, according to the numbers used in the minimal and
@@ -119,49 +171,33 @@ abstract class FrameParser
      * @return the FrameParser that corresponds with value, or UNKNOWN if none
      *         exists.
      */
-    static FrameParser frameTypeFor( final int value )
+    static FrameParser frameParserFor( final int frameType )
     {
-        switch ( value )
-        {
-            case 1:
-                return FrameParser.jpeg( false );
-            case 0:
-                return FrameParser.jpeg( true );
-            case 2:
-            case 3:
-                return FrameParser.MPEG4;
-            case 4:
-                return new FrameParser()
-                {
-                    @Override
-                    public void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel,
-                            final Short ignored, final Short ignored2 )
-                    {
-                        CheckParameters.areNotNull( handler, data );
-                        handler.audioDataArrived( new Packet( channel )
-                        {
-                            @Override
-                            public ByteBuffer getData()
-                            {
-                                return data;
-                            }
-
-                            @Override
-                            public ByteBuffer getOnWireFormat()
-                            {
-                                return data;
-                            }
-                        } );
-                    }
-                };
-            case 6:
-                return FrameParser.MPEG4_MINIMAL;
-            case 9:
-                return FrameParser.INFO;
-            default:
-                return FrameParser.UNKNOWN;
-        }
+      return frameParsers.containsKey(frameType) ? frameParsers.get(frameType) : UNKNOWN;
     }
+
+  private static final FrameParser ADPCM = new FrameParser()
+    {
+      public void parse( final StreamHandler handler, final ByteBuffer data, final int channel,
+                         final Short ignored, final Short ignored2 )
+      {
+        CheckParameters.areNotNull( handler, data );
+        handler.audioDataArrived( new Packet( channel )
+          {
+            @Override
+            public ByteBuffer getData()
+            {
+              return data;
+            }
+            
+            @Override
+            public ByteBuffer getOnWireFormat()
+            {
+              return data;
+            }
+          } );
+      }
+    };
 
     /**
      * Delivers a frame of this type of data to the passed-in StreamHandler.
@@ -177,5 +213,5 @@ abstract class FrameParser
      * @throws NullPointerException
      *         if any of the parameters are null.
      */
-    abstract void deliverTo( StreamHandler handler, ByteBuffer data, int channel, Short xres, Short yres ) throws IOException;
+    abstract void parse( StreamHandler handler, ByteBuffer data, int channel, Short xres, Short yres ) throws IOException;
 }
