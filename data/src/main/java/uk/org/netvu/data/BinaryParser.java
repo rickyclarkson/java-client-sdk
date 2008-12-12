@@ -39,7 +39,7 @@ final class BinaryParser implements Parser
             while ( true )
             {
                 final int frameTypeInt = input.read();
-                final FrameType frameType = FrameType.frameTypeFor( frameTypeInt );
+                final FrameParser frameType = FrameParser.frameTypeFor( frameTypeInt );
 
                 final int channel = input.read() + 1;
                 final int length = new DataInputStream( input ).readInt();

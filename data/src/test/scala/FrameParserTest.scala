@@ -6,11 +6,11 @@ import specs.Specification
 import java.nio.ByteBuffer
 import java.io.ByteArrayInputStream
 
-class FrameTypeTest extends JUnit4(new Specification {
- "FrameType.UNKNOWN.deliverTo" should {
+class FrameParserTest extends JUnit4(new Specification {
+ "FrameParser.UNKNOWN.deliverTo" should {
   "deliver the input to the StreamHandler" in {
    var pass = false
-   FrameType.UNKNOWN.deliverTo(new StreamHandler { def unknownDataArrived(packet: Packet) = pass = true
+   FrameParser.UNKNOWN.deliverTo(new StreamHandler { def unknownDataArrived(packet: Packet) = pass = true
                                                    def infoArrived(packet: Packet) = ()
                                                    def audioDataArrived(packet: Packet) = ()
                                                    def jpegFrameArrived(packet: Packet) = ()
@@ -23,8 +23,8 @@ class FrameTypeTest extends JUnit4(new Specification {
   }
  }
 
- "FrameType.frameTypeFor" should {
-  import FrameType._
+ "FrameParser.frameTypeFor" should {
+  import FrameParser._
   val known = List(2 -> MPEG4, 3 -> MPEG4, 6 -> MPEG4_MINIMAL, 9 -> INFO)
   val unknown = List(-1, 5, 8, 10, 11, 12) map (x => x -> UNKNOWN)
   

@@ -5,13 +5,9 @@ import java.nio.ByteBuffer;
 
 import uk.org.netvu.util.CheckParameters;
 
-/**
- * An enumeration of the supported frame types from binary, minimal and mime
- * streams.
- */
-abstract class FrameType
+abstract class FrameParser
 {
-    public static final FrameType MPEG4 = new FrameType()
+    public static final FrameParser MPEG4 = new FrameParser()
     {
         @Override
         void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel,
@@ -42,7 +38,7 @@ abstract class FrameType
     /**
      * An MPEG-4 frame read from a minimal stream.  An MPEG-4 frame from a minimal stream is the same as from a binary stream, but without an ImageDataStruct and comment block.
      */
-    public static final FrameType MPEG4_MINIMAL = new FrameType()
+    public static final FrameParser MPEG4_MINIMAL = new FrameParser()
     {
         @Override
         void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel,
@@ -72,7 +68,7 @@ abstract class FrameType
     /**
      * Information (such as comments about the other data).
      */
-    public static final FrameType INFO = new FrameType()
+    public static final FrameParser INFO = new FrameParser()
     {
         @Override
         void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel,
@@ -85,7 +81,7 @@ abstract class FrameType
     /**
      * Unknown data. This should not be seen in normal circumstances.
      */
-    public static final FrameType UNKNOWN = new FrameType()
+    public static final FrameParser UNKNOWN = new FrameParser()
     {
         @Override
         void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel,
@@ -100,9 +96,9 @@ abstract class FrameType
      * A complete JFIF, compatible with most display and image manipulation
      * programs.
      */
-    public static FrameType jpeg( final boolean truncated )
+    public static FrameParser jpeg( final boolean truncated )
     {
-        return new FrameType()
+        return new FrameParser()
         {
             @Override
             void deliverTo( final StreamHandler handler, final ByteBuffer input, final int channel,
@@ -119,23 +115,23 @@ abstract class FrameType
      * binary stream formats.
      * 
      * @param value
-     *        the numeric value to find a matching FrameType for.
-     * @return the FrameType that corresponds with value, or UNKNOWN if none
+     *        the numeric value to find a matching FrameParser for.
+     * @return the FrameParser that corresponds with value, or UNKNOWN if none
      *         exists.
      */
-    static FrameType frameTypeFor( final int value )
+    static FrameParser frameTypeFor( final int value )
     {
         switch ( value )
         {
             case 1:
-                return FrameType.jpeg( false );
+                return FrameParser.jpeg( false );
             case 0:
-                return FrameType.jpeg( true );
+                return FrameParser.jpeg( true );
             case 2:
             case 3:
-                return FrameType.MPEG4;
+                return FrameParser.MPEG4;
             case 4:
-                return new FrameType()
+                return new FrameParser()
                 {
                     @Override
                     public void deliverTo( final StreamHandler handler, final ByteBuffer data, final int channel,
@@ -159,11 +155,11 @@ abstract class FrameType
                     }
                 };
             case 6:
-                return FrameType.MPEG4_MINIMAL;
+                return FrameParser.MPEG4_MINIMAL;
             case 9:
-                return FrameType.INFO;
+                return FrameParser.INFO;
             default:
-                return FrameType.UNKNOWN;
+                return FrameParser.UNKNOWN;
         }
     }
 
