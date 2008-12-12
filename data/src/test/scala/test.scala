@@ -65,12 +65,12 @@ class IOTest extends JUnit4(new Specification {
   }
  }
 
- "IO.expectIntFromRestOfLine" should {
+ "IO.readIntFromRestOfLine" should {
   "return an int when the rest of the line contains an int" in {
-   IO.expectIntFromRestOfLine(asInputStream(List("123", "bar"))) mustEqual 123
+   IO.readIntFromRestOfLine(asInputStream(List("123", "bar"))) mustEqual 123
   }
   "throw an IllegalStateException when the rest of the line does not contain an int" in {
-   IO.expectIntFromRestOfLine(asInputStream(List("23a", "bar"))) must throwA[IllegalStateException]
+   IO.readIntFromRestOfLine(asInputStream(List("23a", "bar"))) must throwA[IllegalStateException]
   }
  }
  
@@ -193,7 +193,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
 
       val version = packet.getOnWireFormat.getInt
       if (version != 0xDECADE10 && version != 0xDECADE11 )
-       throw new RuntimeException(version+" :(")
+       throw new RuntimeException(Integer.toHexString(version))
 
       val isIFrame: Boolean = {
        var foundVOP = false

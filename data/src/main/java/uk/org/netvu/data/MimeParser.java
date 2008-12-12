@@ -155,7 +155,7 @@ class MimeParser implements Parser
         IO.expectString( input, "Content-type: " );
         final String contentType = IO.readLine( input );
         IO.expectString( input, "Content-length: " );
-        final int length = IO.expectIntFromRestOfLine( input );
+        final int length = IO.readIntFromRestOfLine( input );
 
         IO.expectLine( input, "" );
         final ByteBuffer data = IO.readIntoByteBuffer( input, length );

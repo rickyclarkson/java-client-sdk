@@ -10,12 +10,21 @@ import java.nio.channels.Channels;
 import uk.org.netvu.util.CheckParameters;
 
 /**
- * A utility class for dealing with reading values from InputStreams and ByteBuffers.
+ * A utility class for dealing with InputStreams, ByteBuffers and byte[]s.
  */
 final class IO
 {
+  /**
+   * Converts a byte[] to a String using the US-ASCII character encoding.
+   * @param b the byte[] to convert to a String.
+   * @return the String after conversion.
+   *
+   * @throws NullPointerException if b is null.
+   */
   public static String bytesToString(byte[] b)
   {
+    CheckParameters.areNotNull(b);
+
     try
     {
       return new String(b, "US-ASCII");
@@ -26,8 +35,17 @@ final class IO
       }
   }
 
+  /**
+   * Converts a String to a byte[] using the US-ASCII character encoding.
+   *
+   * @param s the String to convert to a byte[].
+   * @return the byte[] after conversion.
+   * @throws NullPointerException if s is null.
+   */
   public static byte[] stringToBytes(String s)
   {
+    CheckParameters.areNotNull(s);
+
     try
     {
       return s.getBytes("US-ASCII");
@@ -38,15 +56,24 @@ final class IO
       }
   }
 
+  /**
+   * Duplicates a ByteBuffer, creating a ByteBuffer with the same backing data, but with a new position and limit.
+   * The position of the new ByteBuffer is 0.
+   * @param b the ByteBuffer to duplicate.
+   * @return a copy of this ByteBuffer, with the position set to 0.
+   * @throws NullPointerException if b is null.
+   */
     public static ByteBuffer duplicate( final ByteBuffer b )
     {
+      CheckParameters.areNotNull(b);
+
         final ByteBuffer result = b.duplicate();
         result.position( 0 );
         return result;
     }
 
     /**
-     * Reads the next line from the specified InputStream and returns it as an
+     * Reads the next line of text from the specified InputStream and returns it as an
      * int.
      * 
      * @param input
@@ -59,9 +86,10 @@ final class IO
      * @throws NullPointerException
      *         if input is null.
      */
-    public static int expectIntFromRestOfLine( final InputStream input ) throws IOException
+    public static int readIntFromRestOfLine( final InputStream input ) throws IOException
     {
         CheckParameters.areNotNull( input );
+
         try
         {
             return Integer.parseInt( IO.readLine( input ) );

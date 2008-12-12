@@ -6,8 +6,14 @@ import java.util.*;
 
 import uk.org.netvu.util.CheckParameters;
 
+/**
+ * Parsers for each of the supported data formats.
+ */
 abstract class FrameParser
 {
+  /**
+   * A FrameParser that can parse MPEG-4 frames that arrive complete with their ImageDataStruct.
+   */
     private static final FrameParser MPEG4 = new FrameParser()
     {
         @Override
@@ -37,7 +43,7 @@ abstract class FrameParser
     };
 
     /**
-     * An MPEG-4 frame read from a minimal stream.  An MPEG-4 frame from a minimal stream is the same as from a binary stream, but without an ImageDataStruct and comment block.
+     * A FrameParser that can read MPEG-4 frames read from a minimal stream.  An MPEG-4 frame from a minimal stream is the same as from a binary stream, but without an ImageDataStruct and comment block.
      */
     private static final FrameParser MPEG4_MINIMAL = new FrameParser()
     {
@@ -67,7 +73,7 @@ abstract class FrameParser
     };
 
     /**
-     * Information (such as comments about the other data).
+     * A FrameParser that can read INFO blocks, which are ASCII text.
      */
     private static final FrameParser INFO = new FrameParser()
     {
@@ -80,7 +86,7 @@ abstract class FrameParser
         }
     };
     /**
-     * Unknown data. This should not be seen in normal circumstances.
+     * A FrameParser that can read data of an unknown or unsupported type.
      */
     private static final FrameParser UNKNOWN = new FrameParser()
     {
@@ -93,6 +99,9 @@ abstract class FrameParser
         }
     };
 
+  /**
+   * A FrameParser that can read truncated JFIF frames - JFIF frames without their headers.  This parser reconstructs those frames.
+   */
   private static final FrameParser TRUNCATED_JFIF = new FrameParser()
     {
       public void parse( final StreamHandler handler, final ByteBuffer input, final int channel, final Short ignored2, final Short ignored3) throws IOException
@@ -148,6 +157,9 @@ abstract class FrameParser
         }
       };
 
+  /**
+   * Maps the ints found in the stream formats to FrameParsers to be used for parsing the data with.
+   */
   private static final Map<Integer, FrameParser> frameParsers = new HashMap<Integer, FrameParser>()
   {
     {
@@ -176,6 +188,9 @@ abstract class FrameParser
       return frameParsers.containsKey(frameType) ? frameParsers.get(frameType) : UNKNOWN;
     }
 
+  /**
+   * A FrameParser that can parse ADPCM data.
+   */
   private static final FrameParser ADPCM = new FrameParser()
     {
       public void parse( final StreamHandler handler, final ByteBuffer data, final int channel,
@@ -206,12 +221,13 @@ abstract class FrameParser
      *        the StreamHandler to deliver data to.
      * @param data
      *        the InputStream to read data from.
-     * @param metadata
-     *        information about the packet of data.
+     * @param channel the channel, or camera number, that the data arrived on.
+     * @param xres the horizontal resolution, if known - only used for MPEG-4 frames read from a minimal stream.  It is null if not known.
+     * @param yres the vertical resolution, if known - only used for MPEG-4 frames read from a minimal stream.  It is null if not known.
      * @throws IOException
      *         if there are any I/O errors.
      * @throws NullPointerException
-     *         if any of the parameters are null.
+     *         if handler or data are null.
      */
     abstract void parse( StreamHandler handler, ByteBuffer data, int channel, Short xres, Short yres ) throws IOException;
 }
