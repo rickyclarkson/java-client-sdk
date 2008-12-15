@@ -298,7 +298,7 @@ public final class ImageDataStruct
 
         if ( version != 0xDECADE10 && version != 0xDECADE11 )
         {
-            throw new IllegalArgumentException( "version is " + Integer.toHexString( version ) );
+            throw new IllegalStateException( "version is " + Integer.toHexString( version ) );
         }
     }
 
