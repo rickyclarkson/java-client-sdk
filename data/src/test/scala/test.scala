@@ -227,6 +227,23 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   }
  }
 
+ "parsing a binary stream containing unknown data" should {
+  "yield at least one unknown data packet to the StreamHandler" in {
+   val url = new URL("file:testdata/engineered-192-168-106-207-binary-unknown")
+   val connection = url.openConnection
+   var success = false
+   ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
+    def audioDataArrived(packet: Packet) = ()
+    def jpegFrameArrived(packet: Packet) = ()
+    def infoArrived(packet: Packet) = ()
+    def mpeg4FrameArrived(packet: Packet) = ()
+    def unknownDataArrived(packet: Packet) = success = true
+   })
+
+   success mustBe true
+  }
+ }
+
  "parsing a binary stream containing JPEGs" should {
   "produce identical JFIFs to GenericVideoHeader" in {
    val url = new URL("file:testdata/192-168-106-204-binary-jpeg")
