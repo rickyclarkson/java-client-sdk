@@ -182,8 +182,6 @@ public final class ImageDataStruct
      * @throws NullPointerException
      *         if any of the parameters are null.
      */
-    // TODO check that xres, yres haven't been swapped over for targetLines and
-    // targetPixels.
     static ImageDataStruct createImageDataStruct( final ByteBuffer data, final String comment,
             final VideoFormat videoFormat, final short targetLines, final short targetPixels )
     {

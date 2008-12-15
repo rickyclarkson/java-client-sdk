@@ -37,32 +37,29 @@ class MimeParser implements Parser
         byte[] startCode;
         int pos = 0;
 
-        if ( data != null )
+        startCode = new byte[4];
+        while ( !foundVOP && pos + 4 < data.limit() )
         {
-            startCode = new byte[4];
-            while ( !foundVOP && pos + 4 < data.limit() )
+            data.position( pos );
+            data.get( startCode );
+            if ( Arrays.equals( startCode, MPEG4_VOP_START ) )
             {
-                data.position( pos );
-                data.get( startCode );
-                if ( Arrays.equals( startCode, MPEG4_VOP_START ) )
-                {
-                    foundVOP = true;
-                }
-                pos++;
+                foundVOP = true;
             }
-            pos += 3;
-            if ( foundVOP )
+            pos++;
+        }
+        pos += 3;
+        if ( foundVOP )
+        {
+            final int pictureType = data.get( pos ) >> 6 & 0xFF;
+            if ( pictureType == 0 )
             {
-                final int pictureType = data.get( pos ) >> 6 & 0xFF;
-                if ( pictureType == 0 )
-                {
-                    return true;
-                }
+                return true;
             }
-            else
-            {
-                throw new RuntimeException( "Cannot find MPEG-4 VOP start code; cannot tell if I-frame" );
-            }
+        }
+        else
+        {
+            throw new RuntimeException( "Cannot find MPEG-4 VOP start code; cannot tell if I-frame" );
         }
         return false;
     }

@@ -118,6 +118,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     
     ParserFactory parserFor streamType parse (connection.getInputStream, new StreamHandler {
      def jpegFrameArrived(packet: Packet) = {
+      val rawData = packet.getOnWireFormat
       val buffer = packet.getData
       
       def next = buffer.get & 0xFF
