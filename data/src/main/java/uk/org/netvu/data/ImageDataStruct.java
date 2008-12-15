@@ -8,7 +8,7 @@ import java.text.ParseException;
 import uk.org.netvu.util.CheckParameters;
 
 /**
- * A representation of the 'image data' part of a minimised-JFIF.
+ * A data structure compatible with the image_data struct that video frames arrive in in binary streams.
  */
 public final class ImageDataStruct
 {
@@ -199,6 +199,9 @@ public final class ImageDataStruct
         return indexOfNull == -1 ? input : input.substring( 0, indexOfNull );
     }
 
+  /**
+   * The ByteBuffer in which all the data for this ImageDataStruct is stored.
+   */
     private final ByteBuffer buffer;
 
     /**
@@ -269,6 +272,11 @@ public final class ImageDataStruct
         return IO.readInt( buffer, CAM_OFFSET );
     }
 
+  /**
+   * Gets the value of the line offset field from this ImageDataStruct.
+   *
+   * @return the value of the line offset field from this ImageDataStruct.
+   */
     public short getLineOffset()
     {
         return readShort( LINE_OFFSET );
@@ -314,6 +322,11 @@ public final class ImageDataStruct
         return IO.readInt( buffer, MODE_OFFSET );
     }
 
+  /**
+   * Gets the value of the pixel offset field contained in the image data header.
+   *
+   * @return the value of the pixel offset field contained in the image data header.
+   */
     public short getPixelOffset()
     {
         return readShort( PIXEL_OFFSET );
@@ -360,11 +373,21 @@ public final class ImageDataStruct
         return IO.readInt( buffer, SIZE_OFFSET );
     }
 
+  /**
+   * Gets the source lines value (vertical resolution) contained in the image data header.
+   * 
+   * @return the source lines value (vertical resolution) contained in the image data header.
+   */
     public short getSrcLines()
     {
         return readShort( SRC_LINES_OFFSET );
     }
 
+  /**
+   * Gets the source pixels value (horizontal resolution) contained in the image data header.
+   *
+   * @return the source pixels value (horizontal resolution) contained in the image data header.
+   */
     public short getSrcPixels()
     {
         return readShort( SRC_PIXELS_OFFSET );
@@ -390,11 +413,21 @@ public final class ImageDataStruct
         return IO.readInt( buffer, STATUS_OFFSET );
     }
 
+    /**
+     * Gets the targetLines value contained in the image data header.
+     * 
+     * @return the targetLines value contained in the image data header.
+     */
     public short getTargetLines()
     {
         return readShort( TARGET_LINES );
     }
 
+    /**
+     * Gets the targetPixels value contained in the image data header.
+     * 
+     * @return the targetPixels value contained in the image data header.
+     */
     public short getTargetPixels()
     {
         return readShort( TARGET_PIXELS_OFFSET );
@@ -450,128 +483,242 @@ public final class ImageDataStruct
         return VideoFormat.valueOf( IO.readInt( buffer, VID_FORMAT_OFFSET ) );
     }
 
+  /**
+   * Sets the alarm contained in the image data header.
+   * @param s the alarm to store in the image data header.
+   * @throws NullPointerException if s is null.
+   */
     public void setAlarm( final String s )
     {
+      CheckParameters.areNotNull(s);
         write( nullPad( s, TITLE_LENGTH ), ALARM_OFFSET );
     }
 
+  /**
+   * Sets the alarm bitmask contained in the image data header.
+   * @param alarmBitmask the alarm bitmask to store in the image data header.
+   */
     public void setAlarmBitmask( final int alarmBitmask )
     {
         buffer.putInt( ALM_BITMASK, alarmBitmask );
     }
 
+  /**
+   * Sets the high-bit part of the alarm bitmask in the image data header.
+   * @param alarmBitmaskHigh the high-bit part of the alarm bitmask to store.
+   */
     public void setAlarmBitmaskHigh( final int alarmBitmaskHigh )
     {
         buffer.putInt( ALM_BITMASK_HI_OFFSET, alarmBitmaskHigh );
     }
 
+  /**
+   * Sets the camera number contained in the image data header.
+   * @param camera the camera number to store in the image data header.
+   */
     public void setCamera( final int camera )
     {
         buffer.putInt( CAM_OFFSET, camera );
     }
 
+  /**
+   * Sets the line offset contained in the image data header.
+   * @param lineOffset the line offset to store in the image data header.
+   */
     public void setLineOffset( final short lineOffset )
     {
         writeShort( LINE_OFFSET, lineOffset );
     }
 
+  /**
+   * Sets the locale contained in the image data header.
+   * @param locale the locale to store in the image data header.
+   * @throws NullPointerException if locale is null.
+   */
     public void setLocale( final String locale )
     {
+      CheckParameters.areNotNull(locale);
         write( nullPad( locale, MAX_NAME_LENGTH ), LOCALE_OFFSET );
     }
 
+  /**
+   * Sets the maxSize contained in the image data header.
+   * @param maxSize the max size to store in the image data header.
+   */
     public void setMaxSize( final int maxSize )
     {
         buffer.putInt( MAX_SIZE_OFFSET, maxSize );
     }
 
+  /**
+   * Sets the milliseconds part of the timestamp contained in the image data header.
+   * @param milliseconds the milliseconds part of the timestamp to store in the image data header.
+   */
     public void setMilliseconds( final int milliseconds )
     {
         buffer.putInt( MILLISECONDS_OFFSET, milliseconds );
     }
 
+  /**
+   * Sets the mode contained in the image data header.
+   * @param mode the mode contained in the image data header.
+   */
     public void setMode( final int mode )
     {
         buffer.putInt( MODE_OFFSET, mode );
     }
 
+  /**
+   * Sets the pixel offset contained in the image data header.
+   * @param pixelOffset the pixel offset to store in the image data header.
+   */
     public void setPixelOffset( final short pixelOffset )
     {
         writeShort( PIXEL_OFFSET, pixelOffset );
     }
 
+  /**
+   * Sets the quantisation factor contained in the image data header.
+   * @param qFactor the quantisation factor to store in the image data header.
+   */
     public void setQFactor( final int qFactor )
     {
         buffer.putInt( Q_FACTOR_OFFSET, qFactor );
     }
 
+  /**
+   * Sets the res value contained in the image data header.
+   * @param res the res value to store in the image data header.
+   * @throws NullPointerException if res is null.
+   */
     public void setRes( final String res )
     {
+      CheckParameters.areNotNull(res);
         write( nullPad( res, 4 ), RES_OFFSET );
     }
 
+  /**
+   * Sets the session time contained in the image data header.
+   * @param sessionTime the session time to store in the image data header.
+   */
     public void setSessionTime( final int sessionTime )
     {
         buffer.putInt( SESSION_TIME_OFFSET, sessionTime );
     }
 
+  /**
+   * Sets the size contained in the image data header.
+   * @param size the size to store in the image data header.
+   */
     public void setSize( final int size )
     {
         buffer.putInt( SIZE_OFFSET, size );
     }
 
+  /**
+   * Sets the srcLines value contained in the image data header.
+   * @param srcLines the srcLines value to store in the image data header.
+   */
     public void setSrcLines( final short srcLines )
     {
         writeShort( SRC_LINES_OFFSET, srcLines );
     }
 
+  /**
+   * Sets the srcPixels value contained in the image data header.
+   * @param srcPixels the srcPixels value to store in the image data header.
+   */
     public void setSrcPixels( final short srcPixels )
     {
         writeShort( SRC_PIXELS_OFFSET, srcPixels );
     }
 
+  /**
+   * Sets the startOffset value contained in the image data header.
+   * @param startOffset the startOffset value to store in the image data header.
+   */
     public void setStartOffset( final int startOffset )
     {
         buffer.putInt( START_OFFSET, startOffset );
     }
 
+  /**
+   * Sets the status contained in the image data header.
+   * @param status the status to store in the image data header.
+   */
     public void setStatus( final int status )
     {
         buffer.putInt( STATUS_OFFSET, status );
     }
 
+  /**
+   * Sets the targetLines value contained in the image data header.
+   * @param targetLines the targetLines value to store in the image data header.
+   */
     public void setTargetLines( final short targetLines )
     {
         writeShort( TARGET_LINES, targetLines );
     }
 
+  /**
+   * Sets the targetPixels value contained in the image data header.
+   * @param targetPixels the targetPixels value to store in the image data header.
+   */
     public void setTargetPixels( final short targetPixels )
     {
         writeShort( TARGET_PIXELS_OFFSET, targetPixels );
     }
 
+  /**
+   * Sets the targetSize value contained in the image data header.
+   * @param targetSize the targetSize value to store in the image data header.
+   */
     public void setTargetSize( final int targetSize )
     {
         buffer.putInt( TARGET_SIZE, targetSize );
     }
 
+  /**
+   * Sets the title contained in the image data header.
+   * @param title the title to store in the image data header.
+   * @throws NullPointerException if title is null.
+   */
     public void setTitle( final String title )
     {
+      CheckParameters.areNotNull(title);
         write( nullPad( title, TITLE_LENGTH ), TITLE_OFFSET );
     }
 
+  /**
+   * Sets the offset from UTC contained in the image data header.
+   * @param utcOffset the offset from UTC to store in the image data header.
+   */
     public void setUtcOffset( final int utcOffset )
     {
         buffer.putInt( UTC_OFFSET_OFFSET, utcOffset );
     }
 
+  /**
+   * Sets the video format contained in the image data header.
+   * @param format the video format to store in the image data header.
+   * @throws NullPointerException if format is null.
+   */
     public void setVideoFormat( final VideoFormat format )
     {
+      CheckParameters.areNotNull(format);
         buffer.putInt( VID_FORMAT_OFFSET, format.index );
     }
 
+  /**
+   * Copies the specified String to a byte[] of the specified length, using the US-ASCII character encoding, and leaving all trailing bytes set to 0.
+   * @param string the String to copy.
+   * @param length the length of the byte[] to copy the String into.
+   * @return a byte[] of the specified length containing the US-ASCII-encoded bytes from the specified String.
+   * @throws NullPointerException if string is null.
+   */
     private byte[] nullPad( final String string, final int length )
     {
+      CheckParameters.areNotNull(string);
        final byte[] bytes = new byte[length];
        System.arraycopy( IO.stringToBytes(string), 0, bytes, 0, string.length() );
        return bytes;
@@ -602,8 +749,8 @@ public final class ImageDataStruct
     }
 
     /**
-     * Reads a little-endian short from the specified position within the
-     * ByteBuffer relative to the offset.
+     * Reads a short from the specified position within the
+     * ByteBuffer relative to the offset, with the endianness according to the version field.
      * 
      * @param where
      *        the position within the ByteBuffer relative to the offset to read
@@ -624,17 +771,33 @@ public final class ImageDataStruct
 
     }
 
+  /**
+   * Gives the ByteOrder for reading the short fields with.  For 0xDECADE10 they are little-endian, and for 0xDECADE11 they are big-endian.
+   */
     private ByteOrder versionToByteOrder()
     {
         return getVersion() == 0xDECADE10 ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
     }
 
+  /**
+   * Writes the specified bytes to the ByteBuffer at the specified position within the ByteBuffer.
+   * @param bytes the bytes to write.
+   * @param position the position in the ByteBuffer at which to begin writing.
+   * @throws NullPointerException if bytes is null.
+   */
     private void write( final byte[] bytes, final int position )
     {
+      CheckParameters.areNotNull(bytes);
         buffer.position( position );
         buffer.put( bytes );
     }
 
+  /**
+   * Writes the specified short to the ByteBuffer at the specified position.  The endianness used is set according to the version field.
+   *
+   * @param position the position in the ByteBuffer at which to write the short.
+   * @param value the value to write.
+   */
     private void writeShort( final int position, final short value )
     {
         buffer.order( versionToByteOrder() );
@@ -648,9 +811,20 @@ public final class ImageDataStruct
         }
     }
 
+  /**
+   * Prepends an appropriate ImageDataStruct header and comment block to a ByteBuffer.
+   * @param data the video frame to include in the resulting ByteBuffer.
+   * @param comment the comment block to include in the resulting ByteBuffer.
+   * @param videoFormat the format of the video frame.
+   * @param targetLines the vertical resolution of the video frame.
+   * @return an ImageDataStruct according to the supplied parameters.
+   * @throws NullPointerException if any of the parameters are null.
+   */
+  // TODO check that xres, yres haven't been swapped over for targetLines and targetPixels.
   static ImageDataStruct createImageDataStruct( final ByteBuffer data, final String comment,
             final VideoFormat videoFormat, final short targetLines, final short targetPixels )
     {
+      CheckParameters.areNotNull(data, comment, videoFormat);
         final ByteBuffer imageDataBuffer =
                 ByteBuffer.allocate( ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + comment.length() + data.limit() ).putInt(
                         0xDECADE11 );

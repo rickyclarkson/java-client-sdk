@@ -185,12 +185,30 @@ final class IO
         }
     }
 
+  /**
+   * Searches a String for a certain String, returning the portion of the original String after the end of the String to search for, or a specified default value if the text isn't found.
+   * @param in the String to search in.
+   * @param after the String to search for.
+   * @param ifNotFound the String to return if 'after' is not found.
+   * @return the portion of the String from the 'in' parameter that is after the 'after' parameter, or the ifNotFound parameter otherwise.
+   * @throws NullPointerException if in or after are null.
+   */
     public static String find( final String in, final String after, final String ifNotFound )
     {
+      CheckParameters.areNotNull(in, after );
         final int index = in.indexOf( after );
         return index < 0 ? ifNotFound : in.substring( index + after.length(), in.indexOf( "\r", index ) );
     }
 
+  /**
+   * Searches a String for a certain String, returning the portion of the original String after the end of the String to search for, as an int, or the specified default value if the text isn't found.
+   * @param in the String to search in.
+   * @param after the String to search for.
+   * @param ifNotFound the value to return if 'after' is not found.
+   * @return the portion of the String from the 'in' parameter that is after the 'after' parameter, as an int, or the ifNotFound parameter otherwise.
+   * @throws NullPointerException if any of the parameters are null.
+   * @throws NumberFormatException if the String to parse as an int does not represent an int.
+   */
     public static int findInt( final String in, final String after, final int ifNotFound )
     {
         final String s = find( in, after, null );
@@ -217,8 +235,18 @@ final class IO
         return buffer.getInt( where );
     }
 
+  /**
+   * Reads the specified number of bytes from the specified ByteBuffer, into a byte[].
+   *
+   * @param from the ByteBuffer to read from.
+   * @param length the number of bytes to read.
+   * @return a byte[] containing the bytes read from the ByteBuffer.
+   * @throws NullPointerException if any of the parameters are null.
+   */
     public static byte[] readIntoByteArray( final ByteBuffer from, final int length )
     {
+      CheckParameters.areNotNull(from);
+
         final byte[] bytes = new byte[length];
         from.get( bytes );
         return bytes;
@@ -293,8 +321,18 @@ final class IO
         }
     }
 
+  /**
+   * Searches in the specified ByteBuffer for the specified byte[], returning the index of the found byte[].
+   * @param in the ByteBuffer to search in.
+   * @param toFind the byte[] to search for.
+   * @return the index of the byte[] in the specified ByteBuffer.
+   * @throws NullPointerException if any of the parameters are null.
+   * @throws BufferUnderflowException if the end of the ByteBuffer is reached without finding the byte[].
+   */
     public static int searchFor( final ByteBuffer in, final byte[] toFind )
     {
+      CheckParameters.areNotNull(in, toFind);
+
         int i = 0;
         outer: while ( true )
         {
@@ -312,8 +350,17 @@ final class IO
         }
     }
 
-    static ByteBuffer from( final ByteBuffer b, final int position )
+  /**
+   * Gives a copy of the specified ByteBuffer, from the specified position.
+   * No bytes are copied, the copy has the same data as the original but begins at the specified position.
+   * @param b the ByteBuffer to copy.
+   * @param position the position within the ByteBuffer to begin the new ByteBuffer at.
+   * @return a copy of the specified ByteBuffer, from the specified position.
+   * @throws NullPointerException if any of the parameters are null.
+   */
+    public static ByteBuffer from( final ByteBuffer b, final int position )
     {
+      CheckParameters.areNotNull(b, position);
         ByteBuffer result = b.duplicate();
         result.position( position );
         result = result.slice();
@@ -321,8 +368,18 @@ final class IO
         return result;
     }
 
+  /**
+   * Gives a copy of the specified ByteBuffer, of the specified length, from the specified index.
+   * No bytes are copied, the copy has the same data as the original but only has access to the specified portion.
+   * @param b the ByteBuffer to copy.
+   * @param from the position within the ByteBuffer to begin the new ByteBuffer at.
+   * @param length the length of the new ByteBuffer, in bytes.
+   * @return a copy of the specified ByteBuffer, of the specified length, from the specified index.
+   * @throws NullPointerException if any of the parameters are null.
+   */
     static ByteBuffer slice( final ByteBuffer b, final int from, final int length )
     {
+      CheckParameters.areNotNull(b);
         final ByteBuffer result = from( b, from );
         result.limit( length );
         return result;

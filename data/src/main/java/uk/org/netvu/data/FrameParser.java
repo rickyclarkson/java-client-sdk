@@ -65,8 +65,8 @@ abstract class FrameParser
                 {
                     // TODO implement choosing between frame types. The frame
                     // type is in the stream header.
-
-                    return ImageDataStruct.createImageDataStruct( input, "", VideoFormat.MPEG4_P_FRAME, xres, yres ).getByteBuffer();
+                  boolean iFrame = MimeParser.isIFrame(IO.duplicate(input));
+                  return ImageDataStruct.createImageDataStruct( input, "", iFrame ? VideoFormat.MPEG4_I_FRAME : VideoFormat.MPEG4_P_FRAME, xres, yres ).getByteBuffer();
                 }
             } );
         }
@@ -82,7 +82,18 @@ abstract class FrameParser
                 final Short ignored, final Short ignored2 ) throws IOException
         {
             CheckParameters.areNotNull( handler, data );
-            handler.infoArrived( new InfoPacket( data, channel ) );
+            handler.infoArrived( new Packet( channel )
+              {
+                public ByteBuffer getData()
+                {
+                  return IO.duplicate(data);
+                }
+                
+                public ByteBuffer getOnWireFormat()
+                {
+                  return IO.duplicate(data);
+                }
+              });
         }
     };
     /**

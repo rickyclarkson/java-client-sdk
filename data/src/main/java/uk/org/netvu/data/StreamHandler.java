@@ -6,6 +6,10 @@ package uk.org.netvu.data;
  */
 public interface StreamHandler
 {
+  /**
+   * Signals the arrival of audio data to the client.
+   * @param packet the Packet of audio data that has arrived.
+   */
     void audioDataArrived( Packet packet );
 
     /**

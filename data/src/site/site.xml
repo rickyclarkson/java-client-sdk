@@ -4,7 +4,7 @@
         <menu name="Requirements">
             <item name="Use Cases" href="use-cases/index.html"
                   collapse="true">
-                <item name="Parse Video Streams"/>
+                <item name="Parse Video Streams" href="use-cases/parse-video-streams.html"/>
             </item>
             <item name="Supported Platforms"
                   href="supported-platforms.html"/>
