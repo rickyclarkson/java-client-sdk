@@ -299,6 +299,19 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   }
  }
 
+ "parsing a mime stream containing MPEG-4s with text/plian instead of text/plain" should {
+  "cause an IllegalStateException" in {
+   val connection = new URL("file:testdata/engineered-mime-mp4-plian-text").openConnection
+   ParserFactory parserFor StreamType.MIME parse (connection.getInputStream, new StreamHandler {
+    def audioDataArrived(packet: Packet) = ()
+    def jpegFrameArrived(packet: Packet) = ()
+    def infoArrived(packet: Packet) = ()
+    def mpeg4FrameArrived(packet: Packet) = ()
+    def unknownDataArrived(packet: Packet) = ()
+   }) must throwA[IllegalStateException]
+  }
+ }
+
  "parsing a binary stream containing JPEGs with the wrong image_data magic number" should {
   "cause an IllegalStateException" in {
    val url = new URL("file:testdata/engineered-binary-jpeg-wrong-magic-number")
