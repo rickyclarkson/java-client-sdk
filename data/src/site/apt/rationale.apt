@@ -1,40 +1,32 @@
 Rationale
 
+* AudioDataStruct
+
+ AudioDataStruct is a public class that provides access to the audio_data part of an audio packet.  It is backed by a ByteBuffer, and provides methods to mutate that ByteBuffer, which will fail if the ByteBuffer is read-only.
+
 * BinaryParser
 
  BinaryParser is a package private class that implements parsing of the 'binary' stream format, and delivers packets of data to the StreamHandler.
 
-* FrameType
+* FrameParser
 
- FrameType is a package private enumeration of the various forms of data that the StreamHandler can see.  Each constant has some implementation code to decide how to deliver data to the StreamHandler.  For example, JPEG, which decribes an AD-stripped JFIF, calls a method that constructs and adds a JFIF header, then delivers the resulting complete JFIF to the StreamHandler.
+ FrameParser is a collection of parsers that deliver data to the StreamHandler.  It does any parsing required before delivery, e.g., constructing a JFIF header for truncated JPEG data.
 
 * IO
 
- IO is a package private utility class, used for parsing mime streams and for reading from InputStreams into ByteBuffers.
+ IO is a package private utility class, mainly used for extracting data from ByteBuffers, InputStreams and Strings.
 
 * ImageDataStruct
 
- ImageDataStruct is a straightforward read-only view of the corresponding struct from C, except that it null-terminates Strings that are read from the data.  It uses ByteBuffer for its storage, for flexibility.  It has no methods that alter the data.
-
-* ImageDataStructBuilder
-
- This is an implementation of the Builder pattern particularly for building ImageDataStructs.  It uses the same Builder framework as the protocol/ module's Builders do.
+ ImageDataStruct is a public class that provides access to the image_data part of an image packet.  It is backed by a ByteBuffer, and provides methods to mutate that ByteBuffer, which will fail if the ByteBuffer is read-only.
 
 * JFIFHeader
 
- This takes an AD-stripped JFIF header into a valid JFIF header, which is useful when parsing a JPEG stream, as JFIF is more interoperable than the AD-specific format.
-
-* MPEG4Packet
-
- This extends Packet to provide some extra data: the comment data and the ImageDataStruct associated with the MPEG-4 data in the stream.  Note that Packet does not provide these, as they don't exist for all streams.
+ This takes an AD-stripped JFIF header into a valid JFIF header, which is used when parsing a JPEG stream, to retrieve valid JFIF data.
 
 * MimeParser
 
-  MimeParser is a package private class that implements parsing of mime streams, and delivers packets of data to the StreamHandler.  It currently only supports JFIF data, pending obtaining test data for MPEG-4.  JPEG is not intended to be supported, as the servers don't support emitting JPEG in a mime stream.
-
-* PacketMetadata
-
- PacketMetadata describes the length of a packet, the channel it arrived on and the type of frame it holds (though the type of frame is package-private).  The data in it could feasibly be copied into Packet and PacketMetadata be made package-private.
+ MimeParser is a package private class that implements parsing of mime streams, and delivers packets of data to the StreamHandler.  It currently only supports JFIF data, pending obtaining test data for MPEG-4.  JPEG is not intended to be supported, as the servers don't support emitting JPEG in a mime stream.
 
 * Packet
 
@@ -42,4 +34,22 @@ Rationale
 
  Making Packet generic might not be the best approach; we might consider InfoPacket, JFIFPacket, etc.
 
-* 
+* Parser
+
+ A Parser takes an InputStream containing a certain data format and delivers packets of data from it to a StreamHandler.
+
+* ParserFactory
+
+ ParserFactory has a method, parserFor, that takes a StreamType and gives a Parser that can parse it.
+
+* StreamHandler
+
+ StreamHandler is the interface that the client is expected to implement to listen for data packets as they arrive.
+
+* StreamType
+
+ StreamType is an enumeration of the supported types of stream.
+
+* VideoFormat
+
+ VideoFormat is a representation of the video format field from the ImageDataStruct.

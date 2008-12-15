@@ -6,7 +6,7 @@ import uk.org.netvu.util.CheckParameters;
 
 /**
  * A data structure compatible with the audio_data struct that audio samples
- * arrive in in binary streams.
+ * arrive in in binary streams.  It is backed by a ByteBuffer, so if that ByteBuffer is read-only, writes will fail with a ReadOnlyBufferException.
  */
 public final class AudioDataStruct
 {

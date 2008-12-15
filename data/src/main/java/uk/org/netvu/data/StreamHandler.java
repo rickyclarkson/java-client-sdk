@@ -1,7 +1,7 @@
 package uk.org.netvu.data;
 
 /**
- * The interface the client is expected to interface to listen for data packets
+ * The interface the client is expected to implement to listen for data packets
  * as they arrive.
  */
 public interface StreamHandler
