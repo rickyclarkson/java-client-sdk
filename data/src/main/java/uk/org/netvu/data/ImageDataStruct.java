@@ -200,8 +200,7 @@ public final class ImageDataStruct
 
         final ImageDataStruct imageDataStruct = new ImageDataStruct( imageDataBuffer );
 
-        final int modeChosenByReadingGenericVideoHeader = 2;
-        imageDataStruct.setMode( modeChosenByReadingGenericVideoHeader );
+        imageDataStruct.setMode( 2 );
 
         imageDataStruct.setCamera( IO.findInt( comment, "Number: ", 0 ) );
 
@@ -209,21 +208,11 @@ public final class ImageDataStruct
 
         imageDataStruct.setStartOffset( comment.length() );
         imageDataStruct.setSize( data.limit() );
-
-        final int maxSizeChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setMaxSize( maxSizeChosenByReadingGenericVideoHeader );
-
-        final int targetSizeChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setTargetSize( targetSizeChosenByReadingGenericVideoHeader );
-
-        final int qFactorChosenByReadingGenericVideoHeader = -1;
-        imageDataStruct.setQFactor( qFactorChosenByReadingGenericVideoHeader );
-
-        final int alarmBitmaskHighChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setAlarmBitmaskHigh( alarmBitmaskHighChosenByReadingGenericVideoHeader );
-
-        final int statusChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setStatus( statusChosenByReadingGenericVideoHeader );
+        imageDataStruct.setMaxSize( 0 );
+        imageDataStruct.setTargetSize( 0 );
+        imageDataStruct.setQFactor( -1 );
+        imageDataStruct.setAlarmBitmaskHigh( 0 );
+        imageDataStruct.setStatus( 0 );
 
         try
         {
@@ -238,31 +227,18 @@ public final class ImageDataStruct
 
         imageDataStruct.setMilliseconds( IO.findInt( comment, "MSec: ", 0 ) );
 
-        final String resChosenByReadingGenericVideoHeader = "";
-        imageDataStruct.setRes( resChosenByReadingGenericVideoHeader );
+        imageDataStruct.setRes( "" );
         imageDataStruct.setTitle( IO.find( comment, "Name: ", "" ) );
         imageDataStruct.setAlarm( IO.find( comment, "Alarm-text: ", "" ) );
-
-        final short srcPixelsChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setSrcPixels( srcPixelsChosenByReadingGenericVideoHeader );
-
-        final short srcLinesChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setSrcLines( srcLinesChosenByReadingGenericVideoHeader );
-
+        imageDataStruct.setSrcPixels( (short)0 );
+        imageDataStruct.setSrcLines( (short)0 );
         imageDataStruct.setTargetPixels( targetPixels );
         imageDataStruct.setTargetLines( targetLines );
-
-        final short pixelOffsetChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setPixelOffset( pixelOffsetChosenByReadingGenericVideoHeader );
-
-        final short lineOffsetChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setLineOffset( lineOffsetChosenByReadingGenericVideoHeader );
-
+        imageDataStruct.setPixelOffset( (short)0 );
+        imageDataStruct.setLineOffset( (short)0 );
         imageDataStruct.setLocale( IO.find( comment, "Locale: ", "" ) );
         imageDataStruct.setUtcOffset( IO.findInt( comment, "UTCoffset: ", 0 ) );
-
-        final int alarmBitmaskChosenByReadingGenericVideoHeader = 0;
-        imageDataStruct.setAlarmBitmask( alarmBitmaskChosenByReadingGenericVideoHeader );
+        imageDataStruct.setAlarmBitmask( 0 );
 
         return imageDataStruct;
     }
