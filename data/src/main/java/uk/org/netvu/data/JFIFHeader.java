@@ -96,31 +96,35 @@ final class JFIFHeader
      */
     private static final byte[] EOI_MARKER = byteArrayLiteral( new int[] { 0xFF, 0xD9 } );
 
-  /**
-   * The date format to use for parsing the comment block.
-   */
+    /**
+     * The date format to use for parsing the comment block.
+     */
     private static final String DATE_FORMAT = "dd/MM/yyyy";
 
-  /**
-   * The time format to use for parsing the comment block.
-   */
+    /**
+     * The time format to use for parsing the comment block.
+     */
     private static final String TIME_FORMAT = "HH:mm:ss";
 
-  /**
-   * Gets a SimpleDateFormat for generating the comment block's date field.
-   * This is a method rather than a field because SimpleDateFormat is not thread-safe.
-   * @return a SimpleDateFormat for generating the comment block's date field.
-   */
+    /**
+     * Gets a SimpleDateFormat for generating the comment block's date field.
+     * This is a method rather than a field because SimpleDateFormat is not
+     * thread-safe.
+     * 
+     * @return a SimpleDateFormat for generating the comment block's date field.
+     */
     public static SimpleDateFormat getDateFormat()
     {
         return new SimpleDateFormat( DATE_FORMAT );
     }
 
-  /**
-   * Gets a SimpleDateFormat for generating the comment block's time field.
-   * This is a method rather than a field because SimpleDateFormat is not thread-safe.
-   * @return a SimpleDateFormat for generating the comment block's date field.
-   */
+    /**
+     * Gets a SimpleDateFormat for generating the comment block's time field.
+     * This is a method rather than a field because SimpleDateFormat is not
+     * thread-safe.
+     * 
+     * @return a SimpleDateFormat for generating the comment block's date field.
+     */
     public static SimpleDateFormat getTimeFormat()
     {
         return new SimpleDateFormat( TIME_FORMAT );

@@ -1,8 +1,10 @@
 package uk.org.netvu.data;
 
-import java.io.*;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.Channels;
@@ -14,90 +16,47 @@ import uk.org.netvu.util.CheckParameters;
  */
 final class IO
 {
-  /**
-   * Converts a byte[] to a String using the US-ASCII character encoding.
-   * @param b the byte[] to convert to a String.
-   * @return the String after conversion.
-   *
-   * @throws NullPointerException if b is null.
-   */
-  public static String bytesToString(byte[] b)
-  {
-    CheckParameters.areNotNull(b);
-
-    try
+    /**
+     * Converts a byte[] to a String using the US-ASCII character encoding.
+     * 
+     * @param b
+     *        the byte[] to convert to a String.
+     * @return the String after conversion.
+     * @throws NullPointerException
+     *         if b is null.
+     */
+    public static String bytesToString( final byte[] b )
     {
-      return new String(b, "US-ASCII");
+        CheckParameters.areNotNull( b );
+
+        try
+        {
+            return new String( b, "US-ASCII" );
+        }
+        catch ( final UnsupportedEncodingException e )
+        {
+            throw new RuntimeException( e );
+        }
     }
-    catch (UnsupportedEncodingException e)
-      {
-        throw new RuntimeException(e);
-      }
-  }
 
-  /**
-   * Converts a String to a byte[] using the US-ASCII character encoding.
-   *
-   * @param s the String to convert to a byte[].
-   * @return the byte[] after conversion.
-   * @throws NullPointerException if s is null.
-   */
-  public static byte[] stringToBytes(String s)
-  {
-    CheckParameters.areNotNull(s);
-
-    try
-    {
-      return s.getBytes("US-ASCII");
-    }
-    catch (UnsupportedEncodingException e)
-      {
-        throw new RuntimeException(e);
-      }
-  }
-
-  /**
-   * Duplicates a ByteBuffer, creating a ByteBuffer with the same backing data, but with a new position and limit.
-   * The position of the new ByteBuffer is 0.
-   * @param b the ByteBuffer to duplicate.
-   * @return a copy of this ByteBuffer, with the position set to 0.
-   * @throws NullPointerException if b is null.
-   */
+    /**
+     * Duplicates a ByteBuffer, creating a ByteBuffer with the same backing
+     * data, but with a new position and limit. The position of the new
+     * ByteBuffer is 0.
+     * 
+     * @param b
+     *        the ByteBuffer to duplicate.
+     * @return a copy of this ByteBuffer, with the position set to 0.
+     * @throws NullPointerException
+     *         if b is null.
+     */
     public static ByteBuffer duplicate( final ByteBuffer b )
     {
-      CheckParameters.areNotNull(b);
+        CheckParameters.areNotNull( b );
 
         final ByteBuffer result = b.duplicate();
         result.position( 0 );
         return result;
-    }
-
-    /**
-     * Reads the next line of text from the specified InputStream and returns it as an
-     * int.
-     * 
-     * @param input
-     *        the InputStream to read an int from.
-     * @return the next line from the specified InputStream, as an int.
-     * @throws IllegalStateException
-     *         if the line read doesn't parse as an int.
-     * @throws IOException
-     *         if an I/O error occurs.
-     * @throws NullPointerException
-     *         if input is null.
-     */
-    public static int readIntFromRestOfLine( final InputStream input ) throws IOException
-    {
-        CheckParameters.areNotNull( input );
-
-        try
-        {
-            return Integer.parseInt( IO.readLine( input ) );
-        }
-        catch ( final NumberFormatException exception )
-        {
-            throw new IllegalStateException();
-        }
     }
 
     /**
@@ -185,34 +144,75 @@ final class IO
         }
     }
 
-  /**
-   * Searches a String for a certain String, returning the portion of the original String after the end of the String to search for, or a specified default value if the text isn't found.
-   * @param in the String to search in.
-   * @param after the String to search for.
-   * @param ifNotFound the String to return if 'after' is not found.
-   * @return the portion of the String from the 'in' parameter that is after the 'after' parameter, or the ifNotFound parameter otherwise.
-   * @throws NullPointerException if in or after are null.
-   */
+    /**
+     * Searches a String for a certain String, returning the portion of the
+     * original String after the end of the String to search for, or a specified
+     * default value if the text isn't found.
+     * 
+     * @param in
+     *        the String to search in.
+     * @param after
+     *        the String to search for.
+     * @param ifNotFound
+     *        the String to return if 'after' is not found.
+     * @return the portion of the String from the 'in' parameter that is after
+     *         the 'after' parameter, or the ifNotFound parameter otherwise.
+     * @throws NullPointerException
+     *         if in or after are null.
+     */
     public static String find( final String in, final String after, final String ifNotFound )
     {
-      CheckParameters.areNotNull(in, after );
+        CheckParameters.areNotNull( in, after );
         final int index = in.indexOf( after );
         return index < 0 ? ifNotFound : in.substring( index + after.length(), in.indexOf( "\r", index ) );
     }
 
-  /**
-   * Searches a String for a certain String, returning the portion of the original String after the end of the String to search for, as an int, or the specified default value if the text isn't found.
-   * @param in the String to search in.
-   * @param after the String to search for.
-   * @param ifNotFound the value to return if 'after' is not found.
-   * @return the portion of the String from the 'in' parameter that is after the 'after' parameter, as an int, or the ifNotFound parameter otherwise.
-   * @throws NullPointerException if any of the parameters are null.
-   * @throws NumberFormatException if the String to parse as an int does not represent an int.
-   */
+    /**
+     * Searches a String for a certain String, returning the portion of the
+     * original String after the end of the String to search for, as an int, or
+     * the specified default value if the text isn't found.
+     * 
+     * @param in
+     *        the String to search in.
+     * @param after
+     *        the String to search for.
+     * @param ifNotFound
+     *        the value to return if 'after' is not found.
+     * @return the portion of the String from the 'in' parameter that is after
+     *         the 'after' parameter, as an int, or the ifNotFound parameter
+     *         otherwise.
+     * @throws NullPointerException
+     *         if any of the parameters are null.
+     * @throws NumberFormatException
+     *         if the String to parse as an int does not represent an int.
+     */
     public static int findInt( final String in, final String after, final int ifNotFound )
     {
         final String s = find( in, after, null );
         return s == null ? ifNotFound : Integer.parseInt( s );
+    }
+
+    /**
+     * Gives a copy of the specified ByteBuffer, from the specified position. No
+     * bytes are copied, the copy has the same data as the original but begins
+     * at the specified position.
+     * 
+     * @param b
+     *        the ByteBuffer to copy.
+     * @param position
+     *        the position within the ByteBuffer to begin the new ByteBuffer at.
+     * @return a copy of the specified ByteBuffer, from the specified position.
+     * @throws NullPointerException
+     *         if any of the parameters are null.
+     */
+    public static ByteBuffer from( final ByteBuffer b, final int position )
+    {
+        CheckParameters.areNotNull( b, position );
+        ByteBuffer result = b.duplicate();
+        result.position( position );
+        result = result.slice();
+        result.position( 0 );
+        return result;
     }
 
     /**
@@ -235,17 +235,49 @@ final class IO
         return buffer.getInt( where );
     }
 
-  /**
-   * Reads the specified number of bytes from the specified ByteBuffer, into a byte[].
-   *
-   * @param from the ByteBuffer to read from.
-   * @param length the number of bytes to read.
-   * @return a byte[] containing the bytes read from the ByteBuffer.
-   * @throws NullPointerException if any of the parameters are null.
-   */
+    /**
+     * Reads the next line of text from the specified InputStream and returns it
+     * as an int.
+     * 
+     * @param input
+     *        the InputStream to read an int from.
+     * @return the next line from the specified InputStream, as an int.
+     * @throws IllegalStateException
+     *         if the line read doesn't parse as an int.
+     * @throws IOException
+     *         if an I/O error occurs.
+     * @throws NullPointerException
+     *         if input is null.
+     */
+    public static int readIntFromRestOfLine( final InputStream input ) throws IOException
+    {
+        CheckParameters.areNotNull( input );
+
+        try
+        {
+            return Integer.parseInt( IO.readLine( input ) );
+        }
+        catch ( final NumberFormatException exception )
+        {
+            throw new IllegalStateException();
+        }
+    }
+
+    /**
+     * Reads the specified number of bytes from the specified ByteBuffer, into a
+     * byte[].
+     * 
+     * @param from
+     *        the ByteBuffer to read from.
+     * @param length
+     *        the number of bytes to read.
+     * @return a byte[] containing the bytes read from the ByteBuffer.
+     * @throws NullPointerException
+     *         if any of the parameters are null.
+     */
     public static byte[] readIntoByteArray( final ByteBuffer from, final int length )
     {
-      CheckParameters.areNotNull(from);
+        CheckParameters.areNotNull( from );
 
         final byte[] bytes = new byte[length];
         from.get( bytes );
@@ -321,17 +353,24 @@ final class IO
         }
     }
 
-  /**
-   * Searches in the specified ByteBuffer for the specified byte[], returning the index of the found byte[].
-   * @param in the ByteBuffer to search in.
-   * @param toFind the byte[] to search for.
-   * @return the index of the byte[] in the specified ByteBuffer.
-   * @throws NullPointerException if any of the parameters are null.
-   * @throws BufferUnderflowException if the end of the ByteBuffer is reached without finding the byte[].
-   */
+    /**
+     * Searches in the specified ByteBuffer for the specified byte[], returning
+     * the index of the found byte[].
+     * 
+     * @param in
+     *        the ByteBuffer to search in.
+     * @param toFind
+     *        the byte[] to search for.
+     * @return the index of the byte[] in the specified ByteBuffer.
+     * @throws NullPointerException
+     *         if any of the parameters are null.
+     * @throws BufferUnderflowException
+     *         if the end of the ByteBuffer is reached without finding the
+     *         byte[].
+     */
     public static int searchFor( final ByteBuffer in, final byte[] toFind )
     {
-      CheckParameters.areNotNull(in, toFind);
+        CheckParameters.areNotNull( in, toFind );
 
         int i = 0;
         outer: while ( true )
@@ -350,36 +389,48 @@ final class IO
         }
     }
 
-  /**
-   * Gives a copy of the specified ByteBuffer, from the specified position.
-   * No bytes are copied, the copy has the same data as the original but begins at the specified position.
-   * @param b the ByteBuffer to copy.
-   * @param position the position within the ByteBuffer to begin the new ByteBuffer at.
-   * @return a copy of the specified ByteBuffer, from the specified position.
-   * @throws NullPointerException if any of the parameters are null.
-   */
-    public static ByteBuffer from( final ByteBuffer b, final int position )
+    /**
+     * Converts a String to a byte[] using the US-ASCII character encoding.
+     * 
+     * @param s
+     *        the String to convert to a byte[].
+     * @return the byte[] after conversion.
+     * @throws NullPointerException
+     *         if s is null.
+     */
+    public static byte[] stringToBytes( final String s )
     {
-      CheckParameters.areNotNull(b, position);
-        ByteBuffer result = b.duplicate();
-        result.position( position );
-        result = result.slice();
-        result.position( 0 );
-        return result;
+        CheckParameters.areNotNull( s );
+
+        try
+        {
+            return s.getBytes( "US-ASCII" );
+        }
+        catch ( final UnsupportedEncodingException e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
-  /**
-   * Gives a copy of the specified ByteBuffer, of the specified length, from the specified index.
-   * No bytes are copied, the copy has the same data as the original but only has access to the specified portion.
-   * @param b the ByteBuffer to copy.
-   * @param from the position within the ByteBuffer to begin the new ByteBuffer at.
-   * @param length the length of the new ByteBuffer, in bytes.
-   * @return a copy of the specified ByteBuffer, of the specified length, from the specified index.
-   * @throws NullPointerException if any of the parameters are null.
-   */
+    /**
+     * Gives a copy of the specified ByteBuffer, of the specified length, from
+     * the specified index. No bytes are copied, the copy has the same data as
+     * the original but only has access to the specified portion.
+     * 
+     * @param b
+     *        the ByteBuffer to copy.
+     * @param from
+     *        the position within the ByteBuffer to begin the new ByteBuffer at.
+     * @param length
+     *        the length of the new ByteBuffer, in bytes.
+     * @return a copy of the specified ByteBuffer, of the specified length, from
+     *         the specified index.
+     * @throws NullPointerException
+     *         if any of the parameters are null.
+     */
     static ByteBuffer slice( final ByteBuffer b, final int from, final int length )
     {
-      CheckParameters.areNotNull(b);
+        CheckParameters.areNotNull( b );
         final ByteBuffer result = from( b, from );
         result.limit( length );
         return result;
