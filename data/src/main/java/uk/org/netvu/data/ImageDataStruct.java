@@ -230,12 +230,12 @@ public final class ImageDataStruct
         imageDataStruct.setRes( "" );
         imageDataStruct.setTitle( IO.find( comment, "Name: ", "" ) );
         imageDataStruct.setAlarm( IO.find( comment, "Alarm-text: ", "" ) );
-        imageDataStruct.setSrcPixels( (short)0 );
-        imageDataStruct.setSrcLines( (short)0 );
+        imageDataStruct.setSrcPixels( (short) 0 );
+        imageDataStruct.setSrcLines( (short) 0 );
         imageDataStruct.setTargetPixels( targetPixels );
         imageDataStruct.setTargetLines( targetLines );
-        imageDataStruct.setPixelOffset( (short)0 );
-        imageDataStruct.setLineOffset( (short)0 );
+        imageDataStruct.setPixelOffset( (short) 0 );
+        imageDataStruct.setLineOffset( (short) 0 );
         imageDataStruct.setLocale( IO.find( comment, "Locale: ", "" ) );
         imageDataStruct.setUtcOffset( IO.findInt( comment, "UTCoffset: ", 0 ) );
         imageDataStruct.setAlarmBitmask( 0 );

@@ -127,7 +127,8 @@ class MimeParser implements Parser
      */
     public void parse( final InputStream input, final StreamHandler handler ) throws IOException
     {
-        final Short[] horizontalResolution = { null }, verticalResolution = { null };
+        final Short[] horizontalResolution = { null };
+        final Short[] verticalResolution = { null };
 
         while ( true )
         {

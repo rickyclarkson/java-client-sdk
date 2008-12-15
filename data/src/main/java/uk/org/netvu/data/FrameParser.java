@@ -122,7 +122,7 @@ abstract class FrameParser
      * A complete JFIF, compatible with most display and image manipulation
      * programs.
      */
-    private static FrameParser JFIF = new FrameParser()
+    private static final FrameParser JFIF = new FrameParser()
     {
         @Override
         void parse( final StreamHandler handler, final ByteBuffer input, final int channel, final Short ignored2,
