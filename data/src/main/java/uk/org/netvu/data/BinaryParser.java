@@ -33,7 +33,8 @@ final class BinaryParser implements Parser
 
         try
         {
-            final Short[] resolutions = { null, null };
+          final Short[] horizontalResolution = {null};
+          final Short[] verticalResolution = {null};
 
             while ( true )
             {
@@ -49,8 +50,8 @@ final class BinaryParser implements Parser
                 // packet containing
                 // "IMAGESIZE 0,0:123,456", where 123 and 456 are the
                 // resolution of the frames. We parse that out and store it in
-                // the resolutions array.
-                // An array is used because of Java's 'final' restriction for
+                // the horizontalResolution and verticalResolution arrays.
+                // Arrays are used because of Java's 'final' restriction for
                 // anonymous classes.
                 // The type of it is Short rather than short to catch any
                 // accidental misuses. This means that if the info
@@ -67,7 +68,6 @@ final class BinaryParser implements Parser
                     public void infoArrived( final Packet packet )
                     {
                         final String s = IO.bytesToString( packet.getData().array() );
-
                         final String header = "IMAGESIZE 0,0:";
                         int index = s.indexOf( header );
                         if ( index != -1 )
@@ -77,8 +77,8 @@ final class BinaryParser implements Parser
                             final String theRest = s.substring( index );
                             final int comma = theRest.indexOf( "," );
                             final int semi = theRest.indexOf( ";" );
-                            resolutions[0] = Short.parseShort( theRest.substring( 0, comma ) );
-                            resolutions[1] = Short.parseShort( theRest.substring( comma + 1, semi ) );
+                            horizontalResolution[0] = Short.parseShort( theRest.substring( 0, comma ) );
+                            verticalResolution[0] = Short.parseShort( theRest.substring( comma + 1, semi ) );
                         }
                     }
 
@@ -93,9 +93,9 @@ final class BinaryParser implements Parser
                     public void unknownDataArrived( final Packet packet )
                     {
                     }
-                }, IO.duplicate( data ), channel, null, null );
+                }, IO.duplicate( data ), channel, horizontalResolution[0], verticalResolution[0] );
 
-                frameParser.parse( handler, IO.duplicate( data ), channel, resolutions[0], resolutions[1] );
+                frameParser.parse( handler, IO.duplicate( data ), channel, horizontalResolution[0], verticalResolution[0] );
             }
         }
         catch ( final EOFException e )
