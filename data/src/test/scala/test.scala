@@ -112,6 +112,10 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   validlyParse("file:testdata/engineered-mime-jfif-422", StreamType.MIME)
  }
 
+ "parsing a binary stream containing engineered 4:2:2 colourspace truncated JPEGs" isSpecifiedBy {
+  validlyParse("file:testdata/engineered-binary-jpeg-422-colorspace", StreamType.BINARY)
+ }
+
  def validlyParse(filename: String, streamType: StreamType) = new Specification {
   "reading "+filename+", a " + streamType.toString.toLowerCase( java.util.Locale.ENGLISH ) + " stream containing JFIFs" should {
    "parse out at least two valid JFIF images" in {
