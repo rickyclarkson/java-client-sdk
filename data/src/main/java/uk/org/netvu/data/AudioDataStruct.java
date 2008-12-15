@@ -6,7 +6,8 @@ import uk.org.netvu.util.CheckParameters;
 
 /**
  * A data structure compatible with the audio_data struct that audio samples
- * arrive in in binary streams.  It is backed by a ByteBuffer, so if that ByteBuffer is read-only, writes will fail with a ReadOnlyBufferException.
+ * arrive in in binary streams. It is backed by a ByteBuffer, so if that
+ * ByteBuffer is read-only, writes will fail with a ReadOnlyBufferException.
  */
 public final class AudioDataStruct
 {
@@ -163,8 +164,8 @@ public final class AudioDataStruct
     /**
      * Sets the channel, or camera number, for this AudioDataStruct.
      * 
-     * @param the
-     *        channel, or camera number, for this AudioDataStruct.
+     * @param channel
+     *        the channel, or camera number, for this AudioDataStruct.
      */
     public void setChannel( final int channel )
     {
@@ -204,6 +205,12 @@ public final class AudioDataStruct
         buffer.putInt( SECONDS_OFFSET, seconds );
     }
 
+    /**
+     * Sets the size of the data that this AudioDataStruct describes.
+     * 
+     * @param size
+     *        the size of the data that this AudioDataStruct describes.
+     */
     public void setSize( final int size )
     {
         buffer.putInt( SIZE_OFFSET, size );

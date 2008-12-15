@@ -3,6 +3,7 @@ package uk.org.netvu.data;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
@@ -156,8 +157,8 @@ final class JFIFHeader
      * @param jfif
      *        the raw JFIF bytes.
      * @return a String containing the comments.
-     * @throws a
-     *         BufferUnderflowException if no comment field is found.
+     * @throws BufferUnderflowException
+     *         if no comment field is found.
      */
     static String getComments( final ByteBuffer jfif )
     {
@@ -187,9 +188,7 @@ final class JFIFHeader
      * 
      * @param source
      *        the ByteBuffer containing JPEG data.
-     * @param imageDataStruct
-     *        the ImageDataStruct containing a minimised JPEG header.
-     * @return a JFIFPacket.
+     * @return a ByteBuffer containing JFIF data.
      * @throws NullPointerException
      *         if either of the parameters are null.
      */

@@ -37,6 +37,8 @@ public abstract class Packet
 
     /**
      * Gets the data contained in the Packet.
+     * 
+     * @return the data contained in the Packet.
      */
     public abstract ByteBuffer getData();
 

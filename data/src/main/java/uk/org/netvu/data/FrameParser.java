@@ -68,8 +68,8 @@ abstract class FrameParser
                 public ByteBuffer getOnWireFormat()
                 {
                     final boolean iFrame = MimeParser.isIFrame( IO.duplicate( input ) );
-                    return ImageDataStruct.createImageDataStruct( input, "",
-                            iFrame ? VideoFormat.MPEG4_I_FRAME : VideoFormat.MPEG4_P_FRAME, yres, xres ).getByteBuffer();
+                    final VideoFormat videoFormat = iFrame ? VideoFormat.MPEG4_I_FRAME : VideoFormat.MPEG4_P_FRAME;
+                    return ImageDataStruct.createImageDataStruct( input, "", videoFormat, yres, xres ).getByteBuffer();
                 }
             } );
         }
@@ -184,13 +184,13 @@ abstract class FrameParser
                     input.position( commentPosition + 2 );
                     final int commentLength = input.getShort();
                     final String comment = IO.bytesToString( IO.readIntoByteArray( input, commentLength ) );
+                    final int ffc0 = IO.searchFor( input, new byte[] { (byte) 0xFF, (byte) 0xC0 } );
+
                     final VideoFormat videoFormat =
-                            input.get( IO.searchFor( input, JFIFHeader.byteArrayLiteral( new int[] { 0xFF, 0xC0 } ) ) + 11 ) == 0x22 ? VideoFormat.JPEG_422
-                                    : VideoFormat.JPEG_411;
-                    final short targetPixels =
-                            input.getShort( IO.searchFor( input, new byte[] { (byte) 0xFF, (byte) 0xC0 } ) + 5 );
-                    final short targetLines =
-                            input.getShort( IO.searchFor( input, new byte[] { (byte) 0xFF, (byte) 0xC0 } ) + 7 );
+                            input.get( ffc0 + 11 ) == 0x22 ? VideoFormat.JPEG_422 : VideoFormat.JPEG_411;
+                    final short targetPixels = input.getShort( ffc0 + 5 );
+                    final short targetLines = input.getShort( ffc0 + 7 );
+
                     final ImageDataStruct imageDataStruct =
                             ImageDataStruct.createImageDataStruct( input, comment, videoFormat, targetLines,
                                     targetPixels );
@@ -249,7 +249,7 @@ abstract class FrameParser
      * Gives the type of frame, according to the numbers used in the minimal and
      * binary stream formats.
      * 
-     * @param value
+     * @param frameType
      *        the numeric value to find a matching FrameParser for.
      * @return the FrameParser that corresponds with value, or UNKNOWN if none
      *         exists.

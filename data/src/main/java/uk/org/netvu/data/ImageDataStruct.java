@@ -119,6 +119,9 @@ public final class ImageDataStruct
      */
     private static final int SRC_PIXELS_OFFSET = ALARM_OFFSET + TITLE_LENGTH;
 
+    /**
+     * The size of a short, in bytes.
+     */
     private static final int SHORT_SIZE = 2;
 
     /**
@@ -178,6 +181,8 @@ public final class ImageDataStruct
      *        the format of the video frame.
      * @param targetLines
      *        the vertical resolution of the video frame.
+     * @param targetPixels
+     *        the horizontal resolution of the video frame.
      * @return an ImageDataStruct according to the supplied parameters.
      * @throws NullPointerException
      *         if any of the parameters are null.
@@ -351,11 +356,14 @@ public final class ImageDataStruct
         return IO.readInt( buffer, ALM_BITMASK_HI_OFFSET );
     }
 
+    /**
+     * Gets the ByteBuffer backing this ImageDataStruct.
+     * 
+     * @return the ByteBuffer backing this ImageDataStruct.
+     */
     public ByteBuffer getByteBuffer()
     {
-        final ByteBuffer result = buffer.duplicate();
-        result.position( 0 );
-        return result;
+        return IO.duplicate( buffer );
     }
 
     /**
@@ -937,6 +945,8 @@ public final class ImageDataStruct
     /**
      * Gives the ByteOrder for reading the short fields with. For 0xDECADE10
      * they are little-endian, and for 0xDECADE11 they are big-endian.
+     * 
+     * @return the ByteOrder for reading the short fields with.
      */
     private ByteOrder versionToByteOrder()
     {
