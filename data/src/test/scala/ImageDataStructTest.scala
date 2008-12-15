@@ -37,7 +37,7 @@ class ImageDataStructTest extends JUnit4(new Specification {
    val status = 200
    val sessionTime = 240
    val milliseconds = 460
-   val res = "foo"
+   val res = "fool"
    val title = "0123456789012345678901234567890"
    val alarm = "9876543210987654321098765432109"
    val locale = "012345678901234567890123456789"
