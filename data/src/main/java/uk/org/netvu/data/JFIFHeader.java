@@ -160,7 +160,7 @@ final class JFIFHeader
      * @throws BufferUnderflowException
      *         if no comment field is found.
      */
-    static String getComments( final ByteBuffer jfif )
+    static String getComments( final ByteBuffer jfif ) throws BufferUnderflowException
     {
         while ( true )
         {

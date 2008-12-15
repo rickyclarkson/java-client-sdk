@@ -8,7 +8,7 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.Channels;
-import java.util.Arrays;
+
 import uk.org.netvu.util.CheckParameters;
 
 /**
@@ -368,10 +368,8 @@ final class IO
      *         if the end of the ByteBuffer is reached without finding the
      *         byte[].
      */
-    public static int searchFor( final ByteBuffer in, final byte[] toFind )
+    public static int searchFor( final ByteBuffer in, final byte[] toFind ) throws BufferUnderflowException
     {
-      try
-      {
         CheckParameters.areNotNull( in, toFind );
 
         int i = 0;
@@ -389,23 +387,7 @@ final class IO
 
             return i - 1;
         }
-      }
-      catch (BufferUnderflowException e)
-        {
-          System.out.println("Could not find "+Arrays.toString(toFind)+" in "+toString(in));
-          throw e;
-        }
     }
-
-  private static String toString(ByteBuffer b)
-  {
-    b.position(0);
-    StringBuilder builder = new StringBuilder();
-    for (int a=0;a<b.limit();a+=4)
-      builder.append(Integer.toHexString(b.getInt())+", ");
-    return builder.toString();
-    
-  }
 
     /**
      * Converts a String to a byte[] using the US-ASCII character encoding.

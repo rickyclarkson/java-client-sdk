@@ -145,7 +145,7 @@ abstract class FrameParser
                 @Override
                 public ByteBuffer getOnWireFormat()
                 {
-                  final ByteBuffer data = IO.duplicate(input);
+                    final ByteBuffer data = IO.duplicate( input );
                     final int commentPosition =
                             IO.searchFor( data, JFIFHeader.byteArrayLiteral( new int[] { 0xFF, 0xFE } ) );
                     data.position( commentPosition + 2 );

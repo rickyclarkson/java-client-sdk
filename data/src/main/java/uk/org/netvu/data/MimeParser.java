@@ -44,7 +44,7 @@ class MimeParser implements Parser
             data.get( startCode );
 
             if ( Arrays.equals( startCode, MPEG4_VOP_START ) )
-            {            
+            {
                 foundVOP = true;
             }
             pos++;
@@ -192,7 +192,8 @@ class MimeParser implements Parser
                             new AudioDataStruct( ByteBuffer.allocate( AudioDataStruct.AUDIO_DATA_STRUCT_SIZE ).putInt(
                                     AudioDataStruct.VERSION ) );
 
-                    audioDataStruct.setMode( Integer.parseInt( packet.contentType.substring( "audio/adpcm; rate=".length() ) ) );
+                    final String modePart = packet.contentType.substring( "audio/adpcm; rate=".length() );
+                    audioDataStruct.setMode( Integer.parseInt( modePart ) );
                     audioDataStruct.setChannel( 0 );
                     audioDataStruct.setStartOffset( AudioDataStruct.AUDIO_DATA_STRUCT_SIZE );
                     audioDataStruct.setSize( packet.data.limit() );
@@ -235,7 +236,7 @@ class MimeParser implements Parser
                         public ByteBuffer getOnWireFormat()
                         {
                             final int commentPosition =
-                                    IO.searchFor( packet.data, JFIFHeader.byteArrayLiteral( new int[] { 0xFF, 0xFE } ) );
+                                    IO.searchFor( packet.data, new byte[] { (byte) 0xFF, (byte) 0xFE } );
                             final ByteBuffer data = packet.data;
                             data.position( commentPosition + 2 );
                             final int commentLength = data.getShort();
