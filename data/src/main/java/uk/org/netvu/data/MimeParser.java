@@ -42,8 +42,9 @@ class MimeParser implements Parser
         {
             data.position( pos );
             data.get( startCode );
+
             if ( Arrays.equals( startCode, MPEG4_VOP_START ) )
-            {
+            {            
                 foundVOP = true;
             }
             pos++;
@@ -54,12 +55,13 @@ class MimeParser implements Parser
             final int pictureType = data.get( pos ) >> 6 & 0xFF;
             if ( pictureType == 0 )
             {
+
                 return true;
             }
         }
         else
         {
-            throw new RuntimeException( "Cannot find MPEG-4 VOP start code; cannot tell if I-frame" );
+            throw new IllegalStateException( "Cannot find MPEG-4 VOP start code; cannot tell if I-frame" );
         }
         return false;
     }

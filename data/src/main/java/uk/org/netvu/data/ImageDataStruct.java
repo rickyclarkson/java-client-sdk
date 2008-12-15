@@ -222,7 +222,7 @@ public final class ImageDataStruct
         }
         catch ( final ParseException e )
         {
-          throw new IllegalStateException( e.getMessage() );
+            throw new IllegalStateException( e.getMessage() );
         }
 
         imageDataStruct.setMilliseconds( IO.findInt( comment, "MSec: ", 0 ) );

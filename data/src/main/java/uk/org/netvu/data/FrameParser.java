@@ -41,11 +41,12 @@ abstract class FrameParser
         void parse( final StreamHandler handler, final ByteBuffer input, final int channel, final Short xres,
                 final Short yres ) throws IOException
         {
-          CheckParameters.areNotNull( handler, input );
-          if (xres == null || yres == null)
-          {
-            throw new IllegalStateException("The stream does not contain an IMAGESIZE comment, so the MPEG-4 frames cannot be correctly parsed.");
-          }
+            CheckParameters.areNotNull( handler, input );
+            if ( xres == null || yres == null )
+            {
+                throw new IllegalStateException(
+                        "The stream does not contain an IMAGESIZE comment, so the MPEG-4 frames cannot be correctly parsed." );
+            }
 
             handler.mpeg4FrameArrived( new Packet( channel )
             {

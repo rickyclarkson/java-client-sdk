@@ -33,8 +33,8 @@ final class BinaryParser implements Parser
 
         try
         {
-          final Short[] horizontalResolution = {null};
-          final Short[] verticalResolution = {null};
+            final Short[] horizontalResolution = { null };
+            final Short[] verticalResolution = { null };
 
             while ( true )
             {
@@ -95,7 +95,8 @@ final class BinaryParser implements Parser
                     }
                 }, IO.duplicate( data ), channel, horizontalResolution[0], verticalResolution[0] );
 
-                frameParser.parse( handler, IO.duplicate( data ), channel, horizontalResolution[0], verticalResolution[0] );
+                frameParser.parse( handler, IO.duplicate( data ), channel, horizontalResolution[0],
+                        verticalResolution[0] );
             }
         }
         catch ( final EOFException e )

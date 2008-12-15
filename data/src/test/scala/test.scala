@@ -266,6 +266,23 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   }
  }
 
+ "parsing a mime stream containing MPEG-4 data with no VOP header" should {
+  "cause an IllegalStateException" in {
+   val url = new URL("file:testdata/engineered-mime-mp4-no-vop")
+   val connection = url.openConnection
+   ParserFactory parserFor StreamType.MIME parse (connection.getInputStream, new StreamHandler {
+    def audioDataArrived(packet: Packet) = ()
+    def jpegFrameArrived(packet: Packet) = ()
+    def infoArrived(packet: Packet) = ()
+    def mpeg4FrameArrived(packet: Packet) = {
+     packet.getData
+     packet.getOnWireFormat
+    }
+    def unknownDataArrived(packet: Packet) = ()
+   }) must throwA[IllegalStateException]  
+  }
+ }
+
  "parsing a mime stream containing JFIFs with an invalid Time or Date field, and requesting the on-wire format" should {
   "cause an IllegalStateException" in {
    for (url <- List(new URL("file:testdata/engineered-mime-jfif-invalid-time"), new URL("file:testdata/engineered-mime-jfif-invalid-date"))) {
