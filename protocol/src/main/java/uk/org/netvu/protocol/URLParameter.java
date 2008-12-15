@@ -1,4 +1,6 @@
-package uk.org.netvu.util;
+package uk.org.netvu.protocol;
+
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A representation of a URL Parameter (foo=bar).

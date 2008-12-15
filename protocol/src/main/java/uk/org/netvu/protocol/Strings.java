@@ -1,8 +1,9 @@
-package uk.org.netvu.util;
+package uk.org.netvu.protocol;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * Utility methods for dealing with Strings.

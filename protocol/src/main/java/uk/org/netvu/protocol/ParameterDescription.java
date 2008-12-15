@@ -1,9 +1,10 @@
-package uk.org.netvu.util;
+package uk.org.netvu.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * An object that describes a parameter for a Builder, including conversions

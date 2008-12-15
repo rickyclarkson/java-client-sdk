@@ -4,8 +4,6 @@ import _root_.org.{specs, scalacheck}
 import specs.{Specification, ScalaCheck => Scalacheck}
 import specs.runner.JUnit4
 
-import uk.org.netvu.util.BuildersTests
-
 class DecoderCGITest extends JUnit4(new Specification with Scalacheck {
  "A DecoderCGI with output titles" should {
   "be properly converted to URL parameters" in {

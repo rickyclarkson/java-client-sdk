@@ -1,6 +1,7 @@
-package uk.org.netvu.util;
+package uk.org.netvu.protocol;
 
 import java.io.UnsupportedEncodingException;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A Function that encodes text for safe use in URLs.

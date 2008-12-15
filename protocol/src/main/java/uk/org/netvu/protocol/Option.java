@@ -1,7 +1,8 @@
-package uk.org.netvu.util;
+package uk.org.netvu.protocol;
 
 import java.util.Collections;
 import java.util.Iterator;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * An object that holds 0 or 1 elements.

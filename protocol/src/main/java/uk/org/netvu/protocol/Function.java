@@ -1,5 +1,6 @@
-package uk.org.netvu.util;
+package uk.org.netvu.protocol;
 
+import uk.org.netvu.util.CheckParameters;
 import java.math.BigInteger;
 
 /**

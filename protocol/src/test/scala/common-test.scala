@@ -622,7 +622,7 @@ class NullTest extends JUnit4(new Specification {
  implicit val aParameterDescription = ParameterDescription.parameterWithoutDefault(string, twoWayFunction)
  implicit val unit = ()
 
- import util.Utilities.{notAcceptNull, notAcceptNulls}
+ import Utilities.{notAcceptNull, notAcceptNulls}
 
  def noNull[T <: AnyRef, R](f: T => R, desc: String) =
   "annoying" should { desc + " should not accept null" in { f must notAcceptNull[T, R] } }

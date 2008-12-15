@@ -1,4 +1,6 @@
-package uk.org.netvu.util;
+package uk.org.netvu.protocol;
+
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A transformation from 2 values to 1 value, that can be used across many

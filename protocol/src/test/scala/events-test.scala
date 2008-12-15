@@ -88,8 +88,6 @@ import Arbitrary.arbitrary
 import scalacheck.Prop.{property, extendedBoolean}
 import scalacheck.Gen
 
-import uk.org.netvu.util.BuildersTests
-
 class EventsCGITest extends JUnit4(new Specification with ScalaCheck {
  import EventsCGI.Builder
 
@@ -284,8 +282,6 @@ class EventsCGITest extends JUnit4(new Specification with ScalaCheck {
   }
  }
 })
-
-import uk.org.netvu.util.BuildersTests
 
 class EventsCGIResultTest extends JUnit4(new Specification with ScalaCheck { 
  import EventsCGIResult.{Status, AlarmType, Builder}

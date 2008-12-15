@@ -1,9 +1,10 @@
-package uk.org.netvu.util;
+package uk.org.netvu.protocol;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * An immutable object that stores the values associated with parameters and

@@ -1,8 +1,6 @@
 package uk.org.netvu.protocol;
 
 import java.util.Locale;
-import uk.org.netvu.util.Function;
-import uk.org.netvu.util.Option;
 
 /**
  * The format of the results to be returned from a server.
