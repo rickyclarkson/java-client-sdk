@@ -27,20 +27,7 @@ abstract class FrameParser
             IO.slice( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE, imageHeader.getStartOffset() );
             final ByteBuffer restOfData =
                     IO.from( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + imageHeader.getStartOffset() );
-            handler.mpeg4FrameArrived( new Packet( channel )
-            {
-                @Override
-                public ByteBuffer getData()
-                {
-                    return IO.duplicate( restOfData );
-                }
-
-                @Override
-                public ByteBuffer getOnWireFormat()
-                {
-                    return IO.duplicate( input );
-                }
-            } );
+            handler.mpeg4FrameArrived( Packet.constructPacket( channel, restOfData, input ) );
         }
     };
 
@@ -85,20 +72,7 @@ abstract class FrameParser
                 final Short ignored2 ) throws IOException
         {
             CheckParameters.areNotNull( handler, data );
-            handler.infoArrived( new Packet( channel )
-            {
-                @Override
-                public ByteBuffer getData()
-                {
-                    return IO.duplicate( data );
-                }
-
-                @Override
-                public ByteBuffer getOnWireFormat()
-                {
-                    return IO.duplicate( data );
-                }
-            } );
+            handler.infoArrived( Packet.constructPacket( channel, data, data ) );
         }
     };
     /**
@@ -111,20 +85,7 @@ abstract class FrameParser
                 final Short ignored2 ) throws IOException
         {
             CheckParameters.areNotNull( handler, data );
-            handler.unknownDataArrived( new Packet( channel )
-            {
-                @Override
-                public ByteBuffer getData()
-                {
-                    return data;
-                }
-
-                @Override
-                public ByteBuffer getOnWireFormat()
-                {
-                    return data;
-                }
-            } );
+            handler.unknownDataArrived( Packet.constructPacket( channel, data, data ) );
         }
     };
 
@@ -228,20 +189,7 @@ abstract class FrameParser
                 final Short ignored2 )
         {
             CheckParameters.areNotNull( handler, data );
-            handler.audioDataArrived( new Packet( channel )
-            {
-                @Override
-                public ByteBuffer getData()
-                {
-                    return data;
-                }
-
-                @Override
-                public ByteBuffer getOnWireFormat()
-                {
-                    return data;
-                }
-            } );
+            handler.audioDataArrived( Packet.constructPacket( channel, data, data ) );
         }
     };
 

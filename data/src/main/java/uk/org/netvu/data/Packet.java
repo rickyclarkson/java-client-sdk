@@ -50,4 +50,25 @@ public abstract class Packet
      * @return the data in its on-wire format.
      */
     public abstract ByteBuffer getOnWireFormat();
+
+  /**
+   * Constructs a Packet with the specified channel, data and onWireFormat.  This is a utility method to avoid repetitive subclasses of Packet.
+   * @param channel the channel that the Packet arrived on.
+   * @param data the data contained in the Packet.
+   * @param onWireFormat the data in its on-wire format.
+   */
+  static Packet constructPacket(final int channel, final ByteBuffer data, final ByteBuffer onWireFormat)
+  {
+    return new Packet(channel)
+      {
+        public ByteBuffer getData()
+        {
+          return IO.duplicate(data);
+        }
+        public ByteBuffer getOnWireFormat()
+        {
+          return IO.duplicate(onWireFormat);
+        }
+    };
+  }
 }
