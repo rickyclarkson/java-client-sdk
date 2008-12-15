@@ -262,6 +262,21 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   }
  }
 
+ "parsing a mime stream containing JFIFs with an invalid Time or Date field, and requesting the on-wire format" should {
+  "cause an IllegalStateException" in {
+   for (url <- List(new URL("file:testdata/engineered-mime-jfif-invalid-time"), new URL("file:testdata/engineered-mime-jfif-invalid-date"))) {
+    val connection = url.openConnection
+    ParserFactory parserFor StreamType.MIME parse (connection.getInputStream, new StreamHandler {
+     def audioDataArrived(packet: Packet) = ()
+     def jpegFrameArrived(packet: Packet) = println(packet.getOnWireFormat)
+     def infoArrived(packet: Packet) = ()
+     def mpeg4FrameArrived(packet: Packet) = ()
+     def unknownDataArrived(packet: Packet) = ()
+    }) must throwA[IllegalStateException]
+   }
+  }
+ }
+    
  "parsing a binary stream containing JPEGs" should {
   "produce identical JFIFs to GenericVideoHeader" in {
    val url = new URL("file:testdata/192-168-106-204-binary-jpeg")
