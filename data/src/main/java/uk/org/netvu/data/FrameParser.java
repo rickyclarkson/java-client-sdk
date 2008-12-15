@@ -145,12 +145,13 @@ abstract class FrameParser
                 @Override
                 public ByteBuffer getOnWireFormat()
                 {
+                  final ByteBuffer data = IO.duplicate(input);
                     final int commentPosition =
-                            IO.searchFor( input, JFIFHeader.byteArrayLiteral( new int[] { 0xFF, 0xFE } ) );
-                    input.position( commentPosition + 2 );
-                    final int commentLength = input.getShort();
-                    final String comment = IO.bytesToString( IO.readIntoByteArray( input, commentLength ) );
-                    final int ffc0 = IO.searchFor( input, new byte[] { (byte) 0xFF, (byte) 0xC0 } );
+                            IO.searchFor( data, JFIFHeader.byteArrayLiteral( new int[] { 0xFF, 0xFE } ) );
+                    data.position( commentPosition + 2 );
+                    final int commentLength = data.getShort();
+                    final String comment = IO.bytesToString( IO.readIntoByteArray( data, commentLength ) );
+                    final int ffc0 = IO.searchFor( data, new byte[] { (byte) 0xFF, (byte) 0xC0 } );
 
                     final VideoFormat videoFormat =
                             input.get( ffc0 + 11 ) == 0x22 ? VideoFormat.JPEG_422 : VideoFormat.JPEG_411;
@@ -158,7 +159,7 @@ abstract class FrameParser
                     final short targetLines = input.getShort( ffc0 + 7 );
 
                     final ImageDataStruct imageDataStruct =
-                            ImageDataStruct.createImageDataStruct( input, comment, videoFormat, targetLines,
+                            ImageDataStruct.createImageDataStruct( data, comment, videoFormat, targetLines,
                                     targetPixels );
                     return imageDataStruct.getByteBuffer();
                 }
