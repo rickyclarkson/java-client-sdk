@@ -102,6 +102,7 @@ import java.nio.ByteBuffer
 class ParseBinaryStreamsTest extends JUnit4(new Specification {
  "parsing binary streams containing JFIF" isSpecifiedBy {
   validlyParse("file:testdata/192-168-106-204-binary-jfif", StreamType.BINARY)
+  validlyParse("file:testdata/remguard_mews-with-alarm-text", StreamType.BINARY)
  }
 
  "parsing mime streams containing JFIF" isSpecifiedBy {
