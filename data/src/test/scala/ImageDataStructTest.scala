@@ -14,6 +14,14 @@ class ImageDataStructTest extends JUnit4(new Specification {
   }
  }
 
+ "Constructing an ImageDataStruct with a ByteBuffer containing a valid version" should {
+  "succeed" in {
+   val buffer = ByteBuffer.wrap(Array(0xDE, 0xCA, 0xDE, 0x10) map (_.toByte))
+   new ImageDataStruct(buffer)
+   true mustBe true
+  }
+ }
+
  "An ImageDataStruct" should {
   "have all the values supplied to it by the ByteBuffer" in {
 
