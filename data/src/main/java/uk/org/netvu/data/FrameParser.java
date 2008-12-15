@@ -3,7 +3,6 @@ package uk.org.netvu.data;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.Map;
 
 import uk.org.netvu.util.CheckParameters;
 
@@ -162,24 +161,6 @@ abstract class FrameParser
     };
 
     /**
-     * Maps the ints found in the stream formats to FrameParsers to be used for
-     * parsing the data with.
-     */
-    private static final Map<Integer, FrameParser> frameParsers = new HashMap<Integer, FrameParser>()
-    {
-        {
-            // This is an instance initialiser.
-            put( 0, TRUNCATED_JFIF );
-            put( 1, JFIF );
-            put( 2, MPEG4 );
-            put( 3, MPEG4 );
-            put( 4, ADPCM );
-            put( 6, MPEG4_MINIMAL );
-            put( 9, INFO );
-        }
-    };
-
-    /**
      * A FrameParser that can parse ADPCM data.
      */
     private static final FrameParser ADPCM = new FrameParser()
@@ -204,6 +185,20 @@ abstract class FrameParser
      */
     static FrameParser frameParserFor( final int frameType )
     {
+        final HashMap<Integer, FrameParser> frameParsers = new HashMap<Integer, FrameParser>()
+        {
+            {
+                // This is an instance initialiser.
+                put( 0, TRUNCATED_JFIF );
+                put( 1, JFIF );
+                put( 2, MPEG4 );
+                put( 3, MPEG4 );
+                put( 4, ADPCM );
+                put( 6, MPEG4_MINIMAL );
+                put( 9, INFO );
+            }
+        };
+
         return frameParsers.containsKey( frameType ) ? frameParsers.get( frameType ) : UNKNOWN;
     }
 
