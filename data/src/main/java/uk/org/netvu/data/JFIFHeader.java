@@ -194,7 +194,7 @@ final class JFIFHeader
      */
     static ByteBuffer jpegToJfif( ByteBuffer source )
     {
-        source = source.duplicate();
+      source = IO.duplicate(source);
         source.position( 0 );
         CheckParameters.areNotNull( source );
         final ImageDataStruct imageDataStruct = new ImageDataStruct( source );

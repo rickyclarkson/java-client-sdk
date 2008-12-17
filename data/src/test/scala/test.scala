@@ -128,9 +128,9 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     var numValidFrames = 0
     var numInvalidFrames = 0
     
-    ParserFactory parserFor streamType parse (connection.getInputStream, new StreamHandler {
+    ParserFactory parserFor streamType parse (connection.getInputStream, null, new StreamHandler {
      def jpegFrameArrived(packet: Packet) = {
-      val rawData = packet.getOnWireFormat
+      val rawData = packet.getOnDiskFormat
       val buffer = packet.getData
       val channel = packet.getChannel
       
@@ -140,7 +140,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
       buffer.position(buffer.limit - 2)
       val last = (next, next)
 
-      val version = packet.getOnWireFormat.getInt
+      val version = packet.getOnDiskFormat.getInt
       if (version != 0xDECADE10 && version != 0xDECADE11 )
        throw new RuntimeException(String.valueOf(version))
 
@@ -199,13 +199,13 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     var numInvalidFrames = 0
     var index = 0
     
-    ParserFactory parserFor streamType parse (connection.getInputStream, new StreamHandler {
+    ParserFactory parserFor streamType parse (connection.getInputStream, null, new StreamHandler {
      def audioDataArrived(packet: Packet) = ()
      def jpegFrameArrived(packet: Packet) = ()
      def unknownDataArrived(packet: Packet) = ()
      def mpeg4FrameArrived(packet: Packet) = {
 
-      val version = packet.getOnWireFormat.getInt
+      val version = packet.getOnDiskFormat.getInt
       if (version != 0xDECADE10 && version != 0xDECADE11 )
        throw new RuntimeException(Integer.toHexString(version))
 
@@ -244,7 +244,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
    val url = new URL("file:testdata/engineered-192-168-106-207-binary-unknown")
    val connection = url.openConnection
    var success = false
-   ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
+   ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, null, new StreamHandler {
     def audioDataArrived(packet: Packet) = ()
     def jpegFrameArrived(packet: Packet) = ()
     def infoArrived(packet: Packet) = ()
@@ -260,7 +260,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   "cause an IllegalStateException" in {
    val url = new URL("file:testdata/engineered-minimal-mp4-no-imagesize")
    val connection = url.openConnection
-   ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
+   ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, null, new StreamHandler {
     def audioDataArrived(packet: Packet) = ()
     def jpegFrameArrived(packet: Packet) = ()
     def infoArrived(packet: Packet) = ()
@@ -274,13 +274,13 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   "cause an IllegalStateException" in {
    val url = new URL("file:testdata/engineered-mime-mp4-no-vop")
    val connection = url.openConnection
-   ParserFactory parserFor StreamType.MIME parse (connection.getInputStream, new StreamHandler {
+   ParserFactory parserFor StreamType.MIME parse (connection.getInputStream, null, new StreamHandler {
     def audioDataArrived(packet: Packet) = ()
     def jpegFrameArrived(packet: Packet) = ()
     def infoArrived(packet: Packet) = ()
     def mpeg4FrameArrived(packet: Packet) = {
      packet.getData
-     packet.getOnWireFormat
+     packet.getOnDiskFormat
     }
     def unknownDataArrived(packet: Packet) = ()
    }) must throwA[IllegalStateException]  
@@ -291,9 +291,9 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   "cause an IllegalStateException" in {
    for (url <- List(new URL("file:testdata/engineered-mime-jfif-invalid-time"), new URL("file:testdata/engineered-mime-jfif-invalid-date"))) {
     val connection = url.openConnection
-    ParserFactory parserFor StreamType.MIME parse (connection.getInputStream, new StreamHandler {
+    ParserFactory parserFor StreamType.MIME parse (connection.getInputStream, null, new StreamHandler {
      def audioDataArrived(packet: Packet) = ()
-     def jpegFrameArrived(packet: Packet) = println(packet.getOnWireFormat)
+     def jpegFrameArrived(packet: Packet) = packet.getOnDiskFormat
      def infoArrived(packet: Packet) = ()
      def mpeg4FrameArrived(packet: Packet) = ()
      def unknownDataArrived(packet: Packet) = ()
@@ -305,7 +305,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
  "parsing a mime stream containing MPEG-4s with text/plian instead of text/plain" should {
   "cause an IllegalStateException" in {
    val connection = new URL("file:testdata/engineered-mime-mp4-plian-text").openConnection
-   ParserFactory parserFor StreamType.MIME parse (connection.getInputStream, new StreamHandler {
+   ParserFactory parserFor StreamType.MIME parse (connection.getInputStream, null, new StreamHandler {
     def audioDataArrived(packet: Packet) = ()
     def jpegFrameArrived(packet: Packet) = ()
     def infoArrived(packet: Packet) = ()
@@ -319,7 +319,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   "cause an IllegalStateException" in {
    val url = new URL("file:testdata/engineered-binary-jpeg-wrong-magic-number")
    val connection = url.openConnection
-   ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
+   ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, null, new StreamHandler {
     def audioDataArrived(packet: Packet) = ()
     def jpegFrameArrived(packet: Packet) = packet.getData
     def infoArrived(packet: Packet) = ()
@@ -337,7 +337,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
    var success = 0
    var fail = 0  
 
-   ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, new StreamHandler {
+   ParserFactory parserFor StreamType.BINARY parse (connection.getInputStream, null, new StreamHandler {
     def audioDataArrived(packet: Packet) = ()
     def jpegFrameArrived(packet: Packet) = {
      val buffer = packet.getData

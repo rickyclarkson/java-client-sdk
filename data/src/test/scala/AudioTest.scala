@@ -11,10 +11,10 @@ class AudioTest extends JUnit4(new Specification {
   "Parsing a stream containing ADPCM data" should {
    "parse out at least two ADPCM frames" in {
     var validPackets = 0
-    ParserFactory parserFor mimeType parse (new FileInputStream(url), new StreamHandler {
+    ParserFactory parserFor mimeType parse (new FileInputStream(url), null, new StreamHandler {
      def audioDataArrived(packet: Packet) = {
       packet.getData
-      packet.getOnWireFormat
+      packet.getOnDiskFormat
       validPackets += 1
      }
      def infoArrived(packet: Packet) = ()

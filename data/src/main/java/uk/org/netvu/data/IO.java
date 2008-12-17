@@ -16,8 +16,13 @@ import uk.org.netvu.util.CheckParameters;
  */
 final class IO
 {
+  /**
+   * The encoding used in all conversions between bytes and Strings.
+   */
+  private static final String UTF_8 = "UTF-8";
+
     /**
-     * Converts a byte[] to a String using the US-ASCII character encoding.
+     * Converts a byte[] to a String using the UTF-8 character encoding.
      * 
      * @param b
      *        the byte[] to convert to a String.
@@ -31,7 +36,7 @@ final class IO
 
         try
         {
-            return new String( b, "US-ASCII" );
+            return new String( b, UTF_8 );
         }
         catch ( final UnsupportedEncodingException e )
         {
@@ -216,26 +221,6 @@ final class IO
     }
 
     /**
-     * Reads a big-endian int from the specified position in the specified
-     * ByteBuffer.
-     * 
-     * @param buffer
-     *        the ByteBuffer to read an int from.
-     * @param where
-     *        the position to read from.
-     * @return a big-endian int read from the specified position in the
-     *         specified ByteBuffer.
-     * @throws NullPointerException
-     *         if buffer is null.
-     */
-    public static int readInt( final ByteBuffer buffer, final int where )
-    {
-        CheckParameters.areNotNull( buffer );
-        buffer.order( ByteOrder.BIG_ENDIAN );
-        return buffer.getInt( where );
-    }
-
-    /**
      * Reads the next line of text from the specified InputStream and returns it
      * as an int.
      * 
@@ -390,7 +375,7 @@ final class IO
     }
 
     /**
-     * Converts a String to a byte[] using the US-ASCII character encoding.
+     * Converts a String to a byte[] using the UTF-8 character encoding.
      * 
      * @param s
      *        the String to convert to a byte[].
@@ -404,7 +389,7 @@ final class IO
 
         try
         {
-            return s.getBytes( "US-ASCII" );
+            return s.getBytes( UTF_8 );
         }
         catch ( final UnsupportedEncodingException e )
         {
@@ -441,5 +426,38 @@ final class IO
      */
     private IO()
     {
+    }
+
+    /**
+     * Takes the part of the specified String before its first '\0', or the
+     * whole String if none is found.
+     * 
+     * @param input
+     *        the String to read from.
+     * @return a String without '\0' characters.
+     * @throws NullPointerException
+     *         if input is null.
+     */
+    public static String nullTerminate( final String input )
+    {
+        CheckParameters.areNotNull( input );
+        final int indexOfNull = input.indexOf( '\0' );
+        return indexOfNull == -1 ? input : input.substring( 0, indexOfNull );
+    }
+
+    /**
+     * Reads an ASCII String from the specified byte[], stopping when a 0 byte
+     * is found or the end of the array is reached.
+     * 
+     * @param input
+     *        the byte[] to read from.
+     * @return an ASCII String.
+     * @throws NullPointerException
+     *         if input is null.
+     */
+    public static String nullTerminate( final byte[] input )
+    {
+        CheckParameters.areNotNull( input );
+        return nullTerminate( IO.bytesToString( input ) );
     }
 }

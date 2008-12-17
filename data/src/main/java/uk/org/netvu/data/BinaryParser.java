@@ -13,21 +13,10 @@ import uk.org.netvu.util.CheckParameters;
  */
 final class BinaryParser implements Parser
 {
-    /**
-     * Parses an InputStream as a 'binary' stream, delivering data obtained from
-     * the InputStream to the passed-in StreamHandler.
-     * 
-     * @param input
-     *        the InputStream to read data from.
-     * @param handler
-     *        the StreamHandler to deliver parsed data to.
-     * @throws IOException
-     *         if any I/O errors occur, other than the end of the stream being
-     *         reached, in which case the method returns.
-     * @throws NullPointerException
-     *         if input or handler are null.
-     */
-    public void parse( final InputStream input, final StreamHandler handler ) throws IOException
+  /**
+   * @{inheritDoc}
+   */
+  public void parse( final InputStream input, final Object sourceIdentifier, final StreamHandler handler ) throws IOException
     {
         CheckParameters.areNotNull( input, handler );
 
@@ -63,6 +52,7 @@ final class BinaryParser implements Parser
                 {
                     public void audioDataArrived( final Packet packet )
                     {
+                      handler.audioDataArrived(packet);
                     }
 
                     public void infoArrived( final Packet packet )
@@ -80,23 +70,30 @@ final class BinaryParser implements Parser
                             horizontalResolution[0] = Short.parseShort( theRest.substring( 0, comma ) );
                             verticalResolution[0] = Short.parseShort( theRest.substring( comma + 1, semi ) );
                         }
+                        else
+                          {
+                            handler.infoArrived(packet);
+                          }
                     }
 
                     public void jpegFrameArrived( final Packet packet )
                     {
+                      handler.jpegFrameArrived(packet);
                     }
 
                     public void mpeg4FrameArrived( final Packet packet )
                     {
+                      handler.mpeg4FrameArrived(packet);
                     }
 
                     public void unknownDataArrived( final Packet packet )
                     {
+                      handler.unknownDataArrived(packet);
                     }
-                }, IO.duplicate( data ), channel, horizontalResolution[0], verticalResolution[0] );
+                  }, sourceIdentifier, IO.duplicate( data ), channel, horizontalResolution[0], verticalResolution[0] );
 
-                frameParser.parse( handler, IO.duplicate( data ), channel, horizontalResolution[0],
-                        verticalResolution[0] );
+                /*                frameParser.parse( handler, IO.duplicate( data ), channel, horizontalResolution[0],
+                                  verticalResolution[0] );*/
             }
         }
         catch ( final EOFException e )

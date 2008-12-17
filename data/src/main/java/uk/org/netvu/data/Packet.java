@@ -9,20 +9,21 @@ import java.nio.ByteBuffer;
 public abstract class Packet
 {
     /**
-     * Constructs a Packet with the specified channel, data and onWireFormat.
+     * Constructs a Packet with the specified channel, data and onDiskFormat.
      * This is a utility method to avoid repetitive subclasses of Packet.
      * 
      * @param channel
      *        the channel that the Packet arrived on.
+     * @param sourceIdentifier the caller-supplied source identifier.
      * @param data
      *        the data contained in the Packet.
-     * @param onWireFormat
-     *        the data in its on-wire format.
-     * @return a Packet with the specified channel, data and onWireFormat.
+     * @param onDiskFormat
+     *        the data in its on-disk format.
+     * @return a Packet with the specified channel, data and onDiskFormat.
      */
-    static Packet constructPacket( final int channel, final ByteBuffer data, final ByteBuffer onWireFormat )
+  static Packet constructPacket( final int channel, final Object sourceIdentifier, final ByteBuffer data, final ByteBuffer onDiskFormat )
     {
-        return new Packet( channel )
+      return new Packet( channel, sourceIdentifier )
         {
             @Override
             public ByteBuffer getData()
@@ -31,9 +32,9 @@ public abstract class Packet
             }
 
             @Override
-            public ByteBuffer getOnWireFormat()
+            public ByteBuffer getOnDiskFormat()
             {
-                return IO.duplicate( onWireFormat );
+                return IO.duplicate( onDiskFormat );
             }
         };
     }
@@ -43,16 +44,23 @@ public abstract class Packet
      */
     private final int channel;
 
+  /**
+   * The caller-supplied source identifier.
+   */
+  private final Object sourceIdentifier;
+
     /**
      * Constructs a Packet with the specified channel. Package-private to
      * prevent subclassing from outside this package.
      * 
      * @param channel
      *        the channel that the Packet arrived on.
+     * @param sourceIdentifier the caller-supplied identifier for this Packet's source.
      */
-    Packet( final int channel )
+  Packet( final int channel, Object sourceIdentifier )
     {
         this.channel = channel;
+        this.sourceIdentifier = sourceIdentifier;
     }
 
     /**
@@ -73,11 +81,11 @@ public abstract class Packet
     public abstract ByteBuffer getData();
 
     /**
-     * Gets the data in its on-wire format. For image data, this will always be
+     * Gets the data in its on-disk format. For image data, this will always be
      * in the form of an ImageDataStruct. For audio data, this will always be in
      * the form of an AudioDataStruct.
      * 
-     * @return the data in its on-wire format.
+     * @return the data in its on-disk format.
      */
-    public abstract ByteBuffer getOnWireFormat();
+    public abstract ByteBuffer getOnDiskFormat();
 }

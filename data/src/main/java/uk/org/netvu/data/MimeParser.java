@@ -114,20 +114,10 @@ class MimeParser implements Parser
         return new RawPacket( contentType, data );
     }
 
-    /**
-     * Parses a MIME stream from the specified InputStream, delivering data as
-     * it arrives to the specified StreamHandler.
-     * 
-     * @param input
-     *        the InputStream where the MIME data is to be read from.
-     * @param handler
-     *        the StreamHandler to deliver data to.
-     * @throws IOException
-     *         if an I/O error occurs.
-     * @throws NullPointerException
-     *         if either parameter are null.
+  /**
+   * ${inheritDoc}
      */
-    public void parse( final InputStream input, final StreamHandler handler ) throws IOException
+  public void parse( final InputStream input, final Object sourceIdentifier, final StreamHandler handler ) throws IOException
     {
         final Short[] horizontalResolution = { null };
         final Short[] verticalResolution = { null };
@@ -139,9 +129,11 @@ class MimeParser implements Parser
                 CheckParameters.areNotNull( input, handler );
                 final RawPacket packet = readRawPacket( input );
 
-                if ( packet.contentType.startsWith( "image/admp4" ) )
+                final String IMAGE_ADMP4 = "image/admp4";
+
+                if ( packet.contentType.startsWith( IMAGE_ADMP4 ) )
                 {
-                    final String res = packet.contentType.substring( "image/admp4".length() );
+                    final String res = packet.contentType.substring( IMAGE_ADMP4.length() );
 
                     if ( res.length() != 0 )
                     {
@@ -158,7 +150,7 @@ class MimeParser implements Parser
                         final String comment = IO.bytesToString( next.data.array() );
                         final int channel = getChannelFromCommentBlock( comment );
 
-                        handler.mpeg4FrameArrived( new Packet( channel )
+                        handler.mpeg4FrameArrived( new Packet( channel, sourceIdentifier )
                         {
                             @Override
                             public ByteBuffer getData()
@@ -167,7 +159,7 @@ class MimeParser implements Parser
                             }
 
                             @Override
-                            public ByteBuffer getOnWireFormat()
+                            public ByteBuffer getOnDiskFormat()
                             {
                                 final boolean isIFrame = isIFrame( IO.duplicate( packet.data ) );
 
@@ -203,20 +195,7 @@ class MimeParser implements Parser
                     // timestamps are
                     // unreliable.
 
-                    handler.audioDataArrived( new Packet( audioDataStruct.getChannel() )
-                    {
-                        @Override
-                        public ByteBuffer getData()
-                        {
-                            return packet.data;
-                        }
-
-                        @Override
-                        public ByteBuffer getOnWireFormat()
-                        {
-                            return packet.data;
-                        }
-                    } );
+                    handler.audioDataArrived( Packet.constructPacket( audioDataStruct.getChannel(), sourceIdentifier, packet.data, packet.data ));
                 }
                 else
                 {
@@ -224,7 +203,7 @@ class MimeParser implements Parser
                     final String comments = JFIFHeader.getComments( jpeg );
 
                     final int channel = getChannelFromCommentBlock( comments );
-                    handler.jpegFrameArrived( new Packet( channel )
+                    handler.jpegFrameArrived( new Packet( channel, sourceIdentifier )
                     {
                         @Override
                         public ByteBuffer getData()
@@ -233,7 +212,7 @@ class MimeParser implements Parser
                         }
 
                         @Override
-                        public ByteBuffer getOnWireFormat()
+                        public ByteBuffer getOnDiskFormat()
                         {
                             final int commentPosition =
                                     IO.searchFor( packet.data, new byte[] { (byte) 0xFF, (byte) 0xFE } );

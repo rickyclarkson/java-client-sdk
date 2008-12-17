@@ -84,6 +84,23 @@ public final class AudioDataStruct
         }
     }
 
+  public static AudioDataStruct construct(final int size)
+  {
+    ByteBuffer result = ByteBuffer.allocate(AUDIO_DATA_STRUCT_SIZE);
+    result.putInt(VERSION);
+    return new AudioDataStruct(result);
+  }
+
+  /**
+   * Gives the ByteBuffer that backs this AudioDataStruct.
+   *
+   * @return the ByteBuffer that backs this AudioDataStruct.
+   */
+  public ByteBuffer getByteBuffer()
+  {
+    return IO.duplicate(buffer).asReadOnlyBuffer();
+  }
+
     /**
      * Gets the channel, or camera number, that the data arrived on.
      * 
@@ -91,7 +108,7 @@ public final class AudioDataStruct
      */
     public int getChannel()
     {
-        return IO.readInt( buffer, CHANNEL_OFFSET );
+      return buffer.getInt( CHANNEL_OFFSET );
     }
 
     /**
@@ -103,7 +120,7 @@ public final class AudioDataStruct
      */
     public int getMilliseconds()
     {
-        return IO.readInt( buffer, MILLISECONDS_OFFSET );
+        return buffer.getInt( MILLISECONDS_OFFSET );
     }
 
     /**
@@ -113,7 +130,7 @@ public final class AudioDataStruct
      */
     public int getMode()
     {
-        return IO.readInt( buffer, MODE_OFFSET );
+        return buffer.getInt( MODE_OFFSET );
     }
 
     /**
@@ -125,7 +142,7 @@ public final class AudioDataStruct
      */
     public int getSeconds()
     {
-        return IO.readInt( buffer, SECONDS_OFFSET );
+        return buffer.getInt(  SECONDS_OFFSET );
     }
 
     /**
@@ -135,7 +152,7 @@ public final class AudioDataStruct
      */
     public int getSize()
     {
-        return IO.readInt( buffer, SIZE_OFFSET );
+        return buffer.getInt(  SIZE_OFFSET );
     }
 
     /**
@@ -147,7 +164,7 @@ public final class AudioDataStruct
      */
     public int getStartOffset()
     {
-        return IO.readInt( buffer, DATA_POSITION_OFFSET );
+        return buffer.getInt(  DATA_POSITION_OFFSET );
     }
 
     /**
@@ -158,7 +175,7 @@ public final class AudioDataStruct
      */
     public int getVersion()
     {
-        return IO.readInt( buffer, VERSION_OFFSET );
+        return buffer.getInt(  VERSION_OFFSET );
     }
 
     /**
@@ -167,7 +184,7 @@ public final class AudioDataStruct
      * @param channel
      *        the channel, or camera number, for this AudioDataStruct.
      */
-    public void setChannel( final int channel )
+    void setChannel( final int channel )
     {
         buffer.putInt( CHANNEL_OFFSET, channel );
     }
@@ -178,7 +195,7 @@ public final class AudioDataStruct
      * @param milliseconds
      *        the milliseconds part of the timestamp for this AudioDataStruct.
      */
-    public void setMilliseconds( final int milliseconds )
+    void setMilliseconds( final int milliseconds )
     {
         buffer.putInt( MILLISECONDS_OFFSET, milliseconds );
     }
@@ -189,7 +206,7 @@ public final class AudioDataStruct
      * @param mode
      *        the mode for this AudioDataStruct.
      */
-    public void setMode( final int mode )
+    void setMode( final int mode )
     {
         buffer.putInt( MODE_OFFSET, mode );
     }
@@ -200,7 +217,7 @@ public final class AudioDataStruct
      * @param seconds
      *        the seconds part of the timestamp for this AudioDataStruct.
      */
-    public void setSeconds( final int seconds )
+    void setSeconds( final int seconds )
     {
         buffer.putInt( SECONDS_OFFSET, seconds );
     }
@@ -211,7 +228,7 @@ public final class AudioDataStruct
      * @param size
      *        the size of the data that this AudioDataStruct describes.
      */
-    public void setSize( final int size )
+    void setSize( final int size )
     {
         buffer.putInt( SIZE_OFFSET, size );
     }
@@ -224,7 +241,7 @@ public final class AudioDataStruct
      *        the offset in the ByteBuffer at which the audio data begins, in
      *        bytes.
      */
-    public void setStartOffset( final int startOffset )
+    void setStartOffset( final int startOffset )
     {
         buffer.putInt( DATA_POSITION_OFFSET, startOffset );
     }

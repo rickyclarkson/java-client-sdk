@@ -1,5 +1,9 @@
 Rationale
 
+* Threading Model
+
+ The API caller will typically call ParserFactory.parserFor(StreamType.BINARY).parse(new StreamHandler...), where the StreamHandler is supplied by the caller.  We decided not to parallelise the parsing because it would make the caller's code more difficult to get right, unless we parallelised but ensured that StreamHandler's methods were always called on the original thread.  We decided that there would not be significant benefit in parallelising at this level, but the caller is of course able to control which thread to parse on.
+
 * AudioDataStruct
 
  AudioDataStruct is a public class that provides access to the audio_data part of an audio packet.  It is backed by a ByteBuffer, and provides methods to mutate that ByteBuffer, which will fail if the ByteBuffer is read-only.
