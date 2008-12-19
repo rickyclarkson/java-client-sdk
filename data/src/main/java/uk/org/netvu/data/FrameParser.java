@@ -23,7 +23,7 @@ abstract class FrameParser
                 final Short ignored2 ) throws IOException
         {
             CheckParameters.areNotNull( handler, input );
-            final ImageDataStruct imageHeader = new ImageDataStruct( input );
+            final ImageDataStruct imageHeader = ImageDataStruct.construct( input );
             IO.slice( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE, imageHeader.getStartOffset() );
             final ByteBuffer restOfData =
                     IO.from( input, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + imageHeader.getStartOffset() );
@@ -54,7 +54,7 @@ abstract class FrameParser
                 @Override
                 public ByteBuffer getData()
                 {
-                    return IO.duplicate( input );
+                  return IO.from( input, 6 );
                 }
 
                 @Override
@@ -62,7 +62,7 @@ abstract class FrameParser
                 {
                     final boolean iFrame = MimeParser.isIFrame( IO.duplicate( input ) );
                     final VideoFormat videoFormat = iFrame ? VideoFormat.MPEG4_I_FRAME : VideoFormat.MPEG4_P_FRAME;
-                    return ImageDataStruct.createImageDataStruct( input, "", videoFormat, yres, xres ).getByteBuffer();
+                    return ImageDataStruct.construct( input, "", videoFormat, yres, xres ).getByteBuffer();
                 }
             } );
         }
@@ -140,35 +140,55 @@ abstract class FrameParser
                 @Override
                 public ByteBuffer getData()
                 {
-                    return IO.duplicate( input );
+                  try
+                    {
+                      IO.searchFor( input, new byte[]{ (byte) 0xFF, (byte) 0xD8 } );
+                      return IO.duplicate( input );
+                    }
+                  catch (BufferUnderflowException e)
+                    {
+                      ByteBuffer buffer = parseJfifOrJpeg(input).getData();
+                      if ((buffer.get() & 0xFF) != 0xFF)
+                        throw null;
+                      buffer.position(0);
+                      return buffer;
+                    }
                 }
 
                 @Override
                 public ByteBuffer getOnDiskFormat()
                 {
-                    final ByteBuffer data = IO.duplicate( input );
-                    final int ffc0;
-                    ffc0 = IO.searchFor( data, new byte[] { (byte) 0xFF, (byte) 0xC0 } );
-
-                    final int commentPosition =
-                            IO.searchFor( data, JFIFHeader.byteArrayLiteral( new int[] { 0xFF, 0xFE } ) );
-                    data.position( commentPosition + 2 );
-                    final int commentLength = data.getShort();
-                    final String comment = IO.bytesToString( IO.readIntoByteArray( data, commentLength ) );
-
-                    final VideoFormat videoFormat =
-                            input.get( ffc0 + 11 ) == 0x22 ? VideoFormat.JPEG_422 : VideoFormat.JPEG_411;
-                    final short targetPixels = input.getShort( ffc0 + 5 );
-                    final short targetLines = input.getShort( ffc0 + 7 );
-
-                    final ImageDataStruct imageDataStruct =
-                            ImageDataStruct.createImageDataStruct( data, comment, videoFormat, targetLines,
-                                    targetPixels );
-                    return imageDataStruct.getByteBuffer();
+                  return parseJfifOrJpeg( input ).getByteBuffer();
                 }
-            } );
+              });
         }
     };
+
+  private static ImageDataStruct parseJfifOrJpeg(ByteBuffer jfifOrJpegData)
+  {
+    final ByteBuffer data = IO.duplicate( jfifOrJpegData);
+    try
+    {
+      final int ffd8 = IO.searchFor(data, new byte[]{(byte)0xFF, (byte)0xD8});
+      if (ffd8 != 0)
+        throw null;
+
+      final int ffc0 = IO.searchFor(data, new byte[]{(byte)0xFF, (byte)0xC0});
+      final int commentPosition = IO.searchFor(data, JFIFHeader.byteArrayLiteral(new int[]{0xFF, 0xFE}));
+      data.position(commentPosition + 2);
+      final int commentLength = data.getShort();
+      final String comment = IO.bytesToString(IO.readIntoByteArray(data, commentLength));
+      final VideoFormat videoFormat = data.get(ffc0 + 11) == 0x22 ? VideoFormat.JPEG_422 : VideoFormat.JPEG_411;
+      final short targetPixels = data.getShort(ffc0 +5 );
+      final short targetLines = data.getShort(ffc0+7);
+      return ImageDataStruct.construct(data, comment, videoFormat, targetLines, targetPixels);
+    }
+    catch (BufferUnderflowException e)
+      {
+        final int decade = IO.searchFor(data, new byte[]{(byte)0xDE, (byte)0xCA, (byte)0xDE } );
+        return parseJfifOrJpeg(JFIFHeader.jpegToJfif(IO.from(data, decade)));
+      }
+  }
 
     /**
      * A FrameParser that can parse ADPCM data.
@@ -180,7 +200,7 @@ abstract class FrameParser
                 final Short ignored2 )
         {
             CheckParameters.areNotNull( handler, data );
-            handler.audioDataArrived( Packet.constructPacket( channel, sourceIdentifier, data, data ) );
+            handler.audioDataArrived( Packet.constructPacket( channel, sourceIdentifier, IO.from(data, AudioDataStruct.AUDIO_DATA_STRUCT_SIZE + 6), data ) );
         }
     };
 

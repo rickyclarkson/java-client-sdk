@@ -72,7 +72,7 @@ public final class AudioDataStruct
      * @throws NullPointerException
      *         if buffer is null.
      */
-    public AudioDataStruct( final ByteBuffer buffer )
+    private AudioDataStruct( final ByteBuffer buffer )
     {
         CheckParameters.areNotNull( buffer );
 
@@ -84,9 +84,14 @@ public final class AudioDataStruct
         }
     }
 
+  public static AudioDataStruct construct(ByteBuffer buffer)
+  {
+    return new AudioDataStruct(buffer);
+  }
+
   public static AudioDataStruct construct(final int size)
   {
-    ByteBuffer result = ByteBuffer.allocate(AUDIO_DATA_STRUCT_SIZE);
+    ByteBuffer result = ByteBuffer.allocate(AUDIO_DATA_STRUCT_SIZE + 6 + size);
     result.putInt(VERSION);
     return new AudioDataStruct(result);
   }

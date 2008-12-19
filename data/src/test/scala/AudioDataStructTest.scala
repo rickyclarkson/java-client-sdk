@@ -10,7 +10,7 @@ class AudioDataStructTest extends JUnit4(new Specification {
  "Constructing an AudioDataStruct with a ByteBuffer containing an invalid version" should {
   "cause an IllegalArgumentException" in {
    val buffer = ByteBuffer.wrap(Array(0xFA, 0xCA, 0xDE, 0x10) map (_.toByte))
-   new AudioDataStruct(buffer) must throwA[IllegalArgumentException]
+   AudioDataStruct construct buffer must throwA[IllegalArgumentException]
   }
  }
 
@@ -27,7 +27,7 @@ class AudioDataStructTest extends JUnit4(new Specification {
    val bb = ByteBuffer.allocate(AudioDataStruct.AUDIO_DATA_STRUCT_SIZE)
    bb.putInt(AudioDataStruct.VERSION)
    bb.position(0)
-   val struct = new AudioDataStruct(bb)
+   val struct = AudioDataStruct construct bb
    struct setMode mode
    struct setChannel channel
    struct setStartOffset startOffset

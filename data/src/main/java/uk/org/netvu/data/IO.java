@@ -169,7 +169,16 @@ final class IO
     {
         CheckParameters.areNotNull( in, after );
         final int index = in.indexOf( after );
-        return index < 0 ? ifNotFound : in.substring( index + after.length(), in.indexOf( "\r", index ) );
+        int terminator = -1;
+        for (final char c: new char[]{'\0', '\r', '\n'})
+          {
+            int candidate = in.indexOf(c, index);
+            if (terminator < 0)
+              terminator = candidate;
+            terminator = Math.min(terminator, candidate);
+          }
+
+        return index < 0 ? ifNotFound : terminator < 0 ? in.substring( index + after.length() ) : in.substring( index + after.length(), terminator );
     }
 
     /**
@@ -194,7 +203,14 @@ final class IO
     public static int findInt( final String in, final String after, final int ifNotFound )
     {
         final String s = find( in, after, null );
-        return s == null ? ifNotFound : Integer.parseInt( s );
+        try
+       {
+         return s == null ? ifNotFound : Integer.parseInt( s );
+       }
+        catch (NumberFormatException e)
+          {
+            throw new RuntimeException(Integer.toHexString(s.charAt(1)));
+          }
     }
 
     /**
@@ -353,8 +369,9 @@ final class IO
      *         if the end of the ByteBuffer is reached without finding the
      *         byte[].
      */
-    public static int searchFor( final ByteBuffer in, final byte[] toFind ) throws BufferUnderflowException
+    public static int searchFor( ByteBuffer in, final byte[] toFind ) throws BufferUnderflowException
     {
+      in = IO.duplicate(in);
         CheckParameters.areNotNull( in, toFind );
 
         int i = 0;

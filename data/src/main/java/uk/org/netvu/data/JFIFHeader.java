@@ -35,9 +35,7 @@ final class JFIFHeader
     /**
      * The JFIF header to begin all JFIFs with.
      */
-    private static final byte[] JFIF_HEADER =
-            byteArrayLiteral( new int[] { 0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00, 0x01,
-                0x01, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00 } );
+  private static final byte[] JFIF_HEADER = new byte[] { (byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00 };
 
     /**
      * The start of a comment field.
@@ -197,7 +195,7 @@ final class JFIFHeader
       source = IO.duplicate(source);
         source.position( 0 );
         CheckParameters.areNotNull( source );
-        final ImageDataStruct imageDataStruct = new ImageDataStruct( source );
+        final ImageDataStruct imageDataStruct = ImageDataStruct.construct( source );
         final ByteBuffer commentOriginal =
                 IO.slice( source, ImageDataStruct.IMAGE_DATA_STRUCT_SIZE, imageDataStruct.getStartOffset() );
         final ByteBuffer restOfData =

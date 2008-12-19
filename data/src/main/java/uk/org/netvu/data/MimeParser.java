@@ -164,7 +164,7 @@ class MimeParser implements Parser
                                 final boolean isIFrame = isIFrame( IO.duplicate( packet.data ) );
 
                                 final ImageDataStruct imageDataStruct =
-                                        ImageDataStruct.createImageDataStruct( packet.data, comment,
+                                        ImageDataStruct.construct( packet.data, comment,
                                                 isIFrame ? VideoFormat.MPEG4_I_FRAME : VideoFormat.MPEG4_P_FRAME,
                                                 verticalResolution[0], horizontalResolution[0] );
 
@@ -180,10 +180,7 @@ class MimeParser implements Parser
                 }
                 else if ( packet.contentType.startsWith( "audio/adpcm" ) )
                 {
-                    final AudioDataStruct audioDataStruct =
-                            new AudioDataStruct( ByteBuffer.allocate( AudioDataStruct.AUDIO_DATA_STRUCT_SIZE ).putInt(
-                                    AudioDataStruct.VERSION ) );
-
+                  final AudioDataStruct audioDataStruct = AudioDataStruct.construct( packet.data.limit() );
                     final String modePart = packet.contentType.substring( "audio/adpcm; rate=".length() );
                     audioDataStruct.setMode( Integer.parseInt( modePart ) );
                     audioDataStruct.setChannel( 0 );
@@ -226,7 +223,7 @@ class MimeParser implements Parser
                                     packet.data.get( ffc0 + 11 ) == 0x22 ? VideoFormat.JPEG_422 : VideoFormat.JPEG_411;
                             final short targetPixels = packet.data.getShort( ffc0 + 5 );
                             final short targetLines = packet.data.getShort( ffc0 + 7 );
-                            return ImageDataStruct.createImageDataStruct( packet.data, comment, videoFormat,
+                            return ImageDataStruct.construct( packet.data, comment, videoFormat,
                                     targetLines, targetPixels ).getByteBuffer();
                         }
                     } );

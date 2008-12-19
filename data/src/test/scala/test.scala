@@ -104,9 +104,9 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
   validlyParse("file:testdata/192-168-106-204-binary-jfif", StreamType.BINARY)
  }
 
-/* "parsing binary streams containing JFIF" isSpecifiedBy {
+ "parsing binary streams containing JFIF" isSpecifiedBy {
   validlyParse("file:testdata/remguard_mews-with-alarm-text", StreamType.BINARY)
- }*/
+ }
 
  "parsing mime streams containing JFIF" isSpecifiedBy {
   validlyParse("file:testdata/192-168-106-204-mime-jfif", StreamType.MIME)
@@ -142,11 +142,13 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
 
       val version = packet.getOnDiskFormat.getInt
       if (version != 0xDECADE10 && version != 0xDECADE11 )
-       throw new RuntimeException(String.valueOf(version))
+       throw new RuntimeException(version.toHexString)
 
       (first, last) match {
        case ((0xFF, 0xD8), (0xFF, 0xD9)) => numValidFrames += 1
        case _ => numInvalidFrames += 1
+                 println("first = " + first._1.toHexString+", "+first._2.toHexString + ", last = " + last)
+                 throw null
       }
      }
 

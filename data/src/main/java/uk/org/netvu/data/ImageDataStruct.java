@@ -187,15 +187,19 @@ public final class ImageDataStruct
      * @throws NullPointerException
      *         if any of the parameters are null.
      */
-    static ImageDataStruct createImageDataStruct( final ByteBuffer data, final String comment,
+    static ImageDataStruct construct( final ByteBuffer data, final String comment,
             final VideoFormat videoFormat, final short targetLines, final short targetPixels )
     {
+      data.position(0);
+
         CheckParameters.areNotNull( data, comment, videoFormat );
+        byte[] commentBytes = IO.stringToBytes( comment );
+        
         final ByteBuffer imageDataBuffer =
-                ByteBuffer.allocate( ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + comment.length() + data.limit() ).putInt(
+                ByteBuffer.allocate( ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + commentBytes.length + data.limit() ).putInt(
                         0xDECADE11 );
         imageDataBuffer.position( ImageDataStruct.IMAGE_DATA_STRUCT_SIZE );
-        imageDataBuffer.put( IO.stringToBytes( comment ) );
+        imageDataBuffer.put( commentBytes );
         imageDataBuffer.put( data );
 
         final ImageDataStruct imageDataStruct = new ImageDataStruct( imageDataBuffer );
@@ -206,7 +210,7 @@ public final class ImageDataStruct
 
         imageDataStruct.setVideoFormat( videoFormat );
 
-        imageDataStruct.setStartOffset( comment.length() );
+        imageDataStruct.setStartOffset( commentBytes.length );
         imageDataStruct.setSize( data.limit() );
         imageDataStruct.setMaxSize( 0 );
         imageDataStruct.setTargetSize( 0 );
@@ -240,6 +244,7 @@ public final class ImageDataStruct
         imageDataStruct.setUtcOffset( IO.findInt( comment, "UTCoffset: ", 0 ) );
         imageDataStruct.setAlarmBitmask( 0 );
 
+        
         return new ImageDataStruct(imageDataStruct.getByteBuffer());
     }
 
@@ -257,11 +262,11 @@ public final class ImageDataStruct
      * @throws NullPointerException
      *         if buffer is null.
      */
-    public ImageDataStruct( final ByteBuffer buffer )
+    private ImageDataStruct( final ByteBuffer buffer )
     {
         CheckParameters.areNotNull( buffer );
-        this.buffer = buffer.duplicate();
-        this.buffer.position( 0 );
+        this.buffer = IO.duplicate(buffer);
+
         final int version = this.buffer.getInt( VERSION_OFFSET );
 
         if ( version != 0xDECADE10 && version != 0xDECADE11 )
@@ -269,6 +274,23 @@ public final class ImageDataStruct
             throw new IllegalStateException( "version is " + Integer.toHexString( version ) );
         }
     }
+
+  public static ImageDataStruct construct( final ByteBuffer buffer )
+  {
+    return new ImageDataStruct( buffer );
+  }
+
+  public static ImageDataStruct construct( int commentSize, int dataSize )
+  {
+    ByteBuffer buffer = ByteBuffer.allocate(IMAGE_DATA_STRUCT_SIZE + commentSize + dataSize);
+    buffer.putInt(0xDECADE11);
+    return new ImageDataStruct(buffer);
+  }
+
+  public ByteBuffer getData()
+  {
+    return IO.from(buffer, getStartOffset() + IMAGE_DATA_STRUCT_SIZE).asReadOnlyBuffer();
+  }
 
     /**
      * Gets the alarm contained in the image data header.
