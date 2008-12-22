@@ -98,10 +98,8 @@ final class BinaryParser implements Parser
                 // packet containing
                 // "IMAGESIZE 0,0:123,456", where 123 and 456 are the
                 // resolution of the frames. We parse that out and store it in
-                // the horizontalResolution and verticalResolution arrays.
-                // Arrays are used because of Java's 'final' restriction for
-                // anonymous classes.
-                // The type of it is Short rather than short to catch any
+                // horizontalResolution and verticalResolution.
+                // The type of them is Short rather than short to catch any
                 // accidental misuses. This means that if the info
                 // packet is missing, a minimal stream containing MPEG-4 will
                 // not be parsed (a
