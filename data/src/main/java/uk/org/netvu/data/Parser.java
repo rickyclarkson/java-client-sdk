@@ -16,7 +16,8 @@ public interface Parser
      * @param input
      *        the InputStream to read data from.
      * @param sourceIdentifier
-     * an Object to use to identify the original source - useful if one StreamHandler is reused.
+     *        an Object to use to identify the original source - useful if one
+     *        StreamHandler is reused.
      * @param handler
      *        the StreamHandler to deliver packets to.
      * @throws IOException
@@ -24,5 +25,5 @@ public interface Parser
      * @throws NullPointerException
      *         if input or handler are null.
      */
-  void parse( InputStream input, Object sourceIdentifier, StreamHandler handler ) throws IOException;
+    void parse( InputStream input, Object sourceIdentifier, StreamHandler handler ) throws IOException;
 }

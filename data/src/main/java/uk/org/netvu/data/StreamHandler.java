@@ -45,10 +45,4 @@ public abstract class StreamHandler
      *        the Packet of data that has arrived.
      */
     public abstract void unknownDataArrived( Packet packet );
-
-    final Effect<Packet> audioDataArrived = new Effect<Packet>() { public void apply(Packet packet) { audioDataArrived(packet); } };
-    final Effect<Packet> infoArrived = new Effect<Packet>() { public void apply(Packet packet) { infoArrived(packet); } };
-    final Effect<Packet> jpegFrameArrived = new Effect<Packet>() { public void apply(Packet packet) { jpegFrameArrived(packet); } };
-    final Effect<Packet> mpeg4FrameArrived = new Effect<Packet>() { public void apply(Packet packet) { mpeg4FrameArrived(packet); } };
-    final Effect<Packet> unknownDataArrived = new Effect<Packet>() { public void apply(Packet packet) { unknownDataArrived(packet); } };
 }

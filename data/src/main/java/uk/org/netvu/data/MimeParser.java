@@ -114,10 +114,11 @@ class MimeParser implements Parser
         return new RawPacket( contentType, data );
     }
 
-  /**
-   * ${inheritDoc}
+    /**
+     * {@inheritDoc}
      */
-  public void parse( final InputStream input, final Object sourceIdentifier, final StreamHandler handler ) throws IOException
+    public void parse( final InputStream input, final Object sourceIdentifier, final StreamHandler handler )
+            throws IOException
     {
         final Short[] horizontalResolution = { null };
         final Short[] verticalResolution = { null };
@@ -180,7 +181,7 @@ class MimeParser implements Parser
                 }
                 else if ( packet.contentType.startsWith( "audio/adpcm" ) )
                 {
-                  final AudioDataStruct audioDataStruct = AudioDataStruct.construct( packet.data.limit() );
+                    final AudioDataStruct audioDataStruct = AudioDataStruct.construct( packet.data.limit() );
                     final String modePart = packet.contentType.substring( "audio/adpcm; rate=".length() );
                     audioDataStruct.setMode( Integer.parseInt( modePart ) );
                     audioDataStruct.setChannel( 0 );
@@ -192,7 +193,8 @@ class MimeParser implements Parser
                     // timestamps are
                     // unreliable.
 
-                    handler.audioDataArrived( Packet.constructPacket( audioDataStruct.getChannel(), sourceIdentifier, packet.data, packet.data ));
+                    handler.audioDataArrived( Packet.constructPacket( audioDataStruct.getChannel(), sourceIdentifier,
+                            packet.data, packet.data ) );
                 }
                 else
                 {
@@ -223,8 +225,8 @@ class MimeParser implements Parser
                                     packet.data.get( ffc0 + 11 ) == 0x22 ? VideoFormat.JPEG_422 : VideoFormat.JPEG_411;
                             final short targetPixels = packet.data.getShort( ffc0 + 5 );
                             final short targetLines = packet.data.getShort( ffc0 + 7 );
-                            return ImageDataStruct.construct( packet.data, comment, videoFormat,
-                                    targetLines, targetPixels ).getByteBuffer();
+                            return ImageDataStruct.construct( packet.data, comment, videoFormat, targetLines,
+                                    targetPixels ).getByteBuffer();
                         }
                     } );
                 }

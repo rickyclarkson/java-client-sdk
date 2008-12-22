@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.channels.Channels;
 
 import uk.org.netvu.util.CheckParameters;
@@ -16,10 +15,10 @@ import uk.org.netvu.util.CheckParameters;
  */
 final class IO
 {
-  /**
-   * The encoding used in all conversions between bytes and Strings.
-   */
-  private static final String UTF_8 = "UTF-8";
+    /**
+     * The encoding used in all conversions between bytes and Strings.
+     */
+    private static final String UTF_8 = "UTF-8";
 
     /**
      * Converts a byte[] to a String using the UTF-8 character encoding.
@@ -170,15 +169,18 @@ final class IO
         CheckParameters.areNotNull( in, after );
         final int index = in.indexOf( after );
         int terminator = -1;
-        for (final char c: new char[]{'\0', '\r', '\n'})
-          {
-            int candidate = in.indexOf(c, index);
-            if (terminator < 0)
-              terminator = candidate;
-            terminator = Math.min(terminator, candidate);
-          }
+        for ( final char c : new char[] { '\0', '\r', '\n' } )
+        {
+            final int candidate = in.indexOf( c, index );
+            if ( terminator < 0 )
+            {
+                terminator = candidate;
+            }
+            terminator = Math.min( terminator, candidate );
+        }
 
-        return index < 0 ? ifNotFound : terminator < 0 ? in.substring( index + after.length() ) : in.substring( index + after.length(), terminator );
+        return index < 0 ? ifNotFound : terminator < 0 ? in.substring( index + after.length() ) : in.substring( index
+                + after.length(), terminator );
     }
 
     /**
@@ -204,13 +206,13 @@ final class IO
     {
         final String s = find( in, after, null );
         try
-       {
-         return s == null ? ifNotFound : Integer.parseInt( s );
-       }
-        catch (NumberFormatException e)
-          {
-            throw new RuntimeException(Integer.toHexString(s.charAt(1)));
-          }
+        {
+            return s == null ? ifNotFound : Integer.parseInt( s );
+        }
+        catch ( final NumberFormatException e )
+        {
+            throw new RuntimeException( Integer.toHexString( s.charAt( 1 ) ) );
+        }
     }
 
     /**
@@ -234,6 +236,39 @@ final class IO
         result = result.slice();
         result.position( 0 );
         return result;
+    }
+
+    /**
+     * Reads an ASCII String from the specified byte[], stopping when a 0 byte
+     * is found or the end of the array is reached.
+     * 
+     * @param input
+     *        the byte[] to read from.
+     * @return an ASCII String.
+     * @throws NullPointerException
+     *         if input is null.
+     */
+    public static String nullTerminate( final byte[] input )
+    {
+        CheckParameters.areNotNull( input );
+        return nullTerminate( IO.bytesToString( input ) );
+    }
+
+    /**
+     * Takes the part of the specified String before its first '\0', or the
+     * whole String if none is found.
+     * 
+     * @param input
+     *        the String to read from.
+     * @return a String without '\0' characters.
+     * @throws NullPointerException
+     *         if input is null.
+     */
+    public static String nullTerminate( final String input )
+    {
+        CheckParameters.areNotNull( input );
+        final int indexOfNull = input.indexOf( '\0' );
+        return indexOfNull == -1 ? input : input.substring( 0, indexOfNull );
     }
 
     /**
@@ -371,7 +406,7 @@ final class IO
      */
     public static int searchFor( ByteBuffer in, final byte[] toFind ) throws BufferUnderflowException
     {
-      in = IO.duplicate(in);
+        in = IO.duplicate( in );
         CheckParameters.areNotNull( in, toFind );
 
         int i = 0;
@@ -443,38 +478,5 @@ final class IO
      */
     private IO()
     {
-    }
-
-    /**
-     * Takes the part of the specified String before its first '\0', or the
-     * whole String if none is found.
-     * 
-     * @param input
-     *        the String to read from.
-     * @return a String without '\0' characters.
-     * @throws NullPointerException
-     *         if input is null.
-     */
-    public static String nullTerminate( final String input )
-    {
-        CheckParameters.areNotNull( input );
-        final int indexOfNull = input.indexOf( '\0' );
-        return indexOfNull == -1 ? input : input.substring( 0, indexOfNull );
-    }
-
-    /**
-     * Reads an ASCII String from the specified byte[], stopping when a 0 byte
-     * is found or the end of the array is reached.
-     * 
-     * @param input
-     *        the byte[] to read from.
-     * @return an ASCII String.
-     * @throws NullPointerException
-     *         if input is null.
-     */
-    public static String nullTerminate( final byte[] input )
-    {
-        CheckParameters.areNotNull( input );
-        return nullTerminate( IO.bytesToString( input ) );
     }
 }

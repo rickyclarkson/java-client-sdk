@@ -14,16 +14,18 @@ public abstract class Packet
      * 
      * @param channel
      *        the channel that the Packet arrived on.
-     * @param sourceIdentifier the caller-supplied source identifier.
+     * @param sourceIdentifier
+     *        the caller-supplied source identifier.
      * @param data
      *        the data contained in the Packet.
      * @param onDiskFormat
      *        the data in its on-disk format.
      * @return a Packet with the specified channel, data and onDiskFormat.
      */
-  static Packet constructPacket( final int channel, final Object sourceIdentifier, final ByteBuffer data, final ByteBuffer onDiskFormat )
+    static Packet constructPacket( final int channel, final Object sourceIdentifier, final ByteBuffer data,
+            final ByteBuffer onDiskFormat )
     {
-      return new Packet( channel, sourceIdentifier )
+        return new Packet( channel, sourceIdentifier )
         {
             @Override
             public ByteBuffer getData()
@@ -44,10 +46,10 @@ public abstract class Packet
      */
     private final int channel;
 
-  /**
-   * The caller-supplied source identifier.
-   */
-  private final Object sourceIdentifier;
+    /**
+     * The caller-supplied source identifier.
+     */
+    private final Object sourceIdentifier;
 
     /**
      * Constructs a Packet with the specified channel. Package-private to
@@ -55,9 +57,10 @@ public abstract class Packet
      * 
      * @param channel
      *        the channel that the Packet arrived on.
-     * @param sourceIdentifier the caller-supplied identifier for this Packet's source.
+     * @param sourceIdentifier
+     *        the caller-supplied identifier for this Packet's source.
      */
-  Packet( final int channel, Object sourceIdentifier )
+    Packet( final int channel, final Object sourceIdentifier )
     {
         this.channel = channel;
         this.sourceIdentifier = sourceIdentifier;
@@ -88,4 +91,14 @@ public abstract class Packet
      * @return the data in its on-disk format.
      */
     public abstract ByteBuffer getOnDiskFormat();
+
+    /**
+     * Gets the caller-supplied identifier for this Packet's source.
+     * 
+     * @return the caller-supplied identifier for this Packet's source.
+     */
+    public final Object getSourceIdentifier()
+    {
+        return sourceIdentifier;
+    }
 }

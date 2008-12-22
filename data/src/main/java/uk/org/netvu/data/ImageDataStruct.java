@@ -170,6 +170,42 @@ public final class ImageDataStruct
     public static final int IMAGE_DATA_STRUCT_SIZE = ALM_BITMASK + INT_SIZE;
 
     /**
+     * Constructs an ImageDataStruct with the specified ByteBuffer as its
+     * storage. The ByteBuffer must contain valid ImageDataStruct data.
+     * 
+     * @param buffer
+     *        the ByteBuffer to use as the storage for this ImageDataStruct.
+     * @return an ImageDataStruct with the specified ByteBuffer as its storage.
+     * @throws IllegalStateException
+     *         if the ByteBuffer does not contain valid ImageDataStruct data.
+     * @throws NullPointerException
+     *         if buffer is null.
+     */
+    public static ImageDataStruct construct( final ByteBuffer buffer )
+    {
+        CheckParameters.areNotNull( buffer );
+        return new ImageDataStruct( buffer );
+    }
+
+    /**
+     * Constructs an empty ImageDataStruct, with a backing ByteBuffer large
+     * enough to hold the ImageDataStruct plus the specified comment size and
+     * data size.
+     * 
+     * @param commentSize
+     *        the size of the comment data that this ImageDataStruct will hold.
+     * @param dataSize
+     *        the size of the image data that this ImageDataStruct will hold.
+     * @return an empty ImageDataStruct.
+     */
+    public static ImageDataStruct construct( final int commentSize, final int dataSize )
+    {
+        final ByteBuffer buffer = ByteBuffer.allocate( IMAGE_DATA_STRUCT_SIZE + commentSize + dataSize );
+        buffer.putInt( 0xDECADE11 );
+        return new ImageDataStruct( buffer );
+    }
+
+    /**
      * Prepends an appropriate ImageDataStruct header and comment block to a
      * ByteBuffer.
      * 
@@ -187,14 +223,14 @@ public final class ImageDataStruct
      * @throws NullPointerException
      *         if any of the parameters are null.
      */
-    static ImageDataStruct construct( final ByteBuffer data, final String comment,
-            final VideoFormat videoFormat, final short targetLines, final short targetPixels )
+    static ImageDataStruct construct( final ByteBuffer data, final String comment, final VideoFormat videoFormat,
+            final short targetLines, final short targetPixels )
     {
-      data.position(0);
+        data.position( 0 );
 
         CheckParameters.areNotNull( data, comment, videoFormat );
-        byte[] commentBytes = IO.stringToBytes( comment );
-        
+        final byte[] commentBytes = IO.stringToBytes( comment );
+
         final ByteBuffer imageDataBuffer =
                 ByteBuffer.allocate( ImageDataStruct.IMAGE_DATA_STRUCT_SIZE + commentBytes.length + data.limit() ).putInt(
                         0xDECADE11 );
@@ -244,10 +280,8 @@ public final class ImageDataStruct
         imageDataStruct.setUtcOffset( IO.findInt( comment, "UTCoffset: ", 0 ) );
         imageDataStruct.setAlarmBitmask( 0 );
 
-        
-        return new ImageDataStruct(imageDataStruct.getByteBuffer());
+        return new ImageDataStruct( imageDataStruct.getByteBuffer() );
     }
-
 
     /**
      * The ByteBuffer in which all the data for this ImageDataStruct is stored.
@@ -265,7 +299,7 @@ public final class ImageDataStruct
     private ImageDataStruct( final ByteBuffer buffer )
     {
         CheckParameters.areNotNull( buffer );
-        this.buffer = IO.duplicate(buffer);
+        this.buffer = IO.duplicate( buffer );
 
         final int version = this.buffer.getInt( VERSION_OFFSET );
 
@@ -274,23 +308,6 @@ public final class ImageDataStruct
             throw new IllegalStateException( "version is " + Integer.toHexString( version ) );
         }
     }
-
-  public static ImageDataStruct construct( final ByteBuffer buffer )
-  {
-    return new ImageDataStruct( buffer );
-  }
-
-  public static ImageDataStruct construct( int commentSize, int dataSize )
-  {
-    ByteBuffer buffer = ByteBuffer.allocate(IMAGE_DATA_STRUCT_SIZE + commentSize + dataSize);
-    buffer.putInt(0xDECADE11);
-    return new ImageDataStruct(buffer);
-  }
-
-  public ByteBuffer getData()
-  {
-    return IO.from(buffer, getStartOffset() + IMAGE_DATA_STRUCT_SIZE).asReadOnlyBuffer();
-  }
 
     /**
      * Gets the alarm contained in the image data header.
@@ -309,7 +326,7 @@ public final class ImageDataStruct
      */
     public int getAlarmBitmask()
     {
-        return buffer.getInt(  ALM_BITMASK );
+        return buffer.getInt( ALM_BITMASK );
     }
 
     /**
@@ -319,7 +336,7 @@ public final class ImageDataStruct
      */
     public int getAlarmBitmaskHigh()
     {
-        return buffer.getInt(  ALM_BITMASK_HI_OFFSET );
+        return buffer.getInt( ALM_BITMASK_HI_OFFSET );
     }
 
     /**
@@ -329,7 +346,7 @@ public final class ImageDataStruct
      */
     public ByteBuffer getByteBuffer()
     {
-      return IO.duplicate( buffer ).asReadOnlyBuffer();
+        return IO.duplicate( buffer ).asReadOnlyBuffer();
     }
 
     /**
@@ -339,7 +356,17 @@ public final class ImageDataStruct
      */
     public int getCamera()
     {
-        return buffer.getInt(  CAM_OFFSET );
+        return buffer.getInt( CAM_OFFSET );
+    }
+
+    /**
+     * Gets the image data contained in this ImageDataStruct.
+     * 
+     * @return the image data contained in this ImageDataStruct.
+     */
+    public ByteBuffer getData()
+    {
+        return IO.from( buffer, getStartOffset() + IMAGE_DATA_STRUCT_SIZE ).asReadOnlyBuffer();
     }
 
     /**
@@ -369,7 +396,7 @@ public final class ImageDataStruct
      */
     public int getMaxSize()
     {
-        return buffer.getInt(  MAX_SIZE_OFFSET );
+        return buffer.getInt( MAX_SIZE_OFFSET );
     }
 
     /**
@@ -379,7 +406,7 @@ public final class ImageDataStruct
      */
     public int getMilliseconds()
     {
-        return (int) ( ( 0xFFFFFFFFL & buffer.getInt(  MILLISECONDS_OFFSET ) ) % 1000L );
+        return (int) ( ( 0xFFFFFFFFL & buffer.getInt( MILLISECONDS_OFFSET ) ) % 1000L );
     }
 
     /**
@@ -389,7 +416,7 @@ public final class ImageDataStruct
      */
     public int getMode()
     {
-        return buffer.getInt(  MODE_OFFSET );
+        return buffer.getInt( MODE_OFFSET );
     }
 
     /**
@@ -411,7 +438,7 @@ public final class ImageDataStruct
      */
     public int getQFactor()
     {
-        return buffer.getInt(  Q_FACTOR_OFFSET );
+        return buffer.getInt( Q_FACTOR_OFFSET );
     }
 
     /**
@@ -432,7 +459,7 @@ public final class ImageDataStruct
      */
     public int getSessionTime()
     {
-        return buffer.getInt(  SESSION_TIME_OFFSET );
+        return buffer.getInt( SESSION_TIME_OFFSET );
     }
 
     /**
@@ -442,7 +469,7 @@ public final class ImageDataStruct
      */
     public int getSize()
     {
-        return buffer.getInt(  SIZE_OFFSET );
+        return buffer.getInt( SIZE_OFFSET );
     }
 
     /**
@@ -476,7 +503,7 @@ public final class ImageDataStruct
      */
     public int getStartOffset()
     {
-        return buffer.getInt(  START_OFFSET );
+        return buffer.getInt( START_OFFSET );
     }
 
     /**
@@ -486,7 +513,7 @@ public final class ImageDataStruct
      */
     public int getStatus()
     {
-        return buffer.getInt(  STATUS_OFFSET );
+        return buffer.getInt( STATUS_OFFSET );
     }
 
     /**
@@ -516,7 +543,7 @@ public final class ImageDataStruct
      */
     public int getTargetSize()
     {
-        return buffer.getInt(  TARGET_SIZE );
+        return buffer.getInt( TARGET_SIZE );
     }
 
     /**
@@ -536,7 +563,7 @@ public final class ImageDataStruct
      */
     public int getUtcOffset()
     {
-        return buffer.getInt(  UTC_OFFSET_OFFSET );
+        return buffer.getInt( UTC_OFFSET_OFFSET );
     }
 
     /**
@@ -546,7 +573,7 @@ public final class ImageDataStruct
      */
     public int getVersion()
     {
-        return buffer.getInt(  VERSION_OFFSET );
+        return buffer.getInt( VERSION_OFFSET );
     }
 
     /**
@@ -556,7 +583,75 @@ public final class ImageDataStruct
      */
     public VideoFormat getVideoFormat()
     {
-        return VideoFormat.valueOf( buffer.getInt(  VID_FORMAT_OFFSET ) );
+        return VideoFormat.valueOf( buffer.getInt( VID_FORMAT_OFFSET ) );
+    }
+
+    /**
+     * Copies the specified String to a byte[] of the specified length, using
+     * the US-ASCII character encoding, and leaving all trailing bytes set to 0.
+     * 
+     * @param string
+     *        the String to copy.
+     * @param length
+     *        the length of the byte[] to copy the String into.
+     * @return a byte[] of the specified length containing the US-ASCII-encoded
+     *         bytes from the specified String.
+     * @throws NullPointerException
+     *         if string is null.
+     */
+    private byte[] nullPad( final String string, final int length )
+    {
+        CheckParameters.areNotNull( string );
+        final byte[] bytes = new byte[length];
+        System.arraycopy( IO.stringToBytes( string ), 0, bytes, 0, string.length() );
+        return bytes;
+    }
+
+    /**
+     * Reads the specified number of bytes from the specified ByteBuffer, from
+     * the specified position.
+     * 
+     * @param buffer
+     *        the ByteBuffer to read data from.
+     * @param length
+     *        the number of bytes to read.
+     * @param where
+     *        the position in the ByteBuffer to read from.
+     * @return an array of bytes containing the specified number of bytes read
+     *         from the specified ByteBuffer, at the specified position.
+     * @throws NullPointerException
+     *         if buffer is null.
+     */
+    private byte[] read( final ByteBuffer buffer, final int length, final int where )
+    {
+        CheckParameters.areNotNull( buffer );
+        final byte[] result = new byte[length];
+        buffer.position( where );
+        buffer.get( result );
+        return result;
+    }
+
+    /**
+     * Reads a short from the specified position within the ByteBuffer relative
+     * to the offset, with the endianness according to the version field.
+     * 
+     * @param where
+     *        the position within the ByteBuffer relative to the offset to read
+     *        from.
+     * @return a short read from the ByteBuffer.
+     */
+    private short readShort( final int where )
+    {
+        buffer.order( versionToByteOrder() );
+        try
+        {
+            return buffer.getShort( where );
+        }
+        finally
+        {
+            buffer.order( ByteOrder.BIG_ENDIAN );
+        }
+
     }
 
     /**
@@ -838,74 +933,6 @@ public final class ImageDataStruct
     {
         CheckParameters.areNotNull( format );
         buffer.putInt( VID_FORMAT_OFFSET, format.index );
-    }
-
-    /**
-     * Copies the specified String to a byte[] of the specified length, using
-     * the US-ASCII character encoding, and leaving all trailing bytes set to 0.
-     * 
-     * @param string
-     *        the String to copy.
-     * @param length
-     *        the length of the byte[] to copy the String into.
-     * @return a byte[] of the specified length containing the US-ASCII-encoded
-     *         bytes from the specified String.
-     * @throws NullPointerException
-     *         if string is null.
-     */
-    private byte[] nullPad( final String string, final int length )
-    {
-        CheckParameters.areNotNull( string );
-        final byte[] bytes = new byte[length];
-        System.arraycopy( IO.stringToBytes( string ), 0, bytes, 0, string.length() );
-        return bytes;
-    }
-
-    /**
-     * Reads the specified number of bytes from the specified ByteBuffer, from
-     * the specified position.
-     * 
-     * @param buffer
-     *        the ByteBuffer to read data from.
-     * @param length
-     *        the number of bytes to read.
-     * @param where
-     *        the position in the ByteBuffer to read from.
-     * @return an array of bytes containing the specified number of bytes read
-     *         from the specified ByteBuffer, at the specified position.
-     * @throws NullPointerException
-     *         if buffer is null.
-     */
-    private byte[] read( final ByteBuffer buffer, final int length, final int where )
-    {
-        CheckParameters.areNotNull( buffer );
-        final byte[] result = new byte[length];
-        buffer.position( where );
-        buffer.get( result );
-        return result;
-    }
-
-    /**
-     * Reads a short from the specified position within the ByteBuffer relative
-     * to the offset, with the endianness according to the version field.
-     * 
-     * @param where
-     *        the position within the ByteBuffer relative to the offset to read
-     *        from.
-     * @return a short read from the ByteBuffer.
-     */
-    private short readShort( final int where )
-    {
-        buffer.order( versionToByteOrder() );
-        try
-        {
-            return buffer.getShort( where );
-        }
-        finally
-        {
-            buffer.order( ByteOrder.BIG_ENDIAN );
-        }
-
     }
 
     /**

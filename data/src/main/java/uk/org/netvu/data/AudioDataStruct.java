@@ -63,6 +63,36 @@ public final class AudioDataStruct
     public static final int VERSION = 0x00ABCDEF;
 
     /**
+     * Constructs a new AudioDataStruct with the specified ByteBuffer as its
+     * storage. The ByteBuffer must hold valid AudioDataStruct data.
+     * 
+     * @param buffer
+     *        the ByteBuffer to use as this AudioDataStruct's storage.
+     * @return a new AudioDataStruct with the specified ByteBuffer as its
+     *         storage.
+     */
+    public static AudioDataStruct construct( final ByteBuffer buffer )
+    {
+        return new AudioDataStruct( buffer );
+    }
+
+    /**
+     * Constructs an empty AudioDataStruct with a ByteBuffer large enough to
+     * hold the AudioDataStruct plus the specified size of audio data.
+     * 
+     * @param size
+     *        the number of bytes of audio data that this AudioDataStruct will
+     *        hold.
+     * @return a new AudioDataStruct.
+     */
+    public static AudioDataStruct construct( final int size )
+    {
+        final ByteBuffer result = ByteBuffer.allocate( AUDIO_DATA_STRUCT_SIZE + 6 + size );
+        result.putInt( VERSION );
+        return new AudioDataStruct( result );
+    }
+
+    /**
      * Constructs an AudioDataStruct using the data in the specified ByteBuffer.
      * The first 4 bytes of the ByteBuffer must match the current version of the
      * AudioDataStruct, given by {@link AudioDataStruct}.
@@ -84,27 +114,15 @@ public final class AudioDataStruct
         }
     }
 
-  public static AudioDataStruct construct(ByteBuffer buffer)
-  {
-    return new AudioDataStruct(buffer);
-  }
-
-  public static AudioDataStruct construct(final int size)
-  {
-    ByteBuffer result = ByteBuffer.allocate(AUDIO_DATA_STRUCT_SIZE + 6 + size);
-    result.putInt(VERSION);
-    return new AudioDataStruct(result);
-  }
-
-  /**
-   * Gives the ByteBuffer that backs this AudioDataStruct.
-   *
-   * @return the ByteBuffer that backs this AudioDataStruct.
-   */
-  public ByteBuffer getByteBuffer()
-  {
-    return IO.duplicate(buffer).asReadOnlyBuffer();
-  }
+    /**
+     * Gives the ByteBuffer that backs this AudioDataStruct.
+     * 
+     * @return the ByteBuffer that backs this AudioDataStruct.
+     */
+    public ByteBuffer getByteBuffer()
+    {
+        return IO.duplicate( buffer ).asReadOnlyBuffer();
+    }
 
     /**
      * Gets the channel, or camera number, that the data arrived on.
@@ -113,7 +131,7 @@ public final class AudioDataStruct
      */
     public int getChannel()
     {
-      return buffer.getInt( CHANNEL_OFFSET );
+        return buffer.getInt( CHANNEL_OFFSET );
     }
 
     /**
@@ -147,7 +165,7 @@ public final class AudioDataStruct
      */
     public int getSeconds()
     {
-        return buffer.getInt(  SECONDS_OFFSET );
+        return buffer.getInt( SECONDS_OFFSET );
     }
 
     /**
@@ -157,7 +175,7 @@ public final class AudioDataStruct
      */
     public int getSize()
     {
-        return buffer.getInt(  SIZE_OFFSET );
+        return buffer.getInt( SIZE_OFFSET );
     }
 
     /**
@@ -169,7 +187,7 @@ public final class AudioDataStruct
      */
     public int getStartOffset()
     {
-        return buffer.getInt(  DATA_POSITION_OFFSET );
+        return buffer.getInt( DATA_POSITION_OFFSET );
     }
 
     /**
@@ -180,7 +198,7 @@ public final class AudioDataStruct
      */
     public int getVersion()
     {
-        return buffer.getInt(  VERSION_OFFSET );
+        return buffer.getInt( VERSION_OFFSET );
     }
 
     /**
