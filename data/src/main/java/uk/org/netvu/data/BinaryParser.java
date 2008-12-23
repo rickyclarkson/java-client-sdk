@@ -49,8 +49,15 @@ final class BinaryParser implements Parser
      */
     private static final int INFO = 9;
 
+  /**
+   * Parses out a JFIF if one is found in the specified data, wrapping it in an ImageDataStruct.  Parses out an ImageDataStruct otherwise.
+   * @param jfifOrJpegData the ByteBuffer to parse.
+   * @return an ImageDataStruct containing the parsed data.
+   * @throws NullPointerException if jfifOrJpegData is null.
+   */
     private static ImageDataStruct parseJfifOrJpeg( final ByteBuffer jfifOrJpegData )
     {
+      CheckParameters.areNotNull(jfifOrJpegData);
         final ByteBuffer data = IO.duplicate( jfifOrJpegData );
         try
         {

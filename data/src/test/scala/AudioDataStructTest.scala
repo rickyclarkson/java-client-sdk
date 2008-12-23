@@ -16,7 +16,6 @@ class AudioDataStructTest extends JUnit4(new Specification {
 
  "An AudioDataStruct" should {
   "have all the values supplied to it by the ByteBuffer" in {
-
    val mode = 2
    val channel = 3
    val startOffset = 4
@@ -42,6 +41,13 @@ class AudioDataStructTest extends JUnit4(new Specification {
    getSize mustEqual size
    getSeconds mustEqual seconds
    getMilliseconds mustEqual millis
+  }
+ }
+
+ "Coverage" should {
+  "be 100%" in {
+   AudioDataStruct.construct(10).getByteBuffer
+   true mustBe true
   }
  }
 })

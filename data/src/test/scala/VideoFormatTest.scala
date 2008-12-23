@@ -12,7 +12,7 @@ class VideoFormatTest extends JUnit4(new Specification {
   }
   "throw an IllegalArgumentException for values outside 0 to 5" in {
    for (i <- List(-1, -100, 6, 100))
-    VideoFormat.valueOf(i) must throwA[IllegalArgumentException]
+    VideoFormat.valueOf(i) must throwAn[IllegalArgumentException]
   }
  }
 })

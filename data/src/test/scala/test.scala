@@ -94,6 +94,12 @@ class IOTest extends JUnit4(new Specification {
    bb.get mustEqual 3
   }
  }
+
+ "IO.find" should {
+  "return the default value if the String to search for is not found." in {
+   IO.find("bob","apple","default") mustEqual "default"
+  }
+ }
 })
 
 import java.net.URL
