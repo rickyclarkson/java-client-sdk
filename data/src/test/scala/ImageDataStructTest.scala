@@ -46,4 +46,7 @@ class ImageDataStructTest extends JUnit4(new Specification with DataTables {
  "getStatus" isSpecifiedBy data(_ getStatus, 0)
  "getTargetSize" isSpecifiedBy data(_ getTargetSize, 0)
 
+ val ids = ImageDataStruct.construct(10, 10)
+ ids setRes "blob"
+ ids.getRes mustEqual "blob"                                          
 })

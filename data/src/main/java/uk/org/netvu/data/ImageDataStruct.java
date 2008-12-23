@@ -662,7 +662,7 @@ public final class ImageDataStruct
      * @throws NullPointerException
      *         if s is null.
      */
-    private void setAlarm( final String s )
+    void setAlarm( final String s )
     {
         CheckParameters.areNotNull( s );
         write( nullPad( s, TITLE_LENGTH ), ALARM_OFFSET );
@@ -674,7 +674,7 @@ public final class ImageDataStruct
      * @param alarmBitmask
      *        the alarm bitmask to store in the image data header.
      */
-    private void setAlarmBitmask( final int alarmBitmask )
+    void setAlarmBitmask( final int alarmBitmask )
     {
         buffer.putInt( ALM_BITMASK, alarmBitmask );
     }
@@ -685,7 +685,7 @@ public final class ImageDataStruct
      * @param alarmBitmaskHigh
      *        the high-bit part of the alarm bitmask to store.
      */
-    private void setAlarmBitmaskHigh( final int alarmBitmaskHigh )
+    void setAlarmBitmaskHigh( final int alarmBitmaskHigh )
     {
         buffer.putInt( ALM_BITMASK_HI_OFFSET, alarmBitmaskHigh );
     }
@@ -696,7 +696,7 @@ public final class ImageDataStruct
      * @param camera
      *        the camera number to store in the image data header.
      */
-    private void setCamera( final int camera )
+    void setCamera( final int camera )
     {
         buffer.putInt( CAM_OFFSET, camera );
     }
@@ -707,7 +707,7 @@ public final class ImageDataStruct
      * @param lineOffset
      *        the line offset to store in the image data header.
      */
-    private void setLineOffset( final short lineOffset )
+    void setLineOffset( final short lineOffset )
     {
         writeShort( LINE_OFFSET, lineOffset );
     }
@@ -720,7 +720,7 @@ public final class ImageDataStruct
      * @throws NullPointerException
      *         if locale is null.
      */
-    private void setLocale( final String locale )
+    void setLocale( final String locale )
     {
         CheckParameters.areNotNull( locale );
         write( nullPad( locale, MAX_NAME_LENGTH ), LOCALE_OFFSET );
@@ -732,7 +732,7 @@ public final class ImageDataStruct
      * @param maxSize
      *        the max size to store in the image data header.
      */
-    private void setMaxSize( final int maxSize )
+    void setMaxSize( final int maxSize )
     {
         buffer.putInt( MAX_SIZE_OFFSET, maxSize );
     }
@@ -745,7 +745,7 @@ public final class ImageDataStruct
      *        the milliseconds part of the timestamp to store in the image data
      *        header.
      */
-    private void setMilliseconds( final int milliseconds )
+    void setMilliseconds( final int milliseconds )
     {
         buffer.putInt( MILLISECONDS_OFFSET, milliseconds );
     }
@@ -756,7 +756,7 @@ public final class ImageDataStruct
      * @param mode
      *        the mode contained in the image data header.
      */
-    private void setMode( final int mode )
+    void setMode( final int mode )
     {
         buffer.putInt( MODE_OFFSET, mode );
     }
@@ -767,7 +767,7 @@ public final class ImageDataStruct
      * @param pixelOffset
      *        the pixel offset to store in the image data header.
      */
-    private void setPixelOffset( final short pixelOffset )
+    void setPixelOffset( final short pixelOffset )
     {
         writeShort( PIXEL_OFFSET, pixelOffset );
     }
@@ -778,7 +778,7 @@ public final class ImageDataStruct
      * @param qFactor
      *        the quantisation factor to store in the image data header.
      */
-    private void setQFactor( final int qFactor )
+    void setQFactor( final int qFactor )
     {
         buffer.putInt( Q_FACTOR_OFFSET, qFactor );
     }
@@ -791,7 +791,7 @@ public final class ImageDataStruct
      * @throws NullPointerException
      *         if res is null.
      */
-    private void setRes( final String res )
+    void setRes( final String res )
     {
         CheckParameters.areNotNull( res );
         write( nullPad( res, 4 ), RES_OFFSET );
@@ -803,7 +803,7 @@ public final class ImageDataStruct
      * @param sessionTime
      *        the session time to store in the image data header.
      */
-    private void setSessionTime( final int sessionTime )
+    void setSessionTime( final int sessionTime )
     {
         buffer.putInt( SESSION_TIME_OFFSET, sessionTime );
     }
@@ -814,7 +814,7 @@ public final class ImageDataStruct
      * @param size
      *        the size to store in the image data header.
      */
-    private void setSize( final int size )
+    void setSize( final int size )
     {
         buffer.putInt( SIZE_OFFSET, size );
     }
@@ -825,7 +825,7 @@ public final class ImageDataStruct
      * @param srcLines
      *        the srcLines value to store in the image data header.
      */
-    private void setSrcLines( final short srcLines )
+    void setSrcLines( final short srcLines )
     {
         writeShort( SRC_LINES_OFFSET, srcLines );
     }
@@ -836,7 +836,7 @@ public final class ImageDataStruct
      * @param srcPixels
      *        the srcPixels value to store in the image data header.
      */
-    private void setSrcPixels( final short srcPixels )
+    void setSrcPixels( final short srcPixels )
     {
         writeShort( SRC_PIXELS_OFFSET, srcPixels );
     }
@@ -847,7 +847,7 @@ public final class ImageDataStruct
      * @param startOffset
      *        the startOffset value to store in the image data header.
      */
-    private void setStartOffset( final int startOffset )
+    void setStartOffset( final int startOffset )
     {
         buffer.putInt( START_OFFSET, startOffset );
     }
@@ -858,7 +858,7 @@ public final class ImageDataStruct
      * @param status
      *        the status to store in the image data header.
      */
-    private void setStatus( final int status )
+    void setStatus( final int status )
     {
         buffer.putInt( STATUS_OFFSET, status );
     }
@@ -869,7 +869,7 @@ public final class ImageDataStruct
      * @param targetLines
      *        the targetLines value to store in the image data header.
      */
-    private void setTargetLines( final short targetLines )
+    void setTargetLines( final short targetLines )
     {
         writeShort( TARGET_LINES, targetLines );
     }
@@ -880,7 +880,7 @@ public final class ImageDataStruct
      * @param targetPixels
      *        the targetPixels value to store in the image data header.
      */
-    private void setTargetPixels( final short targetPixels )
+    void setTargetPixels( final short targetPixels )
     {
         writeShort( TARGET_PIXELS_OFFSET, targetPixels );
     }
@@ -891,7 +891,7 @@ public final class ImageDataStruct
      * @param targetSize
      *        the targetSize value to store in the image data header.
      */
-    private void setTargetSize( final int targetSize )
+    void setTargetSize( final int targetSize )
     {
         buffer.putInt( TARGET_SIZE, targetSize );
     }
@@ -904,7 +904,7 @@ public final class ImageDataStruct
      * @throws NullPointerException
      *         if title is null.
      */
-    private void setTitle( final String title )
+    void setTitle( final String title )
     {
         CheckParameters.areNotNull( title );
         write( nullPad( title, TITLE_LENGTH ), TITLE_OFFSET );
@@ -916,7 +916,7 @@ public final class ImageDataStruct
      * @param utcOffset
      *        the offset from UTC to store in the image data header.
      */
-    private void setUtcOffset( final int utcOffset )
+    void setUtcOffset( final int utcOffset )
     {
         buffer.putInt( UTC_OFFSET_OFFSET, utcOffset );
     }
@@ -929,7 +929,7 @@ public final class ImageDataStruct
      * @throws NullPointerException
      *         if format is null.
      */
-    private void setVideoFormat( final VideoFormat format )
+    void setVideoFormat( final VideoFormat format )
     {
         CheckParameters.areNotNull( format );
         buffer.putInt( VID_FORMAT_OFFSET, format.index );

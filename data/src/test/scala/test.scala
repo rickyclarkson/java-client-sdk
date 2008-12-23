@@ -142,7 +142,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
     
     ParserFactory parserFor streamType parse (connection.getInputStream, null, new StreamHandler {
      def jpegFrameArrived(packet: Packet) = {
-      val rawData = packet.getOnDiskFormat
+      packet.getOnDiskFormat
       val buffer = packet.getData
       val channel = packet.getChannel
       
@@ -220,6 +220,7 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
      def mpeg4FrameArrived(packet: Packet) = {
 
       val version = packet.getOnDiskFormat.getInt
+      packet.getSourceIdentifier
       if (version != 0xDECADE10 && version != 0xDECADE11 )
        throw new RuntimeException(Integer.toHexString(version))
 
