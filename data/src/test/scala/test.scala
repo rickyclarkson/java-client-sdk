@@ -100,6 +100,12 @@ class IOTest extends JUnit4(new Specification {
    IO.find("bob","apple","default") mustEqual "default"
   }
  }
+
+ "IO.nullTerminate(String)" should {
+  "give the original string if it has no null character" in {
+   IO.nullTerminate("foo") mustEqual "foo"
+  }
+ }
 })
 
 import java.net.URL
