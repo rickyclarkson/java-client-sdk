@@ -7,9 +7,17 @@ import java.math.BigInteger;
 /**
  * A new Function<, >() { public  apply( ) {  } } from objects of type T to those of type R.
  * 
- * @param <T>
+ * @private static final ParameterDescription<, >  = ;
+public  ()
+{
+        return parameterMap.get();
+} <T>
  *        the type of object to convert from.
- * @param <R>
+ * @private static final ParameterDescription<, >  = ;
+public  ()
+{
+        return parameterMap.get();
+} <R>
  *        the type of object to convert to.
  */
 public abstract class Function<T, R>
@@ -18,9 +26,17 @@ public abstract class Function<T, R>
      * A Function that returns true if the value it receives is the same as the
      * specified parameter.
      * 
-     * @param <T>
+     * @private static final ParameterDescription<, >  = ;
+public  ()
+{
+        return parameterMap.get();
+} <T>
      *        the type of the values that this Function can receive.
-     * @param other
+     * @private static final ParameterDescription<, >  = ;
+public  ()
+{
+        return parameterMap.get();
+} other
      *        the parameter to test values against.
      * @throws NullPointerException
      *         if other is null.
@@ -46,11 +62,23 @@ public abstract class Function<T, R>
      * A Function that, given a Boolean, returns the ifTrue parameter if the
      * Boolean is true, and returns the ifFalse parameter otherwise.
      * 
-     * @param <T>
+     * @private static final ParameterDescription<, >  = ;
+public  ()
+{
+        return parameterMap.get();
+} <T>
      *        the type of value to return.
-     * @param ifTrue
+     * @private static final ParameterDescription<, >  = ;
+public  ()
+{
+        return parameterMap.get();
+} ifTrue
      *        the value to return if the Boolean is true.
-     * @param ifFalse
+     * @private static final ParameterDescription<, >  = ;
+public  ()
+{
+        return parameterMap.get();
+} ifFalse
      *        the value to return if the Boolean is false.
      * @throws NullPointerException
      *         if ifTrue or ifFalse are null.
@@ -95,7 +123,11 @@ public abstract class Function<T, R>
      * The identity new Function<, >() { public  apply( ) {  } } - given an object of type T it results in the same
      * object of type T.
      * 
-     * @param <T>
+     * @private static final ParameterDescription<, >  = ;
+public  ()
+{
+        return parameterMap.get();
+} <T>
      *        the input and output type of this Function.
      * @return the identity conversion for type T.
      */
@@ -151,7 +183,11 @@ public abstract class Function<T, R>
      * A Function that uses Object's toString() to convert objects of type T to
      * Strings.
      * 
-     * @param <T>
+     * @private static final ParameterDescription<, >  = ;
+public  ()
+{
+        return parameterMap.get();
+} <T>
      *        the input type.
      * @return a conversion that uses Object's toString() to convert objects of
      *         type T into Strings.
@@ -262,10 +298,18 @@ public abstract class Function<T, R>
      * into the conversion supplied as a parameter, to finally produce an object
      * of type V.
      * 
-     * @param <V>
+     * @private static final ParameterDescription<, >  = ;
+public  ()
+{
+        return parameterMap.get();
+} <V>
      *        the type that the composed conversions convert objects of type T
      *        to.
-     * @param conversion
+     * @private static final ParameterDescription<, >  = ;
+public  ()
+{
+        return parameterMap.get();
+} conversion
      *        the second conversion to run.
      * @throws NullPointerException
      *         if conversion is null.
@@ -289,7 +333,11 @@ public abstract class Function<T, R>
     /**
      * Converts an object of type T into an object of type R.
      * 
-     * @param t
+     * @private static final ParameterDescription<, >  = ;
+public  ()
+{
+        return parameterMap.get();
+} t
      *        the object to convert.
      * @throws NullPointerException
      *         if t is null.
