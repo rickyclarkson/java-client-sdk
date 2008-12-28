@@ -8,8 +8,9 @@ import specs.runner.JUnit4
 import scalacheck.{Arbitrary, Gen, Prop}
 import Prop.property
 
-import java.util.{Arrays, Random, List => JavaList, ArrayList => JavaArrayList, TreeMap => JavaTreeMap}
+import java.util.{Random, List => JavaList, ArrayList => JavaArrayList, TreeMap => JavaTreeMap}
 import java.lang.{Boolean => JavaBoolean}
+import java.util.Arrays.{asList => asJavaList}
 
 import uk.org.netvu.util._
 import ParameterMap.Validator
@@ -55,7 +56,7 @@ class ParameterDescriptionTest extends JUnit4(new Specification with Scalacheck 
   def apply(s: String): Option[T] = Option.getEmptyOption[T]("Unsupported")
  }
 
- val parameterDescription = parameterWithDefault("foo", 3, StringConversion.partial(from, to))
+ val parameterDescription = parameterWithDefault("foo", 3, StringConversion.partial(from[Int], to[Int]))
  
  "Supplying a value to an ordinary ParameterDescription twice" should {
   "cause an IllegalStateException" in {
@@ -80,7 +81,7 @@ class ParameterDescriptionTest extends JUnit4(new Specification with Scalacheck 
  }
 
  "A bound Parameter" should {
-  val boundParam = parameterWithBounds(1, 10, parameterWithDefault("foo", 3, StringConversion.partial(from, to)))
+  val boundParam = parameterWithBounds(1, 10, parameterWithDefault("foo", 3, StringConversion.partial(from[Integer], to[Integer])))
   "accept values inside its bounds" in {
    new ParameterMap().set[Integer, Integer](boundParam, 4) get boundParam mustEqual 4
   }
@@ -91,7 +92,7 @@ class ParameterDescriptionTest extends JUnit4(new Specification with Scalacheck 
  }
 
  "A 'not' Parameter" should {
-  val nested = parameterWithDefault("foo", 3, StringConversion.partial(from, to))
+  val nested = parameterWithDefault("foo", 3, StringConversion.partial(from[Int], to[Int]))
   val theNot = ParameterDescription.parameterDisallowing(5, nested)
   "allow unbanned values" in { new ParameterMap set (theNot, 2) get theNot mustEqual 2 }
   "reject banned values" in { new ParameterMap set (theNot, 5) must throwA[IllegalArgumentException] }
@@ -231,7 +232,7 @@ class StringsTest extends JUnit4(new Specification with Scalacheck {
 
  "split" should {
   "split a comma-separated String into an array of Strings, ignoring whitespace after commas" in {
-   Arrays.asList(Strings.splitCSV("oh, my,word"): _*) mustEqual Arrays.asList("oh", "my", "word")
+   asJavaList(Strings.splitCSV("oh, my,word"): _*) mustEqual asJavaList("oh", "my", "word")
   }
  }
  "splitIgnoringQuotedSections with a comma separator" should {
@@ -274,20 +275,20 @@ class ListsTest extends JUnit4(new Specification with Scalacheck {
 
  "reduce" should {
   "be able to sum a List containing 1, 2 and 3 to yield 6" in {
-   Lists.reduce[Integer](Arrays.asList(1, 2, 3),
+   Lists.reduce[Integer](asJavaList(1, 2, 3),
                          ((x: Integer), (y: Integer)) => Integer.valueOf(x.intValue + y.intValue)) mustEqual 6
   }
  }
  
  "remove" should {
   "be able to remove 3 from the list 1, 2, 3" in {
-   Lists.remove[Integer](Arrays.asList[Integer](1, 2, 3), 3) sameElements Arrays.asList[Integer](1, 2) mustEqual true
+   Lists.remove[Integer](asJavaList[Integer](1, 2, 3), 3) sameElements asJavaList[Integer](1, 2) mustEqual true
   }
  }
 
  "removeIndices" should {
   "be able to remove the elements with indices 1 and 3 from 0, 1, 2, 3, 4" in {
-   Lists.removeByIndices(Arrays.asList[Integer](0, 1, 2, 3, 4), 1, 3) sameElements Arrays.asList[Integer](0, 2, 4) mustEqual true
+   Lists.removeByIndices(asJavaList[Integer](0, 1, 2, 3, 4), 1, 3) sameElements asJavaList[Integer](0, 2, 4) mustEqual true
   }
  }
 })
@@ -461,7 +462,7 @@ class PairTest extends JUnit4(new Specification {
 class ValidatorTest extends JUnit4(new Specification {
  val nameParam = ParameterDescription.parameterWithoutDefault("name", StringConversion.string)
  val addressParam = ParameterDescription.parameterWithoutDefault("address", StringConversion.string)
- val validator = Validator.mutuallyExclusive(Arrays.asList(nameParam, addressParam))
+ val validator = Validator.mutuallyExclusive(asJavaList(nameParam, addressParam))
 
  "mutually exclusive parameters" should {
   "really be mutually exclusive" in {
@@ -478,9 +479,9 @@ class ParameterMapTest extends JUnit4(new Specification {
   "store the passed-in values in each Parameter" in {
    val forename = parameterWithDefault("name", "Bob", StringConversion.string)
    val surname = parameterWithDefault("surname", "Hope", StringConversion.string)
-   val params: java.util.List[ParameterDescription[_, _]] = Arrays.asList(forename, surname)
+   val params: java.util.List[ParameterDescription[_, _]] = asJavaList(forename, surname)
 
-   ParameterMap.fromStrings(params, Arrays.asList("John", "Major")).get.get(surname) mustEqual "Major"
+   ParameterMap.fromStrings(params, asJavaList("John", "Major")).get.get(surname) mustEqual "Major"
   }
  }
  
@@ -691,7 +692,7 @@ class NullTest extends JUnit4(new Specification {
  noNull(ParameterDescription.nonNegativeParameter[Option[Integer]] _, "ParameterDescription.notNegative")
  noNull(ParameterDescription.parameterWithoutDefault[Integer] _, "ParameterDescription.parameter")
 
- noNull(ParameterDescription.parameterWithDefault[Integer] _, "ParameterDescription.parameterWithDefault")
+ noNull((s: String, i: Integer, sc: StringConversion[Integer]) => ParameterDescription.parameterWithDefault(s, i, sc), "ParameterDescription.parameterWithDefault")
  noNull(ParameterDescription.sparseArrayParameter[Integer] _, "ParameterDescription.sparseArrayParam")
 
  noNull(Reduction.intersperseWith _, "Reduction.intersperseWith")
@@ -716,7 +717,7 @@ class NullTest extends JUnit4(new Specification {
  twoWay(StringConversion.string, "StringConversion.string")
  twoWay(StringConversion.bool, "StringConversion.bool")
  twoWay(StringConversion.getHexToLongStringConversion, "StringConversion.getHexToLongStringConversion")
- twoWay(StringConversion.getHexToIntStringConversion, "StringConversion.getHexToIntStringConversion")
+ twoWay(StringConversion.hexInt, "StringConversion.hexInt")
  noNull(StringConversion.convenientPartial _, "StringConversion.convenientPartial")
  noNull(StringConversion.convenientTotal _, "StringConversion.convenientTotal")
  noNull(StringConversion.partial _, "StringConversion.partial")

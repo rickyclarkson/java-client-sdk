@@ -152,7 +152,7 @@ public final class ParameterMap
     public <T> T get( final ParameterDescription<?, T> parameterDescription )
     {
         return values.containsKey( parameterDescription ) ? (T) values.get( parameterDescription )
-                : parameterDescription.defaultValue;
+          : parameterDescription.defaultValue.apply(this);
     }
 
     /**
@@ -197,7 +197,7 @@ public final class ParameterMap
 
         final Map<ParameterDescription<?, ?>, Object> copy = new HashMap<ParameterDescription<?, ?>, Object>( values );
 
-        copy.put( parameterDescription, parameterDescription.reduce( value, get( parameterDescription ) ) );
+        copy.put( parameterDescription, parameterDescription.reduce( this, value, get( parameterDescription ) ) );
 
         final ParameterMap built = new ParameterMap( copy, validator );
         if ( !validator.isValid( built ) )

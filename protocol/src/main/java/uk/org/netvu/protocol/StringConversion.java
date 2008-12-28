@@ -77,7 +77,7 @@ public final class StringConversion<T>
      * @return a StringConversion that converts between Strings containing
      *         hexadecimal integers and Java's Integer, and vice-versa.
      */
-    public static StringConversion<Integer> getHexToIntStringConversion()
+    public static StringConversion<Integer> hexInt()
     {
         return partial( Function.getHexStringToIntFunction(),
                 Option.toPartialFunction( Function.getIntToHexStringFunction() ) );

@@ -112,7 +112,7 @@ public final class VPartsCGI
     {
         CheckParameters.areNotNull( builtMap );
         this.builtMap = builtMap;
-        if ( getExpiry() != EXPIRY.defaultValue && getMode() != Mode.PROTECT )
+        if ( getExpiry() != EXPIRY.defaultValue.apply(builtMap) && getMode() != Mode.PROTECT )
         {
             throw new IllegalStateException(
                     "Setting the expiry time without setting the mode to VPartsCGI.Mode.PROTECT is not allowed" );
@@ -124,7 +124,7 @@ public final class VPartsCGI
                     "Setting watermark to true without setting the mode to VPartsCGI.Mode.READ is not allowed" );
         }
 
-        if ( getWatermarkStep() != WMARKSTEP.defaultValue && !getWatermark() )
+        if ( getWatermarkStep() != WMARKSTEP.defaultValue.apply(builtMap) && !getWatermark() )
         {
             throw new IllegalStateException( "Setting watermarkStep without setting watermark is not allowed" );
         }

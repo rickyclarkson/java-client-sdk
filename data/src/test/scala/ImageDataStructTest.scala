@@ -43,6 +43,7 @@ class ImageDataStructTest extends JUnit4(new Specification with DataTables {
  "getRes" isSpecifiedBy data(_ getRes, "")
  "getSize" isSpecifiedBy data(_ getSize, 0)
  "getSrcLines" isSpecifiedBy data(_ getSrcLines, 0)
+ "getSrcPixels" isSpecifiedBy data(_ getSrcPixels, 0)
  "getStatus" isSpecifiedBy data(_ getStatus, 0)
  "getTargetSize" isSpecifiedBy data(_ getTargetSize, 0)
 

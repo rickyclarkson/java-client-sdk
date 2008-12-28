@@ -3,8 +3,9 @@ package uk.org.netvu.protocol;
 import uk.org.netvu.util.CheckParameters;
 import java.math.BigInteger;
 
+
 /**
- * A function from objects of type T to those of type R.
+ * A new Function<, >() { public  apply( ) {  } } from objects of type T to those of type R.
  * 
  * @param <T>
  *        the type of object to convert from.
@@ -91,7 +92,7 @@ public abstract class Function<T, R>
     }
 
     /**
-     * The identity function - given an object of type T it results in the same
+     * The identity new Function<, >() { public  apply( ) {  } } - given an object of type T it results in the same
      * object of type T.
      * 
      * @param <T>
@@ -356,4 +357,9 @@ public abstract class Function<T, R>
             }
         }
     }
+
+    public static <T, R> Function<T, R> constant(final R r)
+      {
+        return new Function<T, R>() { public R apply(T ignored) { return r; } };
+      }
 }
