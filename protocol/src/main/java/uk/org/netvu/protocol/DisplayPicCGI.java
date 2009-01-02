@@ -3,6 +3,8 @@ package uk.org.netvu.protocol;
 import java.util.*;
 import static uk.org.netvu.protocol.ParameterDescription.*;
 import static uk.org.netvu.protocol.StringConversion.*;
+import uk.org.netvu.util.CheckParameters;
+
 
 
 
@@ -466,5 +468,16 @@ return Option.getEmptyOption(s + " is not a valid ProxyMode element"); } };
   public String toString()
   {
     return "/display_pic.cgi?" + parameterMap.toURLParameters(params);
+  }
+
+  public static DisplayPicCGI fromString(String string)
+  {
+    CheckParameters.areNotNull( string );
+    if (string.length() == 0)
+      throw new IllegalArgumentException("Cannot parse an empty String into a DisplayPicCGI.");
+    final Option<ParameterMap> map = ParameterMap.fromURL(string, params);
+    if (map.isEmpty())
+      throw new IllegalArgumentException(map.reason());
+    return new DisplayPicCGI(map.get());
   }
 }
