@@ -72,19 +72,6 @@ public final class StringConversion<T>
 
     /**
      * A StringConversion that converts between Strings containing hexadecimal
-     * integers and Java's Integer, and vice-versa.
-     * 
-     * @return a StringConversion that converts between Strings containing
-     *         hexadecimal integers and Java's Integer, and vice-versa.
-     */
-    public static StringConversion<Integer> hexInt()
-    {
-        return partial( Function.getHexStringToIntFunction(),
-                Option.toPartialFunction( Function.getIntToHexStringFunction() ) );
-    }
-
-    /**
-     * A StringConversion that converts between Strings containing hexadecimal
      * integers and Java's Long, and vice-versa.
      * 
      * @return a StringConversion that converts between Strings containing
@@ -94,6 +81,19 @@ public final class StringConversion<T>
     {
         return partial( Function.getHexStringToLongFunction(),
                 Option.toPartialFunction( Function.getLongToHexStringFunction() ) );
+    }
+
+    /**
+     * A StringConversion that converts between Strings containing hexadecimal
+     * integers and Java's Integer, and vice-versa.
+     * 
+     * @return a StringConversion that converts between Strings containing
+     *         hexadecimal integers and Java's Integer, and vice-versa.
+     */
+    public static StringConversion<Integer> hexInt()
+    {
+        return partial( Function.getHexStringToIntFunction(),
+                Option.toPartialFunction( Function.getIntToHexStringFunction() ) );
     }
 
     /**

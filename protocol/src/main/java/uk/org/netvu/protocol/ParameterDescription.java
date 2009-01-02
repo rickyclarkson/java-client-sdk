@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 import uk.org.netvu.util.CheckParameters;
-import static uk.org.netvu.protocol.Function.constant;
 
 /**
  * An object that describes a parameter for a Builder, including conversions
@@ -39,10 +39,11 @@ public abstract class ParameterDescription<T, R>
         return parameterWithBounds( 0, Integer.MAX_VALUE, param );
     }
 
-    public static <R> ParameterDescription<Integer, R> positiveInteger(final ParameterDescription<Integer, R> param)
-      {
-        return parameterWithBounds( 1, Integer.MAX_VALUE, param);
-      }
+    public static <T> ParameterDescriptionWithoutDefault<T> parameter( final String name,
+            final StringConversion<T> conversion )
+    {
+        return new ParameterDescriptionWithoutDefault<T>( name, conversion );
+    }
 
     /**
      * Constructs a ParameterDescription that disallows one value, passing all
@@ -89,28 +90,46 @@ public abstract class ParameterDescription<T, R>
     public static <U> ParameterDescription<Integer, U> parameterWithBounds( final int lowerInclusive,
             final int higherInclusive, final ParameterDescription<Integer, U> delegate )
     {
-        return new BoundParameterDescription<U>( lowerInclusive, higherInclusive, delegate );
+        return new BoundParameterDescription<Integer, U>( lowerInclusive, higherInclusive, Num.integer, delegate );
     }
 
-    public static ParameterDescription<Integer, Integer> parameterWithBoundsAndAnException( final int lowerInclusive, final int higherInclusive, final int exception, final ParameterDescription<Integer, Integer> delegate)
+    public static <T, U> ParameterDescription<T, U> parameterWithBounds( final T lower, final T upper,
+            final Num<T> num, final ParameterDescription<T, U> delegate )
     {
-      return new ParameterDescription<Integer, Integer>(delegate.name, delegate.defaultValue)
-      {
-        public Option<Integer> fromURLParameter(URLParameter nameAndValue)
-        {
-          return delegate.fromURLParameter(nameAndValue);
-        }
+        return new BoundParameterDescription<T, U>( lower, upper, num, delegate );
+    }
 
-        public Option<String> toURLParameter(Integer value)
+    public static ParameterDescription<Integer, Integer> parameterWithBoundsAndAnException( final int lowerInclusive,
+            final int higherInclusive, final int exception, final ParameterDescription<Integer, Integer> delegate )
+    {
+        return new ParameterDescription<Integer, Integer>( delegate.name, delegate.defaultValue )
         {
-          return delegate.toURLParameter(value);
-        }
+            @Override
+            public Option<Integer> fromURLParameter( final URLParameter nameAndValue )
+            {
+                return delegate.fromURLParameter( nameAndValue );
+            }
 
-        Integer reduce(ParameterMap map, final Integer newValue, final Integer original)
-        {
-          return original.equals(defaultValue) ? (newValue.intValue() >= lowerInclusive && newValue.intValue() <= higherInclusive) || newValue == exception ? newValue : original : original;
-        }
-      };
+            @Override
+            public Option<String> toURLParameter( final Integer value )
+            {
+                return delegate.toURLParameter( value );
+            }
+
+            @Override
+            Integer reduce( final ParameterMap map, final Integer newValue, final Integer original )
+            {
+                return original.equals( defaultValue ) ? newValue.intValue() >= lowerInclusive
+                        && newValue.intValue() <= higherInclusive || newValue == exception ? newValue : original
+                        : original;
+            }
+        };
+    }
+
+    public static <T> ParameterDescription<T, T> parameterWithDefault( final String name,
+            final Function<ParameterMap, T> defaultValue, final StringConversion<T> conversions )
+    {
+        return new ParameterDescriptionWithDefault<T>( name, defaultValue, conversions );
     }
 
     /**
@@ -128,17 +147,13 @@ public abstract class ParameterDescription<T, R>
      * @return a ParameterDescription that can take 0 or 1 values of type T,
      *         yield that value or a default value.
      */
-    public static <T> ParameterDescription<T, T> parameterWithDefault( final String name, final T defaultValue,
-            final StringConversion<T> conversions )
+    public static <T> ParameterDescriptionWithDefault<T> parameterWithDefault( final String name,
+            final T defaultValue, final StringConversion<T> conversions )
     {
         CheckParameters.areNotNull( name, defaultValue, conversions );
 
-        return new ParameterDescriptionWithDefault<T>( name, Function.<ParameterMap, T>constant(defaultValue), conversions );
-    }
-
-    public static <T> ParameterDescription<T, T> parameterWithDefault( final String name, final Function<ParameterMap, T> defaultValue, StringConversion<T> conversions)
-    {
-      return new ParameterDescriptionWithDefault<T>(name, defaultValue, conversions);
+        return new ParameterDescriptionWithDefault<T>( name, Function.<ParameterMap, T> constant( defaultValue ),
+                conversions );
     }
 
     /**
@@ -163,25 +178,9 @@ public abstract class ParameterDescription<T, R>
 
     }
 
-    public static <T> ParameterDescription<T, T> oneOfWithDefault(final String name, final T theDefault, final StringConversion<T> stringConversion, final T... validValues)
+    public static <R> ParameterDescription<Integer, R> positiveInteger( final ParameterDescription<Integer, R> param )
     {
-      return new ParameterDescription<T, T>(name, Function.<ParameterMap, T>constant(theDefault))
-      {
-        public Option<T> fromURLParameter(URLParameter nameAndValue)
-        {
-          return stringConversion.fromString(nameAndValue.value);
-        }
-
-        public Option<String> toURLParameter(T value)
-        {
-          return stringConversion.toString(value);
-        }
-
-        T reduce(final ParameterMap map, final T newValue, final T original)
-        {
-          return original.equals(theDefault) ? Arrays.contains(validValues, newValue) ? newValue : original : original;
-        }
-      };
+        return parameterWithBounds( 1, Integer.MAX_VALUE, param );
     }
 
     /**
@@ -208,6 +207,33 @@ public abstract class ParameterDescription<T, R>
         return new SparseArrayParameterDescription<T>( name, conversions );
     }
 
+    private static <T> ParameterDescription<T, T> oneOfWithDefault( final String name,
+            final Function<ParameterMap, T> theDefault, final StringConversion<T> stringConversion,
+            final T... validValues )
+    {
+        return new ParameterDescription<T, T>( name, theDefault )
+        {
+            @Override
+            public Option<T> fromURLParameter( final URLParameter nameAndValue )
+            {
+                return stringConversion.fromString( nameAndValue.value );
+            }
+
+            @Override
+            public Option<String> toURLParameter( final T value )
+            {
+                return stringConversion.toString( value );
+            }
+
+            @Override
+            T reduce( final ParameterMap map, final T newValue, final T original )
+            {
+                return original.equals( theDefault ) ? Arrays.contains( validValues, newValue ) ? newValue : original
+                        : original;
+            }
+        };
+    }
+
     /**
      * The name of the Parameter, as it appears in URL parameters and in
      * diagnostic messages.
@@ -232,6 +258,11 @@ public abstract class ParameterDescription<T, R>
     {
         this.name = name;
         this.defaultValue = defaultValue;
+    }
+
+    public ParameterDescription<T, R> disallowing( final T banned )
+    {
+        return parameterDisallowing( banned, this );
     }
 
     /**
@@ -293,6 +324,87 @@ public abstract class ParameterDescription<T, R>
     abstract R reduce( final ParameterMap map, final T newValue, final R original );
 
     /**
+     * A ParameterDescription for parameters that have a default, or initial,
+     * value.
+     * 
+     * @param <T>
+     *        the input and output type of this ParameterDescription.
+     */
+    public static final class ParameterDescriptionWithDefault<T>
+            extends ParameterDescription<T, T>
+    {
+        /**
+         * The conversions between values of type T and String.
+         */
+        private final StringConversion<T> conversions;
+
+        /**
+         * Constructs a ParameterDescriptionWithDefault.
+         * 
+         * @param name
+         *        the name of the parameter.
+         * @param defaultValue
+         *        the default value of the parameter.
+         * @param conversions
+         *        the conversions between values of type T and String.
+         * @throws NullPointerException
+         *         if name, defaultValue or conversions are null.
+         */
+        private ParameterDescriptionWithDefault( final String name, final Function<ParameterMap, T> defaultValue,
+                final StringConversion<T> conversions )
+        {
+            super( name, defaultValue );
+            this.conversions = conversions;
+        }
+
+        public ParameterDescription<T, T> allowedValues( final T... values )
+        {
+            return oneOfWithDefault( name, defaultValue, conversions, values );
+        }
+
+        @Override
+        public Option<T> fromURLParameter( final URLParameter nameAndValue )
+        {
+            return conversions.fromString( nameAndValue.value );
+        }
+
+        public ParameterDescription<T, T> positive( final Num<T> num )
+        {
+            return parameterWithBounds( num.succ( num.zero() ), num.maxValue(), num, this );
+        }
+
+        @Override
+        public T reduce( final ParameterMap map, final T newValue, final T original )
+        {
+            if ( original.equals( defaultValue.apply( map ) ) )
+            {
+                return newValue;
+            }
+
+            throw new IllegalStateException( "The " + name
+                    + " parameter has already been set to a value other than its default" );
+        }
+
+        @Override
+        public Option<String> toURLParameter( final T value )
+        {
+            return conversions.toString( value ).map( new Function<String, String>()
+            {
+                @Override
+                public String apply( final String t )
+                {
+                    return name + '=' + new URLEncoder().apply( t );
+                }
+            } );
+        }
+
+        public ParameterDescription<T, T> withBounds( final T lower, final T upper, final Num<T> num )
+        {
+            return parameterWithBounds( lower, upper, num, this );
+        }
+    }
+
+    /**
      * A ParameterDescription for parameters that do not have a default, or
      * initial, value.
      * 
@@ -317,7 +429,8 @@ public abstract class ParameterDescription<T, R>
          */
         private ParameterDescriptionWithoutDefault( final String name, final StringConversion<T> conversion )
         {
-          super( name, Function.<ParameterMap, Option<T>>constant(Option.<T> getEmptyOption( "The value for the " + name + " parameter has not been set yet" ) ));
+            super( name, Function.<ParameterMap, Option<T>> constant( Option.<T> getEmptyOption( "The value for the "
+                    + name + " parameter has not been set yet" ) ) );
             this.conversion = conversion;
         }
 
@@ -328,7 +441,7 @@ public abstract class ParameterDescription<T, R>
         }
 
         @Override
-          public Option<T> reduce( final ParameterMap map, final T newValue, final Option<T> original )
+        public Option<T> reduce( final ParameterMap map, final T newValue, final Option<T> original )
         {
             if ( original.isEmpty() )
             {
@@ -357,6 +470,11 @@ public abstract class ParameterDescription<T, R>
                     } );
                 }
             } );
+        }
+
+        public ParameterDescriptionWithDefault<T> withDefault( final T t )
+        {
+            return parameterWithDefault( name, t, conversion );
         }
     }
 
@@ -387,7 +505,7 @@ public abstract class ParameterDescription<T, R>
          */
         private SparseArrayParameterDescription( final String name, final StringConversion<T> conversions )
         {
-          super( name, Function.<ParameterMap, TreeMap<Integer, T>>constant(new TreeMap<Integer, T>()) );
+            super( name, Function.<ParameterMap, TreeMap<Integer, T>> constant( new TreeMap<Integer, T>() ) );
             this.conversions = conversions;
         }
 
@@ -415,7 +533,8 @@ public abstract class ParameterDescription<T, R>
         }
 
         @Override
-          public TreeMap<Integer, T> reduce( final ParameterMap map, final List<Pair<Integer, T>> newValue, final TreeMap<Integer, T> original )
+        public TreeMap<Integer, T> reduce( final ParameterMap map, final List<Pair<Integer, T>> newValue,
+                final TreeMap<Integer, T> original )
         {
             final TreeMap<Integer, T> copy = new TreeMap<Integer, T>( original );
             for ( final Pair<Integer, T> pair : newValue )
@@ -482,7 +601,7 @@ public abstract class ParameterDescription<T, R>
         }
 
         @Override
-          public U reduce( final ParameterMap map, final T newValue, final U original )
+        public U reduce( final ParameterMap map, final T newValue, final U original )
         {
             if ( newValue.equals( banned ) )
             {
@@ -500,30 +619,32 @@ public abstract class ParameterDescription<T, R>
     }
 
     /**
-     * A ParameterDescription for a parameter that accepts Integers in a certain
+     * A ParameterDescription for a parameter that accepts values in a certain
      * range.
      * 
      * @param <U>
      *        the output type of this ParameterDescription.
      */
-    private static final class BoundParameterDescription<U>
-            extends ParameterDescription<Integer, U>
+    private static final class BoundParameterDescription<T, U>
+            extends ParameterDescription<T, U>
     {
         /**
          * The upper bound of acceptable values.
          */
-        private final int higherInclusive;
+        private final T higherInclusive;
 
         /**
          * The lower bound of acceptable values.
          */
-        private final int lowerInclusive;
+        private final T lowerInclusive;
+
+        private final Num<T> num;
 
         /**
          * The ParameterDescription to delegate to, including passing on all
          * accepted values.
          */
-        private final ParameterDescription<Integer, U> delegate;
+        private final ParameterDescription<T, U> delegate;
 
         /**
          * Constructs a BoundParameterDescription.
@@ -536,27 +657,28 @@ public abstract class ParameterDescription<T, R>
          *        the ParameterDescription to delegate to, including passing on
          *        all accepted values. delegate is never null.
          */
-        private BoundParameterDescription( final int lowerInclusive, final int higherInclusive,
-                final ParameterDescription<Integer, U> delegate )
+        private BoundParameterDescription( final T lowerInclusive, final T higherInclusive, final Num<T> num,
+                final ParameterDescription<T, U> delegate )
         {
             super( delegate.name, delegate.defaultValue );
             this.higherInclusive = higherInclusive;
             this.lowerInclusive = lowerInclusive;
+            this.num = num;
             this.delegate = delegate;
         }
 
         @Override
-        public Option<Integer> fromURLParameter( final URLParameter nameAndValue )
+        public Option<T> fromURLParameter( final URLParameter nameAndValue )
         {
             return delegate.fromURLParameter( nameAndValue );
         }
 
         @Override
-          public U reduce( final ParameterMap map, final Integer newValue, final U original )
+        public U reduce( final ParameterMap map, final T newValue, final U original )
         {
-            if ( newValue >= lowerInclusive && newValue <= higherInclusive )
+            if ( num.ge( newValue, lowerInclusive ) && num.le( newValue, higherInclusive ) )
             {
-              return delegate.reduce( map, newValue, original );
+                return delegate.reduce( map, newValue, original );
             }
 
             throw new IllegalArgumentException( "The value " + newValue + " is not within the bounds for the "
@@ -567,72 +689,6 @@ public abstract class ParameterDescription<T, R>
         public Option<String> toURLParameter( final U value )
         {
             return delegate.toURLParameter( value );
-        }
-    }
-
-    /**
-     * A ParameterDescription for parameters that have a default, or initial,
-     * value.
-     * 
-     * @param <T>
-     *        the input and output type of this ParameterDescription.
-     */
-    private static final class ParameterDescriptionWithDefault<T>
-            extends ParameterDescription<T, T>
-    {
-        /**
-         * The conversions between values of type T and String.
-         */
-        private final StringConversion<T> conversions;
-
-        /**
-         * Constructs a ParameterDescriptionWithDefault.
-         * 
-         * @param name
-         *        the name of the parameter.
-         * @param defaultValue
-         *        the default value of the parameter.
-         * @param conversions
-         *        the conversions between values of type T and String.
-         * @throws NullPointerException
-         *         if name, defaultValue or conversions are null.
-         */
-        private ParameterDescriptionWithDefault( final String name, final Function<ParameterMap, T> defaultValue,
-                final StringConversion<T> conversions )
-        {
-            super( name, defaultValue );
-            this.conversions = conversions;
-        }
-
-        @Override
-        public Option<T> fromURLParameter( final URLParameter nameAndValue )
-        {
-            return conversions.fromString( nameAndValue.value );
-        }
-
-        @Override
-          public T reduce( final ParameterMap map, final T newValue, final T original )
-        {
-          if ( original.equals( defaultValue.apply(map ) ))
-            {
-                return newValue;
-            }
-
-            throw new IllegalStateException( "The " + name
-                    + " parameter has already been set to a value other than its default" );
-        }
-
-        @Override
-        public Option<String> toURLParameter( final T value )
-        {
-            return conversions.toString( value ).map( new Function<String, String>()
-            {
-                @Override
-                public String apply( final String t )
-                {
-                    return name + '=' + new URLEncoder().apply( t );
-                }
-            } );
         }
     }
 }

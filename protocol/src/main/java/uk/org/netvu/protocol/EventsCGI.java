@@ -1,16 +1,10 @@
 package uk.org.netvu.protocol;
 
-import uk.org.netvu.util.CheckParameters;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.netvu.protocol.ParameterMap.Validator;
-import uk.org.netvu.protocol.ParameterDescription;
-import uk.org.netvu.protocol.Option;
-import uk.org.netvu.protocol.ParameterMap;
-import uk.org.netvu.protocol.StringConversion;
-import uk.org.netvu.protocol.Lists;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A parameter list for an events.cgi query. Use {@link EventsCGI.Builder} to
@@ -40,7 +34,7 @@ public final class EventsCGI
             ParameterDescription.parameterWithDefault( "cammask", 0L, StringConversion.getHexToLongStringConversion() );
 
     private static final ParameterDescription<Integer, Integer> ALARM_MASK =
-      ParameterDescription.parameterWithDefault( "almmask", 0, StringConversion.hexInt() );
+            ParameterDescription.parameterWithDefault( "almmask", 0, StringConversion.hexInt() );
 
     private static final ParameterDescription<Long, Long> VIDEO_MOTION_DETECTION_MASK =
             ParameterDescription.parameterWithDefault( "vmdmask",
@@ -48,10 +42,10 @@ public final class EventsCGI
             0L, StringConversion.getHexToLongStringConversion() );
 
     private static final ParameterDescription<Integer, Integer> GPS_MASK =
-      ParameterDescription.parameterWithDefault( "gpsmask", 0, StringConversion.hexInt() );
+            ParameterDescription.parameterWithDefault( "gpsmask", 0, StringConversion.hexInt() );
 
     private static final ParameterDescription<Integer, Integer> SYSTEM_MASK =
-      ParameterDescription.parameterWithDefault( "sysmask", 0, StringConversion.hexInt() );
+            ParameterDescription.parameterWithDefault( "sysmask", 0, StringConversion.hexInt() );
 
     private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>()
     {

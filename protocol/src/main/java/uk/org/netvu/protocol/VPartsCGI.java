@@ -1,9 +1,10 @@
 package uk.org.netvu.protocol;
 
-import uk.org.netvu.util.CheckParameters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A parameter list for a vparts.cgi query. Use {@link VPartsCGI.Builder} to
@@ -112,7 +113,7 @@ public final class VPartsCGI
     {
         CheckParameters.areNotNull( builtMap );
         this.builtMap = builtMap;
-        if ( getExpiry() != EXPIRY.defaultValue.apply(builtMap) && getMode() != Mode.PROTECT )
+        if ( getExpiry() != EXPIRY.defaultValue.apply( builtMap ) && getMode() != Mode.PROTECT )
         {
             throw new IllegalStateException(
                     "Setting the expiry time without setting the mode to VPartsCGI.Mode.PROTECT is not allowed" );
@@ -124,7 +125,7 @@ public final class VPartsCGI
                     "Setting watermark to true without setting the mode to VPartsCGI.Mode.READ is not allowed" );
         }
 
-        if ( getWatermarkStep() != WMARKSTEP.defaultValue.apply(builtMap) && !getWatermark() )
+        if ( getWatermarkStep() != WMARKSTEP.defaultValue.apply( builtMap ) && !getWatermark() )
         {
             throw new IllegalStateException( "Setting watermarkStep without setting watermark is not allowed" );
         }

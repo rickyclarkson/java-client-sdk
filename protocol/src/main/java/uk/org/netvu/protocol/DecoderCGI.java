@@ -387,7 +387,7 @@ public final class DecoderCGI
         private static final ParameterDescription<String, Option<String>> SLAVE_IP =
                 ParameterDescription.parameterWithoutDefault( "slaveip", StringConversion.string() );
         private static final ParameterDescription<Integer, Option<Integer>> SEQ =
-          ParameterDescription.parameterWithoutDefault( "seq", StringConversion.hexInt() );
+                ParameterDescription.parameterWithoutDefault( "seq", StringConversion.hexInt() );
         private static final ParameterDescription<Integer, Option<Integer>> DWELL =
                 ParameterDescription.parameterWithoutDefault( "dwell", StringConversion.integer() );
         private static final ParameterDescription<Integer, Option<Integer>> CAM =

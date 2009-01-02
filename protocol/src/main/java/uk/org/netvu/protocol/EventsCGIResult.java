@@ -1,11 +1,11 @@
 package uk.org.netvu.protocol;
 
-import uk.org.netvu.util.CheckParameters;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A single result from the events database. This can be used to build a result

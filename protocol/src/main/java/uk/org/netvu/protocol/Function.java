@@ -1,43 +1,42 @@
 package uk.org.netvu.protocol;
 
-import uk.org.netvu.util.CheckParameters;
 import java.math.BigInteger;
 
+import uk.org.netvu.util.CheckParameters;
 
 /**
- * A new Function<, >() { public  apply( ) {  } } from objects of type T to those of type R.
+ * A new Function<, >() { public apply( ) { } } from objects of type T to those
+ * of type R.
  * 
- * @private static final ParameterDescription<, >  = ;
-public  ()
-{
-        return parameterMap.get();
-} <T>
- *        the type of object to convert from.
- * @private static final ParameterDescription<, >  = ;
-public  ()
-{
-        return parameterMap.get();
-} <R>
- *        the type of object to convert to.
+ * @private static final ParameterDescription<, > = ; public () { return
+ *          parameterMap.get(); } <T> the type of object to convert from.
+ * @private static final ParameterDescription<, > = ; public () { return
+ *          parameterMap.get(); } <R> the type of object to convert to.
  */
 public abstract class Function<T, R>
 {
+    public static <T, R> Function<T, R> constant( final R r )
+    {
+        return new Function<T, R>()
+        {
+            @Override
+            public R apply( final T ignored )
+            {
+                return r;
+            }
+        };
+    }
+
     /**
      * A Function that returns true if the value it receives is the same as the
      * specified parameter.
      * 
-     * @private static final ParameterDescription<, >  = ;
-public  ()
-{
-        return parameterMap.get();
-} <T>
-     *        the type of the values that this Function can receive.
-     * @private static final ParameterDescription<, >  = ;
-public  ()
-{
-        return parameterMap.get();
-} other
-     *        the parameter to test values against.
+     * @private static final ParameterDescription<, > = ; public () { return
+     *          parameterMap.get(); } <T> the type of the values that this
+     *          Function can receive.
+     * @private static final ParameterDescription<, > = ; public () { return
+     *          parameterMap.get(); } other the parameter to test values
+     *          against.
      * @throws NullPointerException
      *         if other is null.
      * @return a Function that returns true if the value it receives is the same
@@ -62,24 +61,14 @@ public  ()
      * A Function that, given a Boolean, returns the ifTrue parameter if the
      * Boolean is true, and returns the ifFalse parameter otherwise.
      * 
-     * @private static final ParameterDescription<, >  = ;
-public  ()
-{
-        return parameterMap.get();
-} <T>
-     *        the type of value to return.
-     * @private static final ParameterDescription<, >  = ;
-public  ()
-{
-        return parameterMap.get();
-} ifTrue
-     *        the value to return if the Boolean is true.
-     * @private static final ParameterDescription<, >  = ;
-public  ()
-{
-        return parameterMap.get();
-} ifFalse
-     *        the value to return if the Boolean is false.
+     * @private static final ParameterDescription<, > = ; public () { return
+     *          parameterMap.get(); } <T> the type of value to return.
+     * @private static final ParameterDescription<, > = ; public () { return
+     *          parameterMap.get(); } ifTrue the value to return if the Boolean
+     *          is true.
+     * @private static final ParameterDescription<, > = ; public () { return
+     *          parameterMap.get(); } ifFalse the value to return if the Boolean
+     *          is false.
      * @throws NullPointerException
      *         if ifTrue or ifFalse are null.
      * @return a Function that, given a Boolean, returns the ifTrue parameter if
@@ -120,15 +109,12 @@ public  ()
     }
 
     /**
-     * The identity new Function<, >() { public  apply( ) {  } } - given an object of type T it results in the same
-     * object of type T.
+     * The identity new Function<, >() { public apply( ) { } } - given an object
+     * of type T it results in the same object of type T.
      * 
-     * @private static final ParameterDescription<, >  = ;
-public  ()
-{
-        return parameterMap.get();
-} <T>
-     *        the input and output type of this Function.
+     * @private static final ParameterDescription<, > = ; public () { return
+     *          parameterMap.get(); } <T> the input and output type of this
+     *          Function.
      * @return the identity conversion for type T.
      */
     public static <T> Function<T, T> getIdentityFunction()
@@ -183,12 +169,8 @@ public  ()
      * A Function that uses Object's toString() to convert objects of type T to
      * Strings.
      * 
-     * @private static final ParameterDescription<, >  = ;
-public  ()
-{
-        return parameterMap.get();
-} <T>
-     *        the input type.
+     * @private static final ParameterDescription<, > = ; public () { return
+     *          parameterMap.get(); } <T> the input type.
      * @return a conversion that uses Object's toString() to convert objects of
      *         type T into Strings.
      */
@@ -298,19 +280,11 @@ public  ()
      * into the conversion supplied as a parameter, to finally produce an object
      * of type V.
      * 
-     * @private static final ParameterDescription<, >  = ;
-public  ()
-{
-        return parameterMap.get();
-} <V>
-     *        the type that the composed conversions convert objects of type T
-     *        to.
-     * @private static final ParameterDescription<, >  = ;
-public  ()
-{
-        return parameterMap.get();
-} conversion
-     *        the second conversion to run.
+     * @private static final ParameterDescription<, > = ; public () { return
+     *          parameterMap.get(); } <V> the type that the composed conversions
+     *          convert objects of type T to.
+     * @private static final ParameterDescription<, > = ; public () { return
+     *          parameterMap.get(); } conversion the second conversion to run.
      * @throws NullPointerException
      *         if conversion is null.
      * @return a composed conversion.
@@ -333,12 +307,8 @@ public  ()
     /**
      * Converts an object of type T into an object of type R.
      * 
-     * @private static final ParameterDescription<, >  = ;
-public  ()
-{
-        return parameterMap.get();
-} t
-     *        the object to convert.
+     * @private static final ParameterDescription<, > = ; public () { return
+     *          parameterMap.get(); } t the object to convert.
      * @throws NullPointerException
      *         if t is null.
      * @return the converted object.
@@ -405,9 +375,4 @@ public  ()
             }
         }
     }
-
-    public static <T, R> Function<T, R> constant(final R r)
-      {
-        return new Function<T, R>() { public R apply(T ignored) { return r; } };
-      }
 }

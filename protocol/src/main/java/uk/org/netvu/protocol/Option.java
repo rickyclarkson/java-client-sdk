@@ -2,6 +2,7 @@ package uk.org.netvu.protocol;
 
 import java.util.Collections;
 import java.util.Iterator;
+
 import uk.org.netvu.util.CheckParameters;
 
 /**

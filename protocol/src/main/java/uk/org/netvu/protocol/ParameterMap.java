@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import uk.org.netvu.util.CheckParameters;
 
 /**
@@ -152,7 +153,7 @@ public final class ParameterMap
     public <T> T get( final ParameterDescription<?, T> parameterDescription )
     {
         return values.containsKey( parameterDescription ) ? (T) values.get( parameterDescription )
-          : parameterDescription.defaultValue.apply(this);
+                : parameterDescription.defaultValue.apply( this );
     }
 
     /**
