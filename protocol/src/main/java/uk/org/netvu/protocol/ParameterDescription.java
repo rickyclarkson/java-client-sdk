@@ -119,9 +119,14 @@ public abstract class ParameterDescription<T, R>
             @Override
             Integer reduce( final ParameterMap map, final Integer newValue, final Integer original )
             {
-                return original.equals( defaultValue ) ? newValue.intValue() >= lowerInclusive
-                        && newValue.intValue() <= higherInclusive || newValue == exception ? newValue : original
-                        : original;
+              if (original.equals( defaultValue ))
+              {
+                if (newValue.intValue() >= lowerInclusive && newValue.intValue() <= higherInclusive || newValue == exception)
+                  return newValue;
+                throw new IllegalStateException(newValue+" is not between "+lowerInclusive + " and " + higherInclusive + ", so is not valid for the " + name + " parameter.");
+              }
+              else
+                throw new IllegalStateException(name+" has already been set to a value.");
             }
         };
     }
@@ -228,8 +233,13 @@ public abstract class ParameterDescription<T, R>
             @Override
             T reduce( final ParameterMap map, final T newValue, final T original )
             {
-                return original.equals( theDefault ) ? Arrays.contains( validValues, newValue ) ? newValue : original
-                        : original;
+              if (original.equals(theDefault))
+                {
+                  if (Arrays.contains(validValues, newValue))
+                    throw new IllegalStateException(newValue+" is not a valid value for the "+name+" parameter.");
+                  return newValue;
+                }
+              throw new IllegalStateException(name+" already has a value set.");
             }
         };
     }
