@@ -1,13 +1,13 @@
 package uk.org.netvu.protocol;
-   import java.util.*;
-   import static uk.org.netvu.protocol.ParameterDescription.*;
-   import static uk.org.netvu.protocol.StringConversion.*;
-   import uk.org.netvu.util.CheckParameters;
-   
-   public final class DisplayPicCGI
+import java.util.*;
+import static uk.org.netvu.protocol.ParameterDescription.*;
+import static uk.org.netvu.protocol.StringConversion.*;
+import uk.org.netvu.util.CheckParameters;
+
+public final class DisplayPicCGI
 {
     private final ParameterMap parameterMap;
-                      DisplayPicCGI(ParameterMap parameterMap)
+    DisplayPicCGI(ParameterMap parameterMap)
     {
         this.parameterMap = parameterMap;
     }
@@ -150,112 +150,328 @@ package uk.org.netvu.protocol;
     public static final class Builder
     {
         private Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
+        /**
+        * Sets the cam parameter in the builder.
+        @param cam the value to store as the cam parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the cam parameter has already been set.
+        @throws NullPointerException if cam is null.
+        */
         public Builder cam(int cam)
         {
+            CheckParameters.areNotNull(cam);
             return set(CAM, cam);
         }
+        /**
+        * Sets the fields parameter in the builder.
+        @param fields the value to store as the fields parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the fields parameter has already been set.
+        @throws NullPointerException if fields is null.
+        */
         public Builder fields(int fields)
         {
+            CheckParameters.areNotNull(fields);
             return set(FIELDS, fields);
         }
+        /**
+        * Sets the res parameter in the builder.
+        @param res the value to store as the res parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the res parameter has already been set.
+        @throws NullPointerException if res is null.
+        */
         public Builder res(String res)
         {
+            CheckParameters.areNotNull(res);
             return set(RES, res);
         }
+        /**
+        * Sets the seq parameter in the builder.
+        @param seq the value to store as the seq parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the seq parameter has already been set.
+        @throws NullPointerException if seq is null.
+        */
         public Builder seq(int seq)
         {
+            CheckParameters.areNotNull(seq);
             return set(SEQ, seq);
         }
+        /**
+        * Sets the dwell parameter in the builder.
+        @param dwell the value to store as the dwell parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the dwell parameter has already been set.
+        @throws NullPointerException if dwell is null.
+        */
         public Builder dwell(int dwell)
         {
+            CheckParameters.areNotNull(dwell);
             return set(DWELL, dwell);
         }
+        /**
+        * Sets the id parameter in the builder.
+        @param id the value to store as the id parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the id parameter has already been set.
+        @throws NullPointerException if id is null.
+        */
         public Builder id(int id)
         {
+            CheckParameters.areNotNull(id);
             return set(ID, id);
         }
+        /**
+        * Sets the dIndex parameter in the builder.
+        @param dIndex the value to store as the dIndex parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the dIndex parameter has already been set.
+        @throws NullPointerException if dIndex is null.
+        */
         public Builder dIndex(int dIndex)
         {
+            CheckParameters.areNotNull(dIndex);
             return set(DINDEX, dIndex);
         }
+        /**
+        * Sets the presel parameter in the builder.
+        @param presel the value to store as the presel parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the presel parameter has already been set.
+        @throws NullPointerException if presel is null.
+        */
         public Builder presel(int presel)
         {
+            CheckParameters.areNotNull(presel);
             return set(PRESEL, presel);
         }
+        /**
+        * Sets the channel parameter in the builder.
+        @param channel the value to store as the channel parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the channel parameter has already been set.
+        @throws NullPointerException if channel is null.
+        */
         public Builder channel(int channel)
         {
+            CheckParameters.areNotNull(channel);
             return set(CHANNEL, channel);
         }
+        /**
+        * Sets the rate parameter in the builder.
+        @param rate the value to store as the rate parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the rate parameter has already been set.
+        @throws NullPointerException if rate is null.
+        */
         public Builder rate(int rate)
         {
+            CheckParameters.areNotNull(rate);
             return set(RATE, rate);
         }
+        /**
+        * Sets the forcedQ parameter in the builder.
+        @param forcedQ the value to store as the forcedQ parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the forcedQ parameter has already been set.
+        @throws NullPointerException if forcedQ is null.
+        */
         public Builder forcedQ(int forcedQ)
         {
+            CheckParameters.areNotNull(forcedQ);
             return set(FORCED_Q, forcedQ);
         }
+        /**
+        * Sets the duration parameter in the builder.
+        @param duration the value to store as the duration parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the duration parameter has already been set.
+        @throws NullPointerException if duration is null.
+        */
         public Builder duration(int duration)
         {
+            CheckParameters.areNotNull(duration);
             return set(DURATION, duration);
         }
+        /**
+        * Sets the nBuffers parameter in the builder.
+        @param nBuffers the value to store as the nBuffers parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the nBuffers parameter has already been set.
+        @throws NullPointerException if nBuffers is null.
+        */
         public Builder nBuffers(int nBuffers)
         {
+            CheckParameters.areNotNull(nBuffers);
             return set(N_BUFFERS, nBuffers);
         }
+        /**
+        * Sets the telemQ parameter in the builder.
+        @param telemQ the value to store as the telemQ parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the telemQ parameter has already been set.
+        @throws NullPointerException if telemQ is null.
+        */
         public Builder telemQ(int telemQ)
         {
+            CheckParameters.areNotNull(telemQ);
             return set(TELEM_Q, telemQ);
         }
+        /**
+        * Sets the pktSize parameter in the builder.
+        @param pktSize the value to store as the pktSize parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the pktSize parameter has already been set.
+        @throws NullPointerException if pktSize is null.
+        */
         public Builder pktSize(int pktSize)
         {
+            CheckParameters.areNotNull(pktSize);
             return set(PKT_SIZE, pktSize);
         }
+        /**
+        * Sets the udpPort parameter in the builder.
+        @param udpPort the value to store as the udpPort parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the udpPort parameter has already been set.
+        @throws NullPointerException if udpPort is null.
+        */
         public Builder udpPort(int udpPort)
         {
+            CheckParameters.areNotNull(udpPort);
             return set(UDP_PORT, udpPort);
         }
+        /**
+        * Sets the audio parameter in the builder.
+        @param audio the value to store as the audio parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the audio parameter has already been set.
+        @throws NullPointerException if audio is null.
+        */
         public Builder audio(String audio)
         {
+            CheckParameters.areNotNull(audio);
             return set(AUDIO, audio);
         }
+        /**
+        * Sets the format parameter in the builder.
+        @param format the value to store as the format parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the format parameter has already been set.
+        @throws NullPointerException if format is null.
+        */
         public Builder format(Format format)
         {
+            CheckParameters.areNotNull(format);
             return set(FORMAT, format);
         }
+        /**
+        * Sets the audioMode parameter in the builder.
+        @param audioMode the value to store as the audioMode parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the audioMode parameter has already been set.
+        @throws NullPointerException if audioMode is null.
+        */
         public Builder audioMode(AudioMode audioMode)
         {
+            CheckParameters.areNotNull(audioMode);
             return set(AUDIO_MODE, audioMode);
         }
+        /**
+        * Sets the transmissionMode parameter in the builder.
+        @param transmissionMode the value to store as the transmissionMode parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the transmissionMode parameter has already been set.
+        @throws NullPointerException if transmissionMode is null.
+        */
         public Builder transmissionMode(TransmissionMode transmissionMode)
         {
+            CheckParameters.areNotNull(transmissionMode);
             return set(TRANSMISSION_MODE, transmissionMode);
         }
+        /**
+        * Sets the pps parameter in the builder.
+        @param pps the value to store as the pps parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the pps parameter has already been set.
+        @throws NullPointerException if pps is null.
+        */
         public Builder pps(int pps)
         {
+            CheckParameters.areNotNull(pps);
             return set(PPS, pps);
         }
+        /**
+        * Sets the mp4Rate parameter in the builder.
+        @param mp4Rate the value to store as the mp4Rate parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the mp4Rate parameter has already been set.
+        @throws NullPointerException if mp4Rate is null.
+        */
         public Builder mp4Rate(int mp4Rate)
         {
+            CheckParameters.areNotNull(mp4Rate);
             return set(MP4_RATE, mp4Rate);
         }
+        /**
+        * Sets the slaveIP parameter in the builder.
+        @param slaveIP the value to store as the slaveIP parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the slaveIP parameter has already been set.
+        @throws NullPointerException if slaveIP is null.
+        */
         public Builder slaveIP(IPAddress slaveIP)
         {
+            CheckParameters.areNotNull(slaveIP);
             return set(SLAVE_IP, slaveIP);
         }
+        /**
+        * Sets the opChan parameter in the builder.
+        @param opChan the value to store as the opChan parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the opChan parameter has already been set.
+        @throws NullPointerException if opChan is null.
+        */
         public Builder opChan(int opChan)
         {
+            CheckParameters.areNotNull(opChan);
             return set(OP_CHAN, opChan);
         }
+        /**
+        * Sets the proxyMode parameter in the builder.
+        @param proxyMode the value to store as the proxyMode parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the proxyMode parameter has already been set.
+        @throws NullPointerException if proxyMode is null.
+        */
         public Builder proxyMode(ProxyMode proxyMode)
         {
+            CheckParameters.areNotNull(proxyMode);
             return set(PROXY_MODE, proxyMode);
         }
+        /**
+        * Sets the proxyPri parameter in the builder.
+        @param proxyPri the value to store as the proxyPri parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the proxyPri parameter has already been set.
+        @throws NullPointerException if proxyPri is null.
+        */
         public Builder proxyPri(int proxyPri)
         {
+            CheckParameters.areNotNull(proxyPri);
             return set(PROXY_PRI, proxyPri);
         }
+        /**
+        * Sets the proxyRetry parameter in the builder.
+        @param proxyRetry the value to store as the proxyRetry parameter.
+        @return the Builder.
+        @throws IllegalStateException if the value is invalid or the proxyRetry parameter has already been set.
+        @throws NullPointerException if proxyRetry is null.
+        */
         public Builder proxyRetry(int proxyRetry)
         {
+            CheckParameters.areNotNull(proxyRetry);
             return set(PROXY_RETRY, proxyRetry);
         }
         private <T> Builder set(final ParameterDescription<T, ?> parameter, final T value)
@@ -315,9 +531,10 @@ package uk.org.netvu.protocol;
         JFIF, JPEG, MP4;
         public static Function<String, Option<Format>> fromStringFunction()
         {
-            return new Function<String, Option<Format>>()
+            return
+            new Function<String, Option<Format>>()
             {
-                public Option<Format> apply(String s)
+                public Option<Format> apply(String s )
                 {
                     for (final Format element: values())
                     {
@@ -326,7 +543,7 @@ package uk.org.netvu.protocol;
                             return Option.getFullOption(element);
                         }
                     }
-                    return Option.getEmptyOption(s + " is not a valid Format element ");
+                    return Option.getEmptyOption(s + " is not a valid Format element " );
                 }
             }
             ;
@@ -337,9 +554,10 @@ package uk.org.netvu.protocol;
         UDP, INLINE;
         public static Function<String, Option<AudioMode>> fromStringFunction()
         {
-            return new Function<String, Option<AudioMode>>()
+            return
+            new Function<String, Option<AudioMode>>()
             {
-                public Option<AudioMode> apply(String s)
+                public Option<AudioMode> apply(String s )
                 {
                     for (final AudioMode element: values())
                     {
@@ -348,7 +566,7 @@ package uk.org.netvu.protocol;
                             return Option.getFullOption(element);
                         }
                     }
-                    return Option.getEmptyOption(s + " is not a valid AudioMode element ");
+                    return Option.getEmptyOption(s + " is not a valid AudioMode element " );
                 }
             }
             ;
@@ -359,9 +577,10 @@ package uk.org.netvu.protocol;
         MIME, BINARY, MINIMAL;
         public static Function<String, Option<TransmissionMode>> fromStringFunction()
         {
-            return new Function<String, Option<TransmissionMode>>()
+            return
+            new Function<String, Option<TransmissionMode>>()
             {
-                public Option<TransmissionMode> apply(String s)
+                public Option<TransmissionMode> apply(String s )
                 {
                     for (final TransmissionMode element: values())
                     {
@@ -370,7 +589,7 @@ package uk.org.netvu.protocol;
                             return Option.getFullOption(element);
                         }
                     }
-                    return Option.getEmptyOption(s + " is not a valid TransmissionMode element ");
+                    return Option.getEmptyOption(s + " is not a valid TransmissionMode element " );
                 }
             }
             ;
@@ -381,9 +600,10 @@ package uk.org.netvu.protocol;
         TRANSIENT, PERSISTENT;
         public static Function<String, Option<ProxyMode>> fromStringFunction()
         {
-            return new Function<String, Option<ProxyMode>>()
+            return
+            new Function<String, Option<ProxyMode>>()
             {
-                public Option<ProxyMode> apply(String s)
+                public Option<ProxyMode> apply(String s )
                 {
                     for (final ProxyMode element: values())
                     {
@@ -392,7 +612,7 @@ package uk.org.netvu.protocol;
                             return Option.getFullOption(element);
                         }
                     }
-                    return Option.getEmptyOption(s + " is not a valid ProxyMode element ");
+                    return Option.getEmptyOption(s + " is not a valid ProxyMode element " );
                 }
             }
             ;
@@ -410,7 +630,7 @@ package uk.org.netvu.protocol;
         {
             throw new IllegalArgumentException("Cannot parse an empty String into a DisplayPicCGI.");
         }
-        final Option<ParameterMap> map = ParameterMap.fromURL(string, params);
+        final Option<ParameterMap> map = ParameterMap.fromURL(string, params);                                                                                     
         if (map.isEmpty())
         {
             throw new IllegalArgumentException(map.reason());
