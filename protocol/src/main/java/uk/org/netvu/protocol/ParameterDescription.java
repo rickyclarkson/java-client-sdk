@@ -36,7 +36,7 @@ public abstract class ParameterDescription<T, R>
     public static <R> ParameterDescription<Integer, R> nonNegativeParameter(
             final ParameterDescription<Integer, R> param )
     {
-        return parameterWithBounds( 0, Integer.MAX_VALUE, param );
+        return ParameterDescription.parameterWithBounds( 0, Integer.MAX_VALUE, param );
     }
 
     public static <T> ParameterDescriptionWithoutDefault<T> parameter( final String name,
@@ -119,7 +119,7 @@ public abstract class ParameterDescription<T, R>
             @Override
             Integer reduce( final ParameterMap map, final Integer newValue, final Integer original )
             {
-                if ( original.equals( defaultValue ) )
+                if ( original.equals( defaultValue.apply( map ) ) )
                 {
                     if ( newValue.intValue() >= lowerInclusive && newValue.intValue() <= higherInclusive
                             || newValue == exception )
@@ -191,7 +191,7 @@ public abstract class ParameterDescription<T, R>
 
     public static <R> ParameterDescription<Integer, R> positiveInteger( final ParameterDescription<Integer, R> param )
     {
-        return parameterWithBounds( 1, Integer.MAX_VALUE, param );
+        return ParameterDescription.parameterWithBounds( 1, Integer.MAX_VALUE, param );
     }
 
     /**
@@ -281,7 +281,7 @@ public abstract class ParameterDescription<T, R>
 
     public ParameterDescription<T, R> disallowing( final T banned )
     {
-        return parameterDisallowing( banned, this );
+        return ParameterDescription.parameterDisallowing( banned, this );
     }
 
     /**
@@ -349,8 +349,7 @@ public abstract class ParameterDescription<T, R>
      * @param <T>
      *        the input and output type of this ParameterDescription.
      */
-    public static final class ParameterDescriptionWithDefault<T>
-            extends ParameterDescription<T, T>
+    public static final class ParameterDescriptionWithDefault<T> extends ParameterDescription<T, T>
     {
         /**
          * The conversions between values of type T and String.
@@ -378,7 +377,7 @@ public abstract class ParameterDescription<T, R>
 
         public ParameterDescription<T, T> allowedValues( final T... values )
         {
-            return oneOfWithDefault( name, defaultValue, conversions, values );
+            return ParameterDescription.oneOfWithDefault( name, defaultValue, conversions, values );
         }
 
         @Override
@@ -387,9 +386,14 @@ public abstract class ParameterDescription<T, R>
             return conversions.fromString( nameAndValue.value );
         }
 
+        public ParameterDescription<T, T> notNegative( final Num<T> num )
+        {
+            return ParameterDescription.parameterWithBounds( num.zero(), num.maxValue(), num, this );
+        }
+
         public ParameterDescription<T, T> positive( final Num<T> num )
         {
-            return parameterWithBounds( num.succ( num.zero() ), num.maxValue(), num, this );
+            return ParameterDescription.parameterWithBounds( num.succ( num.zero() ), num.maxValue(), num, this );
         }
 
         @Override
@@ -419,7 +423,7 @@ public abstract class ParameterDescription<T, R>
 
         public ParameterDescription<T, T> withBounds( final T lower, final T upper, final Num<T> num )
         {
-            return parameterWithBounds( lower, upper, num, this );
+            return ParameterDescription.parameterWithBounds( lower, upper, num, this );
         }
     }
 
@@ -430,8 +434,7 @@ public abstract class ParameterDescription<T, R>
      * @param <T>
      *        The input type of this ParameterDescription.
      */
-    public static final class ParameterDescriptionWithoutDefault<T>
-            extends ParameterDescription<T, Option<T>>
+    public static final class ParameterDescriptionWithoutDefault<T> extends ParameterDescription<T, Option<T>>
     {
         /**
          * The conversions between values of type T and Strings.
@@ -493,7 +496,7 @@ public abstract class ParameterDescription<T, R>
 
         public ParameterDescriptionWithDefault<T> withDefault( final T t )
         {
-            return parameterWithDefault( name, t, conversion );
+            return ParameterDescription.parameterWithDefault( name, t, conversion );
         }
     }
 
@@ -504,8 +507,8 @@ public abstract class ParameterDescription<T, R>
      * @param <T>
      *        the element type of this SparseArrayParameterDescription.
      */
-    public static final class SparseArrayParameterDescription<T>
-            extends ParameterDescription<List<Pair<Integer, T>>, TreeMap<Integer, T>>
+    public static final class SparseArrayParameterDescription<T> extends
+            ParameterDescription<List<Pair<Integer, T>>, TreeMap<Integer, T>>
     {
         /**
          * Functions between values of type T and Strings.
@@ -600,8 +603,7 @@ public abstract class ParameterDescription<T, R>
      * @param <U>
      *        the output type of this ParameterDescription.
      */
-    private static final class BannedParameterDescription<T, U>
-            extends ParameterDescription<T, U>
+    private static final class BannedParameterDescription<T, U> extends ParameterDescription<T, U>
     {
         private final T banned;
         private final ParameterDescription<T, U> delegate;
@@ -644,8 +646,7 @@ public abstract class ParameterDescription<T, R>
      * @param <U>
      *        the output type of this ParameterDescription.
      */
-    private static final class BoundParameterDescription<T, U>
-            extends ParameterDescription<T, U>
+    private static final class BoundParameterDescription<T, U> extends ParameterDescription<T, U>
     {
         /**
          * The upper bound of acceptable values.

@@ -23,7 +23,7 @@ public final class URLExtractor
             return new ArrayList<URLParameter>();
         }
 
-        final List<String> parameters = parameters( url );
+        final List<String> parameters = URLExtractor.parameters( url );
         final Function<String, Pair<String, String>> partitionByEqualsSign = Strings.partition( '=' );
         final Function<String, URLParameter> partitionByEqualsSignThenConstructAURLParameterFromThePair =
                 partitionByEqualsSign.andThen( URLParameter.fromPair );

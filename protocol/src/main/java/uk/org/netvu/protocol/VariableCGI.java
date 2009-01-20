@@ -18,7 +18,7 @@ public final class VariableCGI
      */
     public static VariableCGI fromURL( final String url )
     {
-        final Option<ParameterMap> map = ParameterMap.fromURL( url, params );
+        final Option<ParameterMap> map = ParameterMap.fromURL( url, VariableCGI.params );
 
         if ( map.isEmpty() )
         {
@@ -39,20 +39,20 @@ public final class VariableCGI
     private final ParameterMap parameterMap;
 
     private static final ParameterDescription<Variable, Option<Variable>> VARIABLE =
-            ParameterDescription.parameterWithoutDefault( "variable",
-                    StringConversion.convenientTotal( Variable.fromStringFunction() ) );
+            ParameterDescription.parameterWithoutDefault( "variable", StringConversion.convenientTotal( Variable
+                .fromStringFunction() ) );
 
     private static final ParameterDescription<VariableType, VariableType> TYPE =
-            ParameterDescription.parameterWithDefault( "type", VariableType.HTTP,
-                    StringConversion.convenientPartial( VariableType.fromStringFunction() ) );
+            ParameterDescription.parameterWithDefault( "type", VariableType.HTTP, StringConversion
+                .convenientPartial( VariableType.fromStringFunction() ) );
 
     private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>()
     {
         {
             // this is an anonymous intialiser - it is creating a new ArrayList
             // and adding values to it inline.
-            add( VARIABLE );
-            add( TYPE );
+            add( VariableCGI.VARIABLE );
+            add( VariableCGI.TYPE );
         }
     };
 
@@ -67,9 +67,9 @@ public final class VariableCGI
      */
     VariableCGI( final ParameterMap parameterMap )
     {
-        if ( parameterMap.get( VARIABLE ).isEmpty() )
+        if ( parameterMap.get( VariableCGI.VARIABLE ).isEmpty() )
         {
-            throw new IllegalStateException( VARIABLE.name + " has not been set to a value" );
+            throw new IllegalStateException( VariableCGI.VARIABLE.name + " has not been set to a value" );
         }
 
         this.parameterMap = parameterMap;
@@ -82,7 +82,7 @@ public final class VariableCGI
      */
     public VariableType getType()
     {
-        return parameterMap.get( TYPE );
+        return parameterMap.get( VariableCGI.TYPE );
     }
 
     /**
@@ -92,7 +92,7 @@ public final class VariableCGI
      */
     public Variable getVariable()
     {
-        return parameterMap.get( VARIABLE ).get();
+        return parameterMap.get( VariableCGI.VARIABLE ).get();
     }
 
     /**
@@ -102,7 +102,7 @@ public final class VariableCGI
     @Override
     public String toString()
     {
-        return "/variable.cgi?" + parameterMap.toURLParameters( params );
+        return "/variable.cgi?" + parameterMap.toURLParameters( VariableCGI.params );
     }
 
     /**
@@ -138,7 +138,7 @@ public final class VariableCGI
          */
         public Builder type( final VariableType type )
         {
-            return set( TYPE, type );
+            return set( VariableCGI.TYPE, type );
         }
 
         /**
@@ -150,7 +150,7 @@ public final class VariableCGI
          */
         public Builder variable( final Variable variable )
         {
-            return set( VARIABLE, variable );
+            return set( VariableCGI.VARIABLE, variable );
         }
 
         /**

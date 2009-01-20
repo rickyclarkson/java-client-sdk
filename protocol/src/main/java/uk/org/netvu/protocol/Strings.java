@@ -34,7 +34,7 @@ public final class Strings
      */
     public static String afterFirstLeniently( final String string, final String separator )
     {
-        final List<String> list = partitionLeniently( string, separator );
+        final List<String> list = Strings.partitionLeniently( string, separator );
         return list.get( list.size() > 1 ? 1 : 0 );
     }
 
@@ -55,7 +55,7 @@ public final class Strings
      */
     public static String afterLastLeniently( final String string, final String separator )
     {
-        final List<String> list = partitionLeniently( string, separator );
+        final List<String> list = Strings.partitionLeniently( string, separator );
         return list.get( list.size() - 1 );
     }
 
@@ -76,7 +76,7 @@ public final class Strings
      */
     public static String beforeFirstLeniently( final String string, final String separator )
     {
-        return partitionLeniently( string, separator ).get( 0 );
+        return Strings.partitionLeniently( string, separator ).get( 0 );
     }
 
     /**
@@ -146,8 +146,8 @@ public final class Strings
             @Override
             public Pair<String, String> apply( final String param )
             {
-                return new Pair<String, String>( param.substring( 0, param.indexOf( separator ) ),
-                        param.substring( param.indexOf( separator ) + 1 ) );
+                return new Pair<String, String>( param.substring( 0, param.indexOf( separator ) ), param
+                    .substring( param.indexOf( separator ) + 1 ) );
             }
         };
     }
@@ -162,8 +162,8 @@ public final class Strings
      */
     public static String removeSurroundingQuotesLeniently( final String value )
     {
-        return value.startsWith( DOUBLE_QUOTES ) && value.endsWith( DOUBLE_QUOTES ) ? value.substring( 1,
-                value.length() - 1 ) : value;
+        return value.startsWith( Strings.DOUBLE_QUOTES ) && value.endsWith( Strings.DOUBLE_QUOTES ) ? value.substring(
+                1, value.length() - 1 ) : value;
     }
 
     /**
@@ -228,7 +228,7 @@ public final class Strings
      */
     public static Function<String, String> surroundWithQuotes()
     {
-        return prepend( DOUBLE_QUOTES ).andThen( append( DOUBLE_QUOTES ) );
+        return Strings.prepend( Strings.DOUBLE_QUOTES ).andThen( Strings.append( Strings.DOUBLE_QUOTES ) );
     }
 
     /**
@@ -271,8 +271,8 @@ public final class Strings
             return Arrays.asList( "" );
         }
 
-        return index >= 0 ? Arrays.asList( string.substring( 0, index ), string.substring( index + 1 ) )
-                : Arrays.asList( string );
+        return index >= 0 ? Arrays.asList( string.substring( 0, index ), string.substring( index + 1 ) ) : Arrays
+            .asList( string );
     }
 
     /**

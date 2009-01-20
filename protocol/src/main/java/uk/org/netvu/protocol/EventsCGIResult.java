@@ -52,12 +52,12 @@ public final class EventsCGIResult
                     StringConversion.integer() ) );
 
     private static final ParameterDescription<Status, Status> STATUS =
-            ParameterDescription.parameterWithDefault( "status", Status.NONE,
-                    StringConversion.convenientPartial( Status.fromString() ) );
+            ParameterDescription.parameterWithDefault( "status", Status.NONE, StringConversion
+                .convenientPartial( Status.fromString() ) );
 
     private static final ParameterDescription<AlarmType, AlarmType> ALARM_TYPE =
-            ParameterDescription.parameterWithDefault( "alarmType", AlarmType.NONE,
-                    StringConversion.convenientPartial( AlarmType.fromString ) );
+            ParameterDescription.parameterWithDefault( "alarmType", AlarmType.NONE, StringConversion
+                .convenientPartial( AlarmType.fromString ) );
 
     private static final ArrayList<ParameterDescription<?, ? extends Option<?>>> compulsoryParameters =
             new ArrayList<ParameterDescription<?, ? extends Option<?>>>()
@@ -65,15 +65,15 @@ public final class EventsCGIResult
                 {
                     // this is an anonymous initialiser - it creates an
                     // ArrayList and adds values to it inline.
-                    add( CAMERA_PARAMETER );
-                    add( ALARM );
-                    add( JULIAN_TIME );
-                    add( OFFSET );
-                    add( FILE );
-                    add( ON_DISK );
-                    add( DURATION );
-                    add( PRE_ALARM );
-                    add( ARCHIVE );
+                    add( EventsCGIResult.CAMERA_PARAMETER );
+                    add( EventsCGIResult.ALARM );
+                    add( EventsCGIResult.JULIAN_TIME );
+                    add( EventsCGIResult.OFFSET );
+                    add( EventsCGIResult.FILE );
+                    add( EventsCGIResult.ON_DISK );
+                    add( EventsCGIResult.DURATION );
+                    add( EventsCGIResult.PRE_ALARM );
+                    add( EventsCGIResult.ARCHIVE );
                 }
             };
 
@@ -98,15 +98,15 @@ public final class EventsCGIResult
         }
 
         final List<ParameterDescription<?, ?>> parameterDescriptions =
-                new ArrayList<ParameterDescription<?, ?>>( compulsoryParameters );
+                new ArrayList<ParameterDescription<?, ?>>( EventsCGIResult.compulsoryParameters );
 
         if ( values.length > 11 )
         {
-            parameterDescriptions.add( STATUS );
+            parameterDescriptions.add( EventsCGIResult.STATUS );
         }
         if ( values.length > 12 )
         {
-            parameterDescriptions.add( ALARM_TYPE );
+            parameterDescriptions.add( EventsCGIResult.ALARM_TYPE );
         }
 
         final List<String> removeItems0And7 = Lists.removeByIndices( Arrays.asList( values ), 0, 7 );
@@ -146,7 +146,7 @@ public final class EventsCGIResult
     {
         CheckParameters.areNotNull( builtMap );
 
-        for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : compulsoryParameters )
+        for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : EventsCGIResult.compulsoryParameters )
         {
             if ( builtMap.get( parameterDescription ).isEmpty() )
             {
@@ -165,7 +165,7 @@ public final class EventsCGIResult
      */
     public String getAlarm()
     {
-        return builtMap.get( ALARM ).get();
+        return builtMap.get( EventsCGIResult.ALARM ).get();
     }
 
     /**
@@ -175,7 +175,7 @@ public final class EventsCGIResult
      */
     public AlarmType getAlarmType()
     {
-        return builtMap.get( ALARM_TYPE );
+        return builtMap.get( EventsCGIResult.ALARM_TYPE );
     }
 
     /**
@@ -187,7 +187,7 @@ public final class EventsCGIResult
      */
     public int getArchive()
     {
-        return builtMap.get( ARCHIVE ).get();
+        return builtMap.get( EventsCGIResult.ARCHIVE ).get();
     }
 
     /**
@@ -197,7 +197,7 @@ public final class EventsCGIResult
      */
     public int getCam()
     {
-        return builtMap.get( CAMERA_PARAMETER ).get();
+        return builtMap.get( EventsCGIResult.CAMERA_PARAMETER ).get();
     }
 
     /**
@@ -208,7 +208,7 @@ public final class EventsCGIResult
      */
     public int getDuration()
     {
-        return builtMap.get( DURATION ).get();
+        return builtMap.get( EventsCGIResult.DURATION ).get();
     }
 
     /**
@@ -218,7 +218,7 @@ public final class EventsCGIResult
      */
     public String getFile()
     {
-        return builtMap.get( FILE ).get();
+        return builtMap.get( EventsCGIResult.FILE ).get();
     }
 
     /**
@@ -228,7 +228,7 @@ public final class EventsCGIResult
      */
     public int getJulianTime()
     {
-        return builtMap.get( JULIAN_TIME ).get();
+        return builtMap.get( EventsCGIResult.JULIAN_TIME ).get();
     }
 
     /**
@@ -238,7 +238,7 @@ public final class EventsCGIResult
      */
     public int getOffset()
     {
-        return builtMap.get( OFFSET ).get();
+        return builtMap.get( EventsCGIResult.OFFSET ).get();
     }
 
     /**
@@ -250,7 +250,7 @@ public final class EventsCGIResult
      */
     public int getPreAlarm()
     {
-        return builtMap.get( PRE_ALARM ).get();
+        return builtMap.get( EventsCGIResult.PRE_ALARM ).get();
     }
 
     /**
@@ -261,7 +261,7 @@ public final class EventsCGIResult
      */
     public Status getStatus()
     {
-        return builtMap.get( STATUS );
+        return builtMap.get( EventsCGIResult.STATUS );
     }
 
     /**
@@ -271,7 +271,7 @@ public final class EventsCGIResult
      */
     public boolean isOnDisk()
     {
-        return builtMap.get( ON_DISK ).get();
+        return builtMap.get( EventsCGIResult.ON_DISK ).get();
     }
 
     /**
@@ -403,7 +403,7 @@ public final class EventsCGIResult
 
                 try
                 {
-                    return Option.getFullOption( find( Integer.parseInt( t ) ) );
+                    return Option.getFullOption( AlarmType.find( Integer.parseInt( t ) ) );
                 }
                 catch ( final IllegalArgumentException e )
                 {
@@ -448,7 +448,7 @@ public final class EventsCGIResult
          */
         public Builder alarm( final String alarm )
         {
-            return set( ALARM, alarm );
+            return set( EventsCGIResult.ALARM, alarm );
         }
 
         /**
@@ -463,7 +463,7 @@ public final class EventsCGIResult
          */
         public Builder alarmType( final AlarmType alarmType )
         {
-            return set( ALARM_TYPE, alarmType );
+            return set( EventsCGIResult.ALARM_TYPE, alarmType );
         }
 
         /**
@@ -479,7 +479,7 @@ public final class EventsCGIResult
          */
         public Builder archive( final int archive )
         {
-            return set( ARCHIVE, archive );
+            return set( EventsCGIResult.ARCHIVE, archive );
         }
 
         /**
@@ -512,7 +512,7 @@ public final class EventsCGIResult
          */
         public Builder camera( final int camera )
         {
-            return set( CAMERA_PARAMETER, camera );
+            return set( EventsCGIResult.CAMERA_PARAMETER, camera );
         }
 
         /**
@@ -526,7 +526,7 @@ public final class EventsCGIResult
          */
         public Builder duration( final int duration )
         {
-            return set( DURATION, duration );
+            return set( EventsCGIResult.DURATION, duration );
         }
 
         /**
@@ -541,7 +541,7 @@ public final class EventsCGIResult
          */
         public Builder file( final String file )
         {
-            return set( FILE, file );
+            return set( EventsCGIResult.FILE, file );
         }
 
         /**
@@ -555,7 +555,7 @@ public final class EventsCGIResult
          */
         public Builder julianTime( final int julianTime )
         {
-            return set( JULIAN_TIME, julianTime );
+            return set( EventsCGIResult.JULIAN_TIME, julianTime );
         }
 
         /**
@@ -570,7 +570,7 @@ public final class EventsCGIResult
          */
         public Builder offset( final int offset )
         {
-            return set( OFFSET, offset );
+            return set( EventsCGIResult.OFFSET, offset );
         }
 
         /**
@@ -583,7 +583,7 @@ public final class EventsCGIResult
          */
         public Builder onDisk( final boolean onDisk )
         {
-            return set( ON_DISK, onDisk );
+            return set( EventsCGIResult.ON_DISK, onDisk );
         }
 
         /**
@@ -598,7 +598,7 @@ public final class EventsCGIResult
          */
         public Builder preAlarm( final int preAlarm )
         {
-            return set( PRE_ALARM, preAlarm );
+            return set( EventsCGIResult.PRE_ALARM, preAlarm );
         }
 
         /**
@@ -613,7 +613,7 @@ public final class EventsCGIResult
          */
         public Builder status( final Status status )
         {
-            return set( STATUS, status );
+            return set( EventsCGIResult.STATUS, status );
         }
 
         /**
@@ -710,7 +710,7 @@ public final class EventsCGIResult
 
                     try
                     {
-                        return Option.getFullOption( find( Integer.parseInt( s ) ) );
+                        return Option.getFullOption( Status.find( Integer.parseInt( s ) ) );
                     }
                     catch ( final IllegalArgumentException e )
                     {

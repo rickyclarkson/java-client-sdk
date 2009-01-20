@@ -28,7 +28,7 @@ public final class StringConversion<T>
      */
     public static StringConversion<Boolean> bool()
     {
-        return convenientPartial( Function.getStringToBooleanFunction() );
+        return StringConversion.convenientPartial( Function.getStringToBooleanFunction() );
     }
 
     /**
@@ -47,7 +47,8 @@ public final class StringConversion<T>
      */
     public static <T> StringConversion<T> convenientPartial( final Function<String, Option<T>> conversionFromString )
     {
-        return partial( conversionFromString, andThenToFullOption( Function.<T> getObjectToStringFunction() ) );
+        return StringConversion.partial( conversionFromString, StringConversion.andThenToFullOption( Function
+            .<T> getObjectToStringFunction() ) );
     }
 
     /**
@@ -66,8 +67,8 @@ public final class StringConversion<T>
      */
     public static <T> StringConversion<T> convenientTotal( final Function<String, T> conversionFromString )
     {
-        return partial( andThenToFullOption( conversionFromString ),
-                andThenToFullOption( Function.<T> getObjectToStringFunction() ) );
+        return StringConversion.partial( StringConversion.andThenToFullOption( conversionFromString ),
+                StringConversion.andThenToFullOption( Function.<T> getObjectToStringFunction() ) );
     }
 
     /**
@@ -79,8 +80,8 @@ public final class StringConversion<T>
      */
     public static StringConversion<Long> getHexToLongStringConversion()
     {
-        return partial( Function.getHexStringToLongFunction(),
-                Option.toPartialFunction( Function.getLongToHexStringFunction() ) );
+        return StringConversion.partial( Function.getHexStringToLongFunction(), Option.toPartialFunction( Function
+            .getLongToHexStringFunction() ) );
     }
 
     /**
@@ -92,8 +93,8 @@ public final class StringConversion<T>
      */
     public static StringConversion<Integer> hexInt()
     {
-        return partial( Function.getHexStringToIntFunction(),
-                Option.toPartialFunction( Function.getIntToHexStringFunction() ) );
+        return StringConversion.partial( Function.getHexStringToIntFunction(), Option.toPartialFunction( Function
+            .getIntToHexStringFunction() ) );
     }
 
     /**
@@ -105,7 +106,7 @@ public final class StringConversion<T>
      */
     public static StringConversion<Integer> integer()
     {
-        return convenientPartial( Function.getStringToIntFunction() );
+        return StringConversion.convenientPartial( Function.getStringToIntFunction() );
     }
 
     /**
@@ -124,8 +125,8 @@ public final class StringConversion<T>
     public static <T> StringConversion<T> none( final String reason )
     {
         CheckParameters.areNotNull( reason );
-        return new StringConversion<T>( Option.<String, T> getFunctionToEmptyOption( reason ),
-                Option.<T, String> getFunctionToEmptyOption( reason ) );
+        return new StringConversion<T>( Option.<String, T> getFunctionToEmptyOption( reason ), Option
+            .<T, String> getFunctionToEmptyOption( reason ) );
     }
 
     /**
@@ -159,7 +160,7 @@ public final class StringConversion<T>
      */
     public static StringConversion<String> string()
     {
-        return convenientTotal( Function.<String> getIdentityFunction() );
+        return StringConversion.convenientTotal( Function.<String> getIdentityFunction() );
     }
 
     /**
@@ -181,7 +182,8 @@ public final class StringConversion<T>
     public static <T> StringConversion<T> total( final Function<String, T> conversionFromString,
             final Function<T, String> conversionToString )
     {
-        return partial( andThenToFullOption( conversionFromString ), andThenToFullOption( conversionToString ) );
+        return StringConversion.partial( StringConversion.andThenToFullOption( conversionFromString ),
+                StringConversion.andThenToFullOption( conversionToString ) );
     }
 
     /**

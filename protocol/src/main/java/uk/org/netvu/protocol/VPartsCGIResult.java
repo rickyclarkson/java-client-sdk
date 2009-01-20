@@ -35,14 +35,14 @@ public class VPartsCGIResult
                 {
                     // this is an anonymous intialiser - it is creating a new
                     // ArrayList and adding values to it inline.
-                    add( INDEX );
-                    add( DIRECTORY );
-                    add( FILENAME );
-                    add( START_TIME );
-                    add( END_TIME );
-                    add( EXPIRY_TIME );
-                    add( NUMBER_OF_ENTRIES );
-                    add( CAM_MASK );
+                    add( VPartsCGIResult.INDEX );
+                    add( VPartsCGIResult.DIRECTORY );
+                    add( VPartsCGIResult.FILENAME );
+                    add( VPartsCGIResult.START_TIME );
+                    add( VPartsCGIResult.END_TIME );
+                    add( VPartsCGIResult.EXPIRY_TIME );
+                    add( VPartsCGIResult.NUMBER_OF_ENTRIES );
+                    add( VPartsCGIResult.CAM_MASK );
                 }
             };
 
@@ -63,9 +63,9 @@ public class VPartsCGIResult
         ParameterMap parameterMap = new ParameterMap();
         final String[] elements = Strings.splitCSV( csv );
         int a = 0;
-        for ( final ParameterDescription<?, ?> parameterDescription : parameterDescriptions )
+        for ( final ParameterDescription<?, ?> parameterDescription : VPartsCGIResult.parameterDescriptions )
         {
-            parameterMap = setFromString( parameterMap, parameterDescription, elements[a] );
+            parameterMap = VPartsCGIResult.setFromString( parameterMap, parameterDescription, elements[a] );
             a++;
         }
         return new VPartsCGIResult( parameterMap );
@@ -107,7 +107,7 @@ public class VPartsCGIResult
      */
     private VPartsCGIResult( final ParameterMap parameterMap )
     {
-        for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : parameterDescriptions )
+        for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : VPartsCGIResult.parameterDescriptions )
         {
             if ( parameterMap.get( parameterDescription ).isEmpty() )
             {
@@ -132,7 +132,7 @@ public class VPartsCGIResult
      */
     public int getCamMask()
     {
-        return builtMap.get( CAM_MASK ).get();
+        return builtMap.get( VPartsCGIResult.CAM_MASK ).get();
     }
 
     /**
@@ -142,7 +142,7 @@ public class VPartsCGIResult
      */
     public String getDirectory()
     {
-        return builtMap.get( DIRECTORY ).get();
+        return builtMap.get( VPartsCGIResult.DIRECTORY ).get();
     }
 
     /**
@@ -152,7 +152,7 @@ public class VPartsCGIResult
      */
     public int getEndTime()
     {
-        return builtMap.get( END_TIME ).get();
+        return builtMap.get( VPartsCGIResult.END_TIME ).get();
     }
 
     /**
@@ -163,7 +163,7 @@ public class VPartsCGIResult
      */
     public int getExpiryTime()
     {
-        return builtMap.get( EXPIRY_TIME ).get();
+        return builtMap.get( VPartsCGIResult.EXPIRY_TIME ).get();
     }
 
     /**
@@ -173,7 +173,7 @@ public class VPartsCGIResult
      */
     public String getFilename()
     {
-        return builtMap.get( FILENAME ).get();
+        return builtMap.get( VPartsCGIResult.FILENAME ).get();
     }
 
     /**
@@ -183,7 +183,7 @@ public class VPartsCGIResult
      */
     public int getIndex()
     {
-        return builtMap.get( INDEX ).get();
+        return builtMap.get( VPartsCGIResult.INDEX ).get();
     }
 
     /**
@@ -193,7 +193,7 @@ public class VPartsCGIResult
      */
     public int getNumberOfEntries()
     {
-        return builtMap.get( NUMBER_OF_ENTRIES ).get();
+        return builtMap.get( VPartsCGIResult.NUMBER_OF_ENTRIES ).get();
     }
 
     /**
@@ -203,7 +203,7 @@ public class VPartsCGIResult
      */
     public int getStartTime()
     {
-        return builtMap.get( START_TIME ).get();
+        return builtMap.get( VPartsCGIResult.START_TIME ).get();
     }
 
     /**
@@ -217,7 +217,7 @@ public class VPartsCGIResult
     {
         final StringBuilder result = new StringBuilder();
 
-        for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : parameterDescriptions )
+        for ( final ParameterDescription<?, ? extends Option<?>> parameterDescription : VPartsCGIResult.parameterDescriptions )
         {
             result.append( builtMap.get( parameterDescription ).get() ).append( ", " );
         }
@@ -252,7 +252,7 @@ public class VPartsCGIResult
          */
         public Builder camMask( final int camMask )
         {
-            parameterMap = parameterMap.set( CAM_MASK, camMask );
+            parameterMap = parameterMap.set( VPartsCGIResult.CAM_MASK, camMask );
             return this;
         }
 
@@ -267,7 +267,7 @@ public class VPartsCGIResult
          */
         public Builder directory( final String directory )
         {
-            parameterMap = parameterMap.set( DIRECTORY, directory );
+            parameterMap = parameterMap.set( VPartsCGIResult.DIRECTORY, directory );
             return this;
         }
 
@@ -282,7 +282,7 @@ public class VPartsCGIResult
          */
         public Builder endTime( final int endTime )
         {
-            parameterMap = parameterMap.set( END_TIME, endTime );
+            parameterMap = parameterMap.set( VPartsCGIResult.END_TIME, endTime );
             return this;
         }
 
@@ -297,7 +297,7 @@ public class VPartsCGIResult
          */
         public Builder expiryTime( final int expiryTime )
         {
-            parameterMap = parameterMap.set( EXPIRY_TIME, expiryTime );
+            parameterMap = parameterMap.set( VPartsCGIResult.EXPIRY_TIME, expiryTime );
             return this;
         }
 
@@ -312,7 +312,7 @@ public class VPartsCGIResult
          */
         public Builder filename( final String filename )
         {
-            parameterMap = parameterMap.set( FILENAME, filename );
+            parameterMap = parameterMap.set( VPartsCGIResult.FILENAME, filename );
             return this;
         }
 
@@ -325,7 +325,7 @@ public class VPartsCGIResult
          */
         public Builder index( final int index )
         {
-            parameterMap = parameterMap.set( INDEX, index );
+            parameterMap = parameterMap.set( VPartsCGIResult.INDEX, index );
             return this;
         }
 
@@ -338,7 +338,7 @@ public class VPartsCGIResult
          */
         public Builder numberOfEntries( final int numberOfEntries )
         {
-            parameterMap = parameterMap.set( NUMBER_OF_ENTRIES, numberOfEntries );
+            parameterMap = parameterMap.set( VPartsCGIResult.NUMBER_OF_ENTRIES, numberOfEntries );
             return this;
         }
 
@@ -351,7 +351,7 @@ public class VPartsCGIResult
          */
         public Builder startTime( final int startTime )
         {
-            parameterMap = parameterMap.set( START_TIME, startTime );
+            parameterMap = parameterMap.set( VPartsCGIResult.START_TIME, startTime );
             return this;
         }
     }

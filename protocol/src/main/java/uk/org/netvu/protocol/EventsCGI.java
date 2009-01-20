@@ -21,8 +21,8 @@ public final class EventsCGI
                     Integer.MAX_VALUE, StringConversion.integer() ) );
 
     private static final ParameterDescription<Format, Format> FORMAT =
-            ParameterDescription.parameterWithDefault( "format", Format.CSV,
-                    StringConversion.convenientPartial( Format.fromStringFunction() ) );
+            ParameterDescription.parameterWithDefault( "format", Format.CSV, StringConversion
+                .convenientPartial( Format.fromStringFunction() ) );
 
     private static final ParameterDescription<Integer, Integer> LIST_LENGTH =
             ParameterDescription.parameterWithDefault( "listlength", 100, StringConversion.integer() );
@@ -52,16 +52,16 @@ public final class EventsCGI
         {
             // this is an anonymous initialiser - it creates an ArrayList and
             // adds values to it inline.
-            add( TIME );
-            add( RANGE );
-            add( FORMAT );
-            add( LIST_LENGTH );
-            add( TEXT );
-            add( CAMERA_MASK );
-            add( ALARM_MASK );
-            add( VIDEO_MOTION_DETECTION_MASK );
-            add( GPS_MASK );
-            add( SYSTEM_MASK );
+            add( EventsCGI.TIME );
+            add( EventsCGI.RANGE );
+            add( EventsCGI.FORMAT );
+            add( EventsCGI.LIST_LENGTH );
+            add( EventsCGI.TEXT );
+            add( EventsCGI.CAMERA_MASK );
+            add( EventsCGI.ALARM_MASK );
+            add( EventsCGI.VIDEO_MOTION_DETECTION_MASK );
+            add( EventsCGI.GPS_MASK );
+            add( EventsCGI.SYSTEM_MASK );
         }
     };
 
@@ -72,11 +72,11 @@ public final class EventsCGI
                     // this is an anonymous initialiser - it creates an
                     // ArrayList and
                     // adds values to it inline.
-                    add( TEXT );
-                    add( ALARM_MASK );
-                    add( VIDEO_MOTION_DETECTION_MASK );
-                    add( GPS_MASK );
-                    add( SYSTEM_MASK );
+                    add( EventsCGI.TEXT );
+                    add( EventsCGI.ALARM_MASK );
+                    add( EventsCGI.VIDEO_MOTION_DETECTION_MASK );
+                    add( EventsCGI.GPS_MASK );
+                    add( EventsCGI.SYSTEM_MASK );
                 }
             };
 
@@ -99,7 +99,7 @@ public final class EventsCGI
             throw new IllegalArgumentException( "Cannot parse an empty String into an EventsCGI." );
         }
 
-        final Option<ParameterMap> map = ParameterMap.fromURL( string, params );
+        final Option<ParameterMap> map = ParameterMap.fromURL( string, EventsCGI.params );
 
         if ( map.isEmpty() )
         {
@@ -134,7 +134,7 @@ public final class EventsCGI
      */
     public int getAlarmMask()
     {
-        return parameterMap.get( ALARM_MASK );
+        return parameterMap.get( EventsCGI.ALARM_MASK );
     }
 
     /**
@@ -144,7 +144,7 @@ public final class EventsCGI
      */
     public long getCameraMask()
     {
-        return parameterMap.get( CAMERA_MASK );
+        return parameterMap.get( EventsCGI.CAMERA_MASK );
     }
 
     /**
@@ -154,7 +154,7 @@ public final class EventsCGI
      */
     public Format getFormat()
     {
-        return parameterMap.get( FORMAT );
+        return parameterMap.get( EventsCGI.FORMAT );
     }
 
     /**
@@ -164,7 +164,7 @@ public final class EventsCGI
      */
     public int getGpsMask()
     {
-        return parameterMap.get( GPS_MASK );
+        return parameterMap.get( EventsCGI.GPS_MASK );
     }
 
     /**
@@ -175,7 +175,7 @@ public final class EventsCGI
      */
     public int getListLength()
     {
-        return parameterMap.get( LIST_LENGTH );
+        return parameterMap.get( EventsCGI.LIST_LENGTH );
     }
 
     /**
@@ -185,7 +185,7 @@ public final class EventsCGI
      */
     public int getRange()
     {
-        return parameterMap.get( RANGE );
+        return parameterMap.get( EventsCGI.RANGE );
     }
 
     /**
@@ -195,7 +195,7 @@ public final class EventsCGI
      */
     public int getSystemMask()
     {
-        return parameterMap.get( SYSTEM_MASK );
+        return parameterMap.get( EventsCGI.SYSTEM_MASK );
     }
 
     /**
@@ -205,7 +205,7 @@ public final class EventsCGI
      */
     public String getText()
     {
-        return parameterMap.get( TEXT );
+        return parameterMap.get( EventsCGI.TEXT );
     }
 
     /**
@@ -215,7 +215,7 @@ public final class EventsCGI
      */
     public int getTime()
     {
-        return parameterMap.get( TIME );
+        return parameterMap.get( EventsCGI.TIME );
     }
 
     /**
@@ -225,7 +225,7 @@ public final class EventsCGI
      */
     public long getVideoMotionDetectionMask()
     {
-        return parameterMap.get( VIDEO_MOTION_DETECTION_MASK );
+        return parameterMap.get( EventsCGI.VIDEO_MOTION_DETECTION_MASK );
     }
 
     /**
@@ -235,7 +235,7 @@ public final class EventsCGI
     @Override
     public String toString()
     {
-        final String theRest = parameterMap.toURLParameters( Lists.remove( params, FORMAT ) );
+        final String theRest = parameterMap.toURLParameters( Lists.remove( EventsCGI.params, EventsCGI.FORMAT ) );
 
         return "/events.cgi?format=" + getFormat() + ( theRest.length() == 0 ? "" : "&" ) + theRest;
     }
@@ -260,7 +260,7 @@ public final class EventsCGI
          */
         public Builder()
         {
-            final Validator mutuallyExclusive = ParameterMap.Validator.mutuallyExclusive( exclusiveParams );
+            final Validator mutuallyExclusive = ParameterMap.Validator.mutuallyExclusive( EventsCGI.exclusiveParams );
             parameterMap = Option.getFullOption( new ParameterMap( mutuallyExclusive ) );
         }
 
@@ -276,7 +276,7 @@ public final class EventsCGI
          */
         public Builder alarmMask( final int alarmMask )
         {
-            return set( ALARM_MASK, alarmMask );
+            return set( EventsCGI.ALARM_MASK, alarmMask );
         }
 
         /**
@@ -310,7 +310,7 @@ public final class EventsCGI
          */
         public Builder cameraMask( final long camMask )
         {
-            return set( CAMERA_MASK, camMask );
+            return set( EventsCGI.CAMERA_MASK, camMask );
         }
 
         /**
@@ -329,7 +329,7 @@ public final class EventsCGI
          */
         public Builder format( final Format format )
         {
-            return set( FORMAT, format );
+            return set( EventsCGI.FORMAT, format );
         }
 
         /**
@@ -344,7 +344,7 @@ public final class EventsCGI
          */
         public Builder gpsMask( final int gpsMask )
         {
-            return set( GPS_MASK, gpsMask );
+            return set( EventsCGI.GPS_MASK, gpsMask );
         }
 
         /**
@@ -360,7 +360,7 @@ public final class EventsCGI
          */
         public Builder listLength( final int listLength )
         {
-            return set( LIST_LENGTH, listLength );
+            return set( EventsCGI.LIST_LENGTH, listLength );
         }
 
         /**
@@ -375,7 +375,7 @@ public final class EventsCGI
          */
         public Builder range( final int range )
         {
-            return set( RANGE, range );
+            return set( EventsCGI.RANGE, range );
         }
 
         /**
@@ -390,7 +390,7 @@ public final class EventsCGI
          */
         public Builder systemMask( final int sysMask )
         {
-            return set( SYSTEM_MASK, sysMask );
+            return set( EventsCGI.SYSTEM_MASK, sysMask );
         }
 
         /**
@@ -412,7 +412,7 @@ public final class EventsCGI
          */
         public Builder text( final String text )
         {
-            return set( TEXT, text );
+            return set( EventsCGI.TEXT, text );
         }
 
         /**
@@ -430,7 +430,7 @@ public final class EventsCGI
          */
         public Builder time( final int time )
         {
-            return set( TIME, time );
+            return set( EventsCGI.TIME, time );
         }
 
         /**
@@ -445,7 +445,7 @@ public final class EventsCGI
          */
         public Builder videoMotionDetectionMask( final long videoMotionDetectionMask )
         {
-            return set( VIDEO_MOTION_DETECTION_MASK, videoMotionDetectionMask );
+            return set( EventsCGI.VIDEO_MOTION_DETECTION_MASK, videoMotionDetectionMask );
         }
 
         /**

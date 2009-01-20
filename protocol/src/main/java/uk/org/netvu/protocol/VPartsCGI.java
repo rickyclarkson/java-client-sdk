@@ -20,8 +20,8 @@ public final class VPartsCGI
                     "format", Format.CSV, StringConversion.convenientPartial( Format.fromStringFunction() ) ) );
 
     private static final ParameterDescription<Mode, Mode> MODE =
-            ParameterDescription.parameterWithDefault( "mode", Mode.READ,
-                    StringConversion.convenientPartial( Mode.fromStringFunction() ) );
+            ParameterDescription.parameterWithDefault( "mode", Mode.READ, StringConversion.convenientPartial( Mode
+                .fromStringFunction() ) );
 
     private static final ParameterDescription<Integer, Integer> TIME =
             ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault( "time", 0,
@@ -45,7 +45,8 @@ public final class VPartsCGI
     private static final ParameterDescription<Integer, Integer> LIST_LENGTH =
             ParameterDescription.parameterWithDefault( "listlength", 100, StringConversion.integer() );
 
-    private static final ParameterDescription<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE = pathStyle();
+    private static final ParameterDescription<DirectoryPathFormat, DirectoryPathFormat> PATH_STYLE =
+            VPartsCGI.pathStyle();
 
     private static final List<ParameterDescription<?, ?>> parameterDescriptions =
             new ArrayList<ParameterDescription<?, ?>>()
@@ -53,15 +54,15 @@ public final class VPartsCGI
                 {
                     // this is an anonymous intialiser - it is creating a new
                     // ArrayList and adding values to it inline.
-                    add( FORMAT );
-                    add( MODE );
-                    add( TIME );
-                    add( RANGE );
-                    add( EXPIRY );
-                    add( WATERMARK );
-                    add( WMARKSTEP );
-                    add( LIST_LENGTH );
-                    add( PATH_STYLE );
+                    add( VPartsCGI.FORMAT );
+                    add( VPartsCGI.MODE );
+                    add( VPartsCGI.TIME );
+                    add( VPartsCGI.RANGE );
+                    add( VPartsCGI.EXPIRY );
+                    add( VPartsCGI.WATERMARK );
+                    add( VPartsCGI.WMARKSTEP );
+                    add( VPartsCGI.LIST_LENGTH );
+                    add( VPartsCGI.PATH_STYLE );
                 }
             };
 
@@ -80,7 +81,7 @@ public final class VPartsCGI
     {
         CheckParameters.areNotNull( url );
 
-        final Option<ParameterMap> map = ParameterMap.fromURL( url, parameterDescriptions );
+        final Option<ParameterMap> map = ParameterMap.fromURL( url, VPartsCGI.parameterDescriptions );
 
         if ( map.isEmpty() )
         {
@@ -95,8 +96,8 @@ public final class VPartsCGI
         final Function<String, Option<DirectoryPathFormat>> stringToDirectoryPathFormat =
                 DirectoryPathFormat.fromStringFunction();
 
-        return ParameterDescription.parameterWithDefault( "pathstyle", DirectoryPathFormat.SHORT,
-                StringConversion.convenientPartial( stringToDirectoryPathFormat ) );
+        return ParameterDescription.parameterWithDefault( "pathstyle", DirectoryPathFormat.SHORT, StringConversion
+            .convenientPartial( stringToDirectoryPathFormat ) );
     }
 
     private final ParameterMap builtMap;
@@ -113,7 +114,7 @@ public final class VPartsCGI
     {
         CheckParameters.areNotNull( builtMap );
         this.builtMap = builtMap;
-        if ( getExpiry() != EXPIRY.defaultValue.apply( builtMap ) && getMode() != Mode.PROTECT )
+        if ( getExpiry() != VPartsCGI.EXPIRY.defaultValue.apply( builtMap ) && getMode() != Mode.PROTECT )
         {
             throw new IllegalStateException(
                     "Setting the expiry time without setting the mode to VPartsCGI.Mode.PROTECT is not allowed" );
@@ -125,7 +126,7 @@ public final class VPartsCGI
                     "Setting watermark to true without setting the mode to VPartsCGI.Mode.READ is not allowed" );
         }
 
-        if ( getWatermarkStep() != WMARKSTEP.defaultValue.apply( builtMap ) && !getWatermark() )
+        if ( getWatermarkStep() != VPartsCGI.WMARKSTEP.defaultValue.apply( builtMap ) && !getWatermark() )
         {
             throw new IllegalStateException( "Setting watermarkStep without setting watermark is not allowed" );
         }
@@ -139,7 +140,7 @@ public final class VPartsCGI
      */
     public int getExpiry()
     {
-        return builtMap.get( EXPIRY );
+        return builtMap.get( VPartsCGI.EXPIRY );
     }
 
     /**
@@ -149,7 +150,7 @@ public final class VPartsCGI
      */
     public Format getFormat()
     {
-        return builtMap.get( FORMAT );
+        return builtMap.get( VPartsCGI.FORMAT );
     }
 
     /**
@@ -159,7 +160,7 @@ public final class VPartsCGI
      */
     public int getListLength()
     {
-        return builtMap.get( LIST_LENGTH );
+        return builtMap.get( VPartsCGI.LIST_LENGTH );
     }
 
     /**
@@ -169,7 +170,7 @@ public final class VPartsCGI
      */
     public Mode getMode()
     {
-        return builtMap.get( MODE );
+        return builtMap.get( VPartsCGI.MODE );
     }
 
     /**
@@ -179,7 +180,7 @@ public final class VPartsCGI
      */
     public DirectoryPathFormat getPathStyle()
     {
-        return builtMap.get( PATH_STYLE );
+        return builtMap.get( VPartsCGI.PATH_STYLE );
     }
 
     /**
@@ -189,7 +190,7 @@ public final class VPartsCGI
      */
     public int getRange()
     {
-        return builtMap.get( RANGE );
+        return builtMap.get( VPartsCGI.RANGE );
     }
 
     /**
@@ -199,7 +200,7 @@ public final class VPartsCGI
      */
     public int getTime()
     {
-        return builtMap.get( TIME );
+        return builtMap.get( VPartsCGI.TIME );
     }
 
     /**
@@ -210,7 +211,7 @@ public final class VPartsCGI
      */
     public boolean getWatermark()
     {
-        return builtMap.get( WATERMARK );
+        return builtMap.get( VPartsCGI.WATERMARK );
     }
 
     /**
@@ -221,7 +222,7 @@ public final class VPartsCGI
      */
     public int getWatermarkStep()
     {
-        return builtMap.get( WMARKSTEP );
+        return builtMap.get( VPartsCGI.WMARKSTEP );
     }
 
     /**
@@ -231,8 +232,8 @@ public final class VPartsCGI
     @Override
     public String toString()
     {
-        return "/vparts.cgi?format=" + builtMap.get( FORMAT ) + "&"
-                + builtMap.toURLParameters( Lists.remove( parameterDescriptions, FORMAT ) );
+        return "/vparts.cgi?format=" + builtMap.get( VPartsCGI.FORMAT ) + "&"
+                + builtMap.toURLParameters( Lists.remove( VPartsCGI.parameterDescriptions, VPartsCGI.FORMAT ) );
     }
 
     /**
@@ -279,7 +280,7 @@ public final class VPartsCGI
          */
         public Builder expiry( final int expiry )
         {
-            return set( EXPIRY, expiry );
+            return set( VPartsCGI.EXPIRY, expiry );
         }
 
         /**
@@ -295,7 +296,7 @@ public final class VPartsCGI
          */
         public Builder format( final Format format )
         {
-            return set( FORMAT, format );
+            return set( VPartsCGI.FORMAT, format );
         }
 
         /**
@@ -307,7 +308,7 @@ public final class VPartsCGI
          */
         public Builder listLength( final int listLength )
         {
-            return set( LIST_LENGTH, listLength );
+            return set( VPartsCGI.LIST_LENGTH, listLength );
         }
 
         /**
@@ -321,7 +322,7 @@ public final class VPartsCGI
          */
         public Builder mode( final Mode mode )
         {
-            return set( MODE, mode );
+            return set( VPartsCGI.MODE, mode );
         }
 
         /**
@@ -335,7 +336,7 @@ public final class VPartsCGI
          */
         public Builder pathStyle( final DirectoryPathFormat style )
         {
-            return set( PATH_STYLE, style );
+            return set( VPartsCGI.PATH_STYLE, style );
         }
 
         /**
@@ -349,7 +350,7 @@ public final class VPartsCGI
          */
         public Builder range( final int range )
         {
-            return set( RANGE, range );
+            return set( VPartsCGI.RANGE, range );
         }
 
         /**
@@ -363,7 +364,7 @@ public final class VPartsCGI
          */
         public Builder time( final int time )
         {
-            return set( TIME, time );
+            return set( VPartsCGI.TIME, time );
         }
 
         /**
@@ -376,7 +377,7 @@ public final class VPartsCGI
          */
         public Builder watermark( final boolean watermark )
         {
-            return set( WATERMARK, watermark );
+            return set( VPartsCGI.WATERMARK, watermark );
         }
 
         /**
@@ -391,7 +392,7 @@ public final class VPartsCGI
          */
         public Builder watermarkStep( final int step )
         {
-            return set( WMARKSTEP, step );
+            return set( VPartsCGI.WMARKSTEP, step );
         }
 
         /**

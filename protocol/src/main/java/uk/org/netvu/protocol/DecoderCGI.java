@@ -17,7 +17,7 @@ import uk.org.netvu.util.CheckParameters;
  */
 public final class DecoderCGI
 {
-    private static final ParameterDescription<Persistence, Persistence> PERSISTENCE = persistence();
+    private static final ParameterDescription<Persistence, Persistence> PERSISTENCE = DecoderCGI.persistence();
 
     private static final SparseArrayParameterDescription<Connection> CONNECTIONS =
             ParameterDescription.sparseArrayParameter( "connections", StringConversion.total(
@@ -27,19 +27,19 @@ public final class DecoderCGI
             ParameterDescription.sparseArrayParameter( "layouts", StringConversion.total( Layout.fromURLFunction(),
                     Layout.urlEncode ) );
 
-    private static final ParameterDescription<String[], Option<String[]>> OUTPUT_TITLES = outputTitles();
+    private static final ParameterDescription<String[], Option<String[]>> OUTPUT_TITLES = DecoderCGI.outputTitles();
 
-    private static final SparseArrayParameterDescription<String> COMMANDS = commandsParameter();
+    private static final SparseArrayParameterDescription<String> COMMANDS = DecoderCGI.commandsParameter();
 
     private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>()
     {
         {
             // this is an anonymous intialiser - it creates a new ArrayList
             // and adds values to it inline.
-            add( CONNECTIONS );
-            add( LAYOUTS );
-            add( OUTPUT_TITLES );
-            add( COMMANDS );
+            add( DecoderCGI.CONNECTIONS );
+            add( DecoderCGI.LAYOUTS );
+            add( DecoderCGI.OUTPUT_TITLES );
+            add( DecoderCGI.COMMANDS );
         }
     };
 
@@ -57,7 +57,7 @@ public final class DecoderCGI
     public static DecoderCGI fromURL( final String string )
     {
         CheckParameters.areNotNull( string );
-        final Option<ParameterMap> map = ParameterMap.fromURL( string, params );
+        final Option<ParameterMap> map = ParameterMap.fromURL( string, DecoderCGI.params );
         if ( map.isEmpty() )
         {
             throw new IllegalArgumentException( "Cannot parse " + string + " into a DecoderCGI, because "
@@ -66,7 +66,7 @@ public final class DecoderCGI
 
         final Persistence persistence = string.contains( ".frm" ) ? Persistence.PERSISTENT : Persistence.TEMPORARY;
 
-        final ParameterMap complete = map.get().set( PERSISTENCE, persistence );
+        final ParameterMap complete = map.get().set( DecoderCGI.PERSISTENCE, persistence );
 
         return new DecoderCGI( complete );
     }
@@ -135,8 +135,8 @@ public final class DecoderCGI
     {
         final String message = "Parsing a String into a Persistence is unsupported, as it's embedded in the CGI name.";
         final Function<String, Option<Persistence>> alwaysEmpty = Option.getFunctionToEmptyOption( message );
-        return ParameterDescription.parameterWithDefault( "persistence", Persistence.TEMPORARY,
-                StringConversion.convenientPartial( alwaysEmpty ) );
+        return ParameterDescription.parameterWithDefault( "persistence", Persistence.TEMPORARY, StringConversion
+            .convenientPartial( alwaysEmpty ) );
     }
 
     private final ParameterMap parameterMap;
@@ -162,7 +162,7 @@ public final class DecoderCGI
      */
     public Map<Integer, String> getCommands()
     {
-        return parameterMap.get( COMMANDS );
+        return parameterMap.get( DecoderCGI.COMMANDS );
     }
 
     /**
@@ -172,7 +172,7 @@ public final class DecoderCGI
      */
     public Map<Integer, Connection> getConnections()
     {
-        return parameterMap.get( CONNECTIONS );
+        return parameterMap.get( DecoderCGI.CONNECTIONS );
     }
 
     /**
@@ -182,7 +182,7 @@ public final class DecoderCGI
      */
     public Map<Integer, Layout> getLayouts()
     {
-        return parameterMap.get( LAYOUTS );
+        return parameterMap.get( DecoderCGI.LAYOUTS );
     }
 
     /**
@@ -192,7 +192,7 @@ public final class DecoderCGI
      */
     public String[] getOutputTitles()
     {
-        return parameterMap.get( OUTPUT_TITLES ).get();
+        return parameterMap.get( DecoderCGI.OUTPUT_TITLES ).get();
     }
 
     /**
@@ -200,7 +200,7 @@ public final class DecoderCGI
      */
     public Persistence getPersistence()
     {
-        return parameterMap.get( PERSISTENCE );
+        return parameterMap.get( DecoderCGI.PERSISTENCE );
     }
 
     /**
@@ -211,7 +211,7 @@ public final class DecoderCGI
      */
     public String toURLParameters()
     {
-        return "decoder" + getPersistence() + '?' + parameterMap.toURLParameters( params );
+        return "decoder" + getPersistence() + '?' + parameterMap.toURLParameters( DecoderCGI.params );
     }
 
     /**
@@ -274,7 +274,7 @@ public final class DecoderCGI
         {
             CheckParameters.areNotNull( command ).areNotNegative( index );
 
-            return set( COMMANDS, Collections.singletonList( new Pair<Integer, String>( index, command ) ) );
+            return set( DecoderCGI.COMMANDS, Collections.singletonList( new Pair<Integer, String>( index, command ) ) );
         }
 
         /**
@@ -294,7 +294,8 @@ public final class DecoderCGI
         {
             CheckParameters.areNotNull( connection ).areNotNegative( index );
 
-            return set( CONNECTIONS, Collections.singletonList( new Pair<Integer, Connection>( index, connection ) ) );
+            return set( DecoderCGI.CONNECTIONS, Collections.singletonList( new Pair<Integer, Connection>( index,
+                    connection ) ) );
         }
 
         /**
@@ -314,7 +315,7 @@ public final class DecoderCGI
         {
             CheckParameters.areNotNull( layout ).areNotNegative( index );
 
-            return set( LAYOUTS, Collections.singletonList( new Pair<Integer, Layout>( index, layout ) ) );
+            return set( DecoderCGI.LAYOUTS, Collections.singletonList( new Pair<Integer, Layout>( index, layout ) ) );
         }
 
         /**
@@ -331,7 +332,7 @@ public final class DecoderCGI
             CheckParameters.areNotNull( (Object) titles );
             CheckParameters.areNotNull( (Object[]) titles );
 
-            return set( OUTPUT_TITLES, titles );
+            return set( DecoderCGI.OUTPUT_TITLES, titles );
         }
 
         /**
@@ -346,7 +347,7 @@ public final class DecoderCGI
         public Builder persistence( final Persistence persistence )
         {
             CheckParameters.areNotNull( persistence );
-            return set( PERSISTENCE, persistence );
+            return set( DecoderCGI.PERSISTENCE, persistence );
         }
 
         /**
@@ -401,11 +402,11 @@ public final class DecoderCGI
                     {
                         // this is an anonymous intialiser - it is creating a
                         // new ArrayList and adding values to it inline.
-                        add( SLAVE_IP );
-                        add( SEQ );
-                        add( DWELL );
-                        add( CAM );
-                        add( AUDIO_CHANNEL );
+                        add( Connection.SLAVE_IP );
+                        add( Connection.SEQ );
+                        add( Connection.DWELL );
+                        add( Connection.CAM );
+                        add( Connection.AUDIO_CHANNEL );
                     }
                 };
 
@@ -425,7 +426,7 @@ public final class DecoderCGI
                 public String apply( final Connection connection )
                 {
                     final URLEncoder e = new URLEncoder();
-                    final String result = connection.parameterMap.toURLParameters( connectionParameters );
+                    final String result = connection.parameterMap.toURLParameters( Connection.connectionParameters );
                     return e.apply( result.replaceAll( "&", "," ) );
                 }
             };
@@ -456,7 +457,7 @@ public final class DecoderCGI
          */
         public int getAudioChannel()
         {
-            return parameterMap.get( AUDIO_CHANNEL ).get();
+            return parameterMap.get( Connection.AUDIO_CHANNEL ).get();
         }
 
         /**
@@ -467,7 +468,7 @@ public final class DecoderCGI
          */
         public int getCam()
         {
-            return parameterMap.get( CAM ).get();
+            return parameterMap.get( Connection.CAM ).get();
         }
 
         /**
@@ -478,7 +479,7 @@ public final class DecoderCGI
          */
         public int getDwell()
         {
-            return parameterMap.get( DWELL ).get();
+            return parameterMap.get( Connection.DWELL ).get();
         }
 
         /**
@@ -489,7 +490,7 @@ public final class DecoderCGI
          */
         public int getSeq()
         {
-            return parameterMap.get( SEQ ).get();
+            return parameterMap.get( Connection.SEQ ).get();
         }
 
         /**
@@ -500,7 +501,7 @@ public final class DecoderCGI
          */
         public String getSlaveIP()
         {
-            return parameterMap.get( SLAVE_IP ).get();
+            return parameterMap.get( Connection.SLAVE_IP ).get();
         }
 
         /**
@@ -520,8 +521,9 @@ public final class DecoderCGI
                         @Override
                         public boolean isValid( final ParameterMap parameterMap )
                         {
-                            return parameterMap.isDefault( CAM ) ? true : parameterMap.isDefault( SEQ )
-                                    && parameterMap.isDefault( DWELL );
+                            return parameterMap.isDefault( Connection.CAM ) ? true : parameterMap
+                                .isDefault( Connection.SEQ )
+                                    && parameterMap.isDefault( Connection.DWELL );
                         }
                     } ) );
 
@@ -542,7 +544,7 @@ public final class DecoderCGI
              */
             public Builder audioChannel( final int audioChannel )
             {
-                return set( AUDIO_CHANNEL, audioChannel );
+                return set( Connection.AUDIO_CHANNEL, audioChannel );
             }
 
             /**
@@ -573,7 +575,7 @@ public final class DecoderCGI
              */
             public Builder camera( final int camera )
             {
-                return set( CAM, camera );
+                return set( Connection.CAM, camera );
             }
 
             /**
@@ -585,7 +587,7 @@ public final class DecoderCGI
              */
             public Builder dwell( final int dwell )
             {
-                return set( DWELL, dwell );
+                return set( Connection.DWELL, dwell );
             }
 
             /**
@@ -597,7 +599,7 @@ public final class DecoderCGI
              */
             public Builder seq( final int seq )
             {
-                return set( SEQ, seq );
+                return set( Connection.SEQ, seq );
             }
 
             /**
@@ -611,7 +613,7 @@ public final class DecoderCGI
              */
             public Builder slaveIP( final String slaveIP )
             {
-                return set( SLAVE_IP, slaveIP );
+                return set( Connection.SLAVE_IP, slaveIP );
             }
 
             /**
@@ -647,8 +649,7 @@ public final class DecoderCGI
          * A Function that, given a String containing URL parameters, produces a
          * Connection from it.
          */
-        static final class FromURLToConnection
-                extends Function<String, Connection>
+        static final class FromURLToConnection extends Function<String, Connection>
         {
             @Override
             public Connection apply( final String urlParameters )
@@ -657,7 +658,7 @@ public final class DecoderCGI
                 {
                     final Option<ParameterMap> map =
                             ParameterMap.fromURL( URLDecoder.decode( urlParameters, "UTF-8" ).replaceAll( ",", "&" ),
-                                    connectionParameters );
+                                    Connection.connectionParameters );
 
                     if ( map.isEmpty() )
                     {
@@ -779,7 +780,7 @@ public final class DecoderCGI
                 @Override
                 public Layout apply( final String url )
                 {
-                    return find( Integer.parseInt( url ) );
+                    return Layout.find( Integer.parseInt( url ) );
                 }
             };
         }

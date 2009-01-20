@@ -7,8 +7,7 @@ import uk.org.netvu.util.CheckParameters;
 /**
  * A Function that encodes text for safe use in URLs.
  */
-public final class URLEncoder
-        extends Function<String, String>
+public final class URLEncoder extends Function<String, String>
 {
     /**
      * Constructs a URLEncoder.

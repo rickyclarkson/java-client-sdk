@@ -71,7 +71,7 @@ public abstract class Option<T> implements Iterable<T>
             @Override
             public Option<U> apply( final T t )
             {
-                return getEmptyOption( reason );
+                return Option.getEmptyOption( reason );
             }
         };
     }
@@ -91,7 +91,7 @@ public abstract class Option<T> implements Iterable<T>
             @Override
             public Option<T> apply( final T t )
             {
-                return getFullOption( t );
+                return Option.getFullOption( t );
             }
         };
     }
@@ -120,7 +120,7 @@ public abstract class Option<T> implements Iterable<T>
             @Override
             public Option<U> apply( final T t )
             {
-                return getFullOption( function.apply( t ) );
+                return Option.getFullOption( function.apply( t ) );
             }
         };
     }
@@ -252,8 +252,7 @@ public abstract class Option<T> implements Iterable<T>
      * @param <T>
      *        the type of this Option.
      */
-    private static final class Empty<T>
-            extends Option<T>
+    private static final class Empty<T> extends Option<T>
     {
         private final String reason;
 
@@ -318,8 +317,7 @@ public abstract class Option<T> implements Iterable<T>
      * @param <T>
      *        the type of this Option.
      */
-    private static final class Full<T>
-            extends Option<T>
+    private static final class Full<T> extends Option<T>
     {
         private final T t;
 
