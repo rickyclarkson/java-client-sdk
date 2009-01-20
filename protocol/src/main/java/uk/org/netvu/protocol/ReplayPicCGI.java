@@ -12,121 +12,311 @@ public final class ReplayPicCGI
         this.parameterMap = parameterMap;
     }
     private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>();
+    /**
+    * The specification of the cam parameter.
+    */
     private static final ParameterDescription<Integer, Integer> CAM = parameter("cam", integer()).withDefault(1).withBounds(1, 16, Num.integer);
+    /**
+    * The specification of the fields parameter.
+    */
     private static final ParameterDescription<Integer, Integer> FIELDS = parameter("fields", integer()).withDefault(1).notNegative(Num.integer);
+    /**
+    * The specification of the seq parameter.
+    */
     private static final ParameterDescription<Integer, Integer> SEQ = parameter("seq", hexInt()).withDefault(0).withBounds(0, 0xF, Num.integer);
+    /**
+    * The specification of the id parameter.
+    */
     private static final ParameterDescription<Integer, Integer> ID = parameter("id", integer()).withDefault(0);
+    /**
+    * The specification of the control parameter.
+    */
     private static final ParameterDescription<Control, Control> CONTROL = parameter("control", convenientPartial(Control.fromStringFunction())).withDefault(Control.STOP);
+    /**
+    * The specification of the time parameter.
+    */
     private static final ParameterDescription<Integer, Integer> TIME = parameter("time", convenientPartial(fromTimeFunction())).withDefault(0);
+    /**
+    * The specification of the local parameter.
+    */
     private static final ParameterDescription<Integer, Integer> LOCAL = parameter("local", convenientPartial(fromTimeFunction())).withDefault(0);
+    /**
+    * The specification of the rate parameter.
+    */
     private static final ParameterDescription<Integer, Integer> RATE = parameter("rate", integer()).withDefault(0);
+    /**
+    * The specification of the text parameter.
+    */
     private static final ParameterDescription<String, String> TEXT = parameter("text", string()).withDefault("");
+    /**
+    * The specification of the timeRange parameter.
+    */
     private static final ParameterDescription<Integer, Integer> TIME_RANGE = parameter("timerange", integer()).withDefault(0);
+    /**
+    * The specification of the audioOn parameter.
+    */
     private static final ParameterDescription<OnOrOff, OnOrOff> AUDIO = parameter("audio", convenientPartial(OnOrOff.fromStringFunction())).withDefault(OnOrOff.OFF);
+    /**
+    * The specification of the fastForwardMultiplier parameter.
+    */
     private static final ParameterDescription<Integer, Integer> FAST_FORWARD_MULTIPLIER = parameter("ffmult", integer()).withDefault(0).withBounds(0, 256, Num.integer);
+    /**
+    * The specification of the duration parameter.
+    */
     private static final ParameterDescription<Integer, Integer> DURATION = parameter("duration", integer()).withDefault(0).notNegative(Num.integer);
+    /**
+    * The specification of the res parameter.
+    */
     private static final ParameterDescription<String, String> RES = parameter("res", string()).withDefault("med").allowedValues("hi", "med", "lo");
+    /**
+    * The specification of the pktSize parameter.
+    */
     private static final ParameterDescription<Integer, Integer> PKT_SIZE = parameterWithBoundsAndAnException(100, 1500, 0, parameter("pkt_size", integer()).withDefault(0));
+    /**
+    * The specification of the udpPort parameter.
+    */
     private static final ParameterDescription<Integer, Integer> UDP_PORT = parameter("udp_port", integer()).withDefault(0).withBounds(0, 65535, Num.integer);
+    /**
+    * The specification of the refresh parameter.
+    */
     private static final ParameterDescription<Integer, Integer> REFRESH = parameter("refresh", integer()).withDefault(0);
+    /**
+    * The specification of the format parameter.
+    */
     private static final ParameterDescription<Format, Format> FORMAT = parameter("format", convenientPartial(Format.fromStringFunction())).withDefault(Format.JFIF);
+    /**
+    * The specification of the transmissionMode parameter.
+    */
     private static final ParameterDescription<TransmissionMode, TransmissionMode> TRANSMISSION_MODE = parameterWithDefault("txmode", new Function<ParameterMap, TransmissionMode>() { public TransmissionMode apply(ParameterMap map) { return map.get(FORMAT) == Format.JFIF ? TransmissionMode.MIME : TransmissionMode.MINIMAL; } }, convenientPartial(TransmissionMode.fromStringFunction()));
+    /**
+    * The specification of the slaveIP parameter.
+    */
     private static final ParameterDescription<IPAddress, IPAddress> SLAVE_IP = parameter("slaveip", convenientPartial(IPAddress.fromString)).withDefault(IPAddress.fromString("0.0.0.0").get());
+    /**
+    * The specification of the opChan parameter.
+    */
     private static final ParameterDescription<Integer, Integer> OP_CHAN = parameter("opchan", integer()).withDefault(-1);
+    /**
+    * The specification of the proxyMode parameter.
+    */
     private static final ParameterDescription<ProxyMode, ProxyMode> PROXY_MODE = parameter("proxymode", convenientPartial(ProxyMode.fromStringFunction())).withDefault(ProxyMode.TRANSIENT);
+    /**
+    * The specification of the proxyRetry parameter.
+    */
     private static final ParameterDescription<Integer, Integer> PROXY_RETRY = parameter("proxyretry", integer()).withDefault(0);
+    /**
+    * Gets the value of the cam parameter.
+    *
+    * @return the value of the cam parameter.
+    */
     public int getCam()
     {
         return parameterMap.get(CAM);
     }
+    /**
+    * Gets the value of the fields parameter.
+    *
+    * @return the value of the fields parameter.
+    */
     public int getFields()
     {
         return parameterMap.get(FIELDS);
     }
+    /**
+    * Gets the value of the seq parameter.
+    *
+    * @return the value of the seq parameter.
+    */
     public int getSeq()
     {
         return parameterMap.get(SEQ);
     }
+    /**
+    * Gets the value of the id parameter.
+    *
+    * @return the value of the id parameter.
+    */
     public int getId()
     {
         return parameterMap.get(ID);
     }
+    /**
+    * Gets the value of the control parameter.
+    *
+    * @return the value of the control parameter.
+    */
     public Control getControl()
     {
         return parameterMap.get(CONTROL);
     }
+    /**
+    * Gets the value of the time parameter.
+    *
+    * @return the value of the time parameter.
+    */
     public int getTime()
     {
         return parameterMap.get(TIME);
     }
+    /**
+    * Gets the value of the local parameter.
+    *
+    * @return the value of the local parameter.
+    */
     public int getLocal()
     {
         return parameterMap.get(LOCAL);
     }
+    /**
+    * Gets the value of the rate parameter.
+    *
+    * @return the value of the rate parameter.
+    */
     public int getRate()
     {
         return parameterMap.get(RATE);
     }
+    /**
+    * Gets the value of the text parameter.
+    *
+    * @return the value of the text parameter.
+    */
     public String getText()
     {
         return parameterMap.get(TEXT);
     }
+    /**
+    * Gets the value of the timeRange parameter.
+    *
+    * @return the value of the timeRange parameter.
+    */
     public int getTimeRange()
     {
         return parameterMap.get(TIME_RANGE);
     }
+    /**
+    * Gets the value of the audioOn parameter.
+    *
+    * @return the value of the audioOn parameter.
+    */
     public OnOrOff isAudioOn()
     {
         return parameterMap.get(AUDIO);
     }
+    /**
+    * Gets the value of the fastForwardMultiplier parameter.
+    *
+    * @return the value of the fastForwardMultiplier parameter.
+    */
     public int getFastForwardMultiplier()
     {
         return parameterMap.get(FAST_FORWARD_MULTIPLIER);
     }
+    /**
+    * Gets the value of the duration parameter.
+    *
+    * @return the value of the duration parameter.
+    */
     public int getDuration()
     {
         return parameterMap.get(DURATION);
     }
+    /**
+    * Gets the value of the res parameter.
+    *
+    * @return the value of the res parameter.
+    */
     public String getRes()
     {
         return parameterMap.get(RES);
     }
+    /**
+    * Gets the value of the pktSize parameter.
+    *
+    * @return the value of the pktSize parameter.
+    */
     public int getPktSize()
     {
         return parameterMap.get(PKT_SIZE);
     }
+    /**
+    * Gets the value of the udpPort parameter.
+    *
+    * @return the value of the udpPort parameter.
+    */
     public int getUdpPort()
     {
         return parameterMap.get(UDP_PORT);
     }
+    /**
+    * Gets the value of the refresh parameter.
+    *
+    * @return the value of the refresh parameter.
+    */
     public int getRefresh()
     {
         return parameterMap.get(REFRESH);
     }
+    /**
+    * Gets the value of the format parameter.
+    *
+    * @return the value of the format parameter.
+    */
     public Format getFormat()
     {
         return parameterMap.get(FORMAT);
     }
+    /**
+    * Gets the value of the transmissionMode parameter.
+    *
+    * @return the value of the transmissionMode parameter.
+    */
     public TransmissionMode getTransmissionMode()
     {
         return parameterMap.get(TRANSMISSION_MODE);
     }
+    /**
+    * Gets the value of the slaveIP parameter.
+    *
+    * @return the value of the slaveIP parameter.
+    */
     public IPAddress getSlaveIP()
     {
         return parameterMap.get(SLAVE_IP);
     }
+    /**
+    * Gets the value of the opChan parameter.
+    *
+    * @return the value of the opChan parameter.
+    */
     public int getOpChan()
     {
         return parameterMap.get(OP_CHAN);
     }
+    /**
+    * Gets the value of the proxyMode parameter.
+    *
+    * @return the value of the proxyMode parameter.
+    */
     public ProxyMode getProxyMode()
     {
         return parameterMap.get(PROXY_MODE);
     }
+    /**
+    * Gets the value of the proxyRetry parameter.
+    *
+    * @return the value of the proxyRetry parameter.
+    */
     public int getProxyRetry()
     {
         return parameterMap.get(PROXY_RETRY);
     }
+    /**
+    * A builder that takes in all the optional values for ReplayPicCGI and produces a ReplayPicCGI when build() is
+    * called.  Each parameter must be supplied no more than once.  A Builder can only be built once; that is, it can only have
+    * build() called on it once.  Calling it a second time will cause an IllegalStateException.  Setting its values after
+    * calling build() will cause an IllegalStateException.
+    */
     public static final class Builder
     {
         private Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
@@ -406,6 +596,22 @@ public final class ReplayPicCGI
             CheckParameters.areNotNull(proxyRetry);
             return set(PROXY_RETRY, proxyRetry);
         }
+        /**
+        * Sets the value of a parameter to a given value, and returns the
+        * Builder.
+        * 
+        * @param <T>
+        *        the input type of the specified parameter.
+        * @param parameter
+        *        the parameter to set a value for.
+        * @param value
+        *        the value to give that parameter.
+        * @return the Builder.
+        * @throws IllegalStateException
+        *         if the Builder has already been built once.
+        * @throws NullPointerException
+        *         if parameter or value are null.
+        */
         private <T> Builder set(final ParameterDescription<T, ?> parameter, final T value)
         {
             if (parameterMap.isEmpty())
@@ -416,6 +622,13 @@ public final class ReplayPicCGI
             parameterMap = Option.getFullOption( parameterMap.get().set( parameter, value ) );
             return this;
         }
+        /**
+        * Constructs a ReplayPicCGI with the values from this Builder.
+        *
+        * @throws IllegalStateException
+        *         if this Builder has already been built.
+        * @return a ReplayPicCGI containing the values from this Builder.
+        */
         public ReplayPicCGI build()
         {
             try
@@ -454,9 +667,21 @@ public final class ReplayPicCGI
         params.add(PROXY_MODE);
         params.add(PROXY_RETRY);
     }
+    /**
+    * The possible formats that the video stream can be returned as.
+    */
     public static enum Format
     {
-        JFIF, JPEG, MP4;
+        /**
+        * Complete JFIF (JPEG) image data
+        */
+        JFIF,/**
+        * Truncated JPEG image data
+        */
+        JPEG,/**
+        * MPEG-4 image data
+        */
+        MP4;
         public static Function<String, Option<Format>> fromStringFunction()
         {
             return
@@ -477,9 +702,24 @@ public final class ReplayPicCGI
             ;
         }
     }
+    /**
+    * Various video playback modes
+    */
     public static enum Control
     {
-        PLAY, FFWD, RWND, STOP;
+        /**
+        * Play video forwards at its original speed
+        */
+        PLAY,/**
+        * Play video forwards at a speed controlled by the fast-forward multiplier
+        */
+        FFWD,/**
+        * Play video backwards
+        */
+        RWND,/**
+        * Stop playing video
+        */
+        STOP;
         public static Function<String, Option<Control>> fromStringFunction()
         {
             return
@@ -500,9 +740,21 @@ public final class ReplayPicCGI
             ;
         }
     }
+    /**
+    * The possible stream headers that the video stream can be wrapped in.
+    */
     public static enum TransmissionMode
     {
-        MIME, BINARY, MINIMAL;
+        /**
+        * Multipart MIME
+        */
+        MIME,/**
+        * AD's 'binary' format
+        */
+        BINARY,/**
+        * AD's 'minimal' format
+        */
+        MINIMAL;
         public static Function<String, Option<TransmissionMode>> fromStringFunction()
         {
             return
@@ -523,9 +775,18 @@ public final class ReplayPicCGI
             ;
         }
     }
+    /**
+    * This controls whether or not a decoder that is connected to by the server maintains connections to cameras set up by the CGI request
+    */
     public static enum ProxyMode
     {
-        TRANSIENT, PERSISTENT;
+        /**
+        * A decoder will clear connections to cameras made by the CGI request after the video stream has terminated
+        */
+        TRANSIENT,/**
+        * A decoder will maintain connections to cameras made by the CGI request after the video stream has terminated
+        */
+        PERSISTENT;
         public static Function<String, Option<ProxyMode>> fromStringFunction()
         {
             return
@@ -546,9 +807,18 @@ public final class ReplayPicCGI
             ;
         }
     }
+    /**
+    * This is used in storing whether audio should be enabled
+    */
     public static enum OnOrOff
     {
-        ON, OFF;
+        /**
+        * Signifies that audio is enabled
+        */
+        ON,/**
+        * Signifies that audio is disabled
+        */
+        OFF;
         public static Function<String, Option<OnOrOff>> fromStringFunction()
         {
             return
