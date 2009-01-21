@@ -774,14 +774,14 @@ public final class ReplayPicCGI
             {
                 public Option<Format> apply(String s )
                 {
-                    for (final Format element: values())
+                    for ( final Format element: values() )
                     {
-                        if (element.toString().equals(s))
+                        if ( element.toString().equalsIgnoreCase( s ) )
                         {
-                            return Option.getFullOption(element);
+                            return Option.getFullOption( element );
                         }
                     }
-                    return Option.getEmptyOption(s + " is not a valid Format element " );
+                    return Option.getEmptyOption( s + " is not a valid Format element " );
                 }
             }
             ;
@@ -815,14 +815,14 @@ public final class ReplayPicCGI
             {
                 public Option<Control> apply(String s )
                 {
-                    for (final Control element: values())
+                    for ( final Control element: values() )
                     {
-                        if (element.toString().equals(s))
+                        if ( element.toString().equalsIgnoreCase( s ) )
                         {
-                            return Option.getFullOption(element);
+                            return Option.getFullOption( element );
                         }
                     }
-                    return Option.getEmptyOption(s + " is not a valid Control element " );
+                    return Option.getEmptyOption( s + " is not a valid Control element " );
                 }
             }
             ;
@@ -852,14 +852,14 @@ public final class ReplayPicCGI
             {
                 public Option<TransmissionMode> apply(String s )
                 {
-                    for (final TransmissionMode element: values())
+                    for ( final TransmissionMode element: values() )
                     {
-                        if (element.toString().equals(s))
+                        if ( element.toString().equalsIgnoreCase( s ) )
                         {
-                            return Option.getFullOption(element);
+                            return Option.getFullOption( element );
                         }
                     }
-                    return Option.getEmptyOption(s + " is not a valid TransmissionMode element " );
+                    return Option.getEmptyOption( s + " is not a valid TransmissionMode element " );
                 }
             }
             ;
@@ -885,14 +885,14 @@ public final class ReplayPicCGI
             {
                 public Option<ProxyMode> apply(String s )
                 {
-                    for (final ProxyMode element: values())
+                    for ( final ProxyMode element: values() )
                     {
-                        if (element.toString().equals(s))
+                        if ( element.toString().equalsIgnoreCase( s ) )
                         {
-                            return Option.getFullOption(element);
+                            return Option.getFullOption( element );
                         }
                     }
-                    return Option.getEmptyOption(s + " is not a valid ProxyMode element " );
+                    return Option.getEmptyOption( s + " is not a valid ProxyMode element " );
                 }
             }
             ;
@@ -918,14 +918,14 @@ public final class ReplayPicCGI
             {
                 public Option<OnOrOff> apply(String s )
                 {
-                    for (final OnOrOff element: values())
+                    for ( final OnOrOff element: values() )
                     {
-                        if (element.toString().equals(s))
+                        if ( element.toString().equalsIgnoreCase( s ) )
                         {
-                            return Option.getFullOption(element);
+                            return Option.getFullOption( element );
                         }
                     }
-                    return Option.getEmptyOption(s + " is not a valid OnOrOff element " );
+                    return Option.getEmptyOption( s + " is not a valid OnOrOff element " );
                 }
             }
             ;

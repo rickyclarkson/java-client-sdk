@@ -103,7 +103,7 @@ public final class DisplayPicCGI
     /**
     * The specification of the audioMode parameter.
     */
-    private static final ParameterDescription<AudioMode, AudioMode> AUDIO_MODE = parameter("aud_mode", convenientPartial(AudioMode.fromStringFunction())).withDefault(AudioMode.UDP);
+    private static final ParameterDescription<AudioMode, AudioMode> AUDIO_MODE = parameter("audmode", convenientPartial(AudioMode.fromStringFunction())).withDefault(AudioMode.UDP);
     /**
     * The specification of the transmissionMode parameter.
     */
@@ -890,14 +890,14 @@ public final class DisplayPicCGI
             {
                 public Option<Format> apply(String s )
                 {
-                    for (final Format element: values())
+                    for ( final Format element: values() )
                     {
-                        if (element.toString().equals(s))
+                        if ( element.toString().equalsIgnoreCase( s ) )
                         {
-                            return Option.getFullOption(element);
+                            return Option.getFullOption( element );
                         }
                     }
-                    return Option.getEmptyOption(s + " is not a valid Format element " );
+                    return Option.getEmptyOption( s + " is not a valid Format element " );
                 }
             }
             ;
@@ -923,14 +923,14 @@ public final class DisplayPicCGI
             {
                 public Option<AudioMode> apply(String s )
                 {
-                    for (final AudioMode element: values())
+                    for ( final AudioMode element: values() )
                     {
-                        if (element.toString().equals(s))
+                        if ( element.toString().equalsIgnoreCase( s ) )
                         {
-                            return Option.getFullOption(element);
+                            return Option.getFullOption( element );
                         }
                     }
-                    return Option.getEmptyOption(s + " is not a valid AudioMode element " );
+                    return Option.getEmptyOption( s + " is not a valid AudioMode element " );
                 }
             }
             ;
@@ -960,14 +960,14 @@ public final class DisplayPicCGI
             {
                 public Option<TransmissionMode> apply(String s )
                 {
-                    for (final TransmissionMode element: values())
+                    for ( final TransmissionMode element: values() )
                     {
-                        if (element.toString().equals(s))
+                        if ( element.toString().equalsIgnoreCase( s ) )
                         {
-                            return Option.getFullOption(element);
+                            return Option.getFullOption( element );
                         }
                     }
-                    return Option.getEmptyOption(s + " is not a valid TransmissionMode element " );
+                    return Option.getEmptyOption( s + " is not a valid TransmissionMode element " );
                 }
             }
             ;
@@ -993,14 +993,14 @@ public final class DisplayPicCGI
             {
                 public Option<ProxyMode> apply(String s )
                 {
-                    for (final ProxyMode element: values())
+                    for ( final ProxyMode element: values() )
                     {
-                        if (element.toString().equals(s))
+                        if ( element.toString().equalsIgnoreCase( s ) )
                         {
-                            return Option.getFullOption(element);
+                            return Option.getFullOption( element );
                         }
                     }
-                    return Option.getEmptyOption(s + " is not a valid ProxyMode element " );
+                    return Option.getEmptyOption( s + " is not a valid ProxyMode element " );
                 }
             }
             ;

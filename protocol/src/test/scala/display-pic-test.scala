@@ -56,4 +56,16 @@ class DisplayPicCGITest extends JUnit4(new Specification {
  getProxyMode mustEqual ProxyMode.TRANSIENT
  getProxyPri mustEqual 1
  getProxyRetry mustEqual 0
+
+ for (format <- List("mp4", "jfif", "jpeg"))
+  DisplayPicCGI.fromString("/display_pic.cgi?format="+format).getFormat.toString.toLowerCase mustEqual format
+
+ for (audioMode <- List("udp", "inline"))
+  DisplayPicCGI.fromString("/display_pic.cgi?audmode="+audioMode).getAudioMode.toString.toLowerCase mustEqual audioMode
+
+ for (transmissionMode <- List("mime", "binary", "minimal"))
+  DisplayPicCGI.fromString("/display_pic.cgi?txmode=" + transmissionMode).getTransmissionMode.toString.toLowerCase mustEqual transmissionMode
+
+ for (proxyMode <- List("transient", "persistent"))
+  DisplayPicCGI.fromString("/display_pic.cgi?proxymode=" + proxyMode).getProxyMode.toString.toLowerCase mustEqual proxyMode
 })
