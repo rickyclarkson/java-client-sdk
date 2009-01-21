@@ -50,4 +50,29 @@ class ReplayPicCGITest extends JUnit4(new Specification {
  getOpChan mustEqual -1
  getProxyMode mustEqual ProxyMode.TRANSIENT
  getProxyRetry mustEqual 0
+
+ for (format <- List("mp4", "jfif", "jpeg"))
+  ReplayPicCGI.fromString("/replay_pic.cgi?format="+format).getFormat.toString.toLowerCase mustEqual format
+
+ ReplayPicCGI.fromString("/replay_pic.cgi?format=msdos") must throwAn[IllegalArgumentException]
+ 
+ for (control <- List("PLAY", "FFWD", "RWND", "STOP"))
+  ReplayPicCGI.fromString("/replay_pic.cgi?control="+control).getControl.toString.toUpperCase mustEqual control
+
+ ReplayPicCGI.fromString("/replay_pic.cgi?control=gofaster") must throwAn[IllegalArgumentException]
+
+ for (txMode <- List("mime", "binary", "minimal"))
+  ReplayPicCGI.fromString("/replay_pic.cgi?txmode="+txMode).getTransmissionMode.toString.toLowerCase mustEqual txMode
+
+ ReplayPicCGI.fromString("/replay_pic.cgi?txmode=magic") must throwAn[IllegalArgumentException]
+
+ for (proxyMode <- List("transient", "persistent"))
+  ReplayPicCGI.fromString("/replay_pic.cgi?proxymode="+proxyMode).getProxyMode.toString.toLowerCase mustEqual proxyMode
+
+ ReplayPicCGI.fromString("/replay_pic.cgi?proxymode=tor") must throwAn[IllegalArgumentException]
+
+ for (onOrOff <- List("on", "off"))
+  ReplayPicCGI.fromString("/replay_pic.cgi?audio="+onOrOff).isAudioOn.toString.toLowerCase mustEqual onOrOff
+
+ ReplayPicCGI.fromString("/replay_pic.cgi?audio=whitenoise") must throwAn[IllegalArgumentException]
 })
