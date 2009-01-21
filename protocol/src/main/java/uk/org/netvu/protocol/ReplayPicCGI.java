@@ -1,7 +1,6 @@
 package uk.org.netvu.protocol;
-import java.util.*;
-import static uk.org.netvu.protocol.ParameterDescription.*;
-import static uk.org.netvu.protocol.StringConversion.*;
+import java.util.List;
+import java.util.ArrayList;
 import uk.org.netvu.util.CheckParameters;   
 
 /**
@@ -36,117 +35,117 @@ public final class ReplayPicCGI
     /**
      * The specification of the cam parameter.
      */
-    private static final ParameterDescription<Integer, Integer> CAM = parameter("cam", integer()).withDefault(1).withBounds(1, 16, Num.integer);
+    private static final ParameterDescription<Integer, Integer> CAM = ParameterDescription.parameter("cam", StringConversion.integer()).withDefault(1).withBounds(1, 16, Num.integer);
     
     /**
      * The specification of the fields parameter.
      */
-    private static final ParameterDescription<Integer, Integer> FIELDS = parameter("fields", integer()).withDefault(1).notNegative(Num.integer);
+    private static final ParameterDescription<Integer, Integer> FIELDS = ParameterDescription.parameter("fields", StringConversion.integer()).withDefault(1).notNegative(Num.integer);
     
     /**
      * The specification of the seq parameter.
      */
-    private static final ParameterDescription<Integer, Integer> SEQ = parameter("seq", hexInt()).withDefault(0).withBounds(0, 0xF, Num.integer);
+    private static final ParameterDescription<Integer, Integer> SEQ = ParameterDescription.parameter("seq", StringConversion.hexInt()).withDefault(0).withBounds(0, 0xF, Num.integer);
     
     /**
      * The specification of the id parameter.
      */
-    private static final ParameterDescription<Integer, Integer> ID = parameter("id", integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> ID = ParameterDescription.parameter("id", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the control parameter.
      */
-    private static final ParameterDescription<Control, Control> CONTROL = parameter("control", convenientPartial(Control.fromStringFunction())).withDefault(Control.STOP);
+    private static final ParameterDescription<Control, Control> CONTROL = ParameterDescription.parameter("control", StringConversion.convenientPartial(Control.fromStringFunction())).withDefault(Control.STOP);
     
     /**
      * The specification of the time parameter.
      */
-    private static final ParameterDescription<Integer, Integer> TIME = parameter("time", convenientPartial(fromTimeFunction())).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> TIME = ParameterDescription.parameter("time", StringConversion.convenientPartial(fromTimeFunction())).withDefault(0);
     
     /**
      * The specification of the local parameter.
      */
-    private static final ParameterDescription<Integer, Integer> LOCAL = parameter("local", convenientPartial(fromTimeFunction())).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> LOCAL = ParameterDescription.parameter("local", StringConversion.convenientPartial(fromTimeFunction())).withDefault(0);
     
     /**
      * The specification of the rate parameter.
      */
-    private static final ParameterDescription<Integer, Integer> RATE = parameter("rate", integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> RATE = ParameterDescription.parameter("rate", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the text parameter.
      */
-    private static final ParameterDescription<String, String> TEXT = parameter("text", string()).withDefault("");
+    private static final ParameterDescription<String, String> TEXT = ParameterDescription.parameter("text", StringConversion.string()).withDefault("");
     
     /**
      * The specification of the timeRange parameter.
      */
-    private static final ParameterDescription<Integer, Integer> TIME_RANGE = parameter("timerange", integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> TIME_RANGE = ParameterDescription.parameter("timerange", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the audioOn parameter.
      */
-    private static final ParameterDescription<OnOrOff, OnOrOff> AUDIO = parameter("audio", convenientPartial(OnOrOff.fromStringFunction())).withDefault(OnOrOff.OFF);
+    private static final ParameterDescription<OnOrOff, OnOrOff> AUDIO = ParameterDescription.parameter("audio", StringConversion.convenientPartial(OnOrOff.fromStringFunction())).withDefault(OnOrOff.OFF);
     
     /**
      * The specification of the fastForwardMultiplier parameter.
      */
-    private static final ParameterDescription<Integer, Integer> FAST_FORWARD_MULTIPLIER = parameter("ffmult", integer()).withDefault(0).withBounds(0, 256, Num.integer);
+    private static final ParameterDescription<Integer, Integer> FAST_FORWARD_MULTIPLIER = ParameterDescription.parameter("ffmult", StringConversion.integer()).withDefault(0).withBounds(0, 256, Num.integer);
     
     /**
      * The specification of the duration parameter.
      */
-    private static final ParameterDescription<Integer, Integer> DURATION = parameter("duration", integer()).withDefault(0).notNegative(Num.integer);
+    private static final ParameterDescription<Integer, Integer> DURATION = ParameterDescription.parameter("duration", StringConversion.integer()).withDefault(0).notNegative(Num.integer);
     
     /**
      * The specification of the res parameter.
      */
-    private static final ParameterDescription<String, String> RES = parameter("res", string()).withDefault("med").allowedValues("hi", "med", "lo");
+    private static final ParameterDescription<String, String> RES = ParameterDescription.parameter("res", StringConversion.string()).withDefault("med").allowedValues("hi", "med", "lo");
     
     /**
      * The specification of the pktSize parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PKT_SIZE = parameterWithBoundsAndAnException(100, 1500, 0, parameter("pkt_size", integer()).withDefault(0));
+    private static final ParameterDescription<Integer, Integer> PKT_SIZE = ParameterDescription.parameterWithBoundsAndAnException(100, 1500, 0, ParameterDescription.parameter("pkt_size", StringConversion.integer()).withDefault(0));
     
     /**
      * The specification of the udpPort parameter.
      */
-    private static final ParameterDescription<Integer, Integer> UDP_PORT = parameter("udp_port", integer()).withDefault(0).withBounds(0, 65535, Num.integer);
+    private static final ParameterDescription<Integer, Integer> UDP_PORT = ParameterDescription.parameter("udp_port", StringConversion.integer()).withDefault(0).withBounds(0, 65535, Num.integer);
     
     /**
      * The specification of the refresh parameter.
      */
-    private static final ParameterDescription<Integer, Integer> REFRESH = parameter("refresh", integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> REFRESH = ParameterDescription.parameter("refresh", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the format parameter.
      */
-    private static final ParameterDescription<Format, Format> FORMAT = parameter("format", convenientPartial(Format.fromStringFunction())).withDefault(Format.JFIF);
+    private static final ParameterDescription<Format, Format> FORMAT = ParameterDescription.parameter("format", StringConversion.convenientPartial(Format.fromStringFunction())).withDefault(Format.JFIF);
     
     /**
      * The specification of the transmissionMode parameter.
      */
-    private static final ParameterDescription<TransmissionMode, TransmissionMode> TRANSMISSION_MODE = parameterWithDefault("txmode", new Function<ParameterMap, TransmissionMode>() { public TransmissionMode apply(ParameterMap map) { return map.get(FORMAT) == Format.JFIF ? TransmissionMode.MIME : TransmissionMode.MINIMAL; } }, convenientPartial(TransmissionMode.fromStringFunction()));
+    private static final ParameterDescription<TransmissionMode, TransmissionMode> TRANSMISSION_MODE = ParameterDescription.parameterWithDefault("txmode", new Function<ParameterMap, TransmissionMode>() { public TransmissionMode apply(ParameterMap map) { return map.get(FORMAT) == Format.JFIF ? TransmissionMode.MIME : TransmissionMode.MINIMAL; } }, StringConversion.convenientPartial(TransmissionMode.fromStringFunction()));
     
     /**
      * The specification of the slaveIP parameter.
      */
-    private static final ParameterDescription<IPAddress, IPAddress> SLAVE_IP = parameter("slaveip", convenientPartial(IPAddress.fromString)).withDefault(IPAddress.fromString("0.0.0.0").get());
+    private static final ParameterDescription<IPAddress, IPAddress> SLAVE_IP = ParameterDescription.parameter("slaveip", StringConversion.convenientPartial(IPAddress.fromString)).withDefault(IPAddress.fromString("0.0.0.0").get());
     
     /**
      * The specification of the opChan parameter.
      */
-    private static final ParameterDescription<Integer, Integer> OP_CHAN = parameter("opchan", integer()).withDefault(-1);
+    private static final ParameterDescription<Integer, Integer> OP_CHAN = ParameterDescription.parameter("opchan", StringConversion.integer()).withDefault(-1);
     
     /**
      * The specification of the proxyMode parameter.
      */
-    private static final ParameterDescription<ProxyMode, ProxyMode> PROXY_MODE = parameter("proxymode", convenientPartial(ProxyMode.fromStringFunction())).withDefault(ProxyMode.TRANSIENT);
+    private static final ParameterDescription<ProxyMode, ProxyMode> PROXY_MODE = ParameterDescription.parameter("proxymode", StringConversion.convenientPartial(ProxyMode.fromStringFunction())).withDefault(ProxyMode.TRANSIENT);
     
     /**
      * The specification of the proxyRetry parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PROXY_RETRY = parameter("proxyretry", integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> PROXY_RETRY = ParameterDescription.parameter("proxyretry", StringConversion.integer()).withDefault(0);
     
     /**
      * Gets the value of the cam parameter.
@@ -373,13 +372,10 @@ public final class ReplayPicCGI
          * Sets the cam parameter in the builder.
          * @param cam
          *        the value to store as the cam parameter.
-         * @throws NullPointerException
-         *         if cam is null.
          * @return the Builder
          */
-        public Builder cam( Integer cam )
+        public Builder cam( int cam )
         {
-            CheckParameters.areNotNull( cam );
             return set( CAM, cam );
         }
         
@@ -387,13 +383,10 @@ public final class ReplayPicCGI
          * Sets the fields parameter in the builder.
          * @param fields
          *        the value to store as the fields parameter.
-         * @throws NullPointerException
-         *         if fields is null.
          * @return the Builder
          */
-        public Builder fields( Integer fields )
+        public Builder fields( int fields )
         {
-            CheckParameters.areNotNull( fields );
             return set( FIELDS, fields );
         }
         
@@ -401,13 +394,10 @@ public final class ReplayPicCGI
          * Sets the seq parameter in the builder.
          * @param seq
          *        the value to store as the seq parameter.
-         * @throws NullPointerException
-         *         if seq is null.
          * @return the Builder
          */
-        public Builder seq( Integer seq )
+        public Builder seq( int seq )
         {
-            CheckParameters.areNotNull( seq );
             return set( SEQ, seq );
         }
         
@@ -415,13 +405,10 @@ public final class ReplayPicCGI
          * Sets the id parameter in the builder.
          * @param id
          *        the value to store as the id parameter.
-         * @throws NullPointerException
-         *         if id is null.
          * @return the Builder
          */
-        public Builder id( Integer id )
+        public Builder id( int id )
         {
-            CheckParameters.areNotNull( id );
             return set( ID, id );
         }
         
@@ -443,13 +430,10 @@ public final class ReplayPicCGI
          * Sets the time parameter in the builder.
          * @param time
          *        the value to store as the time parameter.
-         * @throws NullPointerException
-         *         if time is null.
          * @return the Builder
          */
-        public Builder time( Integer time )
+        public Builder time( int time )
         {
-            CheckParameters.areNotNull( time );
             return set( TIME, time );
         }
         
@@ -457,13 +441,10 @@ public final class ReplayPicCGI
          * Sets the local parameter in the builder.
          * @param local
          *        the value to store as the local parameter.
-         * @throws NullPointerException
-         *         if local is null.
          * @return the Builder
          */
-        public Builder local( Integer local )
+        public Builder local( int local )
         {
-            CheckParameters.areNotNull( local );
             return set( LOCAL, local );
         }
         
@@ -471,13 +452,10 @@ public final class ReplayPicCGI
          * Sets the rate parameter in the builder.
          * @param rate
          *        the value to store as the rate parameter.
-         * @throws NullPointerException
-         *         if rate is null.
          * @return the Builder
          */
-        public Builder rate( Integer rate )
+        public Builder rate( int rate )
         {
-            CheckParameters.areNotNull( rate );
             return set( RATE, rate );
         }
         
@@ -499,13 +477,10 @@ public final class ReplayPicCGI
          * Sets the timeRange parameter in the builder.
          * @param timeRange
          *        the value to store as the timeRange parameter.
-         * @throws NullPointerException
-         *         if timeRange is null.
          * @return the Builder
          */
-        public Builder timeRange( Integer timeRange )
+        public Builder timeRange( int timeRange )
         {
-            CheckParameters.areNotNull( timeRange );
             return set( TIME_RANGE, timeRange );
         }
         
@@ -527,13 +502,10 @@ public final class ReplayPicCGI
          * Sets the fastForwardMultiplier parameter in the builder.
          * @param fastForwardMultiplier
          *        the value to store as the fastForwardMultiplier parameter.
-         * @throws NullPointerException
-         *         if fastForwardMultiplier is null.
          * @return the Builder
          */
-        public Builder fastForwardMultiplier( Integer fastForwardMultiplier )
+        public Builder fastForwardMultiplier( int fastForwardMultiplier )
         {
-            CheckParameters.areNotNull( fastForwardMultiplier );
             return set( FAST_FORWARD_MULTIPLIER, fastForwardMultiplier );
         }
         
@@ -541,13 +513,10 @@ public final class ReplayPicCGI
          * Sets the duration parameter in the builder.
          * @param duration
          *        the value to store as the duration parameter.
-         * @throws NullPointerException
-         *         if duration is null.
          * @return the Builder
          */
-        public Builder duration( Integer duration )
+        public Builder duration( int duration )
         {
-            CheckParameters.areNotNull( duration );
             return set( DURATION, duration );
         }
         
@@ -569,13 +538,10 @@ public final class ReplayPicCGI
          * Sets the pktSize parameter in the builder.
          * @param pktSize
          *        the value to store as the pktSize parameter.
-         * @throws NullPointerException
-         *         if pktSize is null.
          * @return the Builder
          */
-        public Builder pktSize( Integer pktSize )
+        public Builder pktSize( int pktSize )
         {
-            CheckParameters.areNotNull( pktSize );
             return set( PKT_SIZE, pktSize );
         }
         
@@ -583,13 +549,10 @@ public final class ReplayPicCGI
          * Sets the udpPort parameter in the builder.
          * @param udpPort
          *        the value to store as the udpPort parameter.
-         * @throws NullPointerException
-         *         if udpPort is null.
          * @return the Builder
          */
-        public Builder udpPort( Integer udpPort )
+        public Builder udpPort( int udpPort )
         {
-            CheckParameters.areNotNull( udpPort );
             return set( UDP_PORT, udpPort );
         }
         
@@ -597,13 +560,10 @@ public final class ReplayPicCGI
          * Sets the refresh parameter in the builder.
          * @param refresh
          *        the value to store as the refresh parameter.
-         * @throws NullPointerException
-         *         if refresh is null.
          * @return the Builder
          */
-        public Builder refresh( Integer refresh )
+        public Builder refresh( int refresh )
         {
-            CheckParameters.areNotNull( refresh );
             return set( REFRESH, refresh );
         }
         
@@ -653,13 +613,10 @@ public final class ReplayPicCGI
          * Sets the opChan parameter in the builder.
          * @param opChan
          *        the value to store as the opChan parameter.
-         * @throws NullPointerException
-         *         if opChan is null.
          * @return the Builder
          */
-        public Builder opChan( Integer opChan )
+        public Builder opChan( int opChan )
         {
-            CheckParameters.areNotNull( opChan );
             return set( OP_CHAN, opChan );
         }
         
@@ -681,18 +638,16 @@ public final class ReplayPicCGI
          * Sets the proxyRetry parameter in the builder.
          * @param proxyRetry
          *        the value to store as the proxyRetry parameter.
-         * @throws NullPointerException
-         *         if proxyRetry is null.
          * @return the Builder
          */
-        public Builder proxyRetry( Integer proxyRetry )
+        public Builder proxyRetry( int proxyRetry )
         {
-            CheckParameters.areNotNull( proxyRetry );
             return set( PROXY_RETRY, proxyRetry );
         }
         
         /**
          * Sets the value of a parameter to a given value, and returns the Builder.
+         * 
          * @param <T>
          *        the input type of the specified parameter.
          * @param parameter
@@ -705,8 +660,9 @@ public final class ReplayPicCGI
          * @throws NullPointerException
          *         if parameter or value are null.
          */
-        private <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
+        private  <T>Builder set( ParameterDescription<T, ?> parameter, T value )
         {
+            CheckParameters.areNotNull( parameter, value );
             if ( parameterMap.isEmpty() )
             {
                 final String message = "The Builder has already been built (build() has been called on it).";
@@ -717,13 +673,13 @@ public final class ReplayPicCGI
         }
         
         /**
-        * Constructs a ReplayPicCGI with the values from this Builder.
-        *
-        * @throws IllegalStateException
-        *         if this Builder has already been built.
-        * @return a ReplayPicCGI containing the values from this Builder.
-        */
-        public ReplayPicCGI build()
+         * Constructs a ReplayPicCGI with the values from this Builder.
+         * 
+         * @return a ReplayPicCGI containing the values from this Builder
+         * @throws IllegalStateException
+         *         if the Builder has already been built.
+         */
+        public  ReplayPicCGI build(  )
         {
             try
             {
@@ -734,6 +690,7 @@ public final class ReplayPicCGI
                 parameterMap = Option.getEmptyOption( "This Builder has already been built once." );
             }
         }
+        
     }
     static
     {

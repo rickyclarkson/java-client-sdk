@@ -1,7 +1,6 @@
 package uk.org.netvu.protocol;
-import java.util.*;
-import static uk.org.netvu.protocol.ParameterDescription.*;
-import static uk.org.netvu.protocol.StringConversion.*;
+import java.util.List;
+import java.util.ArrayList;
 import uk.org.netvu.util.CheckParameters;   
 
 /**
@@ -36,137 +35,137 @@ public final class DisplayPicCGI
     /**
      * The specification of the cam parameter.
      */
-    private static final ParameterDescription<Integer, Integer> CAM = parameter("cam", integer()).withDefault(1).withBounds(1, 16, Num.integer);
+    private static final ParameterDescription<Integer, Integer> CAM = ParameterDescription.parameter("cam", StringConversion.integer()).withDefault(1).withBounds(1, 16, Num.integer);
     
     /**
      * The specification of the fields parameter.
      */
-    private static final ParameterDescription<Integer, Integer> FIELDS = parameter("fields", integer()).withDefault(1).positive(Num.integer);
+    private static final ParameterDescription<Integer, Integer> FIELDS = ParameterDescription.parameter("fields", StringConversion.integer()).withDefault(1).positive(Num.integer);
     
     /**
      * The specification of the res parameter.
      */
-    private static final ParameterDescription<String, String> RES = parameter("res", string()).withDefault("med").allowedValues("hi", "med", "lo");
+    private static final ParameterDescription<String, String> RES = ParameterDescription.parameter("res", StringConversion.string()).withDefault("med").allowedValues("hi", "med", "lo");
     
     /**
      * The specification of the seq parameter.
      */
-    private static final ParameterDescription<Integer, Integer> SEQ = parameter("seq", hexInt()).withDefault(0).withBounds(0, 0xF, Num.integer);
+    private static final ParameterDescription<Integer, Integer> SEQ = ParameterDescription.parameter("seq", StringConversion.hexInt()).withDefault(0).withBounds(0, 0xF, Num.integer);
     
     /**
      * The specification of the dwell parameter.
      */
-    private static final ParameterDescription<Integer, Integer> DWELL = parameter("dwell", integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> DWELL = ParameterDescription.parameter("dwell", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the id parameter.
      */
-    private static final ParameterDescription<Integer, Integer> ID = parameter("id", integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> ID = ParameterDescription.parameter("id", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the dIndex parameter.
      */
-    private static final ParameterDescription<Integer, Integer> DINDEX = parameter("dindex", integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> DINDEX = ParameterDescription.parameter("dindex", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the presel parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PRESEL = parameter("presel", integer()).withDefault(0).withBounds(0, 3, Num.integer);
+    private static final ParameterDescription<Integer, Integer> PRESEL = ParameterDescription.parameter("presel", StringConversion.integer()).withDefault(0).withBounds(0, 3, Num.integer);
     
     /**
      * The specification of the channel parameter.
      */
-    private static final ParameterDescription<Integer, Integer> CHANNEL = parameter("channel", integer()).withDefault(-1).withBounds(-1, 1, Num.integer);
+    private static final ParameterDescription<Integer, Integer> CHANNEL = ParameterDescription.parameter("channel", StringConversion.integer()).withDefault(-1).withBounds(-1, 1, Num.integer);
     
     /**
      * The specification of the rate parameter.
      */
-    private static final ParameterDescription<Integer, Integer> RATE = parameter("rate", integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> RATE = ParameterDescription.parameter("rate", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the forcedQ parameter.
      */
-    private static final ParameterDescription<Integer, Integer> FORCED_Q = parameter("forcedq", integer()).withDefault(0).withBounds(0, 255, Num.integer).disallowing(1);
+    private static final ParameterDescription<Integer, Integer> FORCED_Q = ParameterDescription.parameter("forcedq", StringConversion.integer()).withDefault(0).withBounds(0, 255, Num.integer).disallowing(1);
     
     /**
      * The specification of the duration parameter.
      */
-    private static final ParameterDescription<Integer, Integer> DURATION = parameter("duration", integer()).withDefault(0).notNegative(Num.integer);
+    private static final ParameterDescription<Integer, Integer> DURATION = ParameterDescription.parameter("duration", StringConversion.integer()).withDefault(0).notNegative(Num.integer);
     
     /**
      * The specification of the nBuffers parameter.
      */
-    private static final ParameterDescription<Integer, Integer> N_BUFFERS = parameter("nbuffers", integer()).withDefault(0).notNegative(Num.integer);
+    private static final ParameterDescription<Integer, Integer> N_BUFFERS = ParameterDescription.parameter("nbuffers", StringConversion.integer()).withDefault(0).notNegative(Num.integer);
     
     /**
      * The specification of the telemQ parameter.
      */
-    private static final ParameterDescription<Integer, Integer> TELEM_Q = parameter("telemQ", integer()).withDefault(-1).withBounds(-1, Integer.MAX_VALUE, Num.integer);
+    private static final ParameterDescription<Integer, Integer> TELEM_Q = ParameterDescription.parameter("telemQ", StringConversion.integer()).withDefault(-1).withBounds(-1, Integer.MAX_VALUE, Num.integer);
     
     /**
      * The specification of the pktSize parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PKT_SIZE = parameterWithBoundsAndAnException(100, 1500, 0, parameter("pkt_size", integer()).withDefault(0));
+    private static final ParameterDescription<Integer, Integer> PKT_SIZE = ParameterDescription.parameterWithBoundsAndAnException(100, 1500, 0, ParameterDescription.parameter("pkt_size", StringConversion.integer()).withDefault(0));
     
     /**
      * The specification of the udpPort parameter.
      */
-    private static final ParameterDescription<Integer, Integer> UDP_PORT = parameter("udp_port", integer()).withDefault(0).withBounds(0, 65535, Num.integer);
+    private static final ParameterDescription<Integer, Integer> UDP_PORT = ParameterDescription.parameter("udp_port", StringConversion.integer()).withDefault(0).withBounds(0, 65535, Num.integer);
     
     /**
      * The specification of the audio parameter.
      */
-    private static final ParameterDescription<String, String> AUDIO = parameter("audio", string()).withDefault("0").allowedValues("on", "off", "0", "1", "2");
+    private static final ParameterDescription<String, String> AUDIO = ParameterDescription.parameter("audio", StringConversion.string()).withDefault("0").allowedValues("on", "off", "0", "1", "2");
     
     /**
      * The specification of the format parameter.
      */
-    private static final ParameterDescription<Format, Format> FORMAT = parameter("format", convenientPartial(Format.fromStringFunction())).withDefault(Format.JFIF);
+    private static final ParameterDescription<Format, Format> FORMAT = ParameterDescription.parameter("format", StringConversion.convenientPartial(Format.fromStringFunction())).withDefault(Format.JFIF);
     
     /**
      * The specification of the audioMode parameter.
      */
-    private static final ParameterDescription<AudioMode, AudioMode> AUDIO_MODE = parameter("audmode", convenientPartial(AudioMode.fromStringFunction())).withDefault(AudioMode.UDP);
+    private static final ParameterDescription<AudioMode, AudioMode> AUDIO_MODE = ParameterDescription.parameter("audmode", StringConversion.convenientPartial(AudioMode.fromStringFunction())).withDefault(AudioMode.UDP);
     
     /**
      * The specification of the transmissionMode parameter.
      */
-    private static final ParameterDescription<TransmissionMode, TransmissionMode> TRANSMISSION_MODE = parameterWithDefault("txmode", new Function<ParameterMap, TransmissionMode>() { public TransmissionMode apply(ParameterMap map) { return map.get(FORMAT) == Format.JFIF ? TransmissionMode.MIME : TransmissionMode.MINIMAL; } }, convenientPartial(TransmissionMode.fromStringFunction()));
+    private static final ParameterDescription<TransmissionMode, TransmissionMode> TRANSMISSION_MODE = ParameterDescription.parameterWithDefault("txmode", new Function<ParameterMap, TransmissionMode>() { public TransmissionMode apply(ParameterMap map) { return map.get(FORMAT) == Format.JFIF ? TransmissionMode.MIME : TransmissionMode.MINIMAL; } }, StringConversion.convenientPartial(TransmissionMode.fromStringFunction()));
     
     /**
      * The specification of the pps parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PPS = parameter("pps", integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> PPS = ParameterDescription.parameter("pps", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the mp4Rate parameter.
      */
-    private static final ParameterDescription<Integer, Integer> MP4_RATE = parameter("mp4rate", integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> MP4_RATE = ParameterDescription.parameter("mp4rate", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the slaveIP parameter.
      */
-    private static final ParameterDescription<IPAddress, IPAddress> SLAVE_IP = parameter("slaveip", convenientPartial(IPAddress.fromString)).withDefault(IPAddress.fromString("0.0.0.0").get());
+    private static final ParameterDescription<IPAddress, IPAddress> SLAVE_IP = ParameterDescription.parameter("slaveip", StringConversion.convenientPartial(IPAddress.fromString)).withDefault(IPAddress.fromString("0.0.0.0").get());
     
     /**
      * The specification of the opChan parameter.
      */
-    private static final ParameterDescription<Integer, Integer> OP_CHAN = parameter("opchan", integer()).withDefault(-1);
+    private static final ParameterDescription<Integer, Integer> OP_CHAN = ParameterDescription.parameter("opchan", StringConversion.integer()).withDefault(-1);
     
     /**
      * The specification of the proxyMode parameter.
      */
-    private static final ParameterDescription<ProxyMode, ProxyMode> PROXY_MODE = parameter("proxymode", convenientPartial(ProxyMode.fromStringFunction())).withDefault(ProxyMode.TRANSIENT);
+    private static final ParameterDescription<ProxyMode, ProxyMode> PROXY_MODE = ParameterDescription.parameter("proxymode", StringConversion.convenientPartial(ProxyMode.fromStringFunction())).withDefault(ProxyMode.TRANSIENT);
     
     /**
      * The specification of the proxyPri parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PROXY_PRI = parameter("proxypri", integer()).withDefault(1);
+    private static final ParameterDescription<Integer, Integer> PROXY_PRI = ParameterDescription.parameter("proxypri", StringConversion.integer()).withDefault(1);
     
     /**
      * The specification of the proxyRetry parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PROXY_RETRY = parameter("proxyretry", integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> PROXY_RETRY = ParameterDescription.parameter("proxyretry", StringConversion.integer()).withDefault(0);
     
     /**
      * Gets the value of the cam parameter.
@@ -429,13 +428,10 @@ public final class DisplayPicCGI
          * Sets the cam parameter in the builder.
          * @param cam
          *        the value to store as the cam parameter.
-         * @throws NullPointerException
-         *         if cam is null.
          * @return the Builder
          */
-        public Builder cam( Integer cam )
+        public Builder cam( int cam )
         {
-            CheckParameters.areNotNull( cam );
             return set( CAM, cam );
         }
         
@@ -443,13 +439,10 @@ public final class DisplayPicCGI
          * Sets the fields parameter in the builder.
          * @param fields
          *        the value to store as the fields parameter.
-         * @throws NullPointerException
-         *         if fields is null.
          * @return the Builder
          */
-        public Builder fields( Integer fields )
+        public Builder fields( int fields )
         {
-            CheckParameters.areNotNull( fields );
             return set( FIELDS, fields );
         }
         
@@ -471,13 +464,10 @@ public final class DisplayPicCGI
          * Sets the seq parameter in the builder.
          * @param seq
          *        the value to store as the seq parameter.
-         * @throws NullPointerException
-         *         if seq is null.
          * @return the Builder
          */
-        public Builder seq( Integer seq )
+        public Builder seq( int seq )
         {
-            CheckParameters.areNotNull( seq );
             return set( SEQ, seq );
         }
         
@@ -485,13 +475,10 @@ public final class DisplayPicCGI
          * Sets the dwell parameter in the builder.
          * @param dwell
          *        the value to store as the dwell parameter.
-         * @throws NullPointerException
-         *         if dwell is null.
          * @return the Builder
          */
-        public Builder dwell( Integer dwell )
+        public Builder dwell( int dwell )
         {
-            CheckParameters.areNotNull( dwell );
             return set( DWELL, dwell );
         }
         
@@ -499,13 +486,10 @@ public final class DisplayPicCGI
          * Sets the id parameter in the builder.
          * @param id
          *        the value to store as the id parameter.
-         * @throws NullPointerException
-         *         if id is null.
          * @return the Builder
          */
-        public Builder id( Integer id )
+        public Builder id( int id )
         {
-            CheckParameters.areNotNull( id );
             return set( ID, id );
         }
         
@@ -513,13 +497,10 @@ public final class DisplayPicCGI
          * Sets the dIndex parameter in the builder.
          * @param dIndex
          *        the value to store as the dIndex parameter.
-         * @throws NullPointerException
-         *         if dIndex is null.
          * @return the Builder
          */
-        public Builder dIndex( Integer dIndex )
+        public Builder dIndex( int dIndex )
         {
-            CheckParameters.areNotNull( dIndex );
             return set( DINDEX, dIndex );
         }
         
@@ -527,13 +508,10 @@ public final class DisplayPicCGI
          * Sets the presel parameter in the builder.
          * @param presel
          *        the value to store as the presel parameter.
-         * @throws NullPointerException
-         *         if presel is null.
          * @return the Builder
          */
-        public Builder presel( Integer presel )
+        public Builder presel( int presel )
         {
-            CheckParameters.areNotNull( presel );
             return set( PRESEL, presel );
         }
         
@@ -541,13 +519,10 @@ public final class DisplayPicCGI
          * Sets the channel parameter in the builder.
          * @param channel
          *        the value to store as the channel parameter.
-         * @throws NullPointerException
-         *         if channel is null.
          * @return the Builder
          */
-        public Builder channel( Integer channel )
+        public Builder channel( int channel )
         {
-            CheckParameters.areNotNull( channel );
             return set( CHANNEL, channel );
         }
         
@@ -555,13 +530,10 @@ public final class DisplayPicCGI
          * Sets the rate parameter in the builder.
          * @param rate
          *        the value to store as the rate parameter.
-         * @throws NullPointerException
-         *         if rate is null.
          * @return the Builder
          */
-        public Builder rate( Integer rate )
+        public Builder rate( int rate )
         {
-            CheckParameters.areNotNull( rate );
             return set( RATE, rate );
         }
         
@@ -569,13 +541,10 @@ public final class DisplayPicCGI
          * Sets the forcedQ parameter in the builder.
          * @param forcedQ
          *        the value to store as the forcedQ parameter.
-         * @throws NullPointerException
-         *         if forcedQ is null.
          * @return the Builder
          */
-        public Builder forcedQ( Integer forcedQ )
+        public Builder forcedQ( int forcedQ )
         {
-            CheckParameters.areNotNull( forcedQ );
             return set( FORCED_Q, forcedQ );
         }
         
@@ -583,13 +552,10 @@ public final class DisplayPicCGI
          * Sets the duration parameter in the builder.
          * @param duration
          *        the value to store as the duration parameter.
-         * @throws NullPointerException
-         *         if duration is null.
          * @return the Builder
          */
-        public Builder duration( Integer duration )
+        public Builder duration( int duration )
         {
-            CheckParameters.areNotNull( duration );
             return set( DURATION, duration );
         }
         
@@ -597,13 +563,10 @@ public final class DisplayPicCGI
          * Sets the nBuffers parameter in the builder.
          * @param nBuffers
          *        the value to store as the nBuffers parameter.
-         * @throws NullPointerException
-         *         if nBuffers is null.
          * @return the Builder
          */
-        public Builder nBuffers( Integer nBuffers )
+        public Builder nBuffers( int nBuffers )
         {
-            CheckParameters.areNotNull( nBuffers );
             return set( N_BUFFERS, nBuffers );
         }
         
@@ -611,13 +574,10 @@ public final class DisplayPicCGI
          * Sets the telemQ parameter in the builder.
          * @param telemQ
          *        the value to store as the telemQ parameter.
-         * @throws NullPointerException
-         *         if telemQ is null.
          * @return the Builder
          */
-        public Builder telemQ( Integer telemQ )
+        public Builder telemQ( int telemQ )
         {
-            CheckParameters.areNotNull( telemQ );
             return set( TELEM_Q, telemQ );
         }
         
@@ -625,13 +585,10 @@ public final class DisplayPicCGI
          * Sets the pktSize parameter in the builder.
          * @param pktSize
          *        the value to store as the pktSize parameter.
-         * @throws NullPointerException
-         *         if pktSize is null.
          * @return the Builder
          */
-        public Builder pktSize( Integer pktSize )
+        public Builder pktSize( int pktSize )
         {
-            CheckParameters.areNotNull( pktSize );
             return set( PKT_SIZE, pktSize );
         }
         
@@ -639,13 +596,10 @@ public final class DisplayPicCGI
          * Sets the udpPort parameter in the builder.
          * @param udpPort
          *        the value to store as the udpPort parameter.
-         * @throws NullPointerException
-         *         if udpPort is null.
          * @return the Builder
          */
-        public Builder udpPort( Integer udpPort )
+        public Builder udpPort( int udpPort )
         {
-            CheckParameters.areNotNull( udpPort );
             return set( UDP_PORT, udpPort );
         }
         
@@ -709,13 +663,10 @@ public final class DisplayPicCGI
          * Sets the pps parameter in the builder.
          * @param pps
          *        the value to store as the pps parameter.
-         * @throws NullPointerException
-         *         if pps is null.
          * @return the Builder
          */
-        public Builder pps( Integer pps )
+        public Builder pps( int pps )
         {
-            CheckParameters.areNotNull( pps );
             return set( PPS, pps );
         }
         
@@ -723,13 +674,10 @@ public final class DisplayPicCGI
          * Sets the mp4Rate parameter in the builder.
          * @param mp4Rate
          *        the value to store as the mp4Rate parameter.
-         * @throws NullPointerException
-         *         if mp4Rate is null.
          * @return the Builder
          */
-        public Builder mp4Rate( Integer mp4Rate )
+        public Builder mp4Rate( int mp4Rate )
         {
-            CheckParameters.areNotNull( mp4Rate );
             return set( MP4_RATE, mp4Rate );
         }
         
@@ -751,13 +699,10 @@ public final class DisplayPicCGI
          * Sets the opChan parameter in the builder.
          * @param opChan
          *        the value to store as the opChan parameter.
-         * @throws NullPointerException
-         *         if opChan is null.
          * @return the Builder
          */
-        public Builder opChan( Integer opChan )
+        public Builder opChan( int opChan )
         {
-            CheckParameters.areNotNull( opChan );
             return set( OP_CHAN, opChan );
         }
         
@@ -779,13 +724,10 @@ public final class DisplayPicCGI
          * Sets the proxyPri parameter in the builder.
          * @param proxyPri
          *        the value to store as the proxyPri parameter.
-         * @throws NullPointerException
-         *         if proxyPri is null.
          * @return the Builder
          */
-        public Builder proxyPri( Integer proxyPri )
+        public Builder proxyPri( int proxyPri )
         {
-            CheckParameters.areNotNull( proxyPri );
             return set( PROXY_PRI, proxyPri );
         }
         
@@ -793,18 +735,16 @@ public final class DisplayPicCGI
          * Sets the proxyRetry parameter in the builder.
          * @param proxyRetry
          *        the value to store as the proxyRetry parameter.
-         * @throws NullPointerException
-         *         if proxyRetry is null.
          * @return the Builder
          */
-        public Builder proxyRetry( Integer proxyRetry )
+        public Builder proxyRetry( int proxyRetry )
         {
-            CheckParameters.areNotNull( proxyRetry );
             return set( PROXY_RETRY, proxyRetry );
         }
         
         /**
          * Sets the value of a parameter to a given value, and returns the Builder.
+         * 
          * @param <T>
          *        the input type of the specified parameter.
          * @param parameter
@@ -817,8 +757,9 @@ public final class DisplayPicCGI
          * @throws NullPointerException
          *         if parameter or value are null.
          */
-        private <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
+        private  <T>Builder set( ParameterDescription<T, ?> parameter, T value )
         {
+            CheckParameters.areNotNull( parameter, value );
             if ( parameterMap.isEmpty() )
             {
                 final String message = "The Builder has already been built (build() has been called on it).";
@@ -829,13 +770,13 @@ public final class DisplayPicCGI
         }
         
         /**
-        * Constructs a DisplayPicCGI with the values from this Builder.
-        *
-        * @throws IllegalStateException
-        *         if this Builder has already been built.
-        * @return a DisplayPicCGI containing the values from this Builder.
-        */
-        public DisplayPicCGI build()
+         * Constructs a DisplayPicCGI with the values from this Builder.
+         * 
+         * @return a DisplayPicCGI containing the values from this Builder
+         * @throws IllegalStateException
+         *         if the Builder has already been built.
+         */
+        public  DisplayPicCGI build(  )
         {
             try
             {
@@ -846,6 +787,7 @@ public final class DisplayPicCGI
                 parameterMap = Option.getEmptyOption( "This Builder has already been built once." );
             }
         }
+        
     }
     static
     {
