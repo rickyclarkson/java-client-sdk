@@ -70,7 +70,7 @@ object Pretty {
  def prepend(s: String, lines: Iterable[String]) = lines.toList match { case list => (s + list.head) :: list.drop(1) }
 }
 
-case class Parameter(`type`: String, name: String, description: String) { def typeThenName = `type` + " " + name
+case class Parameter(`type`: String, name: String, description: String) { def typeThenName = "final " + `type` + " " + name
                                                                           def isPrimitive = `type` charAt 0 isLowerCase }
 
 sealed abstract class Visibility(override val toString: String)
@@ -92,7 +92,7 @@ case class Method(visibility: Visibility, isStatic: IsStatic, typeParameters: Li
    case "" => ""
    case s => "<" + s + ">"
   }) + returnType.name + " " + name + (parameters.map(_.typeThenName).mkString(", ") match { case "" => "()"
-                                                                                            case s => "( " + s + " )" })) ++
+                                                                                             case s => "( " + s + " )" })) ++
   brace(checkParametersLine(parameters) ++ body) ++ blankLine
 }
 
