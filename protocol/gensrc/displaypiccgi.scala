@@ -60,6 +60,8 @@ object Pretty {
 
  def Try(body: Iterable[String]) = lines("try") ++ brace(body)
  def Finally(body: Iterable[String]) = lines("finally") ++ brace(body)
+
+ def append(lines: Iterable[String], s: String): Iterable[String] = lines.toList match { case list => list.dropRight(1) ++ List(list.last + s) }
 }
 
 case class Parameter(`type`: String, name: String, description: String) { def typeThenName = `type` + " " + name
@@ -119,7 +121,7 @@ case class Enum(name: String, description: String, static: IsStatic, members: Li
       "for ( final "+name+" element: values() )") ++ brace(lines(
        "if ( element.toString().equalsIgnoreCase( s ) )") ++ brace(lines(
         "return Option.getFullOption( element );"))) ++ lines("return Option.getEmptyOption( s + \" is not a valid " + name + " element \" );")) ++ lines(";"))
-  blockComment(lines(description)) ++ lines("public "+static+" enum "+name) ++ brace(members.map(_.toJava).reduceLeft(_ ++ List(",") ++ blankLine ++ _) ++ List(";") ++ blankLine ++ fromStringToEnum)
+  blockComment(lines(description)) ++ lines("public "+static+" enum "+name) ++ brace(append(members.map(_.toJava).reduceLeft((acc, m) => append(acc, ",") ++ blankLine ++ m), ";") ++ blankLine ++ fromStringToEnum)
  }
 }
 

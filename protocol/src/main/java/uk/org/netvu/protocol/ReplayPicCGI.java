@@ -726,20 +726,17 @@ public final class ReplayPicCGI
         /**
          * Complete JFIF (JPEG) image data.
          */
-        JFIF
-        ,
+        JFIF,
         
         /**
          * Truncated JPEG image data.
          */
-        JPEG
-        ,
+        JPEG,
         
         /**
          * MPEG-4 image data.
          */
-        MP4
-        ;
+        MP4;
         
         /**
          * A Function that, given a String, will produce an Option containing
@@ -776,26 +773,22 @@ public final class ReplayPicCGI
         /**
          * Play video forwards at its original speed.
          */
-        PLAY
-        ,
+        PLAY,
         
         /**
          * Play video forwards at a speed controlled by the fast-forward multiplier.
          */
-        FFWD
-        ,
+        FFWD,
         
         /**
          * Play video backwards.
          */
-        RWND
-        ,
+        RWND,
         
         /**
          * Stop playing video.
          */
-        STOP
-        ;
+        STOP;
         
         /**
          * A Function that, given a String, will produce an Option containing
@@ -832,20 +825,17 @@ public final class ReplayPicCGI
         /**
          * Multipart MIME.
          */
-        MIME
-        ,
+        MIME,
         
         /**
          * AD's 'binary' format.
          */
-        BINARY
-        ,
+        BINARY,
         
         /**
          * AD's 'minimal' format.
          */
-        MINIMAL
-        ;
+        MINIMAL;
         
         /**
          * A Function that, given a String, will produce an Option containing
@@ -882,14 +872,12 @@ public final class ReplayPicCGI
         /**
          * Signifies that audio is enabled.
          */
-        ON
-        ,
+        ON,
         
         /**
          * Signifies that audio is disabled.
          */
-        OFF
-        ;
+        OFF;
         
         /**
          * A Function that, given a String, will produce an Option containing

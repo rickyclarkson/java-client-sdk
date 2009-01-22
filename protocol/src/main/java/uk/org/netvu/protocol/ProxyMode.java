@@ -8,14 +8,12 @@ public  enum ProxyMode
     /**
      * A decoder will clear connections to cameras made by the CGI request after the video stream has terminated.
      */
-    TRANSIENT
-    ,
+    TRANSIENT,
     
     /**
      * A decoder will maintain connections to cameras made by the CGI request after the video stream has terminated.
      */
-    PERSISTENT
-    ;
+    PERSISTENT;
     
     /**
      * A Function that, given a String, will produce an Option containing

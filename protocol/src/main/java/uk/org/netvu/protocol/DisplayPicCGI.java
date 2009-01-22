@@ -827,20 +827,17 @@ public final class DisplayPicCGI
         /**
          * Complete JFIF (JPEG) image data.
          */
-        JFIF
-        ,
+        JFIF,
         
         /**
          * Truncated JPEG image data.
          */
-        JPEG
-        ,
+        JPEG,
         
         /**
          * MPEG-4 image data.
          */
-        MP4
-        ;
+        MP4;
         
         /**
          * A Function that, given a String, will produce an Option containing
@@ -877,14 +874,12 @@ public final class DisplayPicCGI
         /**
          * Out of band UDP data.
          */
-        UDP
-        ,
+        UDP,
         
         /**
          * In-band data interleaved with images.
          */
-        INLINE
-        ;
+        INLINE;
         
         /**
          * A Function that, given a String, will produce an Option containing
@@ -921,20 +916,17 @@ public final class DisplayPicCGI
         /**
          * Multipart MIME.
          */
-        MIME
-        ,
+        MIME,
         
         /**
          * AD's 'binary' format.
          */
-        BINARY
-        ,
+        BINARY,
         
         /**
          * AD's 'minimal' format.
          */
-        MINIMAL
-        ;
+        MINIMAL;
         
         /**
          * A Function that, given a String, will produce an Option containing
