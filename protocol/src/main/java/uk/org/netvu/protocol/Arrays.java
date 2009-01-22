@@ -6,6 +6,13 @@ package uk.org.netvu.protocol;
 final class Arrays
 {
     /**
+     * Private to prevent instantiation.
+     */
+    private Arrays()
+    {
+    }
+
+    /**
      * Identifies whether the specified array contains the specified element.
      * 
      * @param <T>

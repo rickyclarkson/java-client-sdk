@@ -169,7 +169,7 @@ object displaypiccgi { def main(args: Array[String]): Unit = {
  val extras =
   Enum("Format", "The possible formats that the video stream can be returned as.", IsStatic(true),
        List(NameAndDescription("JFIF", "Complete JFIF (JPEG) image data"), NameAndDescription("JPEG", "Truncated JPEG image data"), NameAndDescription("MP4", "MPEG-4 image data"))).toJava ++
-  Enum("AudioMode", "The possible mechanisms for returning audio data", IsStatic(true),
+  Enum("AudioMode", "The possible mechanisms for returning audio data.", IsStatic(true),
        List(NameAndDescription("UDP", "Out of band UDP data"), NameAndDescription("INLINE", "In-band data interleaved with images"))).toJava ++
   Enum("TransmissionMode", "The possible stream headers that the video stream can be wrapped in.", IsStatic(true),
        List(NameAndDescription("MIME", "Multipart MIME"), NameAndDescription("BINARY", "AD's 'binary' format"), NameAndDescription("MINIMAL", "AD's 'minimal' format"))).toJava

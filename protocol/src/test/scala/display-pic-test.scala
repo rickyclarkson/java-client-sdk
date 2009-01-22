@@ -85,4 +85,6 @@ class DisplayPicCGITest extends JUnit4(new Specification {
 
  DisplayPicCGI.fromString("/display_pic.cgi?slaveip=192.168.0.1").getSlaveIP mustEqual IPAddress.fromString("192.168.0.1").get
  DisplayPicCGI.fromString("/display_pic.cgi?slaveip=19222.168.0.1") must throwAn[IllegalArgumentException]
+ DisplayPicCGI.fromString("/display_pic.cgi?slaveip=-21.3.4.5") must throwAn[IllegalArgumentException]
+ DisplayPicCGI.fromString("/display_pic.cgi?slaveip=1.2.3.4").getSlaveIP.rawValue mustEqual 1 << 24 | 2 << 16 | 3 << 8 | 4
 })
