@@ -1,5 +1,7 @@
 object Pretty {
  val tab = 4
+ val max = 120
+
  def lines(s: String): Iterable[String] = s.split("\n").map(_ replaceAll ("^ *", ""))
  def brace(lines: Iterable[String]): Iterable[String] = List("{") ++ lines.map(" " * tab + _) ++ List("}")
  def wrapped(lines: Iterable[String]) = lines.map(" " * (tab * 2) + _)
@@ -55,7 +57,11 @@ object Pretty {
  def clazz(description: Iterable[String], modifiers: String, name: String, body: Iterable[String]) = blockComment(description) ++ lines(modifiers + " class " + name) ++ brace(body)
  private def reduceLeftOr[T](list: List[T], or: T)(f: (T, T) => T): T = list match { case Nil => or
                                                                                      case x :: y => list.reduceLeft(f) }
- def print(lines: Iterable[String]) = println(lines.foldLeft(new StringBuilder)(_ append _ append '\n'))
+ def print(lines: Iterable[String]) = {
+  if (lines.filter(_.length > 120).toList.size != 0)
+   System.err.println(lines.filter(_.length > 120).mkString("\n"))
+  println(lines.foldLeft(new StringBuilder)(_ append _ append '\n'))
+ }
 
  def Try(body: Iterable[String]) = lines("try") ++ brace(body)
  def Finally(body: Iterable[String]) = lines("finally") ++ brace(body)
@@ -93,7 +99,7 @@ case class Method(visibility: Visibility, isStatic: IsStatic, typeParameters: Li
 case class ParaMeta(storedType: String, constName: String, constructor: Iterable[String], publicType: String, getterName: String, name: String)
 
 object intParaMeta {
- def apply(constName: String, constructor: String, getterName: String, name: String) = ParaMeta("Integer", constName, List(constructor), "int", getterName, name)
+ def apply(constName: String, constructor: String, getterName: String, name: String) = ParaMeta("Integer", constName, lines(constructor), "int", getterName, name)
 }
 
 object lambda {
@@ -133,31 +139,50 @@ case class Enum(name: String, description: String, static: IsStatic, members: Li
 
 object displaypiccgi { def main(args: Array[String]): Unit = {  
   val fields = List(
-   intParaMeta("CAM", """ParameterDescription.parameter( "cam", StringConversion.integer() ).withDefault( 1 ).withBounds( 1, 16, Num.integer )""", "getCam", "cam"),
-   intParaMeta("FIELDS", """ParameterDescription.parameter( "fields", StringConversion.integer() ).withDefault( 1 ).positive( Num.integer )""", "getFields", "fields"),
-   ParaMeta("String", "RES", lines("""ParameterDescription.parameter( "res", StringConversion.string() ).withDefault( "med" ).allowedValues( "hi", "med", "lo" )"""), "String", "getRes", "res"),
-   ParaMeta("Integer", "SEQ", lines("""ParameterDescription.parameter( "seq", StringConversion.hexInt() ).withDefault( 0 ).withBounds( 0, 0xF, Num.integer )"""), "int", "getSeq", "seq"),
+   intParaMeta("CAM", """ParameterDescription.parameter( "cam", StringConversion.integer() )
+                      .withDefault( 1 ).withBounds( 1, 16, Num.integer )""", "getCam", "cam"),
+   intParaMeta("FIELDS", """ParameterDescription.parameter( "fields", StringConversion.integer() )
+                      .withDefault( 1 ).positive( Num.integer )""", "getFields", "fields"),
+   ParaMeta("String", "RES", lines("""ParameterDescription.parameter( "res", StringConversion.string() )
+                                   .withDefault( "med" ).allowedValues( "hi", "med", "lo" )"""), "String", "getRes", "res"),
+   ParaMeta("Integer", "SEQ", lines("""ParameterDescription.parameter( "seq", StringConversion.hexInt() ).withDefault( 0 )
+                                    .withBounds( 0, 0xF, Num.integer )"""), "int", "getSeq", "seq"),
    intParaMeta("DWELL", """ParameterDescription.parameter( "dwell", StringConversion.integer() ).withDefault( 0 )""", "getDwell", "dwell"),
    intParaMeta("ID", """ParameterDescription.parameter( "id", StringConversion.integer() ).withDefault( 0 )""", "getId", "id"),
    intParaMeta("DINDEX", """ParameterDescription.parameter( "dindex", StringConversion.integer() ).withDefault( 0 )""", "getDIndex", "dIndex"),
-   intParaMeta("PRESEL", """ParameterDescription.parameter( "presel", StringConversion.integer() ).withDefault( 0 ).withBounds( 0, 3, Num.integer )""", "getPresel", "presel"),
-   intParaMeta("CHANNEL", """ParameterDescription.parameter( "channel", StringConversion.integer() ).withDefault( -1 ).withBounds( -1, 1, Num.integer )""", "getChannel", "channel"),
+   intParaMeta("PRESEL", """ParameterDescription.parameter( "presel", StringConversion.integer() )
+                         .withDefault( 0 ).withBounds( 0, 3, Num.integer )""", "getPresel", "presel"),
+   intParaMeta("CHANNEL", """ParameterDescription.parameter( "channel", StringConversion.integer() )
+                          .withDefault( -1 ).withBounds( -1, 1, Num.integer )""", "getChannel", "channel"),
    intParaMeta("RATE", """ParameterDescription.parameter( "rate", StringConversion.integer() ).withDefault( 0 )""", "getRate", "rate"),
-   intParaMeta("FORCED_Q", """ParameterDescription.parameter( "forcedq", StringConversion.integer() ).withDefault( 0 ).withBounds( 0, 255, Num.integer ).disallowing( 1 )""", "getForcedQ", "forcedQ"),
-   intParaMeta("DURATION", """ParameterDescription.parameter( "duration", StringConversion.integer() ).withDefault( 0 ).notNegative( Num.integer )""", "getDuration", "duration"),
-   intParaMeta("N_BUFFERS", """ParameterDescription.parameter( "nbuffers", StringConversion.integer() ).withDefault( 0 ).notNegative( Num.integer )""", "getNBuffers", "nBuffers"),
-   intParaMeta("TELEM_Q", """ParameterDescription.parameter( "telemQ", StringConversion.integer() ).withDefault( -1 ).withBounds( -1, Integer.MAX_VALUE, Num.integer )""", "getTelemQ", "telemQ"),
-   intParaMeta("PKT_SIZE", """ParameterDescription.parameterWithBoundsAndAnException( 100, 1500, 0, ParameterDescription.parameter( "pkt_size", StringConversion.integer() ).withDefault( 0 ) )""", "getPktSize", "pktSize"),
-   intParaMeta("UDP_PORT", """ParameterDescription.parameter( "udp_port", StringConversion.integer() ).withDefault( 0 ).withBounds( 0, 65535, Num.integer )""", "getUdpPort", "udpPort"),
-   ParaMeta("String", "AUDIO", lines("""ParameterDescription.parameter( "audio", StringConversion.string() ).withDefault( "0" ).allowedValues( "on", "off", "0", "1", "2" )"""), "String", "getAudio", "audio"),
-   ParaMeta("Format", "FORMAT", lines("""ParameterDescription.parameter( "format", StringConversion.convenientPartial( Format.fromStringFunction() ) ).withDefault( Format.JFIF )"""), "Format", "getFormat", "format"),
-   ParaMeta("AudioMode", "AUDIO_MODE", lines("""ParameterDescription.parameter( "audmode", StringConversion.convenientPartial( AudioMode.fromStringFunction() ) ).withDefault( AudioMode.UDP )"""), "AudioMode", "getAudioMode", "audioMode"),
+   intParaMeta("FORCED_Q", """ParameterDescription.parameter( "forcedq", StringConversion.integer() )
+                           .withDefault( 0 ).withBounds( 0, 255, Num.integer ).disallowing( 1 )""", "getForcedQ", "forcedQ"),
+   intParaMeta("DURATION", """ParameterDescription.parameter( "duration", StringConversion.integer() )
+                              .withDefault( 0 ).notNegative( Num.integer )""", "getDuration", "duration"),
+   intParaMeta("N_BUFFERS", """ParameterDescription.parameter( "nbuffers", StringConversion.integer() )
+                            .withDefault( 0 ).notNegative( Num.integer )""", "getNBuffers", "nBuffers"),
+   intParaMeta("TELEM_Q", """ParameterDescription.parameter( "telemQ", StringConversion.integer() )
+                          .withDefault( -1 ).withBounds( -1, Integer.MAX_VALUE, Num.integer )""", "getTelemQ", "telemQ"),
+   intParaMeta("PKT_SIZE", """ParameterDescription.parameterWithBoundsAndAnException( 100, 1500, 0,
+                           ParameterDescription.parameter( "pkt_size", StringConversion.integer() ).withDefault( 0 ) )""", "getPktSize", "pktSize"),
+   intParaMeta("UDP_PORT", """ParameterDescription.parameter( "udp_port", StringConversion.integer() ).withDefault( 0 )
+                           .withBounds( 0, 65535, Num.integer )""", "getUdpPort", "udpPort"),
+   ParaMeta("String", "AUDIO", lines("""ParameterDescription.parameter( "audio", StringConversion.string() )
+                                     .withDefault( "0" ).allowedValues( "on", "off", "0", "1", "2" )"""), "String", "getAudio", "audio"),
+   ParaMeta("Format", "FORMAT", lines("""ParameterDescription.parameter( "format",
+                                      StringConversion.convenientPartial( Format.fromStringFunction() ) )
+                                      .withDefault( Format.JFIF )"""), "Format", "getFormat", "format"),
+   ParaMeta("AudioMode", "AUDIO_MODE", lines("""ParameterDescription.parameter( "audmode",
+                                             StringConversion.convenientPartial( AudioMode.fromStringFunction() ) )
+                                             .withDefault( AudioMode.UDP )"""), "AudioMode", "getAudioMode", "audioMode"),
    ParaMeta("TransmissionMode", "TRANSMISSION_MODE", append(prepend("""ParameterDescription.parameterWithDefault( "txmode", """, lambda("ParameterMap", "TransmissionMode", "map", "map.get( FORMAT ) == Format.JFIF ? TransmissionMode.MIME : TransmissionMode.MINIMAL")), ", StringConversion.convenientPartial( TransmissionMode.fromStringFunction() ) )"), "TransmissionMode", "getTransmissionMode", "transmissionMode"),
    intParaMeta("PPS", """ParameterDescription.parameter( "pps", StringConversion.integer() ).withDefault( 0 )""", "getPPS", "pps"),
    intParaMeta("MP4_RATE", """ParameterDescription.parameter( "mp4rate", StringConversion.integer() ).withDefault( 0 )""", "getMp4Rate", "mp4Rate"),
-   ParaMeta("IPAddress", "SLAVE_IP", lines("""ParameterDescription.parameter( "slaveip", StringConversion.convenientPartial( IPAddress.fromString )).withDefault( IPAddress.fromString( "0.0.0.0" ).get() )"""), "IPAddress", "getSlaveIP", "slaveIP"),
+   ParaMeta("IPAddress", "SLAVE_IP", lines("""ParameterDescription.parameter( "slaveip", StringConversion.convenientPartial(
+                                           IPAddress.fromString )).withDefault( IPAddress.fromString( "0.0.0.0" ).get() )"""), "IPAddress", "getSlaveIP", "slaveIP"),
    intParaMeta("OP_CHAN", """ParameterDescription.parameter( "opchan", StringConversion.integer() ).withDefault( -1 )""", "getOpChan", "opChan"),
-   ParaMeta("ProxyMode", "PROXY_MODE", lines("""ParameterDescription.parameter( "proxymode", StringConversion.convenientPartial( ProxyMode.fromStringFunction() ) ).withDefault( ProxyMode.TRANSIENT )"""), "ProxyMode", "getProxyMode", "proxyMode"),
+   ParaMeta("ProxyMode", "PROXY_MODE", lines("""ParameterDescription.parameter( "proxymode",
+                                             StringConversion.convenientPartial( ProxyMode.fromStringFunction() ) ).withDefault( ProxyMode.TRANSIENT )"""), "ProxyMode", "getProxyMode", "proxyMode"),
    intParaMeta("PROXY_PRI", """ParameterDescription.parameter( "proxypri", StringConversion.integer() ).withDefault( 1 )""", "getProxyPri", "proxyPri"),
    intParaMeta("PROXY_RETRY", """ParameterDescription.parameter( "proxyretry", StringConversion.integer() ).withDefault( 0 )""", "getProxyRetry", "proxyRetry")
   )
@@ -196,12 +221,13 @@ object CodeGen {
     params.flatMap(param => publicMethod(lines("Gets the value of the "+param.name+" parameter."), "the value of the "+param.name+" parameter.", param.publicType, param.getterName, Nil, lines("return parameterMap.get( "+param.constName+" );"))) ++
     clazz(lines(
      """A builder that takes in all the optional values for """+className+" and produces a "+className+""" when build() is
-        called.  Each parameter must be supplied no more than once.  A Builder can only be built once; that is, it can only have
-        build() called on it once.  Calling it a second time will cause an IllegalStateException.  Setting its values after
-        calling build() will cause an IllegalStateException."""), "public static final", "Builder",
+        called.  Each parameter must be supplied no more than once.  A Builder can only be built once; that is, it can
+        only have build() called on it once.  Calling it a second time will cause an IllegalStateException.  Setting its
+        values after calling build() will cause an IllegalStateException."""), "public static final", "Builder",
      privateField(lines(
       """The values supplied for each parameter so far.
-         When this is an empty Option, the Builder is in an invalid state, the reason for which is stored in the Option."""),
+         When this is an empty Option, the Builder is in an invalid state, the reason for
+         which is stored in the Option."""),
       "Option<ParameterMap>", "parameterMap", "Option.getFullOption( new ParameterMap() )") ++
      
     params.flatMap(param => publicMethod(
@@ -223,7 +249,8 @@ object CodeGen {
 
      lines("static") ++ brace(params map (param => "params.add( "+param.constName+" );")) ++ extras ++
 
-     blockComment(lines("Converts this "+className+" into a String containing a URL beginning with " + urlPart +" and containing the supplied parameters.") ++ returnDoc("a String containing a URL beginning with " + urlPart + " and containing the supplied parameters")) ++
+     blockComment(lines("Converts this "+className+""" into a String containing a URL beginning with 
+                        """ + urlPart +" and containing the supplied parameters.") ++ returnDoc("a String containing a URL beginning with " + urlPart + " and containing the supplied parameters")) ++
      lines("""@Override
            public String toString()""") ++ brace(lines("return \"" + urlPart + "\" + parameterMap.toURLParameters( params );")) ++ blankLine ++
 
