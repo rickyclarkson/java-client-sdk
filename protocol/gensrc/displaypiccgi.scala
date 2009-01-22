@@ -2,6 +2,7 @@ object Pretty {
  val tab = 4
  def lines(s: String): Iterable[String] = s.split("\n").map(_ replaceAll ("^ *", ""))
  def brace(lines: Iterable[String]): Iterable[String] = List("{") ++ lines.map(" " * tab + _) ++ List("}")
+ def wrapped(lines: Iterable[String]) = lines.map(" " * (tab * 2) + _)
  def blockComment(lines: Iterable[String]): Iterable[String] = List("/**") ++ lines.map(" * " + _) ++ List(" */")
  def paramDoc(parameter: Parameter) = List(
   "@param "+parameter.name,
@@ -24,7 +25,9 @@ object Pretty {
  def returnDoc(description: String) = lines("@return "+description)
  def blankLine = List("")
  def blankFinal(description: Iterable[String], `type`: String, name: String) = blockComment(description) ++ lines("private final "+`type`+" "+name+";") ++ blankLine
- def privateStatic(description: Iterable[String], `type`: String, name: String, value: String) = blockComment(description) ++ lines("private static final "+`type` + " " + name + " = " + value + ";") ++ blankLine
+ def privateStatic(description: Iterable[String], `type`: String, name: String, value: Iterable[String]) =
+  blockComment(description) ++ lines("private static final "+`type` + " " + name + " = ") ++ append(wrapped(value), ";") ++ blankLine
+
  def privateField(description: Iterable[String], `type`: String, name: String, value: String) = blockComment(description) ++ lines("private "+`type`+" "+name+" = "+value+";") ++ blankLine
 
  def checkParametersLine(parameters: List[Parameter]) = { val nonPrimitives = parameters.filter(!_.isPrimitive)
@@ -44,14 +47,15 @@ object Pretty {
  def nonPrimitives(parameters: List[Parameter]) = parameters.filter(!_.isPrimitive)
 
  def staticPackagePrivateMethod(description: Iterable[String], returnDocPart: String, returnType: String, name: String, parameters: List[Parameter], body: Iterable[String]) =
-  blockComment(description ++ parameters.flatMap(paramDoc) ++ throwsNpeDoc(parameters) ++ returnDoc(returnDocPart)) ++
-  lines("static "+returnType+" "+name+"( "+parameters.map(_.typeThenName).mkString(", ")+" )") ++
-  brace(checkParametersLine(parameters) ++ body) ++ blankLine
+  Method(Package, IsStatic(true), Nil, NameAndDescription(returnType, returnDocPart), name, parameters, description, Nil, body).toJava
 
  def publicMethod(description: Iterable[String], returnDocPart: String, returnType: String, name: String, parameters: List[Parameter], body: Iterable[String]) =
-  blockComment(description ++ parameters.flatMap(paramDoc) ++ throwsNpeDoc(parameters) ++ returnDoc(returnDocPart)) ++
-  lines("public "+returnType+" "+name+"( "+parameters.map(_.typeThenName).mkString(", ") + " )") ++
-  brace(checkParametersLine(parameters) ++ body) ++ blankLine
+  Method(Public, IsStatic(false), Nil, NameAndDescription(returnType, returnDocPart), name, parameters, description, Nil, body).toJava
+
+// def publicMethod(description: Iterable[String], returnDocPart: String, returnType: String, name: String, parameters: List[Parameter], body: Iterable[String]) =
+//  blockComment(description ++ parameters.flatMap(paramDoc) ++ throwsNpeDoc(parameters) ++ returnDoc(returnDocPart)) ++
+//  lines("public "+returnType+" "+name+"( "+parameters.map(_.typeThenName).mkString(", ") + " )") ++
+//  brace(checkParametersLine(parameters) ++ body) ++ blankLine
 
  def clazz(description: Iterable[String], modifiers: String, name: String, body: Iterable[String]) = blockComment(description) ++ lines(modifiers + " class " + name) ++ brace(body)
  private def reduceLeftOr[T](list: List[T], or: T)(f: (T, T) => T): T = list match { case Nil => or
@@ -62,6 +66,7 @@ object Pretty {
  def Finally(body: Iterable[String]) = lines("finally") ++ brace(body)
 
  def append(lines: Iterable[String], s: String): Iterable[String] = lines.toList match { case list => list.dropRight(1) ++ List(list.last + s) }
+ def prepend(s: String, lines: Iterable[String]) = lines.toList match { case list => (s + list.head) :: list.drop(1) }
 }
 
 case class Parameter(`type`: String, name: String, description: String) { def typeThenName = `type` + " " + name
@@ -82,23 +87,25 @@ import Pretty._
 
 case class Method(visibility: Visibility, isStatic: IsStatic, typeParameters: List[TypeParameter], returnType: NameAndDescription, name: String, parameters: List[Parameter], description: Iterable[String], throwsDocs: List[NameAndDescription], body: Iterable[String]) {
  def toJava = blockComment(description ++ blankLine ++ (typeParameters.map(tp => Parameter("fake", "<"+tp.name+">", tp.description)) ++ parameters).flatMap(paramDoc) ++ returnDoc(returnType.description) ++ throwsDocs.flatMap(t => throwsDoc(t.name, t.description)) ++ throwsNpeDoc(parameters)) ++
-  lines(visibility.toString+" "+isStatic.toJava+" "+(typeParameters.map(_.name).mkString(", ") match {
+  lines(visibility.toString+(if (isStatic.is) " static " else " ")+(typeParameters.map(_.name).mkString(", ") match {
    case "" => ""
    case s => "<" + s + ">"
-  }) + returnType.name + " " + name + "( " + parameters.map(_.typeThenName).mkString(", ")+" )") ++
+  }) + returnType.name + " " + name + (parameters.map(_.typeThenName).mkString(", ") match { case "" => "()"
+                                                                                            case s => "( " + s + " )" })) ++
   brace(checkParametersLine(parameters) ++ body) ++ blankLine
 }
 
-case class ParaMeta(storedType: String, constName: String, constructor: String, publicType: String, getterName: String, name: String)
+case class ParaMeta(storedType: String, constName: String, constructor: Iterable[String], publicType: String, getterName: String, name: String)
 
 object intParaMeta {
- def apply(constName: String, constructor: String, getterName: String, name: String) = ParaMeta("Integer", constName, constructor, "int", getterName, name)
+ def apply(constName: String, constructor: String, getterName: String, name: String) = ParaMeta("Integer", constName, List(constructor), "int", getterName, name)
 }
 
 object lambda {
  def apply(in: String, out: String, name: String, body: String) =
   lines("new Function<"+in+", "+out+">()") ++
-  brace(lines("public "+out+" apply("+in+" "+name+")") ++
+  brace(lines("""@Override
+              public """+out+" apply( "+in+" "+name+" )") ++
         brace(lines("return "+body+";")))
 }
 
@@ -118,11 +125,14 @@ case class Enum(name: String, description: String, static: IsStatic, members: Li
    """A Function that, given a String, will produce an Option containing
       a member of """+name+""" if the passed-in String matches it (ignoring case), and an empty
       Option otherwise."""), "a Function that parses a String into a "+name, "Function<String, Option<"+name+">>", "fromStringFunction", Nil, 
-     lines("return") ++ function("String", "Option<"+name+">", "s", lines(
+     append(prepend("return ", function("String", "Option<"+name+">", "s", lines(
       "for ( final "+name+" element: values() )") ++ brace(lines(
        "if ( element.toString().equalsIgnoreCase( s ) )") ++ brace(lines(
-        "return Option.getFullOption( element );"))) ++ lines("return Option.getEmptyOption( s + \" is not a valid " + name + " element \" );")) ++ lines(";"))
-  blockComment(lines(description)) ++ lines("public "+static+" enum "+name) ++ brace(append(members.map(_.toJava).reduceLeft((acc, m) => append(acc, ",") ++ blankLine ++ m), ";") ++ blankLine ++ fromStringToEnum)
+        "return Option.getFullOption( element );"))) ++ lines("return Option.getEmptyOption( s + \" is not a valid " + name + " element \" );"))), ";"))
+  blockComment(lines(description)) ++
+  lines("public "+static+" enum "+name) ++
+  brace(append(members.map(_.toJava).reduceLeft((acc, m) => append(acc, ",") ++ blankLine ++ m), ";") ++ blankLine ++ fromStringToEnum) ++
+  blankLine
  }
 }
 
@@ -130,8 +140,8 @@ object displaypiccgi { def main(args: Array[String]): Unit = {
   val fields = List(
    intParaMeta("CAM", """ParameterDescription.parameter("cam", StringConversion.integer()).withDefault(1).withBounds(1, 16, Num.integer)""", "getCam", "cam"),
    intParaMeta("FIELDS", """ParameterDescription.parameter("fields", StringConversion.integer()).withDefault(1).positive(Num.integer)""", "getFields", "fields"),
-   ParaMeta("String", "RES", """ParameterDescription.parameter("res", StringConversion.string()).withDefault("med").allowedValues("hi", "med", "lo")""", "String", "getRes", "res"),
-   ParaMeta("Integer", "SEQ", """ParameterDescription.parameter("seq", StringConversion.hexInt()).withDefault(0).withBounds(0, 0xF, Num.integer)""", "int", "getSeq", "seq"),
+   ParaMeta("String", "RES", lines("""ParameterDescription.parameter("res", StringConversion.string()).withDefault("med").allowedValues("hi", "med", "lo")"""), "String", "getRes", "res"),
+   ParaMeta("Integer", "SEQ", lines("""ParameterDescription.parameter("seq", StringConversion.hexInt()).withDefault(0).withBounds(0, 0xF, Num.integer)"""), "int", "getSeq", "seq"),
    intParaMeta("DWELL", """ParameterDescription.parameter("dwell", StringConversion.integer()).withDefault(0)""", "getDwell", "dwell"),
    intParaMeta("ID", """ParameterDescription.parameter("id", StringConversion.integer()).withDefault(0)""", "getId", "id"),
    intParaMeta("DINDEX", """ParameterDescription.parameter("dindex", StringConversion.integer()).withDefault(0)""", "getDIndex", "dIndex"),
@@ -144,15 +154,15 @@ object displaypiccgi { def main(args: Array[String]): Unit = {
    intParaMeta("TELEM_Q", """ParameterDescription.parameter("telemQ", StringConversion.integer()).withDefault(-1).withBounds(-1, Integer.MAX_VALUE, Num.integer)""", "getTelemQ", "telemQ"),
    intParaMeta("PKT_SIZE", """ParameterDescription.parameterWithBoundsAndAnException(100, 1500, 0, ParameterDescription.parameter("pkt_size", StringConversion.integer()).withDefault(0))""", "getPktSize", "pktSize"),
    intParaMeta("UDP_PORT", """ParameterDescription.parameter("udp_port", StringConversion.integer()).withDefault(0).withBounds(0, 65535, Num.integer)""", "getUdpPort", "udpPort"),
-   ParaMeta("String", "AUDIO", """ParameterDescription.parameter("audio", StringConversion.string()).withDefault("0").allowedValues("on", "off", "0", "1", "2")""", "String", "getAudio", "audio"),
-   ParaMeta("Format", "FORMAT", """ParameterDescription.parameter("format", StringConversion.convenientPartial(Format.fromStringFunction())).withDefault(Format.JFIF)""", "Format", "getFormat", "format"),
-   ParaMeta("AudioMode", "AUDIO_MODE", """ParameterDescription.parameter("audmode", StringConversion.convenientPartial(AudioMode.fromStringFunction())).withDefault(AudioMode.UDP)""", "AudioMode", "getAudioMode", "audioMode"),
-   ParaMeta("TransmissionMode", "TRANSMISSION_MODE", """ParameterDescription.parameterWithDefault("txmode", new Function<ParameterMap, TransmissionMode>() { public TransmissionMode apply(ParameterMap map) { return map.get(FORMAT) == Format.JFIF ? TransmissionMode.MIME : TransmissionMode.MINIMAL; } }, StringConversion.convenientPartial(TransmissionMode.fromStringFunction()))""", "TransmissionMode", "getTransmissionMode", "transmissionMode"),
+   ParaMeta("String", "AUDIO", lines("""ParameterDescription.parameter("audio", StringConversion.string()).withDefault("0").allowedValues("on", "off", "0", "1", "2")"""), "String", "getAudio", "audio"),
+   ParaMeta("Format", "FORMAT", lines("""ParameterDescription.parameter("format", StringConversion.convenientPartial(Format.fromStringFunction())).withDefault(Format.JFIF)"""), "Format", "getFormat", "format"),
+   ParaMeta("AudioMode", "AUDIO_MODE", lines("""ParameterDescription.parameter("audmode", StringConversion.convenientPartial(AudioMode.fromStringFunction())).withDefault(AudioMode.UDP)"""), "AudioMode", "getAudioMode", "audioMode"),
+   ParaMeta("TransmissionMode", "TRANSMISSION_MODE", append(prepend("""ParameterDescription.parameterWithDefault("txmode", """, lambda("ParameterMap", "TransmissionMode", "map", "map.get(FORMAT) == Format.JFIF ? TransmissionMode.MIME : TransmissionMode.MINIMAL")), ", StringConversion.convenientPartial(TransmissionMode.fromStringFunction()))"), "TransmissionMode", "getTransmissionMode", "transmissionMode"),
    intParaMeta("PPS", """ParameterDescription.parameter("pps", StringConversion.integer()).withDefault(0)""", "getPPS", "pps"),
    intParaMeta("MP4_RATE", """ParameterDescription.parameter("mp4rate", StringConversion.integer()).withDefault(0)""", "getMp4Rate", "mp4Rate"),
-   ParaMeta("IPAddress", "SLAVE_IP", """ParameterDescription.parameter("slaveip", StringConversion.convenientPartial(IPAddress.fromString)).withDefault(IPAddress.fromString("0.0.0.0").get())""", "IPAddress", "getSlaveIP", "slaveIP"),
+   ParaMeta("IPAddress", "SLAVE_IP", lines("""ParameterDescription.parameter("slaveip", StringConversion.convenientPartial(IPAddress.fromString)).withDefault(IPAddress.fromString("0.0.0.0").get())"""), "IPAddress", "getSlaveIP", "slaveIP"),
    intParaMeta("OP_CHAN", """ParameterDescription.parameter("opchan", StringConversion.integer()).withDefault(-1)""", "getOpChan", "opChan"),
-   ParaMeta("ProxyMode", "PROXY_MODE", """ParameterDescription.parameter("proxymode", StringConversion.convenientPartial(ProxyMode.fromStringFunction())).withDefault(ProxyMode.TRANSIENT)""", "ProxyMode", "getProxyMode", "proxyMode"),
+   ParaMeta("ProxyMode", "PROXY_MODE", lines("""ParameterDescription.parameter("proxymode", StringConversion.convenientPartial(ProxyMode.fromStringFunction())).withDefault(ProxyMode.TRANSIENT)"""), "ProxyMode", "getProxyMode", "proxyMode"),
    intParaMeta("PROXY_PRI", """ParameterDescription.parameter("proxypri", StringConversion.integer()).withDefault(1)""", "getProxyPri", "proxyPri"),
    intParaMeta("PROXY_RETRY", """ParameterDescription.parameter("proxyretry", StringConversion.integer()).withDefault(0)""", "getProxyRetry", "proxyRetry")
   )
@@ -171,13 +181,14 @@ object displaypiccgi { def main(args: Array[String]): Unit = {
 
  CodeGen.generate(packageName, lines(
   """A parameter list for a display_pic.cgi query.
-  Use {@link DisplayPicCGI.Builder} to construct a DisplayPicCGI, or {@link DisplayPicCGI#fromURL(String)}."""), className, fields, urlPart, extras)
+  Use {@link DisplayPicCGI.Builder} to construct a DisplayPicCGI, or {@link DisplayPicCGI#fromString(String)}."""), className, fields, urlPart, extras)
 } }
 
 object CodeGen {
  def generate(packageName: String, classComment: Iterable[String], className: String, params: List[ParaMeta], urlPart: String, extras: Iterable[String]) {
   print(lines(
    """package """+packageName+""";
+
    import java.util.List;
    import java.util.ArrayList;
    import uk.org.netvu.util.CheckParameters;   
@@ -185,7 +196,7 @@ object CodeGen {
    """public final class """+className) ++ brace(
     blankFinal(lines("The ParameterMap to get values from."), "ParameterMap", "parameterMap") ++
     packagePrivateConstructor(lines("Constructs a "+className+", using the values from the specified ParameterMap."), className, List(Parameter("ParameterMap", "parameterMap", "the ParameterMap to get values from")), lines("this.parameterMap = parameterMap;")) ++
-    privateStatic(lines("All the parameter specifications, used in parsing URLs."), "List<ParameterDescription<?, ?>>", "params", "new ArrayList<ParameterDescription<?, ?>>();") ++
+    privateStatic(lines("All the parameter specifications, used in parsing URLs."), "List<ParameterDescription<?, ?>>", "params", lines("new ArrayList<ParameterDescription<?, ?>>()")) ++
     params.flatMap(param => privateStatic(lines("The specification of the "+param.name+" parameter."), "ParameterDescription<"+param.storedType+", "+param.storedType+">", param.constName, param.constructor)) ++
     params.flatMap(param => publicMethod(lines("Gets the value of the "+param.name+" parameter."), "the value of the "+param.name+" parameter.", param.publicType, param.getterName, Nil, lines("return parameterMap.get( "+param.constName+" );"))) ++
     clazz(lines(
@@ -217,7 +228,7 @@ object CodeGen {
 
      lines("static") ++ brace(params map (param => "params.add( "+param.constName+" );")) ++ extras ++ lines(
       """@Override
-      public String toString()""") ++ brace(lines("return \"" + urlPart + "\" + parameterMap.toURLParameters( params );")) ++
+      public String toString()""") ++ brace(lines("return \"" + urlPart + "\" + parameterMap.toURLParameters( params );")) ++ blankLine ++
 
      lines("""public static """+className+""" fromString( String string )""") ++ brace(lines(
       """CheckParameters.areNotNull( string );

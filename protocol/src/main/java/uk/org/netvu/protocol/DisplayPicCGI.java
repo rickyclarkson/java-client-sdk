@@ -1,11 +1,12 @@
 package uk.org.netvu.protocol;
+
 import java.util.List;
 import java.util.ArrayList;
 import uk.org.netvu.util.CheckParameters;   
 
 /**
  * A parameter list for a display_pic.cgi query.
- * Use {@link DisplayPicCGI.Builder} to construct a DisplayPicCGI, or {@link DisplayPicCGI#fromURL(String)}.
+ * Use {@link DisplayPicCGI.Builder} to construct a DisplayPicCGI, or {@link DisplayPicCGI#fromString(String)}.
  */
 public final class DisplayPicCGI
 {
@@ -30,382 +31,444 @@ public final class DisplayPicCGI
     /**
      * All the parameter specifications, used in parsing URLs.
      */
-    private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>();;
+    private static final List<ParameterDescription<?, ?>> params = 
+            new ArrayList<ParameterDescription<?, ?>>();
     
     /**
      * The specification of the cam parameter.
      */
-    private static final ParameterDescription<Integer, Integer> CAM = ParameterDescription.parameter("cam", StringConversion.integer()).withDefault(1).withBounds(1, 16, Num.integer);
+    private static final ParameterDescription<Integer, Integer> CAM = 
+            ParameterDescription.parameter("cam", StringConversion.integer()).withDefault(1).withBounds(1, 16, Num.integer);
     
     /**
      * The specification of the fields parameter.
      */
-    private static final ParameterDescription<Integer, Integer> FIELDS = ParameterDescription.parameter("fields", StringConversion.integer()).withDefault(1).positive(Num.integer);
+    private static final ParameterDescription<Integer, Integer> FIELDS = 
+            ParameterDescription.parameter("fields", StringConversion.integer()).withDefault(1).positive(Num.integer);
     
     /**
      * The specification of the res parameter.
      */
-    private static final ParameterDescription<String, String> RES = ParameterDescription.parameter("res", StringConversion.string()).withDefault("med").allowedValues("hi", "med", "lo");
+    private static final ParameterDescription<String, String> RES = 
+            ParameterDescription.parameter("res", StringConversion.string()).withDefault("med").allowedValues("hi", "med", "lo");
     
     /**
      * The specification of the seq parameter.
      */
-    private static final ParameterDescription<Integer, Integer> SEQ = ParameterDescription.parameter("seq", StringConversion.hexInt()).withDefault(0).withBounds(0, 0xF, Num.integer);
+    private static final ParameterDescription<Integer, Integer> SEQ = 
+            ParameterDescription.parameter("seq", StringConversion.hexInt()).withDefault(0).withBounds(0, 0xF, Num.integer);
     
     /**
      * The specification of the dwell parameter.
      */
-    private static final ParameterDescription<Integer, Integer> DWELL = ParameterDescription.parameter("dwell", StringConversion.integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> DWELL = 
+            ParameterDescription.parameter("dwell", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the id parameter.
      */
-    private static final ParameterDescription<Integer, Integer> ID = ParameterDescription.parameter("id", StringConversion.integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> ID = 
+            ParameterDescription.parameter("id", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the dIndex parameter.
      */
-    private static final ParameterDescription<Integer, Integer> DINDEX = ParameterDescription.parameter("dindex", StringConversion.integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> DINDEX = 
+            ParameterDescription.parameter("dindex", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the presel parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PRESEL = ParameterDescription.parameter("presel", StringConversion.integer()).withDefault(0).withBounds(0, 3, Num.integer);
+    private static final ParameterDescription<Integer, Integer> PRESEL = 
+            ParameterDescription.parameter("presel", StringConversion.integer()).withDefault(0).withBounds(0, 3, Num.integer);
     
     /**
      * The specification of the channel parameter.
      */
-    private static final ParameterDescription<Integer, Integer> CHANNEL = ParameterDescription.parameter("channel", StringConversion.integer()).withDefault(-1).withBounds(-1, 1, Num.integer);
+    private static final ParameterDescription<Integer, Integer> CHANNEL = 
+            ParameterDescription.parameter("channel", StringConversion.integer()).withDefault(-1).withBounds(-1, 1, Num.integer);
     
     /**
      * The specification of the rate parameter.
      */
-    private static final ParameterDescription<Integer, Integer> RATE = ParameterDescription.parameter("rate", StringConversion.integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> RATE = 
+            ParameterDescription.parameter("rate", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the forcedQ parameter.
      */
-    private static final ParameterDescription<Integer, Integer> FORCED_Q = ParameterDescription.parameter("forcedq", StringConversion.integer()).withDefault(0).withBounds(0, 255, Num.integer).disallowing(1);
+    private static final ParameterDescription<Integer, Integer> FORCED_Q = 
+            ParameterDescription.parameter("forcedq", StringConversion.integer()).withDefault(0).withBounds(0, 255, Num.integer).disallowing(1);
     
     /**
      * The specification of the duration parameter.
      */
-    private static final ParameterDescription<Integer, Integer> DURATION = ParameterDescription.parameter("duration", StringConversion.integer()).withDefault(0).notNegative(Num.integer);
+    private static final ParameterDescription<Integer, Integer> DURATION = 
+            ParameterDescription.parameter("duration", StringConversion.integer()).withDefault(0).notNegative(Num.integer);
     
     /**
      * The specification of the nBuffers parameter.
      */
-    private static final ParameterDescription<Integer, Integer> N_BUFFERS = ParameterDescription.parameter("nbuffers", StringConversion.integer()).withDefault(0).notNegative(Num.integer);
+    private static final ParameterDescription<Integer, Integer> N_BUFFERS = 
+            ParameterDescription.parameter("nbuffers", StringConversion.integer()).withDefault(0).notNegative(Num.integer);
     
     /**
      * The specification of the telemQ parameter.
      */
-    private static final ParameterDescription<Integer, Integer> TELEM_Q = ParameterDescription.parameter("telemQ", StringConversion.integer()).withDefault(-1).withBounds(-1, Integer.MAX_VALUE, Num.integer);
+    private static final ParameterDescription<Integer, Integer> TELEM_Q = 
+            ParameterDescription.parameter("telemQ", StringConversion.integer()).withDefault(-1).withBounds(-1, Integer.MAX_VALUE, Num.integer);
     
     /**
      * The specification of the pktSize parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PKT_SIZE = ParameterDescription.parameterWithBoundsAndAnException(100, 1500, 0, ParameterDescription.parameter("pkt_size", StringConversion.integer()).withDefault(0));
+    private static final ParameterDescription<Integer, Integer> PKT_SIZE = 
+            ParameterDescription.parameterWithBoundsAndAnException(100, 1500, 0, ParameterDescription.parameter("pkt_size", StringConversion.integer()).withDefault(0));
     
     /**
      * The specification of the udpPort parameter.
      */
-    private static final ParameterDescription<Integer, Integer> UDP_PORT = ParameterDescription.parameter("udp_port", StringConversion.integer()).withDefault(0).withBounds(0, 65535, Num.integer);
+    private static final ParameterDescription<Integer, Integer> UDP_PORT = 
+            ParameterDescription.parameter("udp_port", StringConversion.integer()).withDefault(0).withBounds(0, 65535, Num.integer);
     
     /**
      * The specification of the audio parameter.
      */
-    private static final ParameterDescription<String, String> AUDIO = ParameterDescription.parameter("audio", StringConversion.string()).withDefault("0").allowedValues("on", "off", "0", "1", "2");
+    private static final ParameterDescription<String, String> AUDIO = 
+            ParameterDescription.parameter("audio", StringConversion.string()).withDefault("0").allowedValues("on", "off", "0", "1", "2");
     
     /**
      * The specification of the format parameter.
      */
-    private static final ParameterDescription<Format, Format> FORMAT = ParameterDescription.parameter("format", StringConversion.convenientPartial(Format.fromStringFunction())).withDefault(Format.JFIF);
+    private static final ParameterDescription<Format, Format> FORMAT = 
+            ParameterDescription.parameter("format", StringConversion.convenientPartial(Format.fromStringFunction())).withDefault(Format.JFIF);
     
     /**
      * The specification of the audioMode parameter.
      */
-    private static final ParameterDescription<AudioMode, AudioMode> AUDIO_MODE = ParameterDescription.parameter("audmode", StringConversion.convenientPartial(AudioMode.fromStringFunction())).withDefault(AudioMode.UDP);
+    private static final ParameterDescription<AudioMode, AudioMode> AUDIO_MODE = 
+            ParameterDescription.parameter("audmode", StringConversion.convenientPartial(AudioMode.fromStringFunction())).withDefault(AudioMode.UDP);
     
     /**
      * The specification of the transmissionMode parameter.
      */
-    private static final ParameterDescription<TransmissionMode, TransmissionMode> TRANSMISSION_MODE = ParameterDescription.parameterWithDefault("txmode", new Function<ParameterMap, TransmissionMode>() { public TransmissionMode apply(ParameterMap map) { return map.get(FORMAT) == Format.JFIF ? TransmissionMode.MIME : TransmissionMode.MINIMAL; } }, StringConversion.convenientPartial(TransmissionMode.fromStringFunction()));
+    private static final ParameterDescription<TransmissionMode, TransmissionMode> TRANSMISSION_MODE = 
+            ParameterDescription.parameterWithDefault("txmode", new Function<ParameterMap, TransmissionMode>()
+            {
+                @Override
+                public TransmissionMode apply( ParameterMap map )
+                {
+                    return map.get(FORMAT) == Format.JFIF ? TransmissionMode.MIME : TransmissionMode.MINIMAL;
+                }
+            }, StringConversion.convenientPartial(TransmissionMode.fromStringFunction()));
     
     /**
      * The specification of the pps parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PPS = ParameterDescription.parameter("pps", StringConversion.integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> PPS = 
+            ParameterDescription.parameter("pps", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the mp4Rate parameter.
      */
-    private static final ParameterDescription<Integer, Integer> MP4_RATE = ParameterDescription.parameter("mp4rate", StringConversion.integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> MP4_RATE = 
+            ParameterDescription.parameter("mp4rate", StringConversion.integer()).withDefault(0);
     
     /**
      * The specification of the slaveIP parameter.
      */
-    private static final ParameterDescription<IPAddress, IPAddress> SLAVE_IP = ParameterDescription.parameter("slaveip", StringConversion.convenientPartial(IPAddress.fromString)).withDefault(IPAddress.fromString("0.0.0.0").get());
+    private static final ParameterDescription<IPAddress, IPAddress> SLAVE_IP = 
+            ParameterDescription.parameter("slaveip", StringConversion.convenientPartial(IPAddress.fromString)).withDefault(IPAddress.fromString("0.0.0.0").get());
     
     /**
      * The specification of the opChan parameter.
      */
-    private static final ParameterDescription<Integer, Integer> OP_CHAN = ParameterDescription.parameter("opchan", StringConversion.integer()).withDefault(-1);
+    private static final ParameterDescription<Integer, Integer> OP_CHAN = 
+            ParameterDescription.parameter("opchan", StringConversion.integer()).withDefault(-1);
     
     /**
      * The specification of the proxyMode parameter.
      */
-    private static final ParameterDescription<ProxyMode, ProxyMode> PROXY_MODE = ParameterDescription.parameter("proxymode", StringConversion.convenientPartial(ProxyMode.fromStringFunction())).withDefault(ProxyMode.TRANSIENT);
+    private static final ParameterDescription<ProxyMode, ProxyMode> PROXY_MODE = 
+            ParameterDescription.parameter("proxymode", StringConversion.convenientPartial(ProxyMode.fromStringFunction())).withDefault(ProxyMode.TRANSIENT);
     
     /**
      * The specification of the proxyPri parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PROXY_PRI = ParameterDescription.parameter("proxypri", StringConversion.integer()).withDefault(1);
+    private static final ParameterDescription<Integer, Integer> PROXY_PRI = 
+            ParameterDescription.parameter("proxypri", StringConversion.integer()).withDefault(1);
     
     /**
      * The specification of the proxyRetry parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PROXY_RETRY = ParameterDescription.parameter("proxyretry", StringConversion.integer()).withDefault(0);
+    private static final ParameterDescription<Integer, Integer> PROXY_RETRY = 
+            ParameterDescription.parameter("proxyretry", StringConversion.integer()).withDefault(0);
     
     /**
      * Gets the value of the cam parameter.
+     * 
      * @return the value of the cam parameter.
      */
-    public int getCam(  )
+    public int getCam()
     {
         return parameterMap.get( CAM );
     }
     
     /**
      * Gets the value of the fields parameter.
+     * 
      * @return the value of the fields parameter.
      */
-    public int getFields(  )
+    public int getFields()
     {
         return parameterMap.get( FIELDS );
     }
     
     /**
      * Gets the value of the res parameter.
+     * 
      * @return the value of the res parameter.
      */
-    public String getRes(  )
+    public String getRes()
     {
         return parameterMap.get( RES );
     }
     
     /**
      * Gets the value of the seq parameter.
+     * 
      * @return the value of the seq parameter.
      */
-    public int getSeq(  )
+    public int getSeq()
     {
         return parameterMap.get( SEQ );
     }
     
     /**
      * Gets the value of the dwell parameter.
+     * 
      * @return the value of the dwell parameter.
      */
-    public int getDwell(  )
+    public int getDwell()
     {
         return parameterMap.get( DWELL );
     }
     
     /**
      * Gets the value of the id parameter.
+     * 
      * @return the value of the id parameter.
      */
-    public int getId(  )
+    public int getId()
     {
         return parameterMap.get( ID );
     }
     
     /**
      * Gets the value of the dIndex parameter.
+     * 
      * @return the value of the dIndex parameter.
      */
-    public int getDIndex(  )
+    public int getDIndex()
     {
         return parameterMap.get( DINDEX );
     }
     
     /**
      * Gets the value of the presel parameter.
+     * 
      * @return the value of the presel parameter.
      */
-    public int getPresel(  )
+    public int getPresel()
     {
         return parameterMap.get( PRESEL );
     }
     
     /**
      * Gets the value of the channel parameter.
+     * 
      * @return the value of the channel parameter.
      */
-    public int getChannel(  )
+    public int getChannel()
     {
         return parameterMap.get( CHANNEL );
     }
     
     /**
      * Gets the value of the rate parameter.
+     * 
      * @return the value of the rate parameter.
      */
-    public int getRate(  )
+    public int getRate()
     {
         return parameterMap.get( RATE );
     }
     
     /**
      * Gets the value of the forcedQ parameter.
+     * 
      * @return the value of the forcedQ parameter.
      */
-    public int getForcedQ(  )
+    public int getForcedQ()
     {
         return parameterMap.get( FORCED_Q );
     }
     
     /**
      * Gets the value of the duration parameter.
+     * 
      * @return the value of the duration parameter.
      */
-    public int getDuration(  )
+    public int getDuration()
     {
         return parameterMap.get( DURATION );
     }
     
     /**
      * Gets the value of the nBuffers parameter.
+     * 
      * @return the value of the nBuffers parameter.
      */
-    public int getNBuffers(  )
+    public int getNBuffers()
     {
         return parameterMap.get( N_BUFFERS );
     }
     
     /**
      * Gets the value of the telemQ parameter.
+     * 
      * @return the value of the telemQ parameter.
      */
-    public int getTelemQ(  )
+    public int getTelemQ()
     {
         return parameterMap.get( TELEM_Q );
     }
     
     /**
      * Gets the value of the pktSize parameter.
+     * 
      * @return the value of the pktSize parameter.
      */
-    public int getPktSize(  )
+    public int getPktSize()
     {
         return parameterMap.get( PKT_SIZE );
     }
     
     /**
      * Gets the value of the udpPort parameter.
+     * 
      * @return the value of the udpPort parameter.
      */
-    public int getUdpPort(  )
+    public int getUdpPort()
     {
         return parameterMap.get( UDP_PORT );
     }
     
     /**
      * Gets the value of the audio parameter.
+     * 
      * @return the value of the audio parameter.
      */
-    public String getAudio(  )
+    public String getAudio()
     {
         return parameterMap.get( AUDIO );
     }
     
     /**
      * Gets the value of the format parameter.
+     * 
      * @return the value of the format parameter.
      */
-    public Format getFormat(  )
+    public Format getFormat()
     {
         return parameterMap.get( FORMAT );
     }
     
     /**
      * Gets the value of the audioMode parameter.
+     * 
      * @return the value of the audioMode parameter.
      */
-    public AudioMode getAudioMode(  )
+    public AudioMode getAudioMode()
     {
         return parameterMap.get( AUDIO_MODE );
     }
     
     /**
      * Gets the value of the transmissionMode parameter.
+     * 
      * @return the value of the transmissionMode parameter.
      */
-    public TransmissionMode getTransmissionMode(  )
+    public TransmissionMode getTransmissionMode()
     {
         return parameterMap.get( TRANSMISSION_MODE );
     }
     
     /**
      * Gets the value of the pps parameter.
+     * 
      * @return the value of the pps parameter.
      */
-    public int getPPS(  )
+    public int getPPS()
     {
         return parameterMap.get( PPS );
     }
     
     /**
      * Gets the value of the mp4Rate parameter.
+     * 
      * @return the value of the mp4Rate parameter.
      */
-    public int getMp4Rate(  )
+    public int getMp4Rate()
     {
         return parameterMap.get( MP4_RATE );
     }
     
     /**
      * Gets the value of the slaveIP parameter.
+     * 
      * @return the value of the slaveIP parameter.
      */
-    public IPAddress getSlaveIP(  )
+    public IPAddress getSlaveIP()
     {
         return parameterMap.get( SLAVE_IP );
     }
     
     /**
      * Gets the value of the opChan parameter.
+     * 
      * @return the value of the opChan parameter.
      */
-    public int getOpChan(  )
+    public int getOpChan()
     {
         return parameterMap.get( OP_CHAN );
     }
     
     /**
      * Gets the value of the proxyMode parameter.
+     * 
      * @return the value of the proxyMode parameter.
      */
-    public ProxyMode getProxyMode(  )
+    public ProxyMode getProxyMode()
     {
         return parameterMap.get( PROXY_MODE );
     }
     
     /**
      * Gets the value of the proxyPri parameter.
+     * 
      * @return the value of the proxyPri parameter.
      */
-    public int getProxyPri(  )
+    public int getProxyPri()
     {
         return parameterMap.get( PROXY_PRI );
     }
     
     /**
      * Gets the value of the proxyRetry parameter.
+     * 
      * @return the value of the proxyRetry parameter.
      */
-    public int getProxyRetry(  )
+    public int getProxyRetry()
     {
         return parameterMap.get( PROXY_RETRY );
     }
@@ -426,6 +489,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the cam parameter in the builder.
+         * 
          * @param cam
          *        the value to store as the cam parameter.
          * @return the Builder
@@ -437,6 +501,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the fields parameter in the builder.
+         * 
          * @param fields
          *        the value to store as the fields parameter.
          * @return the Builder
@@ -448,11 +513,12 @@ public final class DisplayPicCGI
         
         /**
          * Sets the res parameter in the builder.
+         * 
          * @param res
          *        the value to store as the res parameter.
+         * @return the Builder
          * @throws NullPointerException
          *         if res is null.
-         * @return the Builder
          */
         public Builder res( String res )
         {
@@ -462,6 +528,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the seq parameter in the builder.
+         * 
          * @param seq
          *        the value to store as the seq parameter.
          * @return the Builder
@@ -473,6 +540,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the dwell parameter in the builder.
+         * 
          * @param dwell
          *        the value to store as the dwell parameter.
          * @return the Builder
@@ -484,6 +552,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the id parameter in the builder.
+         * 
          * @param id
          *        the value to store as the id parameter.
          * @return the Builder
@@ -495,6 +564,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the dIndex parameter in the builder.
+         * 
          * @param dIndex
          *        the value to store as the dIndex parameter.
          * @return the Builder
@@ -506,6 +576,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the presel parameter in the builder.
+         * 
          * @param presel
          *        the value to store as the presel parameter.
          * @return the Builder
@@ -517,6 +588,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the channel parameter in the builder.
+         * 
          * @param channel
          *        the value to store as the channel parameter.
          * @return the Builder
@@ -528,6 +600,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the rate parameter in the builder.
+         * 
          * @param rate
          *        the value to store as the rate parameter.
          * @return the Builder
@@ -539,6 +612,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the forcedQ parameter in the builder.
+         * 
          * @param forcedQ
          *        the value to store as the forcedQ parameter.
          * @return the Builder
@@ -550,6 +624,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the duration parameter in the builder.
+         * 
          * @param duration
          *        the value to store as the duration parameter.
          * @return the Builder
@@ -561,6 +636,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the nBuffers parameter in the builder.
+         * 
          * @param nBuffers
          *        the value to store as the nBuffers parameter.
          * @return the Builder
@@ -572,6 +648,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the telemQ parameter in the builder.
+         * 
          * @param telemQ
          *        the value to store as the telemQ parameter.
          * @return the Builder
@@ -583,6 +660,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the pktSize parameter in the builder.
+         * 
          * @param pktSize
          *        the value to store as the pktSize parameter.
          * @return the Builder
@@ -594,6 +672,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the udpPort parameter in the builder.
+         * 
          * @param udpPort
          *        the value to store as the udpPort parameter.
          * @return the Builder
@@ -605,11 +684,12 @@ public final class DisplayPicCGI
         
         /**
          * Sets the audio parameter in the builder.
+         * 
          * @param audio
          *        the value to store as the audio parameter.
+         * @return the Builder
          * @throws NullPointerException
          *         if audio is null.
-         * @return the Builder
          */
         public Builder audio( String audio )
         {
@@ -619,11 +699,12 @@ public final class DisplayPicCGI
         
         /**
          * Sets the format parameter in the builder.
+         * 
          * @param format
          *        the value to store as the format parameter.
+         * @return the Builder
          * @throws NullPointerException
          *         if format is null.
-         * @return the Builder
          */
         public Builder format( Format format )
         {
@@ -633,11 +714,12 @@ public final class DisplayPicCGI
         
         /**
          * Sets the audioMode parameter in the builder.
+         * 
          * @param audioMode
          *        the value to store as the audioMode parameter.
+         * @return the Builder
          * @throws NullPointerException
          *         if audioMode is null.
-         * @return the Builder
          */
         public Builder audioMode( AudioMode audioMode )
         {
@@ -647,11 +729,12 @@ public final class DisplayPicCGI
         
         /**
          * Sets the transmissionMode parameter in the builder.
+         * 
          * @param transmissionMode
          *        the value to store as the transmissionMode parameter.
+         * @return the Builder
          * @throws NullPointerException
          *         if transmissionMode is null.
-         * @return the Builder
          */
         public Builder transmissionMode( TransmissionMode transmissionMode )
         {
@@ -661,6 +744,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the pps parameter in the builder.
+         * 
          * @param pps
          *        the value to store as the pps parameter.
          * @return the Builder
@@ -672,6 +756,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the mp4Rate parameter in the builder.
+         * 
          * @param mp4Rate
          *        the value to store as the mp4Rate parameter.
          * @return the Builder
@@ -683,11 +768,12 @@ public final class DisplayPicCGI
         
         /**
          * Sets the slaveIP parameter in the builder.
+         * 
          * @param slaveIP
          *        the value to store as the slaveIP parameter.
+         * @return the Builder
          * @throws NullPointerException
          *         if slaveIP is null.
-         * @return the Builder
          */
         public Builder slaveIP( IPAddress slaveIP )
         {
@@ -697,6 +783,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the opChan parameter in the builder.
+         * 
          * @param opChan
          *        the value to store as the opChan parameter.
          * @return the Builder
@@ -708,11 +795,12 @@ public final class DisplayPicCGI
         
         /**
          * Sets the proxyMode parameter in the builder.
+         * 
          * @param proxyMode
          *        the value to store as the proxyMode parameter.
+         * @return the Builder
          * @throws NullPointerException
          *         if proxyMode is null.
-         * @return the Builder
          */
         public Builder proxyMode( ProxyMode proxyMode )
         {
@@ -722,6 +810,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the proxyPri parameter in the builder.
+         * 
          * @param proxyPri
          *        the value to store as the proxyPri parameter.
          * @return the Builder
@@ -733,6 +822,7 @@ public final class DisplayPicCGI
         
         /**
          * Sets the proxyRetry parameter in the builder.
+         * 
          * @param proxyRetry
          *        the value to store as the proxyRetry parameter.
          * @return the Builder
@@ -757,7 +847,7 @@ public final class DisplayPicCGI
          * @throws NullPointerException
          *         if parameter or value are null.
          */
-        private  <T>Builder set( ParameterDescription<T, ?> parameter, T value )
+        private <T>Builder set( ParameterDescription<T, ?> parameter, T value )
         {
             CheckParameters.areNotNull( parameter, value );
             if ( parameterMap.isEmpty() )
@@ -776,7 +866,7 @@ public final class DisplayPicCGI
          * @throws IllegalStateException
          *         if the Builder has already been built.
          */
-        public  DisplayPicCGI build(  )
+        public DisplayPicCGI build()
         {
             try
             {
@@ -843,12 +933,12 @@ public final class DisplayPicCGI
          * A Function that, given a String, will produce an Option containing
          * a member of Format if the passed-in String matches it (ignoring case), and an empty
          * Option otherwise.
+         * 
          * @return a Function that parses a String into a Format
          */
-        static Function<String, Option<Format>> fromStringFunction(  )
+        static Function<String, Option<Format>> fromStringFunction()
         {
-            return
-            new Function<String, Option<Format>>()
+            return new Function<String, Option<Format>>()
             {
                 @Override
                 public Option<Format> apply(String s )
@@ -862,11 +952,11 @@ public final class DisplayPicCGI
                     }
                     return Option.getEmptyOption( s + " is not a valid Format element " );
                 }
-            }
-            ;
+            };
         }
         
     }
+    
     /**
      * The possible mechanisms for returning audio data
      */
@@ -886,12 +976,12 @@ public final class DisplayPicCGI
          * A Function that, given a String, will produce an Option containing
          * a member of AudioMode if the passed-in String matches it (ignoring case), and an empty
          * Option otherwise.
+         * 
          * @return a Function that parses a String into a AudioMode
          */
-        static Function<String, Option<AudioMode>> fromStringFunction(  )
+        static Function<String, Option<AudioMode>> fromStringFunction()
         {
-            return
-            new Function<String, Option<AudioMode>>()
+            return new Function<String, Option<AudioMode>>()
             {
                 @Override
                 public Option<AudioMode> apply(String s )
@@ -905,11 +995,11 @@ public final class DisplayPicCGI
                     }
                     return Option.getEmptyOption( s + " is not a valid AudioMode element " );
                 }
-            }
-            ;
+            };
         }
         
     }
+    
     /**
      * The possible stream headers that the video stream can be wrapped in.
      */
@@ -934,12 +1024,12 @@ public final class DisplayPicCGI
          * A Function that, given a String, will produce an Option containing
          * a member of TransmissionMode if the passed-in String matches it (ignoring case), and an empty
          * Option otherwise.
+         * 
          * @return a Function that parses a String into a TransmissionMode
          */
-        static Function<String, Option<TransmissionMode>> fromStringFunction(  )
+        static Function<String, Option<TransmissionMode>> fromStringFunction()
         {
-            return
-            new Function<String, Option<TransmissionMode>>()
+            return new Function<String, Option<TransmissionMode>>()
             {
                 @Override
                 public Option<TransmissionMode> apply(String s )
@@ -953,16 +1043,17 @@ public final class DisplayPicCGI
                     }
                     return Option.getEmptyOption( s + " is not a valid TransmissionMode element " );
                 }
-            }
-            ;
+            };
         }
         
     }
+    
     @Override
     public String toString()
     {
         return "/display_pic.cgi?" + parameterMap.toURLParameters( params );
     }
+    
     public static DisplayPicCGI fromString( String string )
     {
         CheckParameters.areNotNull( string );

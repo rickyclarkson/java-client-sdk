@@ -19,12 +19,12 @@ public  enum ProxyMode
      * A Function that, given a String, will produce an Option containing
      * a member of ProxyMode if the passed-in String matches it (ignoring case), and an empty
      * Option otherwise.
+     * 
      * @return a Function that parses a String into a ProxyMode
      */
-    static Function<String, Option<ProxyMode>> fromStringFunction(  )
+    static Function<String, Option<ProxyMode>> fromStringFunction()
     {
-        return
-        new Function<String, Option<ProxyMode>>()
+        return new Function<String, Option<ProxyMode>>()
         {
             @Override
             public Option<ProxyMode> apply(String s )
@@ -38,9 +38,9 @@ public  enum ProxyMode
                 }
                 return Option.getEmptyOption( s + " is not a valid ProxyMode element " );
             }
-        }
-        ;
+        };
     }
     
 }
+
 
