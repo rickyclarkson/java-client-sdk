@@ -422,7 +422,7 @@ public final class DisplayPicCGI
          * The values supplied for each parameter so far.
          * When this is an empty Option, the Builder is in an invalid state, the reason for which is stored in the Option.
          */
-        private Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );;
+        private Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
         
         /**
          * Sets the cam parameter in the builder.
@@ -850,6 +850,7 @@ public final class DisplayPicCGI
             return
             new Function<String, Option<Format>>()
             {
+                @Override
                 public Option<Format> apply(String s )
                 {
                     for ( final Format element: values() )
@@ -892,6 +893,7 @@ public final class DisplayPicCGI
             return
             new Function<String, Option<AudioMode>>()
             {
+                @Override
                 public Option<AudioMode> apply(String s )
                 {
                     for ( final AudioMode element: values() )
@@ -939,6 +941,7 @@ public final class DisplayPicCGI
             return
             new Function<String, Option<TransmissionMode>>()
             {
+                @Override
                 public Option<TransmissionMode> apply(String s )
                 {
                     for ( final TransmissionMode element: values() )

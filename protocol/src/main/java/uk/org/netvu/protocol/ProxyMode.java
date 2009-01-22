@@ -26,6 +26,7 @@ public  enum ProxyMode
         return
         new Function<String, Option<ProxyMode>>()
         {
+            @Override
             public Option<ProxyMode> apply(String s )
             {
                 for ( final ProxyMode element: values() )

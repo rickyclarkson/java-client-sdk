@@ -22,6 +22,20 @@ class ReplayPicCGITest extends JUnit4(new Specification {
 
    fromString("/replay_pic.cgi?time=10:20:30:10:11:09") match { case cgi => cgi.getTime > 0 mustEqual true }
    fromString("/replay_pic.cgi?time=100") match { case cgi => cgi.getTime mustEqual 100 }
+   fromString("/replay_pic.cgi?time=tomorrow") must throwAn[IllegalArgumentException]
+  }
+ }
+
+ "The default transmission mode for JFIF" should {
+  "be MIME" in {
+   fromString("/replay_pic.cgi?format=jfif").getTransmissionMode mustEqual TransmissionMode.MIME
+  }
+ }
+  
+ "The default transmission mode for MP4 and JPEG" should {
+  "be MINIMAL" in {
+   for (format <- List("mp4", "jpeg"))
+    fromString("/replay_pic.cgi?format=mp4").getTransmissionMode mustEqual TransmissionMode.MINIMAL
   }
  }
 

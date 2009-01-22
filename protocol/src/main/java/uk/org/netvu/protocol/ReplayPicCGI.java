@@ -366,7 +366,7 @@ public final class ReplayPicCGI
          * The values supplied for each parameter so far.
          * When this is an empty Option, the Builder is in an invalid state, the reason for which is stored in the Option.
          */
-        private Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );;
+        private Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
         
         /**
          * Sets the cam parameter in the builder.
@@ -749,6 +749,7 @@ public final class ReplayPicCGI
             return
             new Function<String, Option<Format>>()
             {
+                @Override
                 public Option<Format> apply(String s )
                 {
                     for ( final Format element: values() )
@@ -801,6 +802,7 @@ public final class ReplayPicCGI
             return
             new Function<String, Option<Control>>()
             {
+                @Override
                 public Option<Control> apply(String s )
                 {
                     for ( final Control element: values() )
@@ -848,6 +850,7 @@ public final class ReplayPicCGI
             return
             new Function<String, Option<TransmissionMode>>()
             {
+                @Override
                 public Option<TransmissionMode> apply(String s )
                 {
                     for ( final TransmissionMode element: values() )
@@ -890,6 +893,7 @@ public final class ReplayPicCGI
             return
             new Function<String, Option<OnOrOff>>()
             {
+                @Override
                 public Option<OnOrOff> apply(String s )
                 {
                     for ( final OnOrOff element: values() )
@@ -911,6 +915,7 @@ public final class ReplayPicCGI
         return
         new Function<String, Option<Integer>>()
         {
+            @Override
             public Option<Integer> apply(String s )
             {
                 java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("HH:mm:ss:dd:MM:yy");

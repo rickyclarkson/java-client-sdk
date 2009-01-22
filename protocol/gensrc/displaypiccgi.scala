@@ -105,7 +105,8 @@ object lambda {
 object function {
  def apply(in: String, out: String, name: String, body: Iterable[String]) =
   lines("new Function<" + in +", " + out + ">()") ++
-  brace(lines("public " + out + " apply(" + in + " " + name + " )") ++
+  brace(lines("""@Override
+              public """ + out + " apply(" + in + " " + name + " )") ++
         brace(body))
 }
 
@@ -195,7 +196,7 @@ object CodeGen {
      privateField(lines(
       """The values supplied for each parameter so far.
          When this is an empty Option, the Builder is in an invalid state, the reason for which is stored in the Option."""),
-      "Option<ParameterMap>", "parameterMap", "Option.getFullOption( new ParameterMap() );") ++
+      "Option<ParameterMap>", "parameterMap", "Option.getFullOption( new ParameterMap() )") ++
      
     params.flatMap(param => publicMethod(
      lines("Sets the "+param.name+" parameter in the builder."), "the Builder", "Builder", param.name, List(Parameter(param.publicType, param.name, "the value to store as the "+param.name+" parameter")), 
