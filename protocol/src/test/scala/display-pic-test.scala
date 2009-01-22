@@ -82,4 +82,7 @@ class DisplayPicCGITest extends JUnit4(new Specification {
   DisplayPicCGI.fromString("/display_pic.cgi?proxymode=" + proxyMode).getProxyMode.toString.toLowerCase mustEqual proxyMode
 
  DisplayPicCGI.fromString("/display_pic.cgi?proxymode=tor") must throwAn[IllegalArgumentException]
+
+ DisplayPicCGI.fromString("/display_pic.cgi?slaveip=192.168.0.1").getSlaveIP mustEqual IPAddress.fromString("192.168.0.1").get
+ DisplayPicCGI.fromString("/display_pic.cgi?slaveip=19222.168.0.1") must throwAn[IllegalArgumentException]
 })
