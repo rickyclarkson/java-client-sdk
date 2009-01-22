@@ -825,19 +825,19 @@ public final class DisplayPicCGI
     public static enum Format
     {
         /**
-         * Complete JFIF (JPEG) image data
+         * Complete JFIF (JPEG) image data.
          */
         JFIF
         ,
         
         /**
-         * Truncated JPEG image data
+         * Truncated JPEG image data.
          */
         JPEG
         ,
         
         /**
-         * MPEG-4 image data
+         * MPEG-4 image data.
          */
         MP4
         ;
@@ -875,13 +875,13 @@ public final class DisplayPicCGI
     public static enum AudioMode
     {
         /**
-         * Out of band UDP data
+         * Out of band UDP data.
          */
         UDP
         ,
         
         /**
-         * In-band data interleaved with images
+         * In-band data interleaved with images.
          */
         INLINE
         ;
@@ -919,19 +919,19 @@ public final class DisplayPicCGI
     public static enum TransmissionMode
     {
         /**
-         * Multipart MIME
+         * Multipart MIME.
          */
         MIME
         ,
         
         /**
-         * AD's 'binary' format
+         * AD's 'binary' format.
          */
         BINARY
         ,
         
         /**
-         * AD's 'minimal' format
+         * AD's 'minimal' format.
          */
         MINIMAL
         ;
@@ -957,50 +957,6 @@ public final class DisplayPicCGI
                         }
                     }
                     return Option.getEmptyOption( s + " is not a valid TransmissionMode element " );
-                }
-            }
-            ;
-        }
-        
-    }
-    /**
-     * This controls whether or not a decoder that is connected to by the server maintains connections to cameras set up by the CGI request
-     */
-    public static enum ProxyMode
-    {
-        /**
-         * A decoder will clear connections to cameras made by the CGI request after the video stream has terminated
-         */
-        TRANSIENT
-        ,
-        
-        /**
-         * A decoder will maintain connections to cameras made by the CGI request after the video stream has terminated
-         */
-        PERSISTENT
-        ;
-        
-        /**
-         * A Function that, given a String, will produce an Option containing
-         * a member of ProxyMode if the passed-in String matches it (ignoring case), and an empty
-         * Option otherwise.
-         * @return a Function that parses a String into a ProxyMode
-         */
-        static Function<String, Option<ProxyMode>> fromStringFunction(  )
-        {
-            return
-            new Function<String, Option<ProxyMode>>()
-            {
-                public Option<ProxyMode> apply(String s )
-                {
-                    for ( final ProxyMode element: values() )
-                    {
-                        if ( element.toString().equalsIgnoreCase( s ) )
-                        {
-                            return Option.getFullOption( element );
-                        }
-                    }
-                    return Option.getEmptyOption( s + " is not a valid ProxyMode element " );
                 }
             }
             ;

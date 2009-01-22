@@ -21,8 +21,6 @@ object Pretty {
                                                                                                       case _ => "any of " + nonPrimitives.map(_.name).mkString(", ") + " are " }) + "null") }
  }
 
- def throwsNpeDoc(name: String) = throwsDoc("NullPointerException", "if "+name+" is null")
- def throwsNpeDoc(one: String, two: String) = throwsDoc("NullPointerException", "if "+one+" or "+two+" are null")
  def returnDoc(description: String) = lines("@return "+description)
  def blankLine = List("")
  def blankFinal(description: Iterable[String], `type`: String, name: String) = blockComment(description) ++ lines("private final "+`type`+" "+name+";") ++ blankLine
@@ -30,11 +28,11 @@ object Pretty {
  def privateField(description: Iterable[String], `type`: String, name: String, value: String) = blockComment(description) ++ lines("private "+`type`+" "+name+" = "+value+";") ++ blankLine
 
  def checkParametersLine(parameters: List[Parameter]) = { val nonPrimitives = parameters.filter(!_.isPrimitive)
-                                                                  nonPrimitives match {
-                                                                   case Nil => Nil
-                                                                   case x :: y => List("CheckParameters.areNotNull( " + nonPrimitives.map(_.name).reduceLeft(_ + ", " + _) + " );")
-                                                                  }
-                                                                }
+                                                          nonPrimitives match {
+                                                           case Nil => Nil
+                                                           case x :: y => List("CheckParameters.areNotNull( " + nonPrimitives.map(_.name).reduceLeft(_ + ", " + _) + " );")
+                                                          }
+                                                        }
 
  def packagePrivateConstructor(description: Iterable[String], className: String, parameters: List[Parameter], body: Iterable[String]): Iterable[String] = {
   val nonPrimitives = parameters.filter(!_.isPrimitive)
@@ -46,12 +44,12 @@ object Pretty {
  def nonPrimitives(parameters: List[Parameter]) = parameters.filter(!_.isPrimitive)
 
  def staticPackagePrivateMethod(description: Iterable[String], returnDocPart: String, returnType: String, name: String, parameters: List[Parameter], body: Iterable[String]) =
-  blockComment(description ++ parameters.flatMap(paramDoc) ++ nonPrimitives(parameters).flatMap(p => throwsNpeDoc(p.name)) ++ returnDoc(returnDocPart)) ++
+  blockComment(description ++ parameters.flatMap(paramDoc) ++ throwsNpeDoc(parameters) ++ returnDoc(returnDocPart)) ++
   lines("static "+returnType+" "+name+"( "+parameters.map(_.typeThenName).mkString(", ")+" )") ++
   brace(checkParametersLine(parameters) ++ body) ++ blankLine
 
  def publicMethod(description: Iterable[String], returnDocPart: String, returnType: String, name: String, parameters: List[Parameter], body: Iterable[String]) =
-  blockComment(description ++ parameters.flatMap(paramDoc) ++ nonPrimitives(parameters).flatMap(p => throwsNpeDoc(p.name)) ++ returnDoc(returnDocPart)) ++
+  blockComment(description ++ parameters.flatMap(paramDoc) ++ throwsNpeDoc(parameters) ++ returnDoc(returnDocPart)) ++
   lines("public "+returnType+" "+name+"( "+parameters.map(_.typeThenName).mkString(", ") + " )") ++
   brace(checkParametersLine(parameters) ++ body) ++ blankLine
 
@@ -73,7 +71,8 @@ case object Package extends Visibility("")
 case object Private extends Visibility("private")
 
 case class IsStatic(is: Boolean) { val isnt = !is
-                                   def toJava = if (is) "static" else "" }
+                                   def toJava = if (is) "static" else ""
+                                   override def toString = toJava }
 
 case class TypeParameter(name: String, description: String)
 
@@ -108,9 +107,9 @@ object function {
         brace(body))
 }
 
-case class NameAndDescription(name: String, description: String) { def toJava = blockComment(lines(description)) ++ lines(name) }
+case class NameAndDescription(name: String, description: String) { def toJava = blockComment(lines(description + ".")) ++ lines(name) }
 
-case class Enum(name: String, description: String, members: List[NameAndDescription]) {
+case class Enum(name: String, description: String, static: IsStatic, members: List[NameAndDescription]) {
  def toJava = {
   val fromStringToEnum = staticPackagePrivateMethod(lines(
    """A Function that, given a String, will produce an Option containing
@@ -120,7 +119,7 @@ case class Enum(name: String, description: String, members: List[NameAndDescript
       "for ( final "+name+" element: values() )") ++ brace(lines(
        "if ( element.toString().equalsIgnoreCase( s ) )") ++ brace(lines(
         "return Option.getFullOption( element );"))) ++ lines("return Option.getEmptyOption( s + \" is not a valid " + name + " element \" );")) ++ lines(";"))
-  blockComment(lines(description)) ++ lines("public static enum "+name) ++ brace(members.map(_.toJava).reduceLeft(_ ++ List(",") ++ blankLine ++ _) ++ List(";") ++ blankLine ++ fromStringToEnum)
+  blockComment(lines(description)) ++ lines("public "+static+" enum "+name) ++ brace(members.map(_.toJava).reduceLeft(_ ++ List(",") ++ blankLine ++ _) ++ List(";") ++ blankLine ++ fromStringToEnum)
  }
 }
 
@@ -159,10 +158,13 @@ object displaypiccgi { def main(args: Array[String]): Unit = {
  val className = "DisplayPicCGI"
  val urlPart = "/display_pic.cgi?"
 
- val extras = Enum("Format", "The possible formats that the video stream can be returned as.", List(NameAndDescription("JFIF", "Complete JFIF (JPEG) image data"), NameAndDescription("JPEG", "Truncated JPEG image data"), NameAndDescription("MP4", "MPEG-4 image data"))).toJava ++
- Enum("AudioMode", "The possible mechanisms for returning audio data", List(NameAndDescription("UDP", "Out of band UDP data"), NameAndDescription("INLINE", "In-band data interleaved with images"))).toJava ++
- Enum("TransmissionMode", "The possible stream headers that the video stream can be wrapped in.", List(NameAndDescription("MIME", "Multipart MIME"), NameAndDescription("BINARY", "AD's 'binary' format"), NameAndDescription("MINIMAL", "AD's 'minimal' format"))).toJava ++
- Enum("ProxyMode", "This controls whether or not a decoder that is connected to by the server maintains connections to cameras set up by the CGI request", List(NameAndDescription("TRANSIENT", "A decoder will clear connections to cameras made by the CGI request after the video stream has terminated"), NameAndDescription("PERSISTENT", "A decoder will maintain connections to cameras made by the CGI request after the video stream has terminated"))).toJava
+ val extras =
+  Enum("Format", "The possible formats that the video stream can be returned as.", IsStatic(true),
+       List(NameAndDescription("JFIF", "Complete JFIF (JPEG) image data"), NameAndDescription("JPEG", "Truncated JPEG image data"), NameAndDescription("MP4", "MPEG-4 image data"))).toJava ++
+  Enum("AudioMode", "The possible mechanisms for returning audio data", IsStatic(true),
+       List(NameAndDescription("UDP", "Out of band UDP data"), NameAndDescription("INLINE", "In-band data interleaved with images"))).toJava ++
+  Enum("TransmissionMode", "The possible stream headers that the video stream can be wrapped in.", IsStatic(true),
+       List(NameAndDescription("MIME", "Multipart MIME"), NameAndDescription("BINARY", "AD's 'binary' format"), NameAndDescription("MINIMAL", "AD's 'minimal' format"))).toJava
 
  CodeGen.generate(packageName, lines(
   """A parameter list for a display_pic.cgi query.

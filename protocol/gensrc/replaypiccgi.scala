@@ -31,13 +31,18 @@ object replaypiccgi { def main(args: Array[String]): Unit = {
   val className = "ReplayPicCGI"
   val urlPart = "/replay_pic.cgi?"
 
- val extras = Enum("Format", "The possible formats that the video stream can be returned as.", List(NameAndDescription("JFIF", "Complete JFIF (JPEG) image data"), NameAndDescription("JPEG", "Truncated JPEG image data"), NameAndDescription("MP4", "MPEG-4 image data"))).toJava ++
- Enum("Control", "Various video playback modes", List(NameAndDescription("PLAY", "Play video forwards at its original speed"), NameAndDescription("FFWD", "Play video forwards at a speed controlled by the fast-forward multiplier"),
-                                                      NameAndDescription("RWND", "Play video backwards"),
-                                                      NameAndDescription("STOP", "Stop playing video"))).toJava ++
- Enum("TransmissionMode", "The possible stream headers that the video stream can be wrapped in.", List(NameAndDescription("MIME", "Multipart MIME"), NameAndDescription("BINARY", "AD's 'binary' format"), NameAndDescription("MINIMAL", "AD's 'minimal' format"))).toJava ++
- Enum("ProxyMode", "This controls whether or not a decoder that is connected to by the server maintains connections to cameras set up by the CGI request", List(NameAndDescription("TRANSIENT", "A decoder will clear connections to cameras made by the CGI request after the video stream has terminated"), NameAndDescription("PERSISTENT", "A decoder will maintain connections to cameras made by the CGI request after the video stream has terminated"))).toJava ++
- Enum("OnOrOff", "This is used in storing whether audio should be enabled", List(NameAndDescription("ON", "Signifies that audio is enabled"), NameAndDescription("OFF", "Signifies that audio is disabled"))).toJava++ lines("public static Function<String, Option<Integer>> fromTimeFunction()") ++ brace(lines(
+ val extras =
+  Enum("Format", "The possible formats that the video stream can be returned as.", IsStatic(true),
+       List(NameAndDescription("JFIF", "Complete JFIF (JPEG) image data"), NameAndDescription("JPEG", "Truncated JPEG image data"), NameAndDescription("MP4", "MPEG-4 image data"))).toJava ++
+  Enum("Control", "Various video playback modes", IsStatic(true),
+       List(NameAndDescription("PLAY", "Play video forwards at its original speed"), NameAndDescription("FFWD", "Play video forwards at a speed controlled by the fast-forward multiplier"),
+            NameAndDescription("RWND", "Play video backwards"),
+            NameAndDescription("STOP", "Stop playing video"))).toJava ++
+  Enum("TransmissionMode", "The possible stream headers that the video stream can be wrapped in.", IsStatic(true),
+       List(NameAndDescription("MIME", "Multipart MIME"), NameAndDescription("BINARY", "AD's 'binary' format"), NameAndDescription("MINIMAL", "AD's 'minimal' format"))).toJava ++
+  Enum("OnOrOff", "This is used in storing whether audio should be enabled", IsStatic(true),
+       List(NameAndDescription("ON", "Signifies that audio is enabled"), NameAndDescription("OFF", "Signifies that audio is disabled"))).toJava ++
+ lines("public static Function<String, Option<Integer>> fromTimeFunction()") ++ brace(lines(
    "return") ++ function("String", "Option<Integer>", "s", lines(
     """java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("HH:mm:ss:dd:MM:yy");
     try""") ++ brace(lines("return Option.getFullOption((int)(format.parse(s).getTime()/1000));")) ++ lines(

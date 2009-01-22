@@ -19,10 +19,19 @@ class ReplayPicCGITest extends JUnit4(new Specification {
    val cgi = fromString("/replay_pic.cgi?cam=4&fields=5")
    cgi.getCam mustEqual 4
    cgi.getFields mustEqual 5
+
+   fromString("/replay_pic.cgi?time=10:20:30:10:11:09") match { case cgi => cgi.getTime > 0 mustEqual true }
+   fromString("/replay_pic.cgi?time=100") match { case cgi => cgi.getTime mustEqual 100 }
+  }
+ }
+
+ "Parsing an empty String" should {
+  "cause an IllegalArgumentException" in {
+   fromString("") must throwAn[IllegalArgumentException]
   }
  }
    
- val setters = List[Builder => Builder](_ cam 4, _ fields 5, _ seq 6, _ id 7, _ control Control.FFWD, _ time 8, _ local 9, _ rate 10, _ text "bob", _ timeRange 11, _ audioOn OnOrOff.ON, _ fastForwardMultiplier 12, _ duration 13, _ res "hi", _ pktSize 110, _ refresh 14, _ format Format.MP4, _ transmissionMode TransmissionMode.BINARY, _ slaveIP IPAddress.fromString("192.168.0.1").get, _ opChan 15, _ proxyMode ProxyMode.PERSISTENT, _ proxyRetry 16)
+ val setters = List[Builder => Builder](_ cam 4, _ fields 5, _ seq 6, _ id 7, _ control Control.FFWD, _ time 8, _ local 9, _ rate 10, _ text "bob", _ timeRange 11, _ audioOn OnOrOff.ON, _ fastForwardMultiplier 12, _ duration 13, _ res "hi", _ pktSize 110, _ udpPort 6, _ refresh 14, _ format Format.MP4, _ transmissionMode TransmissionMode.BINARY, _ slaveIP IPAddress.fromString("192.168.0.1").get, _ opChan 15, _ proxyMode ProxyMode.PERSISTENT, _ proxyRetry 16)
  "Builder constraints" areSpecifiedBy BuildersTests.testBuilder[ReplayPicCGI, Builder](new Builder, new Builder, setters, "ReplayPicCGITest")
 
  val cgi = new Builder().build

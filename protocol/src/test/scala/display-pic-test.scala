@@ -21,6 +21,12 @@ class DisplayPicCGITest extends JUnit4(new Specification {
    cgi.getFields mustEqual 5
   }
  }
+
+ "Parsing an empty String" should {
+  "cause an IllegalArgumentException" in {
+   fromString("") must throwAn[IllegalArgumentException]
+  }
+ }
    
  new Builder audio "none" must throwA[IllegalStateException]
 

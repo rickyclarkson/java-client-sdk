@@ -1,6 +1,6 @@
 package uk.org.netvu.protocol;
 
-public final class Arrays
+final class Arrays
 {
     public static <T> boolean contains( final T[] array, final T element )
     {
