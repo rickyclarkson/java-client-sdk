@@ -13,8 +13,8 @@
                 <item name="Parse EventsCGI Requests" href="use-cases/parse-events-cgi.html"/>
                 <item name="Parse EventsCGI Results" href="use-cases/parse-events-cgi-results.html"/>
                 <item name="Build and Parse DecoderCGI Requests" href="use-cases/build-decoder-cgi.html"/>
-                <item name="Build and Parse DisplayPicCGI Requests" href="use-cases/display-pic-cgi.html"/>
-                <item name="Build and Parse ReplayPicCGI Requests" href="use-cases/replay-pic-cgi.html"/>
+                <item name="Build and Parse DisplayPicCGI Requests" href="use-cases/build-display-pic-cgi.html"/>
+                <item name="Build and Parse ReplayPicCGI Requests" href="use-cases/build-replay-pic-cgi.html"/>
             </item>
         </menu>
         <menu name="Design">

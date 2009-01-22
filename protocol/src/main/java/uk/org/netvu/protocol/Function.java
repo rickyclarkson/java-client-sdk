@@ -5,15 +5,12 @@ import java.math.BigInteger;
 import uk.org.netvu.util.CheckParameters;
 
 /**
- * A new Function<, >() { public apply( ) { } } from objects of type T to those
- * of type R.
+ * A function from objects of type T to those of type R.
  * 
- * @private static final ParameterDescription<, > = ; public () { return
- *          parameterMap.get(); } static { params.add(); } <T> the type of
- *          object to convert from.
- * @private static final ParameterDescription<, > = ; public () { return
- *          parameterMap.get(); } static { params.add(); } <R> the type of
- *          object to convert to.
+ * @param <T>
+ *        the type of object to convert from.
+ * @param <R>
+ *        the type of object to convert to.
  */
 public abstract class Function<T, R>
 {
@@ -21,12 +18,10 @@ public abstract class Function<T, R>
      * A Function that returns true if the value it receives is the same as the
      * specified parameter.
      * 
-     * @private static final ParameterDescription<, > = ; public () { return
-     *          parameterMap.get(); } static { params.add(); } <T> the type of
-     *          the values that this Function can receive.
-     * @private static final ParameterDescription<, > = ; public () { return
-     *          parameterMap.get(); } static { params.add(); } other the
-     *          parameter to test values against.
+     * @param <T>
+     *        the type of the values that this Function can receive.
+     * @param other
+     *        the parameter to test values against.
      * @throws NullPointerException
      *         if other is null.
      * @return a Function that returns true if the value it receives is the same
@@ -51,15 +46,12 @@ public abstract class Function<T, R>
      * A Function that, given a Boolean, returns the ifTrue parameter if the
      * Boolean is true, and returns the ifFalse parameter otherwise.
      * 
-     * @private static final ParameterDescription<, > = ; public () { return
-     *          parameterMap.get(); } static { params.add(); } <T> the type of
-     *          value to return.
-     * @private static final ParameterDescription<, > = ; public () { return
-     *          parameterMap.get(); } static { params.add(); } ifTrue the value
-     *          to return if the Boolean is true.
-     * @private static final ParameterDescription<, > = ; public () { return
-     *          parameterMap.get(); } static { params.add(); } ifFalse the value
-     *          to return if the Boolean is false.
+     * @param <T>
+     *        the type of value to return.
+     * @param ifTrue
+     *        the value to return if the Boolean is true.
+     * @param ifFalse
+     *        the value to return if the Boolean is false.
      * @throws NullPointerException
      *         if ifTrue or ifFalse are null.
      * @return a Function that, given a Boolean, returns the ifTrue parameter if
@@ -100,12 +92,11 @@ public abstract class Function<T, R>
     }
 
     /**
-     * The identity new Function<, >() { public apply( ) { } } - given an object
-     * of type T it results in the same object of type T.
+     * The identity Function - given an object of type T it results in the same
+     * object of type T.
      * 
-     * @private static final ParameterDescription<, > = ; public () { return
-     *          parameterMap.get(); } static { params.add(); } <T> the input and
-     *          output type of this Function.
+     * @param <T>
+     *        the input and output type of this Function.
      * @return the identity conversion for type T.
      */
     public static <T> Function<T, T> getIdentityFunction()
@@ -160,9 +151,8 @@ public abstract class Function<T, R>
      * A Function that uses Object's toString() to convert objects of type T to
      * Strings.
      * 
-     * @private static final ParameterDescription<, > = ; public () { return
-     *          parameterMap.get(); } static { params.add(); } <T> the input
-     *          type.
+     * @param <T>
+     *        the input type.
      * @return a conversion that uses Object's toString() to convert objects of
      *         type T into Strings.
      */
@@ -267,17 +257,15 @@ public abstract class Function<T, R>
     }
 
     /**
-     * Composes two conversions together such that an incoming object of type T
+     * Composes two Functions together such that an incoming object of type T
      * gets converted by this Function to an object of type R, then gets passed
-     * into the conversion supplied as a parameter, to finally produce an object
+     * into the Function supplied as a parameter, to finally produce an object
      * of type V.
      * 
-     * @private static final ParameterDescription<, > = ; public () { return
-     *          parameterMap.get(); } static { params.add(); } <V> the type that
-     *          the composed conversions convert objects of type T to.
-     * @private static final ParameterDescription<, > = ; public () { return
-     *          parameterMap.get(); } static { params.add(); } conversion the
-     *          second conversion to run.
+     * @param <V>
+     *        the type that the composed Functions convert objects of type T to.
+     * @param conversion
+     *        the second conversion to run.
      * @throws NullPointerException
      *         if conversion is null.
      * @return a composed conversion.
@@ -300,9 +288,8 @@ public abstract class Function<T, R>
     /**
      * Converts an object of type T into an object of type R.
      * 
-     * @private static final ParameterDescription<, > = ; public () { return
-     *          parameterMap.get(); } static { params.add(); } t the object to
-     *          convert.
+     * @param t
+     *        the object to convert.
      * @throws NullPointerException
      *         if t is null.
      * @return the converted object.
@@ -368,6 +355,19 @@ public abstract class Function<T, R>
         }
     }
 
+    /**
+     * Gives a Function that ignores its argument and instead always returns the
+     * specified value.
+     * 
+     * @param <T>
+     *        the argument type of the returned Function.
+     * @param <R>
+     *        the return type of the returned Function.
+     * @param r
+     *        the value that the returned Function returns.
+     * @return a Function that ignores its argument and instead always returns
+     *         the specified value.
+     */
     public static <T, R> Function<T, R> constant( final R r )
     {
         return new Function<T, R>()

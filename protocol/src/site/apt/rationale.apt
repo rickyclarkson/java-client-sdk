@@ -16,6 +16,10 @@ Rationale
 
  DecoderCGI is currently immutable, so the objects created from it can be reused by adding more parameters to them.  This is quite different to the Builder approach, where each Builder is 'one-shot'; the caller can not add more parameters after calling build().  This is a positive for DecoderCGI in terms of code quality, but as we expect the callers to be novice programmers, they might be more used to handling mutable objects.  Java forums endlessly have questions about String's replaceAll method, because String's immutability surprises novices.  String in Java cannot be made mutable to remove that surprise, as Strings are shared across threads and are important for security.  DecoderCGI doesn't have similar constraints, but it's difficult to imagine all the possible uses of a class.  It might be appropriate to make it mutable.
 
+* DisplayPicCGI and ReplayPicCGI
+
+ DisplayPicCGI and ReplayPicCGI provide a type-safe way of constructing display_pic.cgi and replay_pic.cgi requests respectively.  They use ParameterMap and ParameterDescription heavily, and are identical to EventsCGI other than the parameters that they support.  Typical use will be either producing a URL from an object or parsing a URL to form an object.
+
 * Function
 
  A Function represents a mapping from one type to another.
@@ -27,6 +31,14 @@ Rationale
 * Format
 
  Most of the CGI requests need to specify what format the results return in.  Rather than repeat the Format enum in each module that uses it, we keep it in core/cgi/common.
+
+* IPAddress
+
+ This wraps an IPv4 address, providing mechanisms for going between a String and an IPAddress.  This could have just been an int, but it's worth wrapping as an IPAddress to avoid mistakes - especially as Java's ints are signed.  For example, one could not write the IP address 192.168.0.1 as 192 << 24 + 168 << 16 + 0 << 8 + 1, because 192 << 24 overflows an int's boundary, causing the addition to be incorrect.
+
+* Num
+
+ Num is used to allow generic methods that need arithmetic operations to work without copying and pasting code.  {{{http://rickyclarkson.blogspot.com/2009/01/typeclass-pattern.html}This blog post explains why it is useful}}, though at the time of this writing there is only Num.integer().
 
 * Option
 

@@ -1,7 +1,5 @@
 #!/bin/sh
 
-find . -name \*.m4 -not -name macros.m4 -exec ./m4it.sh {} \;
-
 cd gensrc
 scalac *.scala &&
 rm -f ../src/main/java/uk/org/netvu/protocol/DisplayPicCGI.java &&
