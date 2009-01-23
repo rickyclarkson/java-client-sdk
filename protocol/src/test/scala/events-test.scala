@@ -94,7 +94,7 @@ class EventsCGITest extends JUnit4(new Specification with ScalaCheck {
  "The default values for EventsCGI.Builder" should {
   "be the same as in the specification." in {
    val events = new Builder().build
-   events.getFormat mustEqual Format.CSV
+   events.getFormat mustEqual TextResultsFormat.CSV
    events.getTime mustEqual 0
    events.getRange mustEqual Integer.MAX_VALUE
    events.getListLength mustEqual 100
@@ -107,7 +107,7 @@ class EventsCGITest extends JUnit4(new Specification with ScalaCheck {
   }
  }
 
- val setters = List[Builder => Builder](_ alarmMask 4, _ cameraMask 4, _ format Format.HTML, _ gpsMask 4,
+ val setters = List[Builder => Builder](_ alarmMask 4, _ cameraMask 4, _ format TextResultsFormat.HTML, _ gpsMask 4,
                                         _ listLength 4, _ range 4, _ systemMask 4, _ text "4", _ time 4, 
                                         _ videoMotionDetectionMask 4)
  "Builder constraints" areSpecifiedBy BuildersTests.testBuilder[EventsCGI, Builder](new Builder, new Builder, setters, "EventsCGITest")
@@ -200,7 +200,7 @@ class EventsCGITest extends JUnit4(new Specification with ScalaCheck {
   def nonNegativeInt = arbitrary[Int] map (_.abs) sample
   def anyInt = arbitrary[Int] sample
   def anyLong = arbitrary[Long] sample
-  def anyFormat = arbitrary[Format] sample
+  def anyFormat = arbitrary[TextResultsFormat] sample
   def anyString = arbitrary[String] sample
   
   val methods = List(() => builder.alarmMask(anyInt.get),

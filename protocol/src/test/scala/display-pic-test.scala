@@ -28,9 +28,12 @@ class DisplayPicCGITest extends JUnit4(new Specification {
   }
  }
    
- new Builder audio "none" must throwA[IllegalStateException]
+ new Builder audioChannel -1 must throwAn[IllegalArgumentException]
 
- val setters = List[Builder => Builder](_ camera 4, _ fieldCount 5, _ resolution "hi", _ cameraSequenceMask 6, _ dwellTime 7, _ connectionID 8, _ dIndex 9, _ preselector 3, _ channel 1, _ maximumTransmitRate 12, _ quantisationFactor 13, _ duration 14, _ bufferCount 15, _ quantisationFactorForTelemetryImages 16, _ packetSize 17, _ udpPort 18, _ audio "none", _ format Format.MP4, _ audioMode AudioMode.INLINE, _ transmissionMode TransmissionMode.BINARY, _ picturesPerSecond 19, _ mp4Bitrate 20, _ slaveIP new IPAddress(63 << 24 + 48 << 16 + 22 << 8 + 123), _ outputChannel 21, _ proxyMode ProxyMode.PERSISTENT, _ proxyPriority 22, _ proxyRetries 23)
+ val setters = List[Builder => Builder](_ camera 4, _ fieldCount 5, _ resolution "hi", _ cameraSequenceMask "6", _ dwellTime 7, _ connectionID 8, _ preselector 3, _ channel 1,
+                                        _ maximumTransmitRate 12, _ quantisationFactor 13, _ duration 14, _ bufferCount 15, _ quantisationFactorForTelemetryImages 16, _ packetSize 17, _ udpPort 18,
+                                        _ audioChannel 1, _ format VideoFormat.MP4, _ audioMode AudioMode.INLINE, _ transmissionMode TransmissionMode.BINARY, _ picturesPerSecond 19, _ mp4Bitrate 20,
+                                        _ slaveIP new IPAddress(63 << 24 + 48 << 16 + 22 << 8 + 123), _ outputChannel 21, _ proxyMode ProxyMode.PERSISTENT, _ proxyPriority 22, _ proxyRetries 23)
  "Builder constraints" areSpecifiedBy BuildersTests.testBuilder[DisplayPicCGI, Builder](new Builder, new Builder, setters, "DisplayPicCGITest")
 
  val cgi = new Builder().build
@@ -38,10 +41,9 @@ class DisplayPicCGITest extends JUnit4(new Specification {
  getCamera mustEqual 1
  getFieldCount mustEqual 1
  getResolution mustEqual "med"
- getCameraSequenceMask mustEqual 0
+ getCameraSequenceMask mustEqual "0"
  getDwellTime mustEqual 0
  getConnectionID mustEqual 0
- getDIndex mustEqual 0
  getPreselector mustEqual 0
  getChannel mustEqual -1
  getMaximumTransmitRate mustEqual 0
@@ -51,8 +53,8 @@ class DisplayPicCGITest extends JUnit4(new Specification {
  getQuantisationFactorForTelemetryImages mustEqual -1
  getPacketSize mustEqual 0
  getUdpPort mustEqual 0
- getAudio mustEqual "0"
- getFormat mustEqual Format.JFIF
+ getAudioChannel mustEqual 0
+ getFormat mustEqual VideoFormat.JFIF
  getAudioMode mustEqual AudioMode.UDP
  getTransmissionMode mustEqual TransmissionMode.MIME
  getPicturesPerSecond mustEqual 0

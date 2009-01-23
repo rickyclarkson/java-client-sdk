@@ -15,9 +15,10 @@ import uk.org.netvu.util.CheckParameters;
  */
 public final class VPartsCGI
 {
-    private static final ParameterDescription<Format, Format> FORMAT =
-            ParameterDescription.parameterDisallowing( Format.HTML, ParameterDescription.parameterWithDefault(
-                    "format", Format.CSV, StringConversion.convenientPartial( Format.fromStringFunction() ) ) );
+    private static final ParameterDescription<TextResultsFormat, TextResultsFormat> FORMAT =
+            ParameterDescription.parameterDisallowing( TextResultsFormat.HTML, ParameterDescription
+                .parameterWithDefault( "format", TextResultsFormat.CSV, StringConversion
+                    .convenientPartial( TextResultsFormat.fromStringFunction() ) ) );
 
     private static final ParameterDescription<Mode, Mode> MODE =
             ParameterDescription.parameterWithDefault( "mode", Mode.READ, StringConversion.convenientPartial( Mode
@@ -148,7 +149,7 @@ public final class VPartsCGI
      * 
      * @return the output format.
      */
-    public Format getFormat()
+    public TextResultsFormat getFormat()
     {
         return builtMap.get( VPartsCGI.FORMAT );
     }
@@ -294,7 +295,7 @@ public final class VPartsCGI
          *         if format is null.
          * @return the Builder.
          */
-        public Builder format( final Format format )
+        public Builder format( final TextResultsFormat format )
         {
             return set( VPartsCGI.FORMAT, format );
         }

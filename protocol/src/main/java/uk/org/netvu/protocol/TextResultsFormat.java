@@ -5,7 +5,7 @@ import java.util.Locale;
 /**
  * The format of the results to be returned from a server.
  */
-public enum Format
+public enum TextResultsFormat
 {
     /**
      * A JavaScript snippet that includes the results in a JavaScript object
@@ -26,32 +26,32 @@ public enum Format
     CSV;
 
     /**
-     * A Function that converts Strings to Formats according to the String
-     * representation of Formats.
+     * A Function that converts Strings to TextResultsFormats according to the
+     * String representation of TextResultsFormats.
      * 
-     * @return a Function that converts Strings to Formats.
+     * @return a Function that converts Strings to TextResultsFormats.
      */
-    public static final Function<String, Option<Format>> fromStringFunction()
+    public static final Function<String, Option<TextResultsFormat>> fromStringFunction()
     {
-        return new Function<String, Option<Format>>()
+        return new Function<String, Option<TextResultsFormat>>()
         {
             @Override
-            public Option<Format> apply( final String t )
+            public Option<TextResultsFormat> apply( final String t )
             {
                 try
                 {
-                    return Option.getFullOption( Format.valueOf( t.toUpperCase( Locale.ENGLISH ) ) );
+                    return Option.getFullOption( TextResultsFormat.valueOf( t.toUpperCase( Locale.ENGLISH ) ) );
                 }
                 catch ( final IllegalArgumentException exception )
                 {
-                    return Option.getEmptyOption( t + " is not a valid Format" );
+                    return Option.getEmptyOption( t + " is not a valid TextResultsFormat" );
                 }
             }
         };
     }
 
     /**
-     * Gives the name of the Format in lowercase.
+     * Gives the name of the TextResultsFormat in lowercase.
      */
     @Override
     public String toString()

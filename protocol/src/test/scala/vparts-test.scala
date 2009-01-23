@@ -44,7 +44,7 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
 
  "Setting the format to HTML" should {
   "cause an IllegalArgumentException" in {
-   new VPartsCGI.Builder().format(Format.HTML).build must throwA[IllegalArgumentException]
+   new VPartsCGI.Builder().format(TextResultsFormat.HTML).build must throwA[IllegalArgumentException]
   }
  }
 
@@ -52,7 +52,7 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
   "give a VPartsCGI containing the values held in the URL" in {
    val url = "/vparts.cgi?format=csv&mode=protect&time=958038820&range=120&pathstyle=long"
    val cgi = VPartsCGI.fromURL(url)
-   cgi.getFormat mustEqual Format.CSV
+   cgi.getFormat mustEqual TextResultsFormat.CSV
    cgi.getMode mustEqual Mode.PROTECT
    cgi.getTime mustEqual 958038820
    cgi.getRange mustEqual 120
@@ -91,7 +91,7 @@ class VPartsCGITest extends JUnit4(new Specification with Scalacheck {
    } must pass
 
    import EnumSet.{complementOf, of}
-   complementOf(of(Format.HTML)) forall { f => new VPartsCGI.Builder().format(f).build.getFormat mustEqual f }
+   complementOf(of(TextResultsFormat.HTML)) forall { f => new VPartsCGI.Builder().format(f).build.getFormat mustEqual f }
 
    property { x: Int => new VPartsCGI.Builder().listLength(x).build.getListLength mustEqual x } must pass
 

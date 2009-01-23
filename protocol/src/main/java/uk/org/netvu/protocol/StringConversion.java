@@ -98,6 +98,30 @@ public final class StringConversion<T>
     }
 
     /**
+     * A StringConversion that only verifies that the String only contains
+     * hexadecimal digits.
+     * 
+     * @return a StringConversion that only verifies that the String only
+     *         contains hexadecimal digits.
+     */
+    public static StringConversion<String> onlyHexDigits()
+    {
+        return convenientPartial( new Function<String, Option<String>>()
+        {
+            @Override
+            public Option<String> apply( final String s )
+            {
+                if ( s.matches( "^[0-9a-fA-F]*$" ) )
+                {
+                    return Option.getFullOption( s );
+                }
+
+                return Option.getEmptyOption( s + " is not valid hexadecimal." );
+            }
+        } );
+    }
+
+    /**
      * A StringConversion that converts between Strings containing decimal
      * integers and Java's Integer and vice-versa.
      * 

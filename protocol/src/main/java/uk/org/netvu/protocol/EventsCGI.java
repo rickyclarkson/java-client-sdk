@@ -20,9 +20,9 @@ public final class EventsCGI
             ParameterDescription.nonNegativeParameter( ParameterDescription.parameterWithDefault( "range",
                     Integer.MAX_VALUE, StringConversion.integer() ) );
 
-    private static final ParameterDescription<Format, Format> FORMAT =
-            ParameterDescription.parameterWithDefault( "format", Format.CSV, StringConversion
-                .convenientPartial( Format.fromStringFunction() ) );
+    private static final ParameterDescription<TextResultsFormat, TextResultsFormat> FORMAT =
+            ParameterDescription.parameterWithDefault( "format", TextResultsFormat.CSV, StringConversion
+                .convenientPartial( TextResultsFormat.fromStringFunction() ) );
 
     private static final ParameterDescription<Integer, Integer> LIST_LENGTH =
             ParameterDescription.parameterWithDefault( "listlength", 100, StringConversion.integer() );
@@ -152,7 +152,7 @@ public final class EventsCGI
      * 
      * @return the format of the results.
      */
-    public Format getFormat()
+    public TextResultsFormat getFormat()
     {
         return parameterMap.get( EventsCGI.FORMAT );
     }
@@ -327,7 +327,7 @@ public final class EventsCGI
          *         already been set.
          * @return the builder
          */
-        public Builder format( final Format format )
+        public Builder format( final TextResultsFormat format )
         {
             return set( EventsCGI.FORMAT, format );
         }

@@ -26,7 +26,7 @@ object Implicits {
  implicit def listToJavaList[T](list: List[T]): JavaList[T] = new JavaArrayList[T] { for (t <- list) add(t) }
  implicit def pairToTuple[T, U](pair: Pair[T, U]) = (pair.getFirstComponent, pair.getSecondComponent)
  implicit def tupleToPair[T, U](tuple: (T, U)) = new Pair(tuple._1, tuple._2)
- implicit val arbFormat: Arbitrary[Format] = Arbitrary { Gen.elements(Format.CSV, Format.HTML, Format.JS) }
+ implicit val arbFormat: Arbitrary[TextResultsFormat] = Arbitrary { Gen.elements(TextResultsFormat.CSV, TextResultsFormat.HTML, TextResultsFormat.JS) }
 }
 
 import Implicits._
@@ -298,19 +298,19 @@ class FormatTest extends JUnit4(new Specification with Scalacheck {
 
  "Format.functionFromStringToFormat" should {
   "give an empty Option when supplied with 'foo'" in {
-   Format.fromStringFunction()("foo").isEmpty mustEqual true
+   TextResultsFormat.fromStringFunction()("foo").isEmpty mustEqual true
   }
   "give an empty Option when supplied with an empty String" in {
-   Format.fromStringFunction()("").isEmpty mustEqual true
+   TextResultsFormat.fromStringFunction()("").isEmpty mustEqual true
   }
  }
 
  "Formats" should {
   "have a lowercase String representation" in {
-   property { f: Format => f.toString == f.toString.toLowerCase } must pass
+   property { f: TextResultsFormat => f.toString == f.toString.toLowerCase } must pass
   }
   "be retrievable by their String representation" in {
-   property { f: Format => Format.fromStringFunction()(f.toString).get == f } must pass
+   property { f: TextResultsFormat => TextResultsFormat.fromStringFunction()(f.toString).get == f } must pass
   }
  }
 })
