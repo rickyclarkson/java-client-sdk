@@ -805,14 +805,14 @@ public final class ReplayPicCGI
     }
 
     /**
-     * Converts a String to a ReplayPicCGI if it matches one of ReplayPicCGI's
-     * members case-insensitively, returning it in an Option if it does, and
-     * returning an empty Option otherwise.
+     * Converts a String containing a URL describing a /replay_pic.cgi? request
+     * into a ReplayPicCGI.
      * 
      * @param string
      *        the String to parse.
-     * @return an Option containing the parsed ReplayPicCGI if the parse
-     *         succeeded; the Option is empty otherwise
+     * @return A ReplayPicCGI describing the specified URL
+     * @throws IllegalArgumentException
+     *         if the String cannot be parsed into a ReplayPicCGI.
      * @throws NullPointerException
      *         if string is null.
      */

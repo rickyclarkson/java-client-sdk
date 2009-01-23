@@ -235,10 +235,9 @@ object CodeGen {
      lines("""@Override
            public String toString()""") ++ brace(lines("return \"" + urlPart + "\" + parameterMap.toURLParameters( params );")) ++ blankLine ++
 
-     Method(Public, IsStatic(true), Nil, NameAndDescription(className, "an Option containing the parsed "+className+" if the parse succeeded; the Option is empty otherwise"), "fromString",
-            List(Parameter("String", "string", "the String to parse")), lines("Converts a String to a "+className+" if it matches one of "+className+"""'s
-                                                                              members case-insensitively, returning it in an Option if it does, and
-                                                                              returning an empty Option otherwise."""), Nil,
+     Method(Public, IsStatic(true), Nil, NameAndDescription(className, "A "+className+" describing the specified URL"), "fromString",
+            List(Parameter("String", "string", "the String to parse")), lines("Converts a String containing a URL describing a "+urlPart+" request into a "+className+"."),
+            List(NameAndDescription("IllegalArgumentException", "if the String cannot be parsed into a "+className)),
             lines("if ( string.length() == 0 )") ++ brace(lines("""throw new IllegalArgumentException( "Cannot parse an empty String into a """ + className + """." );""")) ++
             lines("""final Option<ParameterMap> map = ParameterMap.fromURL( string, params );
                   if ( map.isEmpty() )""") ++ brace(lines("throw new IllegalArgumentException( map.reason() );")) ++ lines("return new "+className+"( map.get() );")).toJava))

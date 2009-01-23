@@ -850,14 +850,14 @@ public final class DisplayPicCGI
     }
 
     /**
-     * Converts a String to a DisplayPicCGI if it matches one of DisplayPicCGI's
-     * members case-insensitively, returning it in an Option if it does, and
-     * returning an empty Option otherwise.
+     * Converts a String containing a URL describing a /display_pic.cgi? request
+     * into a DisplayPicCGI.
      * 
      * @param string
      *        the String to parse.
-     * @return an Option containing the parsed DisplayPicCGI if the parse
-     *         succeeded; the Option is empty otherwise
+     * @return A DisplayPicCGI describing the specified URL
+     * @throws IllegalArgumentException
+     *         if the String cannot be parsed into a DisplayPicCGI.
      * @throws NullPointerException
      *         if string is null.
      */
