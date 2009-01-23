@@ -97,6 +97,13 @@ public final class DisplayPicCGI
             ParameterDescription.parameter( "proxypri", StringConversion.integer() ).withDefault( 1 );
 
     /**
+     * The specification of the bufferCount parameter.
+     */
+    private static final ParameterDescription<Integer, Integer> BUFFER_COUNT =
+            ParameterDescription.parameter( "nbuffers", StringConversion.integer() ).withDefault( 0 ).notNegative(
+                    Num.integer );
+
+    /**
      * Gets the value of the dwellTime parameter.
      * 
      * @return the value of the dwellTime parameter.
@@ -187,6 +194,16 @@ public final class DisplayPicCGI
     }
 
     /**
+     * Gets the value of the bufferCount parameter.
+     * 
+     * @return the value of the bufferCount parameter.
+     */
+    public int getBufferCount()
+    {
+        return parameterMap.get( BUFFER_COUNT );
+    }
+
+    /**
      * Gets the value of the camera parameter.
      * 
      * @return the value of the camera parameter.
@@ -254,16 +271,6 @@ public final class DisplayPicCGI
     public int getDuration()
     {
         return parameterMap.get( CommonParameters.DURATION );
-    }
-
-    /**
-     * Gets the value of the bufferCount parameter.
-     * 
-     * @return the value of the bufferCount parameter.
-     */
-    public int getBufferCount()
-    {
-        return parameterMap.get( CommonParameters.BUFFER_COUNT );
     }
 
     /**
@@ -487,6 +494,18 @@ public final class DisplayPicCGI
         }
 
         /**
+         * Sets the bufferCount parameter in the builder.
+         * 
+         * @param bufferCount
+         *        the value to store as the bufferCount parameter.
+         * @return the Builder
+         */
+        public Builder bufferCount( final int bufferCount )
+        {
+            return set( BUFFER_COUNT, bufferCount );
+        }
+
+        /**
          * Sets the camera parameter in the builder.
          * 
          * @param camera
@@ -574,18 +593,6 @@ public final class DisplayPicCGI
         public Builder duration( final int duration )
         {
             return set( CommonParameters.DURATION, duration );
-        }
-
-        /**
-         * Sets the bufferCount parameter in the builder.
-         * 
-         * @param bufferCount
-         *        the value to store as the bufferCount parameter.
-         * @return the Builder
-         */
-        public Builder bufferCount( final int bufferCount )
-        {
-            return set( CommonParameters.BUFFER_COUNT, bufferCount );
         }
 
         /**
@@ -767,6 +774,7 @@ public final class DisplayPicCGI
         params.add( PICTURES_PER_SECOND );
         params.add( MP4_BITRATE );
         params.add( PROXY_PRIORITY );
+        params.add( BUFFER_COUNT );
         params.add( CommonParameters.CAMERA );
         params.add( CommonParameters.FIELD_COUNT );
         params.add( CommonParameters.RESOLUTION );
@@ -774,7 +782,6 @@ public final class DisplayPicCGI
         params.add( CommonParameters.CONNECTION_ID );
         params.add( CommonParameters.MAXIMUM_TRANSMIT_RATE );
         params.add( CommonParameters.DURATION );
-        params.add( CommonParameters.BUFFER_COUNT );
         params.add( CommonParameters.PACKET_SIZE );
         params.add( CommonParameters.UDP_PORT );
         params.add( CommonParameters.FORMAT );

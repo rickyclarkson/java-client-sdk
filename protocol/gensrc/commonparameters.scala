@@ -13,8 +13,6 @@ object commonparameters {
   intParaMeta("MAXIMUM_TRANSMIT_RATE", """ParameterDescription.parameter( "rate", StringConversion.integer() ).withDefault( 0 )""", "getMaximumTransmitRate", "maximumTransmitRate"),
   intParaMeta("DURATION", """ParameterDescription.parameter( "duration", StringConversion.integer() )
                           .withDefault( 0 ).notNegative( Num.integer )""", "getDuration", "duration"),
-  intParaMeta("BUFFER_COUNT", """ParameterDescription.parameter( "nbuffers", StringConversion.integer() )
-                            .withDefault( 0 ).notNegative( Num.integer )""", "getBufferCount", "bufferCount"),
   intParaMeta("PACKET_SIZE", """ParameterDescription.parameterWithBoundsAndAnException( 100, 1500, 0,
                              ParameterDescription.parameter( "pkt_size", StringConversion.integer() ).withDefault( 0 ) )""", "getPacketSize", "packetSize"),
   intParaMeta("UDP_PORT", """ParameterDescription.parameter( "udp_port", StringConversion.integer() ).withDefault( 0 )

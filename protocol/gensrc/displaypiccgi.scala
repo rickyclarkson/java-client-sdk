@@ -101,7 +101,10 @@ case class Method(visibility: Visibility, isStatic: IsStatic, typeParameters: Li
 }
 
 case class Field(description: Iterable[String], visibility: Visibility, isStatic: IsStatic, isFinal: Final, `type`: String, name: String, value: Iterable[String]) {
- def toJava = blockComment(description) ++ append(lines(visibility.toString + (if (isStatic.is) " static " else " ") + (if (isFinal.is) " final " else " ") + `type` + " " + name + " = ") ++ wrapped(value), ";")
+ def toJava =
+  blockComment(description) ++
+  append(lines(visibility.toString + (if (isStatic.is) " static " else " ") + (if (isFinal.is) " final " else " ") + `type` + " " + name + " = ") ++ wrapped(value), ";") ++
+  blankLine
 }
 
 case class ParaMeta(storedType: String, constName: String, constructor: Iterable[String], publicType: String, getterName: String, name: String) {
@@ -165,7 +168,8 @@ object displaypiccgi { def main(args: Array[String]): Unit = {
    intParaMeta("PICTURES_PER_SECOND", """ParameterDescription.parameter( "pps", StringConversion.integer() ).withDefault( 0 )""", "getPicturesPerSecond", "picturesPerSecond"),
    intParaMeta("MP4_BITRATE", """ParameterDescription.parameter( "mp4rate", StringConversion.integer() ).withDefault( 0 )""", "getMp4Bitrate", "mp4Bitrate"),
    intParaMeta("PROXY_PRIORITY", """ParameterDescription.parameter( "proxypri", StringConversion.integer() ).withDefault( 1 )""", "getProxyPriority", "proxyPriority"),
-
+   intParaMeta("BUFFER_COUNT", """ParameterDescription.parameter( "nbuffers", StringConversion.integer() )
+               .withDefault( 0 ).notNegative( Num.integer )""", "getBufferCount", "bufferCount")
   )
 
  val packageName = "uk.org.netvu.protocol" 

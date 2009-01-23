@@ -223,16 +223,6 @@ public final class ReplayPicCGI
     }
 
     /**
-     * Gets the value of the bufferCount parameter.
-     * 
-     * @return the value of the bufferCount parameter.
-     */
-    public int getBufferCount()
-    {
-        return parameterMap.get( CommonParameters.BUFFER_COUNT );
-    }
-
-    /**
      * Gets the value of the packetSize parameter.
      * 
      * @return the value of the packetSize parameter.
@@ -520,18 +510,6 @@ public final class ReplayPicCGI
         }
 
         /**
-         * Sets the bufferCount parameter in the builder.
-         * 
-         * @param bufferCount
-         *        the value to store as the bufferCount parameter.
-         * @return the Builder
-         */
-        public Builder bufferCount( final int bufferCount )
-        {
-            return set( CommonParameters.BUFFER_COUNT, bufferCount );
-        }
-
-        /**
          * Sets the packetSize parameter in the builder.
          * 
          * @param packetSize
@@ -715,7 +693,6 @@ public final class ReplayPicCGI
         params.add( CommonParameters.CONNECTION_ID );
         params.add( CommonParameters.MAXIMUM_TRANSMIT_RATE );
         params.add( CommonParameters.DURATION );
-        params.add( CommonParameters.BUFFER_COUNT );
         params.add( CommonParameters.PACKET_SIZE );
         params.add( CommonParameters.UDP_PORT );
         params.add( CommonParameters.FORMAT );
