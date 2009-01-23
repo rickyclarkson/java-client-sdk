@@ -10,7 +10,7 @@ import uk.org.netvu.util.CheckParameters;
 /**
  * A set of utility methods for operating on Lists.
  */
-public final class Lists
+final class Lists
 {
     /**
      * Given a List and a predicate, constructs a List consisting of only the

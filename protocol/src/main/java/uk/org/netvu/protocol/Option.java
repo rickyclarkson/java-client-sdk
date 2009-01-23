@@ -11,7 +11,7 @@ import uk.org.netvu.util.CheckParameters;
  * @param <T>
  *        the type of the object.
  */
-public abstract class Option<T> implements Iterable<T>
+abstract class Option<T> implements Iterable<T>
 {
     /**
      * Creates an Option holding no elements.

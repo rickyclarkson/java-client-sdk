@@ -12,7 +12,7 @@ import uk.org.netvu.util.CheckParameters;
  * @param <R>
  *        the type of object to convert to.
  */
-public abstract class Function<T, R>
+abstract class Function<T, R>
 {
     /**
      * A Function that returns true if the value it receives is the same as the

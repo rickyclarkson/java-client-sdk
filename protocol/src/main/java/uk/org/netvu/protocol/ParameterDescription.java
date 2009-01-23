@@ -18,7 +18,7 @@ import uk.org.netvu.util.CheckParameters;
  *        the output type of the parameter that the ParameterDescription
  *        describes.
  */
-public abstract class ParameterDescription<T, R>
+abstract class ParameterDescription<T, R>
 {
     /**
      * Constructs a ParameterDescription that describes a parameter that accepts

@@ -5,7 +5,7 @@ import uk.org.netvu.util.CheckParameters;
 /**
  * A representation of a URL Parameter (foo=bar).
  */
-public final class URLParameter
+final class URLParameter
 {
     /**
      * The name of this parameter.

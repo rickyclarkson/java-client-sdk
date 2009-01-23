@@ -17,7 +17,7 @@ import uk.org.netvu.util.CheckParameters;
  * @param <T>
  *        the type that this StringConversion can convert Strings to and from.
  */
-public final class StringConversion<T>
+final class StringConversion<T>
 {
     /**
      * A StringConversion that converts between Strings containing 'true' or

@@ -9,7 +9,7 @@ import uk.org.netvu.util.CheckParameters;
 /**
  * Utility methods for dealing with Strings.
  */
-public final class Strings
+final class Strings
 {
     /**
      * A named String literal, used to improve the readability of uses of double

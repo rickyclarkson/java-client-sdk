@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * A utility class for parsing Strings into URL parts.
  */
-public final class URLExtractor
+final class URLExtractor
 {
     /**
      * Parses key-value pairs separated by &, and internally separated by =,

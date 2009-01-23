@@ -12,7 +12,7 @@ import uk.org.netvu.util.CheckParameters;
  * @param <R>
  *        the type of the accumulator.
  */
-public abstract class Reduction<T, R>
+abstract class Reduction<T, R>
 {
     /**
      * A Reduction that, given two Strings, constructs a new String containing

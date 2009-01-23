@@ -10,7 +10,7 @@ import uk.org.netvu.util.CheckParameters;
  * @param <U>
  *        the type of the second object.
  */
-public final class Pair<T, U>
+final class Pair<T, U>
 {
     private final T t;
 

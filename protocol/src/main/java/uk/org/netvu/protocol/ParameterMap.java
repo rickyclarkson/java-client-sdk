@@ -11,7 +11,7 @@ import uk.org.netvu.util.CheckParameters;
  * An immutable object that stores the values associated with parameters and
  * provides an interface to retrieving those values.
  */
-public final class ParameterMap
+final class ParameterMap
 {
     /**
      * Parses each of the specified Strings and gives it to the corresponding
