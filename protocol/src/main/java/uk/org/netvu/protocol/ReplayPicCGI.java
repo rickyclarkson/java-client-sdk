@@ -1,23 +1,5 @@
 package uk.org.netvu.protocol;
 
-import static uk.org.netvu.protocol.CommonParameters.AUDIO_CHANNEL;
-import static uk.org.netvu.protocol.CommonParameters.BUFFER_COUNT;
-import static uk.org.netvu.protocol.CommonParameters.CAMERA;
-import static uk.org.netvu.protocol.CommonParameters.CAMERA_SEQUENCE_MASK;
-import static uk.org.netvu.protocol.CommonParameters.CONNECTION_ID;
-import static uk.org.netvu.protocol.CommonParameters.DURATION;
-import static uk.org.netvu.protocol.CommonParameters.FIELD_COUNT;
-import static uk.org.netvu.protocol.CommonParameters.FORMAT;
-import static uk.org.netvu.protocol.CommonParameters.MAXIMUM_TRANSMIT_RATE;
-import static uk.org.netvu.protocol.CommonParameters.OUTPUT_CHANNEL;
-import static uk.org.netvu.protocol.CommonParameters.PACKET_SIZE;
-import static uk.org.netvu.protocol.CommonParameters.PROXY_MODE;
-import static uk.org.netvu.protocol.CommonParameters.PROXY_RETRIES;
-import static uk.org.netvu.protocol.CommonParameters.RESOLUTION;
-import static uk.org.netvu.protocol.CommonParameters.SLAVE_IP;
-import static uk.org.netvu.protocol.CommonParameters.TRANSMISSION_MODE;
-import static uk.org.netvu.protocol.CommonParameters.UDP_PORT;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -177,7 +159,7 @@ public final class ReplayPicCGI
      */
     public int getCamera()
     {
-        return parameterMap.get( CAMERA );
+        return parameterMap.get( CommonParameters.CAMERA );
     }
 
     /**
@@ -187,7 +169,7 @@ public final class ReplayPicCGI
      */
     public int getFieldCount()
     {
-        return parameterMap.get( FIELD_COUNT );
+        return parameterMap.get( CommonParameters.FIELD_COUNT );
     }
 
     /**
@@ -197,7 +179,7 @@ public final class ReplayPicCGI
      */
     public String getResolution()
     {
-        return parameterMap.get( RESOLUTION );
+        return parameterMap.get( CommonParameters.RESOLUTION );
     }
 
     /**
@@ -207,7 +189,7 @@ public final class ReplayPicCGI
      */
     public String getCameraSequenceMask()
     {
-        return parameterMap.get( CAMERA_SEQUENCE_MASK );
+        return parameterMap.get( CommonParameters.CAMERA_SEQUENCE_MASK );
     }
 
     /**
@@ -217,7 +199,7 @@ public final class ReplayPicCGI
      */
     public int getConnectionID()
     {
-        return parameterMap.get( CONNECTION_ID );
+        return parameterMap.get( CommonParameters.CONNECTION_ID );
     }
 
     /**
@@ -227,7 +209,7 @@ public final class ReplayPicCGI
      */
     public int getMaximumTransmitRate()
     {
-        return parameterMap.get( MAXIMUM_TRANSMIT_RATE );
+        return parameterMap.get( CommonParameters.MAXIMUM_TRANSMIT_RATE );
     }
 
     /**
@@ -237,7 +219,7 @@ public final class ReplayPicCGI
      */
     public int getDuration()
     {
-        return parameterMap.get( DURATION );
+        return parameterMap.get( CommonParameters.DURATION );
     }
 
     /**
@@ -247,7 +229,7 @@ public final class ReplayPicCGI
      */
     public int getBufferCount()
     {
-        return parameterMap.get( BUFFER_COUNT );
+        return parameterMap.get( CommonParameters.BUFFER_COUNT );
     }
 
     /**
@@ -257,7 +239,7 @@ public final class ReplayPicCGI
      */
     public int getPacketSize()
     {
-        return parameterMap.get( PACKET_SIZE );
+        return parameterMap.get( CommonParameters.PACKET_SIZE );
     }
 
     /**
@@ -267,7 +249,7 @@ public final class ReplayPicCGI
      */
     public int getUdpPort()
     {
-        return parameterMap.get( UDP_PORT );
+        return parameterMap.get( CommonParameters.UDP_PORT );
     }
 
     /**
@@ -277,7 +259,7 @@ public final class ReplayPicCGI
      */
     public VideoFormat getFormat()
     {
-        return parameterMap.get( FORMAT );
+        return parameterMap.get( CommonParameters.FORMAT );
     }
 
     /**
@@ -287,7 +269,7 @@ public final class ReplayPicCGI
      */
     public int getAudioChannel()
     {
-        return parameterMap.get( AUDIO_CHANNEL );
+        return parameterMap.get( CommonParameters.AUDIO_CHANNEL );
     }
 
     /**
@@ -297,7 +279,7 @@ public final class ReplayPicCGI
      */
     public TransmissionMode getTransmissionMode()
     {
-        return parameterMap.get( TRANSMISSION_MODE );
+        return parameterMap.get( CommonParameters.TRANSMISSION_MODE );
     }
 
     /**
@@ -307,7 +289,7 @@ public final class ReplayPicCGI
      */
     public IPAddress getSlaveIP()
     {
-        return parameterMap.get( SLAVE_IP );
+        return parameterMap.get( CommonParameters.SLAVE_IP );
     }
 
     /**
@@ -317,7 +299,7 @@ public final class ReplayPicCGI
      */
     public int getOutputChannel()
     {
-        return parameterMap.get( OUTPUT_CHANNEL );
+        return parameterMap.get( CommonParameters.OUTPUT_CHANNEL );
     }
 
     /**
@@ -327,7 +309,7 @@ public final class ReplayPicCGI
      */
     public ProxyMode getProxyMode()
     {
-        return parameterMap.get( PROXY_MODE );
+        return parameterMap.get( CommonParameters.PROXY_MODE );
     }
 
     /**
@@ -337,7 +319,7 @@ public final class ReplayPicCGI
      */
     public int getProxyRetries()
     {
-        return parameterMap.get( PROXY_RETRIES );
+        return parameterMap.get( CommonParameters.PROXY_RETRIES );
     }
 
     /**
@@ -456,7 +438,7 @@ public final class ReplayPicCGI
          */
         public Builder camera( final int camera )
         {
-            return set( CAMERA, camera );
+            return set( CommonParameters.CAMERA, camera );
         }
 
         /**
@@ -468,7 +450,7 @@ public final class ReplayPicCGI
          */
         public Builder fieldCount( final int fieldCount )
         {
-            return set( FIELD_COUNT, fieldCount );
+            return set( CommonParameters.FIELD_COUNT, fieldCount );
         }
 
         /**
@@ -483,7 +465,7 @@ public final class ReplayPicCGI
         public Builder resolution( final String resolution )
         {
             CheckParameters.areNotNull( resolution );
-            return set( RESOLUTION, resolution );
+            return set( CommonParameters.RESOLUTION, resolution );
         }
 
         /**
@@ -498,7 +480,7 @@ public final class ReplayPicCGI
         public Builder cameraSequenceMask( final String cameraSequenceMask )
         {
             CheckParameters.areNotNull( cameraSequenceMask );
-            return set( CAMERA_SEQUENCE_MASK, cameraSequenceMask );
+            return set( CommonParameters.CAMERA_SEQUENCE_MASK, cameraSequenceMask );
         }
 
         /**
@@ -510,7 +492,7 @@ public final class ReplayPicCGI
          */
         public Builder connectionID( final int connectionID )
         {
-            return set( CONNECTION_ID, connectionID );
+            return set( CommonParameters.CONNECTION_ID, connectionID );
         }
 
         /**
@@ -522,7 +504,7 @@ public final class ReplayPicCGI
          */
         public Builder maximumTransmitRate( final int maximumTransmitRate )
         {
-            return set( MAXIMUM_TRANSMIT_RATE, maximumTransmitRate );
+            return set( CommonParameters.MAXIMUM_TRANSMIT_RATE, maximumTransmitRate );
         }
 
         /**
@@ -534,7 +516,7 @@ public final class ReplayPicCGI
          */
         public Builder duration( final int duration )
         {
-            return set( DURATION, duration );
+            return set( CommonParameters.DURATION, duration );
         }
 
         /**
@@ -546,7 +528,7 @@ public final class ReplayPicCGI
          */
         public Builder bufferCount( final int bufferCount )
         {
-            return set( BUFFER_COUNT, bufferCount );
+            return set( CommonParameters.BUFFER_COUNT, bufferCount );
         }
 
         /**
@@ -558,7 +540,7 @@ public final class ReplayPicCGI
          */
         public Builder packetSize( final int packetSize )
         {
-            return set( PACKET_SIZE, packetSize );
+            return set( CommonParameters.PACKET_SIZE, packetSize );
         }
 
         /**
@@ -570,7 +552,7 @@ public final class ReplayPicCGI
          */
         public Builder udpPort( final int udpPort )
         {
-            return set( UDP_PORT, udpPort );
+            return set( CommonParameters.UDP_PORT, udpPort );
         }
 
         /**
@@ -585,7 +567,7 @@ public final class ReplayPicCGI
         public Builder format( final VideoFormat format )
         {
             CheckParameters.areNotNull( format );
-            return set( FORMAT, format );
+            return set( CommonParameters.FORMAT, format );
         }
 
         /**
@@ -597,7 +579,7 @@ public final class ReplayPicCGI
          */
         public Builder audioChannel( final int audioChannel )
         {
-            return set( AUDIO_CHANNEL, audioChannel );
+            return set( CommonParameters.AUDIO_CHANNEL, audioChannel );
         }
 
         /**
@@ -612,7 +594,7 @@ public final class ReplayPicCGI
         public Builder transmissionMode( final TransmissionMode transmissionMode )
         {
             CheckParameters.areNotNull( transmissionMode );
-            return set( TRANSMISSION_MODE, transmissionMode );
+            return set( CommonParameters.TRANSMISSION_MODE, transmissionMode );
         }
 
         /**
@@ -627,7 +609,7 @@ public final class ReplayPicCGI
         public Builder slaveIP( final IPAddress slaveIP )
         {
             CheckParameters.areNotNull( slaveIP );
-            return set( SLAVE_IP, slaveIP );
+            return set( CommonParameters.SLAVE_IP, slaveIP );
         }
 
         /**
@@ -639,7 +621,7 @@ public final class ReplayPicCGI
          */
         public Builder outputChannel( final int outputChannel )
         {
-            return set( OUTPUT_CHANNEL, outputChannel );
+            return set( CommonParameters.OUTPUT_CHANNEL, outputChannel );
         }
 
         /**
@@ -654,7 +636,7 @@ public final class ReplayPicCGI
         public Builder proxyMode( final ProxyMode proxyMode )
         {
             CheckParameters.areNotNull( proxyMode );
-            return set( PROXY_MODE, proxyMode );
+            return set( CommonParameters.PROXY_MODE, proxyMode );
         }
 
         /**
@@ -666,7 +648,7 @@ public final class ReplayPicCGI
          */
         public Builder proxyRetries( final int proxyRetries )
         {
-            return set( PROXY_RETRIES, proxyRetries );
+            return set( CommonParameters.PROXY_RETRIES, proxyRetries );
         }
 
         /**
@@ -726,23 +708,23 @@ public final class ReplayPicCGI
         params.add( TIME_RANGE );
         params.add( FAST_FORWARD_MULTIPLIER );
         params.add( REFRESH );
-        params.add( CAMERA );
-        params.add( FIELD_COUNT );
-        params.add( RESOLUTION );
-        params.add( CAMERA_SEQUENCE_MASK );
-        params.add( CONNECTION_ID );
-        params.add( MAXIMUM_TRANSMIT_RATE );
-        params.add( DURATION );
-        params.add( BUFFER_COUNT );
-        params.add( PACKET_SIZE );
-        params.add( UDP_PORT );
-        params.add( FORMAT );
-        params.add( AUDIO_CHANNEL );
-        params.add( TRANSMISSION_MODE );
-        params.add( SLAVE_IP );
-        params.add( OUTPUT_CHANNEL );
-        params.add( PROXY_MODE );
-        params.add( PROXY_RETRIES );
+        params.add( CommonParameters.CAMERA );
+        params.add( CommonParameters.FIELD_COUNT );
+        params.add( CommonParameters.RESOLUTION );
+        params.add( CommonParameters.CAMERA_SEQUENCE_MASK );
+        params.add( CommonParameters.CONNECTION_ID );
+        params.add( CommonParameters.MAXIMUM_TRANSMIT_RATE );
+        params.add( CommonParameters.DURATION );
+        params.add( CommonParameters.BUFFER_COUNT );
+        params.add( CommonParameters.PACKET_SIZE );
+        params.add( CommonParameters.UDP_PORT );
+        params.add( CommonParameters.FORMAT );
+        params.add( CommonParameters.AUDIO_CHANNEL );
+        params.add( CommonParameters.TRANSMISSION_MODE );
+        params.add( CommonParameters.SLAVE_IP );
+        params.add( CommonParameters.OUTPUT_CHANNEL );
+        params.add( CommonParameters.PROXY_MODE );
+        params.add( CommonParameters.PROXY_RETRIES );
     }
 
     /**

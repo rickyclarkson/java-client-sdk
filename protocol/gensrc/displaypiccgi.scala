@@ -104,7 +104,9 @@ case class Field(description: Iterable[String], visibility: Visibility, isStatic
  def toJava = blockComment(description) ++ append(lines(visibility.toString + (if (isStatic.is) " static " else " ") + (if (isFinal.is) " final " else " ") + `type` + " " + name + " = ") ++ wrapped(value), ";")
 }
 
-case class ParaMeta(storedType: String, constName: String, constructor: Iterable[String], publicType: String, getterName: String, name: String)
+case class ParaMeta(storedType: String, constName: String, constructor: Iterable[String], publicType: String, getterName: String, name: String) {
+ def withConstName(newName: String) = ParaMeta(storedType, newName, constructor, publicType, getterName, name)
+}
 
 object intParaMeta {
  def apply(constName: String, constructor: String, getterName: String, name: String) = ParaMeta("Integer", constName, lines(constructor), "int", getterName, name)
@@ -187,14 +189,13 @@ object CodeGen {
    import java.util.List;
    import java.util.ArrayList;
    import uk.org.netvu.util.CheckParameters;   
-   import static uk.org.netvu.protocol.CommonParameters.*;
    """) ++ blockComment(classComment) ++ lines(
    """public final class """+className) ++ brace(
     blankFinal(lines("The ParameterMap to get values from."), "ParameterMap", "parameterMap") ++
     packagePrivateConstructor(lines("Constructs a "+className+", using the values from the specified ParameterMap."), className, List(Parameter("ParameterMap", "parameterMap", "the ParameterMap to get values from")), lines("this.parameterMap = parameterMap;")) ++
     privateStatic(lines("All the parameter specifications, used in parsing URLs."), "List<ParameterDescription<?, ?>>", "params", lines("new ArrayList<ParameterDescription<?, ?>>()")) ++
     params.flatMap(param => privateStatic(lines("The specification of the "+param.name+" parameter."), "ParameterDescription<"+param.storedType+", "+param.storedType+">", param.constName, param.constructor)) ++
-    (params ++ commonparameters.commonParams).flatMap(param => publicMethod(lines("Gets the value of the "+param.name+" parameter."), "the value of the "+param.name+" parameter.", param.publicType, param.getterName, Nil, lines("return parameterMap.get( "+param.constName+" );"))) ++
+    (params ++ commonparameters.commonParams.map(p => p.withConstName("CommonParameters." + p.constName))).flatMap(param => publicMethod(lines("Gets the value of the "+param.name+" parameter."), "the value of the "+param.name+" parameter.", param.publicType, param.getterName, Nil, lines("return parameterMap.get( "+param.constName+" );"))) ++
     clazz(lines(
      """A builder that takes in all the optional values for """+className+" and produces a "+className+""" when build() is
         called.  Each parameter must be supplied no more than once.  A Builder can only be built once; that is, it can
@@ -206,7 +207,7 @@ object CodeGen {
          which is stored in the Option."""),
       "Option<ParameterMap>", "parameterMap", "Option.getFullOption( new ParameterMap() )") ++
      
-    (params ++ commonparameters.commonParams).flatMap(param => publicMethod(
+    (params ++ commonparameters.commonParams.map(p => p.withConstName("CommonParameters." + p.constName))).flatMap(param => publicMethod(
      lines("Sets the "+param.name+" parameter in the builder."), "the Builder", "Builder", param.name, List(Parameter(param.publicType, param.name, "the value to store as the "+param.name+" parameter")), 
      lines("return set( "+param.constName+", "+param.name+" );"))) ++ 
      
@@ -223,7 +224,7 @@ object CodeGen {
             lines("Constructs a "+className+" with the values from this Builder."), List(NameAndDescription("IllegalStateException", "if the Builder has already been built")),
             Try(lines("return new "+className+"( parameterMap.get() );")) ++ Finally(lines("""parameterMap = Option.getEmptyOption( "This Builder has already been built once." );"""))).toJava) ++
 
-     lines("static") ++ brace((params ++ commonparameters.commonParams) map (param => "params.add( "+param.constName+" );")) ++ extras ++
+     lines("static") ++ brace((params ++ commonparameters.commonParams.map(p => p.withConstName("CommonParameters." + p.constName))) map (param => "params.add( "+param.constName+" );")) ++ extras ++
 
      blockComment(lines("Converts this "+className+""" into a String containing a URL beginning with 
                         """ + urlPart +" and containing the supplied parameters.") ++ returnDoc("a String containing a URL beginning with " + urlPart + " and containing the supplied parameters")) ++
