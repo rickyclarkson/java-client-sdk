@@ -37,9 +37,9 @@ public final class ReplayPicCGI
     private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>();
 
     /**
-     * The specification of the cam parameter.
+     * The specification of the camera parameter.
      */
-    private static final ParameterDescription<Integer, Integer> CAM =
+    private static final ParameterDescription<Integer, Integer> CAMERA =
             ParameterDescription.parameter( "cam", StringConversion.integer() ).withDefault( 1 ).withBounds( 1, 16,
                     Num.integer );
 
@@ -51,16 +51,16 @@ public final class ReplayPicCGI
                     Num.integer );
 
     /**
-     * The specification of the seq parameter.
+     * The specification of the cameraSequenceMask parameter.
      */
-    private static final ParameterDescription<Integer, Integer> SEQ =
+    private static final ParameterDescription<Integer, Integer> CAMERA_SEQUENCE_MASK =
             ParameterDescription.parameter( "seq", StringConversion.hexInt() ).withDefault( 0 ).withBounds( 0, 0xF,
                     Num.integer );
 
     /**
-     * The specification of the id parameter.
+     * The specification of the connectionID parameter.
      */
-    private static final ParameterDescription<Integer, Integer> ID =
+    private static final ParameterDescription<Integer, Integer> CONNECTION_ID =
             ParameterDescription.parameter( "id", StringConversion.integer() ).withDefault( 0 );
 
     /**
@@ -71,23 +71,23 @@ public final class ReplayPicCGI
                     StringConversion.convenientPartial( Control.fromStringFunction() ) ).withDefault( Control.STOP );
 
     /**
-     * The specification of the time parameter.
+     * The specification of the gmtTime parameter.
      */
-    private static final ParameterDescription<Integer, Integer> TIME =
+    private static final ParameterDescription<Integer, Integer> GMT_TIME =
             ParameterDescription.parameter( "time", StringConversion.convenientPartial( fromTimeFunction() ) )
                 .withDefault( 0 );
 
     /**
-     * The specification of the local parameter.
+     * The specification of the localTime parameter.
      */
-    private static final ParameterDescription<Integer, Integer> LOCAL =
+    private static final ParameterDescription<Integer, Integer> LOCAL_TIME =
             ParameterDescription.parameter( "local", StringConversion.convenientPartial( fromTimeFunction() ) )
                 .withDefault( 0 );
 
     /**
-     * The specification of the rate parameter.
+     * The specification of the maximumTransmitRate parameter.
      */
-    private static final ParameterDescription<Integer, Integer> RATE =
+    private static final ParameterDescription<Integer, Integer> MAXIMUM_TRANSMIT_RATE =
             ParameterDescription.parameter( "rate", StringConversion.integer() ).withDefault( 0 );
 
     /**
@@ -125,16 +125,16 @@ public final class ReplayPicCGI
                     Num.integer );
 
     /**
-     * The specification of the res parameter.
+     * The specification of the resolution parameter.
      */
-    private static final ParameterDescription<String, String> RES =
+    private static final ParameterDescription<String, String> RESOLUTION =
             ParameterDescription.parameter( "res", StringConversion.string() ).withDefault( "med" ).allowedValues(
                     "hi", "med", "lo" );
 
     /**
-     * The specification of the pktSize parameter.
+     * The specification of the packetSize parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PKT_SIZE =
+    private static final ParameterDescription<Integer, Integer> PACKET_SIZE =
             ParameterDescription.parameterWithBoundsAndAnException( 100, 1500, 0, ParameterDescription.parameter(
                     "pkt_size", StringConversion.integer() ).withDefault( 0 ) );
 
@@ -180,9 +180,9 @@ public final class ReplayPicCGI
                 .withDefault( IPAddress.fromString( "0.0.0.0" ).get() );
 
     /**
-     * The specification of the opChan parameter.
+     * The specification of the outputChannel parameter.
      */
-    private static final ParameterDescription<Integer, Integer> OP_CHAN =
+    private static final ParameterDescription<Integer, Integer> OUTPUT_CHANNEL =
             ParameterDescription.parameter( "opchan", StringConversion.integer() ).withDefault( -1 );
 
     /**
@@ -194,19 +194,19 @@ public final class ReplayPicCGI
                     ProxyMode.TRANSIENT );
 
     /**
-     * The specification of the proxyRetry parameter.
+     * The specification of the proxyRetries parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PROXY_RETRY =
+    private static final ParameterDescription<Integer, Integer> PROXY_RETRIES =
             ParameterDescription.parameter( "proxyretry", StringConversion.integer() ).withDefault( 0 );
 
     /**
-     * Gets the value of the cam parameter.
+     * Gets the value of the camera parameter.
      * 
-     * @return the value of the cam parameter.
+     * @return the value of the camera parameter.
      */
-    public int getCam()
+    public int getCamera()
     {
-        return parameterMap.get( CAM );
+        return parameterMap.get( CAMERA );
     }
 
     /**
@@ -220,23 +220,23 @@ public final class ReplayPicCGI
     }
 
     /**
-     * Gets the value of the seq parameter.
+     * Gets the value of the cameraSequenceMask parameter.
      * 
-     * @return the value of the seq parameter.
+     * @return the value of the cameraSequenceMask parameter.
      */
-    public int getSeq()
+    public int getCameraSequenceMask()
     {
-        return parameterMap.get( SEQ );
+        return parameterMap.get( CAMERA_SEQUENCE_MASK );
     }
 
     /**
-     * Gets the value of the id parameter.
+     * Gets the value of the connectionID parameter.
      * 
-     * @return the value of the id parameter.
+     * @return the value of the connectionID parameter.
      */
-    public int getId()
+    public int getConnectionID()
     {
-        return parameterMap.get( ID );
+        return parameterMap.get( CONNECTION_ID );
     }
 
     /**
@@ -250,33 +250,33 @@ public final class ReplayPicCGI
     }
 
     /**
-     * Gets the value of the time parameter.
+     * Gets the value of the gmtTime parameter.
      * 
-     * @return the value of the time parameter.
+     * @return the value of the gmtTime parameter.
      */
-    public int getTime()
+    public int getGMTTime()
     {
-        return parameterMap.get( TIME );
+        return parameterMap.get( GMT_TIME );
     }
 
     /**
-     * Gets the value of the local parameter.
+     * Gets the value of the localTime parameter.
      * 
-     * @return the value of the local parameter.
+     * @return the value of the localTime parameter.
      */
-    public int getLocal()
+    public int getLocalTime()
     {
-        return parameterMap.get( LOCAL );
+        return parameterMap.get( LOCAL_TIME );
     }
 
     /**
-     * Gets the value of the rate parameter.
+     * Gets the value of the maximumTransmitRate parameter.
      * 
-     * @return the value of the rate parameter.
+     * @return the value of the maximumTransmitRate parameter.
      */
-    public int getRate()
+    public int getMaximumTransmitRate()
     {
-        return parameterMap.get( RATE );
+        return parameterMap.get( MAXIMUM_TRANSMIT_RATE );
     }
 
     /**
@@ -330,23 +330,23 @@ public final class ReplayPicCGI
     }
 
     /**
-     * Gets the value of the res parameter.
+     * Gets the value of the resolution parameter.
      * 
-     * @return the value of the res parameter.
+     * @return the value of the resolution parameter.
      */
-    public String getRes()
+    public String getResolution()
     {
-        return parameterMap.get( RES );
+        return parameterMap.get( RESOLUTION );
     }
 
     /**
-     * Gets the value of the pktSize parameter.
+     * Gets the value of the packetSize parameter.
      * 
-     * @return the value of the pktSize parameter.
+     * @return the value of the packetSize parameter.
      */
-    public int getPktSize()
+    public int getPacketSize()
     {
-        return parameterMap.get( PKT_SIZE );
+        return parameterMap.get( PACKET_SIZE );
     }
 
     /**
@@ -400,13 +400,13 @@ public final class ReplayPicCGI
     }
 
     /**
-     * Gets the value of the opChan parameter.
+     * Gets the value of the outputChannel parameter.
      * 
-     * @return the value of the opChan parameter.
+     * @return the value of the outputChannel parameter.
      */
-    public int getOpChan()
+    public int getOutputChannel()
     {
-        return parameterMap.get( OP_CHAN );
+        return parameterMap.get( OUTPUT_CHANNEL );
     }
 
     /**
@@ -420,13 +420,13 @@ public final class ReplayPicCGI
     }
 
     /**
-     * Gets the value of the proxyRetry parameter.
+     * Gets the value of the proxyRetries parameter.
      * 
-     * @return the value of the proxyRetry parameter.
+     * @return the value of the proxyRetries parameter.
      */
-    public int getProxyRetry()
+    public int getProxyRetries()
     {
-        return parameterMap.get( PROXY_RETRY );
+        return parameterMap.get( PROXY_RETRIES );
     }
 
     /**
@@ -447,15 +447,15 @@ public final class ReplayPicCGI
         private Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
 
         /**
-         * Sets the cam parameter in the builder.
+         * Sets the camera parameter in the builder.
          * 
-         * @param cam
-         *        the value to store as the cam parameter.
+         * @param camera
+         *        the value to store as the camera parameter.
          * @return the Builder
          */
-        public Builder cam( final int cam )
+        public Builder camera( final int camera )
         {
-            return set( CAM, cam );
+            return set( CAMERA, camera );
         }
 
         /**
@@ -471,27 +471,27 @@ public final class ReplayPicCGI
         }
 
         /**
-         * Sets the seq parameter in the builder.
+         * Sets the cameraSequenceMask parameter in the builder.
          * 
-         * @param seq
-         *        the value to store as the seq parameter.
+         * @param cameraSequenceMask
+         *        the value to store as the cameraSequenceMask parameter.
          * @return the Builder
          */
-        public Builder seq( final int seq )
+        public Builder cameraSequenceMask( final int cameraSequenceMask )
         {
-            return set( SEQ, seq );
+            return set( CAMERA_SEQUENCE_MASK, cameraSequenceMask );
         }
 
         /**
-         * Sets the id parameter in the builder.
+         * Sets the connectionID parameter in the builder.
          * 
-         * @param id
-         *        the value to store as the id parameter.
+         * @param connectionID
+         *        the value to store as the connectionID parameter.
          * @return the Builder
          */
-        public Builder id( final int id )
+        public Builder connectionID( final int connectionID )
         {
-            return set( ID, id );
+            return set( CONNECTION_ID, connectionID );
         }
 
         /**
@@ -510,39 +510,39 @@ public final class ReplayPicCGI
         }
 
         /**
-         * Sets the time parameter in the builder.
+         * Sets the gmtTime parameter in the builder.
          * 
-         * @param time
-         *        the value to store as the time parameter.
+         * @param gmtTime
+         *        the value to store as the gmtTime parameter.
          * @return the Builder
          */
-        public Builder time( final int time )
+        public Builder gmtTime( final int gmtTime )
         {
-            return set( TIME, time );
+            return set( GMT_TIME, gmtTime );
         }
 
         /**
-         * Sets the local parameter in the builder.
+         * Sets the localTime parameter in the builder.
          * 
-         * @param local
-         *        the value to store as the local parameter.
+         * @param localTime
+         *        the value to store as the localTime parameter.
          * @return the Builder
          */
-        public Builder local( final int local )
+        public Builder localTime( final int localTime )
         {
-            return set( LOCAL, local );
+            return set( LOCAL_TIME, localTime );
         }
 
         /**
-         * Sets the rate parameter in the builder.
+         * Sets the maximumTransmitRate parameter in the builder.
          * 
-         * @param rate
-         *        the value to store as the rate parameter.
+         * @param maximumTransmitRate
+         *        the value to store as the maximumTransmitRate parameter.
          * @return the Builder
          */
-        public Builder rate( final int rate )
+        public Builder maximumTransmitRate( final int maximumTransmitRate )
         {
-            return set( RATE, rate );
+            return set( MAXIMUM_TRANSMIT_RATE, maximumTransmitRate );
         }
 
         /**
@@ -612,30 +612,30 @@ public final class ReplayPicCGI
         }
 
         /**
-         * Sets the res parameter in the builder.
+         * Sets the resolution parameter in the builder.
          * 
-         * @param res
-         *        the value to store as the res parameter.
+         * @param resolution
+         *        the value to store as the resolution parameter.
          * @return the Builder
          * @throws NullPointerException
-         *         if res is null.
+         *         if resolution is null.
          */
-        public Builder res( final String res )
+        public Builder resolution( final String resolution )
         {
-            CheckParameters.areNotNull( res );
-            return set( RES, res );
+            CheckParameters.areNotNull( resolution );
+            return set( RESOLUTION, resolution );
         }
 
         /**
-         * Sets the pktSize parameter in the builder.
+         * Sets the packetSize parameter in the builder.
          * 
-         * @param pktSize
-         *        the value to store as the pktSize parameter.
+         * @param packetSize
+         *        the value to store as the packetSize parameter.
          * @return the Builder
          */
-        public Builder pktSize( final int pktSize )
+        public Builder packetSize( final int packetSize )
         {
-            return set( PKT_SIZE, pktSize );
+            return set( PACKET_SIZE, packetSize );
         }
 
         /**
@@ -708,15 +708,15 @@ public final class ReplayPicCGI
         }
 
         /**
-         * Sets the opChan parameter in the builder.
+         * Sets the outputChannel parameter in the builder.
          * 
-         * @param opChan
-         *        the value to store as the opChan parameter.
+         * @param outputChannel
+         *        the value to store as the outputChannel parameter.
          * @return the Builder
          */
-        public Builder opChan( final int opChan )
+        public Builder outputChannel( final int outputChannel )
         {
-            return set( OP_CHAN, opChan );
+            return set( OUTPUT_CHANNEL, outputChannel );
         }
 
         /**
@@ -735,15 +735,15 @@ public final class ReplayPicCGI
         }
 
         /**
-         * Sets the proxyRetry parameter in the builder.
+         * Sets the proxyRetries parameter in the builder.
          * 
-         * @param proxyRetry
-         *        the value to store as the proxyRetry parameter.
+         * @param proxyRetries
+         *        the value to store as the proxyRetries parameter.
          * @return the Builder
          */
-        public Builder proxyRetry( final int proxyRetry )
+        public Builder proxyRetries( final int proxyRetries )
         {
-            return set( PROXY_RETRY, proxyRetry );
+            return set( PROXY_RETRIES, proxyRetries );
         }
 
         /**
@@ -796,29 +796,29 @@ public final class ReplayPicCGI
     }
     static
     {
-        params.add( CAM );
+        params.add( CAMERA );
         params.add( FIELDS );
-        params.add( SEQ );
-        params.add( ID );
+        params.add( CAMERA_SEQUENCE_MASK );
+        params.add( CONNECTION_ID );
         params.add( CONTROL );
-        params.add( TIME );
-        params.add( LOCAL );
-        params.add( RATE );
+        params.add( GMT_TIME );
+        params.add( LOCAL_TIME );
+        params.add( MAXIMUM_TRANSMIT_RATE );
         params.add( TEXT );
         params.add( TIME_RANGE );
         params.add( AUDIO );
         params.add( FAST_FORWARD_MULTIPLIER );
         params.add( DURATION );
-        params.add( RES );
-        params.add( PKT_SIZE );
+        params.add( RESOLUTION );
+        params.add( PACKET_SIZE );
         params.add( UDP_PORT );
         params.add( REFRESH );
         params.add( FORMAT );
         params.add( TRANSMISSION_MODE );
         params.add( SLAVE_IP );
-        params.add( OP_CHAN );
+        params.add( OUTPUT_CHANNEL );
         params.add( PROXY_MODE );
-        params.add( PROXY_RETRY );
+        params.add( PROXY_RETRIES );
     }
 
     /**

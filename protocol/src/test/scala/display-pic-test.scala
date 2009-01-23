@@ -8,7 +8,7 @@ class DisplayPicCGITest extends JUnit4(new Specification {
  import DisplayPicCGI._
  "Building a DisplayPicCGI" should {
   "give a DisplayPicCGI containing the correct values" in {
-   val builder = new Builder cam 4 fields 5
+   val builder = new Builder camera 4 fieldCount 5
    val url = "/display_pic.cgi?cam=4&fields=5"
    builder.build.toString mustEqual url
   }
@@ -17,8 +17,8 @@ class DisplayPicCGITest extends JUnit4(new Specification {
  "Parsing a display_pic.cgi request" should {
   "give a DisplayPicCGI containing the correct values" in {
    val cgi = fromString("/display_pic.cgi?cam=4&fields=5")
-   cgi.getCam mustEqual 4
-   cgi.getFields mustEqual 5
+   cgi.getCamera mustEqual 4
+   cgi.getFieldCount mustEqual 5
   }
  }
 
@@ -30,38 +30,38 @@ class DisplayPicCGITest extends JUnit4(new Specification {
    
  new Builder audio "none" must throwA[IllegalStateException]
 
- val setters = List[Builder => Builder](_ cam 4, _ fields 5, _ res "hi", _ seq 6, _ dwell 7, _ id 8, _ dIndex 9, _ presel 3, _ channel 1, _ rate 12, _ forcedQ 13, _ duration 14, _ nBuffers 15, _ telemQ 16, _ pktSize 17, _ udpPort 18, _ audio "none", _ format Format.MP4, _ audioMode AudioMode.INLINE, _ transmissionMode TransmissionMode.BINARY, _ pps 19, _ mp4Rate 20, _ slaveIP new IPAddress(63 << 24 + 48 << 16 + 22 << 8 + 123), _ opChan 21, _ proxyMode ProxyMode.PERSISTENT, _ proxyPri 22, _ proxyRetry 23)
+ val setters = List[Builder => Builder](_ camera 4, _ fieldCount 5, _ resolution "hi", _ cameraSequenceMask 6, _ dwellTime 7, _ connectionID 8, _ dIndex 9, _ preselector 3, _ channel 1, _ maximumTransmitRate 12, _ quantisationFactor 13, _ duration 14, _ bufferCount 15, _ quantisationFactorForTelemetryImages 16, _ packetSize 17, _ udpPort 18, _ audio "none", _ format Format.MP4, _ audioMode AudioMode.INLINE, _ transmissionMode TransmissionMode.BINARY, _ picturesPerSecond 19, _ mp4Bitrate 20, _ slaveIP new IPAddress(63 << 24 + 48 << 16 + 22 << 8 + 123), _ outputChannel 21, _ proxyMode ProxyMode.PERSISTENT, _ proxyPriority 22, _ proxyRetries 23)
  "Builder constraints" areSpecifiedBy BuildersTests.testBuilder[DisplayPicCGI, Builder](new Builder, new Builder, setters, "DisplayPicCGITest")
 
  val cgi = new Builder().build
  import cgi._
- getCam mustEqual 1
- getFields mustEqual 1
- getRes mustEqual "med"
- getSeq mustEqual 0
- getDwell mustEqual 0
- getId mustEqual 0
+ getCamera mustEqual 1
+ getFieldCount mustEqual 1
+ getResolution mustEqual "med"
+ getCameraSequenceMask mustEqual 0
+ getDwellTime mustEqual 0
+ getConnectionID mustEqual 0
  getDIndex mustEqual 0
- getPresel mustEqual 0
+ getPreselector mustEqual 0
  getChannel mustEqual -1
- getRate mustEqual 0
- getForcedQ mustEqual 0
+ getMaximumTransmitRate mustEqual 0
+ getQuantisationFactor mustEqual 0
  getDuration mustEqual 0
- getNBuffers mustEqual 0
- getTelemQ mustEqual -1
- getPktSize mustEqual 0
+ getBufferCount mustEqual 0
+ getQuantisationFactorForTelemetryImages mustEqual -1
+ getPacketSize mustEqual 0
  getUdpPort mustEqual 0
  getAudio mustEqual "0"
  getFormat mustEqual Format.JFIF
  getAudioMode mustEqual AudioMode.UDP
  getTransmissionMode mustEqual TransmissionMode.MIME
- getPPS mustEqual 0
- getMp4Rate mustEqual 0
+ getPicturesPerSecond mustEqual 0
+ getMp4Bitrate mustEqual 0
  getSlaveIP mustEqual IPAddress.fromString("0.0.0.0").get
- getOpChan mustEqual -1
+ getOutputChannel mustEqual -1
  getProxyMode mustEqual ProxyMode.TRANSIENT
- getProxyPri mustEqual 1
- getProxyRetry mustEqual 0
+ getProxyPriority mustEqual 1
+ getProxyRetries mustEqual 0
 
  for (format <- List("mp4", "jfif", "jpeg"))
   DisplayPicCGI.fromString("/display_pic.cgi?format="+format).getFormat.toString.toLowerCase mustEqual format

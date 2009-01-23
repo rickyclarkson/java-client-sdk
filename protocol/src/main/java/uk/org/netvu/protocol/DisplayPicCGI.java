@@ -38,43 +38,43 @@ public final class DisplayPicCGI
     private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>();
 
     /**
-     * The specification of the cam parameter.
+     * The specification of the camera parameter.
      */
-    private static final ParameterDescription<Integer, Integer> CAM =
+    private static final ParameterDescription<Integer, Integer> CAMERA =
             ParameterDescription.parameter( "cam", StringConversion.integer() ).withDefault( 1 ).withBounds( 1, 16,
                     Num.integer );
 
     /**
-     * The specification of the fields parameter.
+     * The specification of the fieldCount parameter.
      */
-    private static final ParameterDescription<Integer, Integer> FIELDS =
+    private static final ParameterDescription<Integer, Integer> FIELD_COUNT =
             ParameterDescription.parameter( "fields", StringConversion.integer() ).withDefault( 1 ).positive(
                     Num.integer );
 
     /**
-     * The specification of the res parameter.
+     * The specification of the resolution parameter.
      */
-    private static final ParameterDescription<String, String> RES =
+    private static final ParameterDescription<String, String> RESOLUTION =
             ParameterDescription.parameter( "res", StringConversion.string() ).withDefault( "med" ).allowedValues(
                     "hi", "med", "lo" );
 
     /**
-     * The specification of the seq parameter.
+     * The specification of the cameraSequenceMask parameter.
      */
-    private static final ParameterDescription<Integer, Integer> SEQ =
+    private static final ParameterDescription<Integer, Integer> CAMERA_SEQUENCE_MASK =
             ParameterDescription.parameter( "seq", StringConversion.hexInt() ).withDefault( 0 ).withBounds( 0, 0xF,
                     Num.integer );
 
     /**
-     * The specification of the dwell parameter.
+     * The specification of the dwellTime parameter.
      */
-    private static final ParameterDescription<Integer, Integer> DWELL =
+    private static final ParameterDescription<Integer, Integer> DWELL_TIME =
             ParameterDescription.parameter( "dwell", StringConversion.integer() ).withDefault( 0 );
 
     /**
-     * The specification of the id parameter.
+     * The specification of the connectionID parameter.
      */
-    private static final ParameterDescription<Integer, Integer> ID =
+    private static final ParameterDescription<Integer, Integer> CONNECTION_ID =
             ParameterDescription.parameter( "id", StringConversion.integer() ).withDefault( 0 );
 
     /**
@@ -84,9 +84,9 @@ public final class DisplayPicCGI
             ParameterDescription.parameter( "dindex", StringConversion.integer() ).withDefault( 0 );
 
     /**
-     * The specification of the presel parameter.
+     * The specification of the preselector parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PRESEL =
+    private static final ParameterDescription<Integer, Integer> PRESELECTOR =
             ParameterDescription.parameter( "presel", StringConversion.integer() ).withDefault( 0 ).withBounds( 0, 3,
                     Num.integer );
 
@@ -98,15 +98,15 @@ public final class DisplayPicCGI
                     1, Num.integer );
 
     /**
-     * The specification of the rate parameter.
+     * The specification of the maximumTransmitRate parameter.
      */
-    private static final ParameterDescription<Integer, Integer> RATE =
+    private static final ParameterDescription<Integer, Integer> MAXIMUM_TRANSMIT_RATE =
             ParameterDescription.parameter( "rate", StringConversion.integer() ).withDefault( 0 );
 
     /**
-     * The specification of the forcedQ parameter.
+     * The specification of the quantisationFactor parameter.
      */
-    private static final ParameterDescription<Integer, Integer> FORCED_Q =
+    private static final ParameterDescription<Integer, Integer> QUANTISATION_FACTOR =
             ParameterDescription.parameter( "forcedq", StringConversion.integer() ).withDefault( 0 ).withBounds( 0,
                     255, Num.integer ).disallowing( 1 );
 
@@ -118,23 +118,23 @@ public final class DisplayPicCGI
                     Num.integer );
 
     /**
-     * The specification of the nBuffers parameter.
+     * The specification of the bufferCount parameter.
      */
-    private static final ParameterDescription<Integer, Integer> N_BUFFERS =
+    private static final ParameterDescription<Integer, Integer> BUFFER_COUNT =
             ParameterDescription.parameter( "nbuffers", StringConversion.integer() ).withDefault( 0 ).notNegative(
                     Num.integer );
 
     /**
-     * The specification of the telemQ parameter.
+     * The specification of the quantisationFactorForTelemetryImages parameter.
      */
-    private static final ParameterDescription<Integer, Integer> TELEM_Q =
+    private static final ParameterDescription<Integer, Integer> QUANTISATION_FACTOR_FOR_TELEMETRY_IMAGES =
             ParameterDescription.parameter( "telemQ", StringConversion.integer() ).withDefault( -1 ).withBounds( -1,
                     Integer.MAX_VALUE, Num.integer );
 
     /**
-     * The specification of the pktSize parameter.
+     * The specification of the packetSize parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PKT_SIZE =
+    private static final ParameterDescription<Integer, Integer> PACKET_SIZE =
             ParameterDescription.parameterWithBoundsAndAnException( 100, 1500, 0, ParameterDescription.parameter(
                     "pkt_size", StringConversion.integer() ).withDefault( 0 ) );
 
@@ -181,15 +181,15 @@ public final class DisplayPicCGI
             }, StringConversion.convenientPartial( TransmissionMode.fromStringFunction() ) );
 
     /**
-     * The specification of the pps parameter.
+     * The specification of the picturesPerSecond parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PPS =
+    private static final ParameterDescription<Integer, Integer> PICTURES_PER_SECOND =
             ParameterDescription.parameter( "pps", StringConversion.integer() ).withDefault( 0 );
 
     /**
-     * The specification of the mp4Rate parameter.
+     * The specification of the mp4Bitrate parameter.
      */
-    private static final ParameterDescription<Integer, Integer> MP4_RATE =
+    private static final ParameterDescription<Integer, Integer> MP4_BITRATE =
             ParameterDescription.parameter( "mp4rate", StringConversion.integer() ).withDefault( 0 );
 
     /**
@@ -200,9 +200,9 @@ public final class DisplayPicCGI
                 .withDefault( IPAddress.fromString( "0.0.0.0" ).get() );
 
     /**
-     * The specification of the opChan parameter.
+     * The specification of the outputChannel parameter.
      */
-    private static final ParameterDescription<Integer, Integer> OP_CHAN =
+    private static final ParameterDescription<Integer, Integer> OUTPUT_CHANNEL =
             ParameterDescription.parameter( "opchan", StringConversion.integer() ).withDefault( -1 );
 
     /**
@@ -214,75 +214,75 @@ public final class DisplayPicCGI
                     ProxyMode.TRANSIENT );
 
     /**
-     * The specification of the proxyPri parameter.
+     * The specification of the proxyPriority parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PROXY_PRI =
+    private static final ParameterDescription<Integer, Integer> PROXY_PRIORITY =
             ParameterDescription.parameter( "proxypri", StringConversion.integer() ).withDefault( 1 );
 
     /**
-     * The specification of the proxyRetry parameter.
+     * The specification of the proxyRetries parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PROXY_RETRY =
+    private static final ParameterDescription<Integer, Integer> PROXY_RETRIES =
             ParameterDescription.parameter( "proxyretry", StringConversion.integer() ).withDefault( 0 );
 
     /**
-     * Gets the value of the cam parameter.
+     * Gets the value of the camera parameter.
      * 
-     * @return the value of the cam parameter.
+     * @return the value of the camera parameter.
      */
-    public int getCam()
+    public int getCamera()
     {
-        return parameterMap.get( CAM );
+        return parameterMap.get( CAMERA );
     }
 
     /**
-     * Gets the value of the fields parameter.
+     * Gets the value of the fieldCount parameter.
      * 
-     * @return the value of the fields parameter.
+     * @return the value of the fieldCount parameter.
      */
-    public int getFields()
+    public int getFieldCount()
     {
-        return parameterMap.get( FIELDS );
+        return parameterMap.get( FIELD_COUNT );
     }
 
     /**
-     * Gets the value of the res parameter.
+     * Gets the value of the resolution parameter.
      * 
-     * @return the value of the res parameter.
+     * @return the value of the resolution parameter.
      */
-    public String getRes()
+    public String getResolution()
     {
-        return parameterMap.get( RES );
+        return parameterMap.get( RESOLUTION );
     }
 
     /**
-     * Gets the value of the seq parameter.
+     * Gets the value of the cameraSequenceMask parameter.
      * 
-     * @return the value of the seq parameter.
+     * @return the value of the cameraSequenceMask parameter.
      */
-    public int getSeq()
+    public int getCameraSequenceMask()
     {
-        return parameterMap.get( SEQ );
+        return parameterMap.get( CAMERA_SEQUENCE_MASK );
     }
 
     /**
-     * Gets the value of the dwell parameter.
+     * Gets the value of the dwellTime parameter.
      * 
-     * @return the value of the dwell parameter.
+     * @return the value of the dwellTime parameter.
      */
-    public int getDwell()
+    public int getDwellTime()
     {
-        return parameterMap.get( DWELL );
+        return parameterMap.get( DWELL_TIME );
     }
 
     /**
-     * Gets the value of the id parameter.
+     * Gets the value of the connectionID parameter.
      * 
-     * @return the value of the id parameter.
+     * @return the value of the connectionID parameter.
      */
-    public int getId()
+    public int getConnectionID()
     {
-        return parameterMap.get( ID );
+        return parameterMap.get( CONNECTION_ID );
     }
 
     /**
@@ -296,13 +296,13 @@ public final class DisplayPicCGI
     }
 
     /**
-     * Gets the value of the presel parameter.
+     * Gets the value of the preselector parameter.
      * 
-     * @return the value of the presel parameter.
+     * @return the value of the preselector parameter.
      */
-    public int getPresel()
+    public int getPreselector()
     {
-        return parameterMap.get( PRESEL );
+        return parameterMap.get( PRESELECTOR );
     }
 
     /**
@@ -316,23 +316,23 @@ public final class DisplayPicCGI
     }
 
     /**
-     * Gets the value of the rate parameter.
+     * Gets the value of the maximumTransmitRate parameter.
      * 
-     * @return the value of the rate parameter.
+     * @return the value of the maximumTransmitRate parameter.
      */
-    public int getRate()
+    public int getMaximumTransmitRate()
     {
-        return parameterMap.get( RATE );
+        return parameterMap.get( MAXIMUM_TRANSMIT_RATE );
     }
 
     /**
-     * Gets the value of the forcedQ parameter.
+     * Gets the value of the quantisationFactor parameter.
      * 
-     * @return the value of the forcedQ parameter.
+     * @return the value of the quantisationFactor parameter.
      */
-    public int getForcedQ()
+    public int getQuantisationFactor()
     {
-        return parameterMap.get( FORCED_Q );
+        return parameterMap.get( QUANTISATION_FACTOR );
     }
 
     /**
@@ -346,33 +346,33 @@ public final class DisplayPicCGI
     }
 
     /**
-     * Gets the value of the nBuffers parameter.
+     * Gets the value of the bufferCount parameter.
      * 
-     * @return the value of the nBuffers parameter.
+     * @return the value of the bufferCount parameter.
      */
-    public int getNBuffers()
+    public int getBufferCount()
     {
-        return parameterMap.get( N_BUFFERS );
+        return parameterMap.get( BUFFER_COUNT );
     }
 
     /**
-     * Gets the value of the telemQ parameter.
+     * Gets the value of the quantisationFactorForTelemetryImages parameter.
      * 
-     * @return the value of the telemQ parameter.
+     * @return the value of the quantisationFactorForTelemetryImages parameter.
      */
-    public int getTelemQ()
+    public int getQuantisationFactorForTelemetryImages()
     {
-        return parameterMap.get( TELEM_Q );
+        return parameterMap.get( QUANTISATION_FACTOR_FOR_TELEMETRY_IMAGES );
     }
 
     /**
-     * Gets the value of the pktSize parameter.
+     * Gets the value of the packetSize parameter.
      * 
-     * @return the value of the pktSize parameter.
+     * @return the value of the packetSize parameter.
      */
-    public int getPktSize()
+    public int getPacketSize()
     {
-        return parameterMap.get( PKT_SIZE );
+        return parameterMap.get( PACKET_SIZE );
     }
 
     /**
@@ -426,23 +426,23 @@ public final class DisplayPicCGI
     }
 
     /**
-     * Gets the value of the pps parameter.
+     * Gets the value of the picturesPerSecond parameter.
      * 
-     * @return the value of the pps parameter.
+     * @return the value of the picturesPerSecond parameter.
      */
-    public int getPPS()
+    public int getPicturesPerSecond()
     {
-        return parameterMap.get( PPS );
+        return parameterMap.get( PICTURES_PER_SECOND );
     }
 
     /**
-     * Gets the value of the mp4Rate parameter.
+     * Gets the value of the mp4Bitrate parameter.
      * 
-     * @return the value of the mp4Rate parameter.
+     * @return the value of the mp4Bitrate parameter.
      */
-    public int getMp4Rate()
+    public int getMp4Bitrate()
     {
-        return parameterMap.get( MP4_RATE );
+        return parameterMap.get( MP4_BITRATE );
     }
 
     /**
@@ -456,13 +456,13 @@ public final class DisplayPicCGI
     }
 
     /**
-     * Gets the value of the opChan parameter.
+     * Gets the value of the outputChannel parameter.
      * 
-     * @return the value of the opChan parameter.
+     * @return the value of the outputChannel parameter.
      */
-    public int getOpChan()
+    public int getOutputChannel()
     {
-        return parameterMap.get( OP_CHAN );
+        return parameterMap.get( OUTPUT_CHANNEL );
     }
 
     /**
@@ -476,23 +476,23 @@ public final class DisplayPicCGI
     }
 
     /**
-     * Gets the value of the proxyPri parameter.
+     * Gets the value of the proxyPriority parameter.
      * 
-     * @return the value of the proxyPri parameter.
+     * @return the value of the proxyPriority parameter.
      */
-    public int getProxyPri()
+    public int getProxyPriority()
     {
-        return parameterMap.get( PROXY_PRI );
+        return parameterMap.get( PROXY_PRIORITY );
     }
 
     /**
-     * Gets the value of the proxyRetry parameter.
+     * Gets the value of the proxyRetries parameter.
      * 
-     * @return the value of the proxyRetry parameter.
+     * @return the value of the proxyRetries parameter.
      */
-    public int getProxyRetry()
+    public int getProxyRetries()
     {
-        return parameterMap.get( PROXY_RETRY );
+        return parameterMap.get( PROXY_RETRIES );
     }
 
     /**
@@ -513,78 +513,78 @@ public final class DisplayPicCGI
         private Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
 
         /**
-         * Sets the cam parameter in the builder.
+         * Sets the camera parameter in the builder.
          * 
-         * @param cam
-         *        the value to store as the cam parameter.
+         * @param camera
+         *        the value to store as the camera parameter.
          * @return the Builder
          */
-        public Builder cam( final int cam )
+        public Builder camera( final int camera )
         {
-            return set( CAM, cam );
+            return set( CAMERA, camera );
         }
 
         /**
-         * Sets the fields parameter in the builder.
+         * Sets the fieldCount parameter in the builder.
          * 
-         * @param fields
-         *        the value to store as the fields parameter.
+         * @param fieldCount
+         *        the value to store as the fieldCount parameter.
          * @return the Builder
          */
-        public Builder fields( final int fields )
+        public Builder fieldCount( final int fieldCount )
         {
-            return set( FIELDS, fields );
+            return set( FIELD_COUNT, fieldCount );
         }
 
         /**
-         * Sets the res parameter in the builder.
+         * Sets the resolution parameter in the builder.
          * 
-         * @param res
-         *        the value to store as the res parameter.
+         * @param resolution
+         *        the value to store as the resolution parameter.
          * @return the Builder
          * @throws NullPointerException
-         *         if res is null.
+         *         if resolution is null.
          */
-        public Builder res( final String res )
+        public Builder resolution( final String resolution )
         {
-            CheckParameters.areNotNull( res );
-            return set( RES, res );
+            CheckParameters.areNotNull( resolution );
+            return set( RESOLUTION, resolution );
         }
 
         /**
-         * Sets the seq parameter in the builder.
+         * Sets the cameraSequenceMask parameter in the builder.
          * 
-         * @param seq
-         *        the value to store as the seq parameter.
+         * @param cameraSequenceMask
+         *        the value to store as the cameraSequenceMask parameter.
          * @return the Builder
          */
-        public Builder seq( final int seq )
+        public Builder cameraSequenceMask( final int cameraSequenceMask )
         {
-            return set( SEQ, seq );
+            return set( CAMERA_SEQUENCE_MASK, cameraSequenceMask );
         }
 
         /**
-         * Sets the dwell parameter in the builder.
+         * Sets the dwellTime parameter in the builder.
          * 
-         * @param dwell
-         *        the value to store as the dwell parameter.
+         * @param dwellTime
+         *        the value to store as the dwellTime parameter.
          * @return the Builder
          */
-        public Builder dwell( final int dwell )
+        public Builder dwellTime( final int dwellTime )
         {
-            return set( DWELL, dwell );
+            return set( DWELL_TIME, dwellTime );
         }
 
         /**
-         * Sets the id parameter in the builder.
+         * Sets the connectionID parameter in the builder.
          * 
-         * @param id
-         *        the value to store as the id parameter.
+         * @param connectionID
+         *        the value to store as the connectionID parameter.
          * @return the Builder
          */
-        public Builder id( final int id )
+        public Builder connectionID( final int connectionID )
         {
-            return set( ID, id );
+            return set( CONNECTION_ID, connectionID );
         }
 
         /**
@@ -600,15 +600,15 @@ public final class DisplayPicCGI
         }
 
         /**
-         * Sets the presel parameter in the builder.
+         * Sets the preselector parameter in the builder.
          * 
-         * @param presel
-         *        the value to store as the presel parameter.
+         * @param preselector
+         *        the value to store as the preselector parameter.
          * @return the Builder
          */
-        public Builder presel( final int presel )
+        public Builder preselector( final int preselector )
         {
-            return set( PRESEL, presel );
+            return set( PRESELECTOR, preselector );
         }
 
         /**
@@ -624,27 +624,27 @@ public final class DisplayPicCGI
         }
 
         /**
-         * Sets the rate parameter in the builder.
+         * Sets the maximumTransmitRate parameter in the builder.
          * 
-         * @param rate
-         *        the value to store as the rate parameter.
+         * @param maximumTransmitRate
+         *        the value to store as the maximumTransmitRate parameter.
          * @return the Builder
          */
-        public Builder rate( final int rate )
+        public Builder maximumTransmitRate( final int maximumTransmitRate )
         {
-            return set( RATE, rate );
+            return set( MAXIMUM_TRANSMIT_RATE, maximumTransmitRate );
         }
 
         /**
-         * Sets the forcedQ parameter in the builder.
+         * Sets the quantisationFactor parameter in the builder.
          * 
-         * @param forcedQ
-         *        the value to store as the forcedQ parameter.
+         * @param quantisationFactor
+         *        the value to store as the quantisationFactor parameter.
          * @return the Builder
          */
-        public Builder forcedQ( final int forcedQ )
+        public Builder quantisationFactor( final int quantisationFactor )
         {
-            return set( FORCED_Q, forcedQ );
+            return set( QUANTISATION_FACTOR, quantisationFactor );
         }
 
         /**
@@ -660,39 +660,41 @@ public final class DisplayPicCGI
         }
 
         /**
-         * Sets the nBuffers parameter in the builder.
+         * Sets the bufferCount parameter in the builder.
          * 
-         * @param nBuffers
-         *        the value to store as the nBuffers parameter.
+         * @param bufferCount
+         *        the value to store as the bufferCount parameter.
          * @return the Builder
          */
-        public Builder nBuffers( final int nBuffers )
+        public Builder bufferCount( final int bufferCount )
         {
-            return set( N_BUFFERS, nBuffers );
+            return set( BUFFER_COUNT, bufferCount );
         }
 
         /**
-         * Sets the telemQ parameter in the builder.
+         * Sets the quantisationFactorForTelemetryImages parameter in the
+         * builder.
          * 
-         * @param telemQ
-         *        the value to store as the telemQ parameter.
+         * @param quantisationFactorForTelemetryImages
+         *        the value to store as the quantisationFactorForTelemetryImages
+         *        parameter.
          * @return the Builder
          */
-        public Builder telemQ( final int telemQ )
+        public Builder quantisationFactorForTelemetryImages( final int quantisationFactorForTelemetryImages )
         {
-            return set( TELEM_Q, telemQ );
+            return set( QUANTISATION_FACTOR_FOR_TELEMETRY_IMAGES, quantisationFactorForTelemetryImages );
         }
 
         /**
-         * Sets the pktSize parameter in the builder.
+         * Sets the packetSize parameter in the builder.
          * 
-         * @param pktSize
-         *        the value to store as the pktSize parameter.
+         * @param packetSize
+         *        the value to store as the packetSize parameter.
          * @return the Builder
          */
-        public Builder pktSize( final int pktSize )
+        public Builder packetSize( final int packetSize )
         {
-            return set( PKT_SIZE, pktSize );
+            return set( PACKET_SIZE, packetSize );
         }
 
         /**
@@ -768,27 +770,27 @@ public final class DisplayPicCGI
         }
 
         /**
-         * Sets the pps parameter in the builder.
+         * Sets the picturesPerSecond parameter in the builder.
          * 
-         * @param pps
-         *        the value to store as the pps parameter.
+         * @param picturesPerSecond
+         *        the value to store as the picturesPerSecond parameter.
          * @return the Builder
          */
-        public Builder pps( final int pps )
+        public Builder picturesPerSecond( final int picturesPerSecond )
         {
-            return set( PPS, pps );
+            return set( PICTURES_PER_SECOND, picturesPerSecond );
         }
 
         /**
-         * Sets the mp4Rate parameter in the builder.
+         * Sets the mp4Bitrate parameter in the builder.
          * 
-         * @param mp4Rate
-         *        the value to store as the mp4Rate parameter.
+         * @param mp4Bitrate
+         *        the value to store as the mp4Bitrate parameter.
          * @return the Builder
          */
-        public Builder mp4Rate( final int mp4Rate )
+        public Builder mp4Bitrate( final int mp4Bitrate )
         {
-            return set( MP4_RATE, mp4Rate );
+            return set( MP4_BITRATE, mp4Bitrate );
         }
 
         /**
@@ -807,15 +809,15 @@ public final class DisplayPicCGI
         }
 
         /**
-         * Sets the opChan parameter in the builder.
+         * Sets the outputChannel parameter in the builder.
          * 
-         * @param opChan
-         *        the value to store as the opChan parameter.
+         * @param outputChannel
+         *        the value to store as the outputChannel parameter.
          * @return the Builder
          */
-        public Builder opChan( final int opChan )
+        public Builder outputChannel( final int outputChannel )
         {
-            return set( OP_CHAN, opChan );
+            return set( OUTPUT_CHANNEL, outputChannel );
         }
 
         /**
@@ -834,27 +836,27 @@ public final class DisplayPicCGI
         }
 
         /**
-         * Sets the proxyPri parameter in the builder.
+         * Sets the proxyPriority parameter in the builder.
          * 
-         * @param proxyPri
-         *        the value to store as the proxyPri parameter.
+         * @param proxyPriority
+         *        the value to store as the proxyPriority parameter.
          * @return the Builder
          */
-        public Builder proxyPri( final int proxyPri )
+        public Builder proxyPriority( final int proxyPriority )
         {
-            return set( PROXY_PRI, proxyPri );
+            return set( PROXY_PRIORITY, proxyPriority );
         }
 
         /**
-         * Sets the proxyRetry parameter in the builder.
+         * Sets the proxyRetries parameter in the builder.
          * 
-         * @param proxyRetry
-         *        the value to store as the proxyRetry parameter.
+         * @param proxyRetries
+         *        the value to store as the proxyRetries parameter.
          * @return the Builder
          */
-        public Builder proxyRetry( final int proxyRetry )
+        public Builder proxyRetries( final int proxyRetries )
         {
-            return set( PROXY_RETRY, proxyRetry );
+            return set( PROXY_RETRIES, proxyRetries );
         }
 
         /**
@@ -907,33 +909,33 @@ public final class DisplayPicCGI
     }
     static
     {
-        params.add( CAM );
-        params.add( FIELDS );
-        params.add( RES );
-        params.add( SEQ );
-        params.add( DWELL );
-        params.add( ID );
+        params.add( CAMERA );
+        params.add( FIELD_COUNT );
+        params.add( RESOLUTION );
+        params.add( CAMERA_SEQUENCE_MASK );
+        params.add( DWELL_TIME );
+        params.add( CONNECTION_ID );
         params.add( DINDEX );
-        params.add( PRESEL );
+        params.add( PRESELECTOR );
         params.add( CHANNEL );
-        params.add( RATE );
-        params.add( FORCED_Q );
+        params.add( MAXIMUM_TRANSMIT_RATE );
+        params.add( QUANTISATION_FACTOR );
         params.add( DURATION );
-        params.add( N_BUFFERS );
-        params.add( TELEM_Q );
-        params.add( PKT_SIZE );
+        params.add( BUFFER_COUNT );
+        params.add( QUANTISATION_FACTOR_FOR_TELEMETRY_IMAGES );
+        params.add( PACKET_SIZE );
         params.add( UDP_PORT );
         params.add( AUDIO );
         params.add( FORMAT );
         params.add( AUDIO_MODE );
         params.add( TRANSMISSION_MODE );
-        params.add( PPS );
-        params.add( MP4_RATE );
+        params.add( PICTURES_PER_SECOND );
+        params.add( MP4_BITRATE );
         params.add( SLAVE_IP );
-        params.add( OP_CHAN );
+        params.add( OUTPUT_CHANNEL );
         params.add( PROXY_MODE );
-        params.add( PROXY_PRI );
-        params.add( PROXY_RETRY );
+        params.add( PROXY_PRIORITY );
+        params.add( PROXY_RETRIES );
     }
 
     /**

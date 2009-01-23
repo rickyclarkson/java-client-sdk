@@ -139,32 +139,32 @@ case class Enum(name: String, description: String, static: IsStatic, members: Li
 
 object displaypiccgi { def main(args: Array[String]): Unit = {  
   val fields = List(
-   intParaMeta("CAM", """ParameterDescription.parameter( "cam", StringConversion.integer() )
-                      .withDefault( 1 ).withBounds( 1, 16, Num.integer )""", "getCam", "cam"),
-   intParaMeta("FIELDS", """ParameterDescription.parameter( "fields", StringConversion.integer() )
-                      .withDefault( 1 ).positive( Num.integer )""", "getFields", "fields"),
-   ParaMeta("String", "RES", lines("""ParameterDescription.parameter( "res", StringConversion.string() )
-                                   .withDefault( "med" ).allowedValues( "hi", "med", "lo" )"""), "String", "getRes", "res"),
-   ParaMeta("Integer", "SEQ", lines("""ParameterDescription.parameter( "seq", StringConversion.hexInt() ).withDefault( 0 )
-                                    .withBounds( 0, 0xF, Num.integer )"""), "int", "getSeq", "seq"),
-   intParaMeta("DWELL", """ParameterDescription.parameter( "dwell", StringConversion.integer() ).withDefault( 0 )""", "getDwell", "dwell"),
-   intParaMeta("ID", """ParameterDescription.parameter( "id", StringConversion.integer() ).withDefault( 0 )""", "getId", "id"),
+   intParaMeta("CAMERA", """ParameterDescription.parameter( "cam", StringConversion.integer() )
+                      .withDefault( 1 ).withBounds( 1, 16, Num.integer )""", "getCamera", "camera"),
+   intParaMeta("FIELD_COUNT", """ParameterDescription.parameter( "fields", StringConversion.integer() )
+                      .withDefault( 1 ).positive( Num.integer )""", "getFieldCount", "fieldCount"),
+   ParaMeta("String", "RESOLUTION", lines("""ParameterDescription.parameter( "res", StringConversion.string() )
+                                   .withDefault( "med" ).allowedValues( "hi", "med", "lo" )"""), "String", "getResolution", "resolution"),
+   ParaMeta("Integer", "CAMERA_SEQUENCE_MASK", lines("""ParameterDescription.parameter( "seq", StringConversion.hexInt() ).withDefault( 0 )
+                                    .withBounds( 0, 0xF, Num.integer )"""), "int", "getCameraSequenceMask", "cameraSequenceMask"),
+   intParaMeta("DWELL_TIME", """ParameterDescription.parameter( "dwell", StringConversion.integer() ).withDefault( 0 )""", "getDwellTime", "dwellTime"),
+   intParaMeta("CONNECTION_ID", """ParameterDescription.parameter( "id", StringConversion.integer() ).withDefault( 0 )""", "getConnectionID", "connectionID"),
    intParaMeta("DINDEX", """ParameterDescription.parameter( "dindex", StringConversion.integer() ).withDefault( 0 )""", "getDIndex", "dIndex"),
-   intParaMeta("PRESEL", """ParameterDescription.parameter( "presel", StringConversion.integer() )
-                         .withDefault( 0 ).withBounds( 0, 3, Num.integer )""", "getPresel", "presel"),
+   intParaMeta("PRESELECTOR", """ParameterDescription.parameter( "presel", StringConversion.integer() )
+                         .withDefault( 0 ).withBounds( 0, 3, Num.integer )""", "getPreselector", "preselector"),
    intParaMeta("CHANNEL", """ParameterDescription.parameter( "channel", StringConversion.integer() )
                           .withDefault( -1 ).withBounds( -1, 1, Num.integer )""", "getChannel", "channel"),
-   intParaMeta("RATE", """ParameterDescription.parameter( "rate", StringConversion.integer() ).withDefault( 0 )""", "getRate", "rate"),
-   intParaMeta("FORCED_Q", """ParameterDescription.parameter( "forcedq", StringConversion.integer() )
-                           .withDefault( 0 ).withBounds( 0, 255, Num.integer ).disallowing( 1 )""", "getForcedQ", "forcedQ"),
+   intParaMeta("MAXIMUM_TRANSMIT_RATE", """ParameterDescription.parameter( "rate", StringConversion.integer() ).withDefault( 0 )""", "getMaximumTransmitRate", "maximumTransmitRate"),
+   intParaMeta("QUANTISATION_FACTOR", """ParameterDescription.parameter( "forcedq", StringConversion.integer() )
+                           .withDefault( 0 ).withBounds( 0, 255, Num.integer ).disallowing( 1 )""", "getQuantisationFactor", "quantisationFactor"),
    intParaMeta("DURATION", """ParameterDescription.parameter( "duration", StringConversion.integer() )
                               .withDefault( 0 ).notNegative( Num.integer )""", "getDuration", "duration"),
-   intParaMeta("N_BUFFERS", """ParameterDescription.parameter( "nbuffers", StringConversion.integer() )
-                            .withDefault( 0 ).notNegative( Num.integer )""", "getNBuffers", "nBuffers"),
-   intParaMeta("TELEM_Q", """ParameterDescription.parameter( "telemQ", StringConversion.integer() )
-                          .withDefault( -1 ).withBounds( -1, Integer.MAX_VALUE, Num.integer )""", "getTelemQ", "telemQ"),
-   intParaMeta("PKT_SIZE", """ParameterDescription.parameterWithBoundsAndAnException( 100, 1500, 0,
-                           ParameterDescription.parameter( "pkt_size", StringConversion.integer() ).withDefault( 0 ) )""", "getPktSize", "pktSize"),
+   intParaMeta("BUFFER_COUNT", """ParameterDescription.parameter( "nbuffers", StringConversion.integer() )
+                            .withDefault( 0 ).notNegative( Num.integer )""", "getBufferCount", "bufferCount"),
+   intParaMeta("QUANTISATION_FACTOR_FOR_TELEMETRY_IMAGES", """ParameterDescription.parameter( "telemQ", StringConversion.integer() )
+                          .withDefault( -1 ).withBounds( -1, Integer.MAX_VALUE, Num.integer )""", "getQuantisationFactorForTelemetryImages", "quantisationFactorForTelemetryImages"),
+   intParaMeta("PACKET_SIZE", """ParameterDescription.parameterWithBoundsAndAnException( 100, 1500, 0,
+                           ParameterDescription.parameter( "pkt_size", StringConversion.integer() ).withDefault( 0 ) )""", "getPacketSize", "packetSize"),
    intParaMeta("UDP_PORT", """ParameterDescription.parameter( "udp_port", StringConversion.integer() ).withDefault( 0 )
                            .withBounds( 0, 65535, Num.integer )""", "getUdpPort", "udpPort"),
    ParaMeta("String", "AUDIO", lines("""ParameterDescription.parameter( "audio", StringConversion.string() )
@@ -176,15 +176,15 @@ object displaypiccgi { def main(args: Array[String]): Unit = {
                                              StringConversion.convenientPartial( AudioMode.fromStringFunction() ) )
                                              .withDefault( AudioMode.UDP )"""), "AudioMode", "getAudioMode", "audioMode"),
    ParaMeta("TransmissionMode", "TRANSMISSION_MODE", append(prepend("""ParameterDescription.parameterWithDefault( "txmode", """, lambda("ParameterMap", "TransmissionMode", "map", "map.get( FORMAT ) == Format.JFIF ? TransmissionMode.MIME : TransmissionMode.MINIMAL")), ", StringConversion.convenientPartial( TransmissionMode.fromStringFunction() ) )"), "TransmissionMode", "getTransmissionMode", "transmissionMode"),
-   intParaMeta("PPS", """ParameterDescription.parameter( "pps", StringConversion.integer() ).withDefault( 0 )""", "getPPS", "pps"),
-   intParaMeta("MP4_RATE", """ParameterDescription.parameter( "mp4rate", StringConversion.integer() ).withDefault( 0 )""", "getMp4Rate", "mp4Rate"),
+   intParaMeta("PICTURES_PER_SECOND", """ParameterDescription.parameter( "pps", StringConversion.integer() ).withDefault( 0 )""", "getPicturesPerSecond", "picturesPerSecond"),
+   intParaMeta("MP4_BITRATE", """ParameterDescription.parameter( "mp4rate", StringConversion.integer() ).withDefault( 0 )""", "getMp4Bitrate", "mp4Bitrate"),
    ParaMeta("IPAddress", "SLAVE_IP", lines("""ParameterDescription.parameter( "slaveip", StringConversion.convenientPartial(
                                            IPAddress.fromString )).withDefault( IPAddress.fromString( "0.0.0.0" ).get() )"""), "IPAddress", "getSlaveIP", "slaveIP"),
-   intParaMeta("OP_CHAN", """ParameterDescription.parameter( "opchan", StringConversion.integer() ).withDefault( -1 )""", "getOpChan", "opChan"),
+   intParaMeta("OUTPUT_CHANNEL", """ParameterDescription.parameter( "opchan", StringConversion.integer() ).withDefault( -1 )""", "getOutputChannel", "outputChannel"),
    ParaMeta("ProxyMode", "PROXY_MODE", lines("""ParameterDescription.parameter( "proxymode",
                                              StringConversion.convenientPartial( ProxyMode.fromStringFunction() ) ).withDefault( ProxyMode.TRANSIENT )"""), "ProxyMode", "getProxyMode", "proxyMode"),
-   intParaMeta("PROXY_PRI", """ParameterDescription.parameter( "proxypri", StringConversion.integer() ).withDefault( 1 )""", "getProxyPri", "proxyPri"),
-   intParaMeta("PROXY_RETRY", """ParameterDescription.parameter( "proxyretry", StringConversion.integer() ).withDefault( 0 )""", "getProxyRetry", "proxyRetry")
+   intParaMeta("PROXY_PRIORITY", """ParameterDescription.parameter( "proxypri", StringConversion.integer() ).withDefault( 1 )""", "getProxyPriority", "proxyPriority"),
+   intParaMeta("PROXY_RETRIES", """ParameterDescription.parameter( "proxyretry", StringConversion.integer() ).withDefault( 0 )""", "getProxyRetries", "proxyRetries")
   )
 
  val packageName = "uk.org.netvu.protocol" 
