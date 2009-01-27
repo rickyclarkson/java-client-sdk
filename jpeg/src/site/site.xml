@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project>
+    <body>
+        <menu name="Requirements">
+            <item name="Use Cases" href="use-cases/index.html" collapse="true">
+                <item name="Decode JPEG" href="use-cases/decode-jpeg.html"/>
+                <item name="Extract JPEG Metadata" href="use-cases/get-jpeg-parts.html"/>
+                <item name="Validate JPEG data" href="use-cases/validate-jpeg.html"/>
+            </item>
+        </menu>
+        <menu name="Design">
+            <item name="Rationale" href="rationale.html"/>
+        </menu>
+        <menu ref="reports"/>
+    </body>
+</project>

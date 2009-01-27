@@ -2,22 +2,22 @@ import Pretty._
 
 object replaypiccgi { def main(args: Array[String]): Unit = {  
   val params = List(
-   ParaMeta("Control", "CONTROL", lines("""ParameterDescription.parameter( "control",
+   ParaMeta('Control, 'CONTROL, lines("""ParameterDescription.parameter( "control",
                                         StringConversion.convenientPartial( Control.fromStringFunction() ) )
-                                        .withDefault( Control.STOP )"""), "Control", "getControl", "control"),
-   intParaMeta("GMT_TIME", """ParameterDescription.parameter( "time", StringConversion.convenientPartial( fromTimeFunction() ) )
-               .withDefault( 0 )""", "getGMTTime", "gmtTime"),
-   intParaMeta("LOCAL_TIME", """ParameterDescription.parameter( "local", StringConversion.convenientPartial( fromTimeFunction() ) )
-               .withDefault( 0 )""", "getLocalTime", "localTime"),
-   ParaMeta("String", "TEXT", lines("""ParameterDescription.parameter( "text", StringConversion.string() ).withDefault( "" )"""), "String", "getText", "text"),
-   intParaMeta("TIME_RANGE", """ParameterDescription.parameter( "timerange", StringConversion.integer() ).withDefault( 0 )""", "getTimeRange", "timeRange"),
-   intParaMeta("FAST_FORWARD_MULTIPLIER", """ParameterDescription.parameter( "ffmult", StringConversion.integer() )
-               .withDefault( 0 ).withBounds( 0, 256, Num.integer )""", "getFastForwardMultiplier", "fastForwardMultiplier"),
-   intParaMeta("REFRESH", """ParameterDescription.parameter( "refresh", StringConversion.integer() )
-                             .withDefault( 0 )""", "getRefresh", "refresh"))
+                                        .withDefault( Control.STOP )"""), 'Control, 'getControl, 'control),
+   intParaMeta('GMT_TIME, """ParameterDescription.parameter( "time", StringConversion.convenientPartial( fromTimeFunction() ) )
+               .withDefault( 0 )""", 'getGMTTime, 'gmtTime),
+   intParaMeta('LOCAL_TIME, """ParameterDescription.parameter( "local", StringConversion.convenientPartial( fromTimeFunction() ) )
+               .withDefault( 0 )""", 'getLocalTime, 'localTime),
+   ParaMeta('String, 'TEXT, lines("""ParameterDescription.parameter( "text", StringConversion.string() ).withDefault( "" )"""), 'String, 'getText, 'text),
+   intParaMeta('TIME_RANGE, """ParameterDescription.parameter( "timerange", StringConversion.integer() ).withDefault( 0 )""", 'getTimeRange, 'timeRange),
+   intParaMeta('FAST_FORWARD_MULTIPLIER, """ParameterDescription.parameter( "ffmult", StringConversion.integer() )
+               .withDefault( 0 ).withBounds( 0, 256, Num.integer )""", 'getFastForwardMultiplier, 'fastForwardMultiplier),
+   intParaMeta('REFRESH, """ParameterDescription.parameter( "refresh", StringConversion.integer() )
+                             .withDefault( 0 )""", 'getRefresh, 'refresh))
 
   val packageName = "uk.org.netvu.protocol" 
-  val className = "ReplayPicCGI"
+  val className = 'ReplayPicCGI
   val urlPart = "/replay_pic.cgi?"
 
  val extras =
@@ -33,7 +33,7 @@ object replaypiccgi { def main(args: Array[String]): Unit = {
       "try") ++ brace(lines(
        "return Option.getFullOption(Integer.parseInt(s));")) ++ lines(
       "catch (NumberFormatException e2)") ++ brace(lines(
-       """return Option.getEmptyOption("Cannot parse "+s+" as a timestamp.");"""))))), ";")) ++ blankLine
+       """return Option.getEmptyOption("Cannot parse " + s + " as a timestamp.");"""))))), ";")) ++ blankLine
 
  CodeGen.generate(packageName, lines(
   """A parameter list for a replay_pic.cgi query.

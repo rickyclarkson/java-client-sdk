@@ -2,10 +2,54 @@ Rationale
 
 * Benchmarking
 
- We chose to create a number of JPEG decoders, using the libraries provided by Java and adffmpeg, so that we could compare their performance, and always choose the fastest.  To help in this, we created a benchmarking suite, contained in src/test/scala/benchmark
+ We will create a number of JPEG decoders, using the libraries provided by Java, adffmpeg and elsewhere, so that we can compare their performance, and always choose the fastest.  We will provide a common interface to those decoders, so that we can change which implementation client code uses easily.
 
- To run the benchmarking suite, compile as usual, then run scala -classpath target/classes:target/test-classes benchmark.Run
+ To help in this, we will create a benchmarking suite, contained in src/test/java/benchmark.
+
+ To run the benchmarking suite, compile as usual, then run java -classpath target/classes:target/test-classes benchmark.Run (replace the : with a ; on Windows)
 
 * Other JPEG decoders
 
- We also looked into other JPEG decoders, with the aim of seeing which of those were reasonably easy to use and fast.
+ We will also look into other JPEG decoders, with the aim of seeing which of those work well and are fast.
+
+** {{{http://webuser.hs-furtwangen.de/~dersch/}Panorama Tools}}
+
+ Panorama has a number of tools and libraries, but one of interest is the pure Java JPEG decoder.  It was written with mobile devices in mind, but that shouldn't have adverse effects on its performance on desktop PCs.
+
+ Unfortunately, the JPEGDecoder.java file from Panorama is under the General Public License (GPL), meaning that the legal implications of using it from our proprietary software are subjective.  Some of the other code from the same site is available under the less problematic Lesser General Public License (LGPL), so we might find JPEGDecoder.java available with a less restrictive licence elsewhere, or the author might be willing to relicense JPEGDecoder.java.
+
+** {{{http://www.saillard.org/programs_and_patches/tinyjpegdecoder/}TinyJPEGDecoder}}
+
+ This is a C JPEG decoder, again with the troublesome GPL.
+
+** {{{http://www.ijg.org/}The Independent JPEG Group's libjpeg}}
+
+ This site has a more liberally licenced JPEG decoder written in C, but the latest release was made in 1998.  It appears to have been well-tested at the time, and is used by a lot of programs, possibly including the Java Virtual Machine some years ago.  The licence states that you may use the software for any purpose, but you must acknowledge the Independent JPEG Group in documentation.
+
+ There is a SourceForge project, {{{http://gnuwin32.sourceforge.net/packages/jpeg.htm}gnuwin32}}that contains what looks to be a Windows-specific  version of this library, last updated in 2005 - there may be functional changes too.
+
+** {{{http://www.intel.com/cd/software/products/asmo-na/eng/302910.htm#vc}Intel Integrated Performance Primitives}}
+
+ This is a library containing a JPEG decoder that targets Intel CPUs.  It costs money, though an evaluation version is available.  It is only available for Linux and Windows.  It will be interesting to see if it is markedly faster, but it would be awkward to depend on processor-specific libraries.
+
+** {{{http://en.wikipedia.org/wiki/CUDA}Nvidia's CUDA}}
+
+ Many modern PCs have high-powered graphics cards, which are particularly optimised for running many instructions in parallel.  These cards are programmable via card-specific libraries/languages like CUDA, though there may be more general tools available.  CUDA is available for free, though under a proprietary licence.
+
+ Nvidia-only libraries are probably not what we will use, but it would be interesting to know how much of a speedup they would give us.  XvNC and DXVA (next in this document), or similar-level libraries, might be more practical to use directly.
+
+** {{{http://en.wikipedia.org/wiki/X-Video_Motion_Compensation}XvMC - X Video Motion Compensation}} and {{{http://en.wikipedia.org/wiki/DirectX_Video_Acceleration}DXVA - DirectX Video Acceleration}}
+
+ These two libraries provide support for offloading video decoding to the graphics card, but XvMC doesn't appear to support JPEG in particular.  DXVA doesn't either, but it does support individual parts that are necessary for JPEG decoding; iDCT operations and Huffman coding.  It is linked to the DirectShow framework, but appears to be usable without DirectShow.
+
+ FFmpeg already has XvMC support, though not for JPEG.  FFmpeg doesn't appear to have DXVA support.
+
+** {{{http://en.wikipedia.org/wiki/OpenCV}OpenCV}}
+
+ OpenCV was an Intel project originally which provided a graphics library that would work on any graphics card but would detect Intel hardware and accelerate itself using that.  Now it is an open source project that has lain dormant for some years, but is more active as of September 2008.
+
+** {{{https://picoforge.int-evry.fr/cgi-bin/twiki/view/Gpucv/Web/WebHome}GpuCV}}
+
+ GpuCV is an attempt to provide something like OpenCV but which supports hardware acceleration on more graphics cards.  It is mainly developed on Windows, but beta versions include Linux support.  GpuCV is under a similar licence to the BSD licence (everything permitted except suing the copyright holder).
+
+ Neither OpenCV nor GpuCV are known to explicitly support JPEG decoding, but it might not be a mammoth task to port one of the smaller JPEG decoders written in C to them.
