@@ -21,7 +21,7 @@ object replaypiccgi { def main(args: Array[String]): Unit = {
   val urlPart = "/replay_pic.cgi?"
 
  val extras =
-  Enum("Control", "Various video playback modes.", IsStatic(true),
+  Enum("Control", "Various video playback modes.", Static(true),
        List(NameAndDescription("PLAY", "Play video forwards at its original speed"), NameAndDescription("FFWD", "Play video forwards at a speed controlled by the fast-forward multiplier"),
             NameAndDescription("RWND", "Play video backwards"),
             NameAndDescription("STOP", "Stop playing video"))).toJava ++

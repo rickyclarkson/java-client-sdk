@@ -1,0 +1,43 @@
+Get JPEG Parts
+
+  Provide a concise way of obtaining metadata contained within a JPEG, e.g., the comment data.
+
+* Summary:
+
+  This library should allow the client programmer convenient access to individual parts of a JPEG, such as the comment data.
+
+* Related ticket(s):
+
+  {{{http://adwiki.ad-group.adh/ticket/3262}#3262 Provide a programmatic way of extracting metadata from JPEGs.}}
+
+* Goal:
+
+  To provide a concise way of obtaining metadata contained within a JPEG, e.g., the comment data.
+
+* Actors:
+
+  NetVu ObserVer.
+
+* Preconditions:
+
+  None.
+
+* Triggers:
+
+  The client calls a function to extract the comment data from a JPEG frame.
+
+* Basic success path:
+
+  The comment data is made available for the client to handle.
+
+* Other success paths:
+
+  None.
+
+* Exception paths:
+
+  The frame is corrupt, or does not contain any comment data.
+
+* Notes:
+
+  None.

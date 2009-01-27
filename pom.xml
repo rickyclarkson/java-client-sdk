@@ -90,5 +90,6 @@
         <module>protocol</module>
         <module>data</module>
         <module>util</module>
+        <module>jpeg</module>
     </modules>
 </project>

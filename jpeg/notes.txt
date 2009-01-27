@@ -1,0 +1,54 @@
+JPEG decoder API
+
+utility code - static - getComment() etc.
+
+>= 3 implementations:
+   ImageIO
+   Toolkit
+   ADFFMPEG
+   ..
+
+Performance tests.
+
+svn/adffmpeg-java uses swig
+gensrc = swig's output.
+swig.org has docs.
+
+In Swig's output, direct ByteBuffers wrap structs, and the generated
+classes just contain a pointer to the struct.
+
+We statically link to adffmpeg to avoid library loading issues.
+
+http://192.168.106.22:8080 is the Mac build server.
+
+In adffmpeg-java, maven runs maven-exec.sh
+
+Typical resolutions are 2cif and cif, but hi-res cameras need support
+and performance tests too.
+
+cif = 352 x 288
+4cif = 704 x 576
+
+Not sure what 2cif is then.  Perhaps 500ish x 400ish?
+Also see ccir601
+
+Can ImageIO use ffmpeg?
+
+svn-old/uk-org-netvu/legacy/ffmpegcodec/FFMPEGCodec.java
+
+VLC has Java bindings but not directly to ffmpeg.
+jffmpeg is a dead Java port.
+fmj is an open source jmf.
+Pegasus Video on Windows.
+
+VirtualBox for testing Windows stuff?
+
+Use Cases: ByteBuffer => BufferedImage for decoding, and ByteBuffer =>
+arbitrary stuff for parsing out JPEG comment blocks etc.
+
+Benchmarks aren't to be run like unit tests, but maybe some will,
+depending on how long they take.  Fine in Scala.
+
+Rationale including benchmarking.  Other JPEG libs.
+
+ImageDecoderThread.java

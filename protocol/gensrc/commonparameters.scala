@@ -37,7 +37,7 @@ object commonparameters {
               "CommonParameters",
               commonParams.flatMap(param => Field(lines("The specification of the " + param.name+" parameter."),
                                                   Package,
-                                                  IsStatic(true),
+                                                  Static(true),
                                                   Final(true),
                                                   "ParameterDescription<" + param.storedType + ", " + param.storedType + ">",
                                                   param.constName,

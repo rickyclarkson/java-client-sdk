@@ -48,31 +48,35 @@ class ReplayPicCGITest extends JUnit4(new Specification {
  val setters = List[Builder => Builder](_ camera 4, _ fieldCount 5, _ cameraSequenceMask "6", _ connectionID 7, _ control Control.FFWD, _ gmtTime 8, _ localTime 9, _ maximumTransmitRate 10, _ text "bob", _ timeRange 11, _ audioChannel 11, _ fastForwardMultiplier 12, _ duration 13, _ resolution "hi", _ packetSize 110, _ udpPort 6, _ refresh 14, _ format VideoFormat.MP4, _ transmissionMode TransmissionMode.BINARY, _ slaveIP IPAddress.fromString("192.168.0.1").get, _ outputChannel 15, _ proxyMode ProxyMode.PERSISTENT, _ proxyRetries 16)
  "Builder constraints" areSpecifiedBy BuildersTests.testBuilder[ReplayPicCGI, Builder](new Builder, new Builder, setters, "ReplayPicCGITest")
 
- val cgi = new Builder().build
- import cgi._
- getCamera mustEqual 1
- getFieldCount mustEqual 1
- getCameraSequenceMask mustEqual "0"
- getConnectionID mustEqual 0
- getControl mustEqual Control.STOP
- getGMTTime mustEqual 0
- getLocalTime mustEqual 0
- getMaximumTransmitRate mustEqual 0
- getText mustEqual ""
- getTimeRange mustEqual 0
- getAudioChannel mustEqual 0
- getFastForwardMultiplier mustEqual 0
- getDuration mustEqual 0
- getResolution mustEqual "med"
- getPacketSize mustEqual 0
- getUdpPort mustEqual 0
- getRefresh mustEqual 0
- getFormat mustEqual VideoFormat.JFIF
- getTransmissionMode mustEqual TransmissionMode.MIME
- getSlaveIP mustEqual IPAddress.fromString("0.0.0.0").get
- getOutputChannel mustEqual -1
- getProxyMode mustEqual ProxyMode.TRANSIENT
- getProxyRetries mustEqual 0
+ "The default values for ReplayPicCGI" should {
+  "match the Video Server Specification" in {
+   val cgi = new Builder().build
+   import cgi._
+   getCamera mustEqual 1
+   getFieldCount mustEqual 1
+   getCameraSequenceMask mustEqual "0"
+   getConnectionID mustEqual 0
+   getControl mustEqual Control.STOP
+   getGMTTime mustEqual 0
+   getLocalTime mustEqual 0
+   getMaximumTransmitRate mustEqual 0
+   getText mustEqual ""
+   getTimeRange mustEqual 0
+   getAudioChannel mustEqual 0
+   getFastForwardMultiplier mustEqual 0
+   getDuration mustEqual 0
+   getResolution mustEqual "med"
+   getPacketSize mustEqual 0
+   getUdpPort mustEqual 0
+   getRefresh mustEqual 0
+   getFormat mustEqual VideoFormat.JFIF
+   getTransmissionMode mustEqual TransmissionMode.MIME
+   getSlaveIP mustEqual IPAddress.fromString("0.0.0.0").get
+   getOutputChannel mustEqual -1
+   getProxyMode mustEqual ProxyMode.TRANSIENT
+   getProxyRetries mustEqual 0
+  }
+ }
 
  for (format <- List("mp4", "jfif", "jpeg"))
   ReplayPicCGI.fromString("/replay_pic.cgi?format="+format).getFormat.toString.toLowerCase mustEqual format

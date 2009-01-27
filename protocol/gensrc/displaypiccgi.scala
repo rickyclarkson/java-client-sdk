@@ -49,10 +49,10 @@ object Pretty {
  def nonPrimitives(parameters: List[Parameter]) = parameters.filter(!_.isPrimitive)
 
  def staticPackagePrivateMethod(description: Iterable[String], returnDocPart: String, returnType: String, name: String, parameters: List[Parameter], body: Iterable[String]) =
-  Method(Package, IsStatic(true), Nil, NameAndDescription(returnType, returnDocPart), name, parameters, description, Nil, body).toJava
+  Method(Package, Static(true), Nil, NameAndDescription(returnType, returnDocPart), name, parameters, description, Nil, body).toJava
 
  def publicMethod(description: Iterable[String], returnDocPart: String, returnType: String, name: String, parameters: List[Parameter], body: Iterable[String]) =
-  Method(Public, IsStatic(false), Nil, NameAndDescription(returnType, returnDocPart), name, parameters, description, Nil, body).toJava
+  Method(Public, Static(false), Nil, NameAndDescription(returnType, returnDocPart), name, parameters, description, Nil, body).toJava
 
  def clazz(description: Iterable[String], modifiers: String, name: String, body: Iterable[String]) = blockComment(description) ++ lines(modifiers + " class " + name) ++ brace(body)
  private def reduceLeftOr[T](list: List[T], or: T)(f: (T, T) => T): T = list match { case Nil => or
@@ -81,7 +81,7 @@ case object Public extends Visibility("public")
 case object Package extends Visibility("")
 case object Private extends Visibility("private")
 
-case class IsStatic(is: Boolean) { val isnt = !is
+case class Static(is: Boolean) { val isnt = !is
                                    def toJava = if (is) "static" else ""
                                    override def toString = toJava }
 
@@ -90,7 +90,7 @@ case class TypeParameter(name: String, description: String)
 
 import Pretty._
 
-case class Method(visibility: Visibility, isStatic: IsStatic, typeParameters: List[TypeParameter], returnType: NameAndDescription, name: String, parameters: List[Parameter], description: Iterable[String], throwsDocs: List[NameAndDescription], body: Iterable[String]) {
+case class Method(visibility: Visibility, isStatic: Static, typeParameters: List[TypeParameter], returnType: NameAndDescription, name: String, parameters: List[Parameter], description: Iterable[String], throwsDocs: List[NameAndDescription], body: Iterable[String]) {
  def toJava = blockComment(description ++ blankLine ++ (typeParameters.map(tp => Parameter("fake", "<"+tp.name+">", tp.description)) ++ parameters).flatMap(paramDoc) ++ returnDoc(returnType.description) ++ throwsDocs.flatMap(t => throwsDoc(t.name, t.description)) ++ throwsNpeDoc(parameters)) ++
   lines(visibility.toString+(if (isStatic.is) " static " else " ")+(typeParameters.map(_.name).mkString(", ") match {
    case "" => ""
@@ -100,7 +100,7 @@ case class Method(visibility: Visibility, isStatic: IsStatic, typeParameters: Li
   brace(checkParametersLine(parameters) ++ body) ++ blankLine
 }
 
-case class Field(description: Iterable[String], visibility: Visibility, isStatic: IsStatic, isFinal: Final, `type`: String, name: String, value: Iterable[String]) {
+case class Field(description: Iterable[String], visibility: Visibility, isStatic: Static, isFinal: Final, `type`: String, name: String, value: Iterable[String]) {
  def toJava =
   blockComment(description) ++
   append(lines(visibility.toString + (if (isStatic.is) " static " else " ") + (if (isFinal.is) " final " else " ") + `type` + " " + name + " = ") ++ wrapped(value), ";") ++
@@ -133,7 +133,7 @@ object function {
 
 case class NameAndDescription(name: String, description: String) { def toJava = blockComment(lines(description + ".")) ++ lines(name) }
 
-case class Enum(name: String, description: String, static: IsStatic, members: List[NameAndDescription]) {
+case class Enum(name: String, description: String, static: Static, members: List[NameAndDescription]) {
  def toJava = {
   val fromStringToEnum = staticPackagePrivateMethod(lines(
    """A Function that, given a String, will produce an Option containing
@@ -177,7 +177,7 @@ object displaypiccgi { def main(args: Array[String]): Unit = {
  val urlPart = "/display_pic.cgi?"
 
  val extras =
-  Enum("AudioMode", "The possible mechanisms for returning audio data.", IsStatic(true),
+  Enum("AudioMode", "The possible mechanisms for returning audio data.", Static(true),
        List(NameAndDescription("UDP", "Out of band UDP data"), NameAndDescription("INLINE", "In-band data interleaved with images"))).toJava
 
  CodeGen.generate(packageName, lines(
@@ -215,7 +215,7 @@ object CodeGen {
      lines("Sets the "+param.name+" parameter in the builder."), "the Builder", "Builder", param.name, List(Parameter(param.publicType, param.name, "the value to store as the "+param.name+" parameter")), 
      lines("return set( "+param.constName+", "+param.name+" );"))) ++ 
      
-     Method(Private, IsStatic(false), List(TypeParameter("T", "the input type of the specified parameter")), NameAndDescription("Builder", "the Builder"), "set",
+     Method(Private, Static(false), List(TypeParameter("T", "the input type of the specified parameter")), NameAndDescription("Builder", "the Builder"), "set",
             List(Parameter("ParameterDescription<T, ?>", "parameter", "the parameter to set a value for"), Parameter("T", "value", "the value to give that parameter")),
             lines("Sets the value of a parameter to a given value, and returns the Builder."), List(NameAndDescription("IllegalStateException", "if the Builder has already been built once")),
             lines("if ( parameterMap.isEmpty() )") ++ brace(
@@ -224,7 +224,7 @@ object CodeGen {
             lines("""parameterMap = Option.getFullOption( parameterMap.get().set( parameter, value ) );
                   return this;""")).toJava ++
 
-     Method(Public, IsStatic(false), Nil, NameAndDescription(className, "a "+className+" containing the values from this Builder"), "build", Nil,
+     Method(Public, Static(false), Nil, NameAndDescription(className, "a "+className+" containing the values from this Builder"), "build", Nil,
             lines("Constructs a "+className+" with the values from this Builder."), List(NameAndDescription("IllegalStateException", "if the Builder has already been built")),
             Try(lines("return new "+className+"( parameterMap.get() );")) ++ Finally(lines("""parameterMap = Option.getEmptyOption( "This Builder has already been built once." );"""))).toJava) ++
 
@@ -235,7 +235,7 @@ object CodeGen {
      lines("""@Override
            public String toString()""") ++ brace(lines("return \"" + urlPart + "\" + parameterMap.toURLParameters( params );")) ++ blankLine ++
 
-     Method(Public, IsStatic(true), Nil, NameAndDescription(className, "A "+className+" describing the specified URL"), "fromString",
+     Method(Public, Static(true), Nil, NameAndDescription(className, "A "+className+" describing the specified URL"), "fromString",
             List(Parameter("String", "string", "the String to parse")), lines("Converts a String containing a URL describing a "+urlPart+" request into a "+className+"."),
             List(NameAndDescription("IllegalArgumentException", "if the String cannot be parsed into a "+className)),
             lines("if ( string.length() == 0 )") ++ brace(lines("""throw new IllegalArgumentException( "Cannot parse an empty String into a """ + className + """." );""")) ++

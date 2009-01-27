@@ -1,0 +1,11 @@
+Rationale
+
+* Benchmarking
+
+ We chose to create a number of JPEG decoders, using the libraries provided by Java and adffmpeg, so that we could compare their performance, and always choose the fastest.  To help in this, we created a benchmarking suite, contained in src/test/scala/benchmark
+
+ To run the benchmarking suite, compile as usual, then run scala -classpath target/classes:target/test-classes benchmark.Run
+
+* Other JPEG decoders
+
+ We also looked into other JPEG decoders, with the aim of seeing which of those were reasonably easy to use and fast.
