@@ -37,5 +37,7 @@ object replaypiccgi { def main(args: Array[String]): Unit = {
 
  CodeGen.generate(packageName, lines(
   """A parameter list for a replay_pic.cgi query.
-  Use {@link ReplayPicCGI.Builder} to construct a ReplayPicCGI, or {@link ReplayPicCGI#fromString(String)}."""), className, params, urlPart, extras)
+  Use {@link ReplayPicCGI.Builder} to construct a ReplayPicCGI, or {@link ReplayPicCGI#fromString(String)}.
+  See the <a href="http://adwiki.ad-group.adh/attachment/wiki/DevelopmentSite/AD/Client/Vserve%20Specification.pdf">Video
+  Server Specification</a> for more detail on the replay_pic.cgi query."""), className, params, urlPart, extras)
 } }

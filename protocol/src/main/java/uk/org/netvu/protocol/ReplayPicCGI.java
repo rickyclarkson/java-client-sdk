@@ -7,7 +7,9 @@ import uk.org.netvu.util.CheckParameters;
 
 /**
  * A parameter list for a replay_pic.cgi query. Use {@link ReplayPicCGI.Builder}
- * to construct a ReplayPicCGI, or {@link ReplayPicCGI#fromString(String)}.
+ * to construct a ReplayPicCGI, or {@link ReplayPicCGI#fromString(String)}. See
+ * the <a href="http://adwiki.ad-group.adh/attachment/wiki/DevelopmentSite/AD/Client/Vserve%20Specification.pdf"
+ * >Video Server Specification</a> for more detail on the replay_pic.cgi query.
  */
 public final class ReplayPicCGI
 {

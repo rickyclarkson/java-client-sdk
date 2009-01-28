@@ -8,7 +8,8 @@ import uk.org.netvu.util.CheckParameters;
 /**
  * A parameter list for a display_pic.cgi query. Use
  * {@link DisplayPicCGI.Builder} to construct a DisplayPicCGI, or
- * {@link DisplayPicCGI#fromString(String)}.
+ * {@link DisplayPicCGI#fromString(String)} See the <a href="http://adwiki.ad-group.adh/attachment/wiki/DevelopmentSite/AD/Client/Vserve%20Specification.pdf"
+ * >Video Server Specification</a> for more detail on the display_pic.cgi query.
  */
 public final class DisplayPicCGI
 {
