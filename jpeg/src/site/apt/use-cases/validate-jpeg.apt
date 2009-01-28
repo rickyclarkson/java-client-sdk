@@ -1,10 +1,10 @@
 Validate JPEG
 
-  Provide a concise way of validating that JPEG data is well-formed.
+  Provide a concise way of validating that some data is likely to be valid JPEG data.
 
 * Summary:
 
-  This library should allow the client programmer to conveniently ensure that a JPEG is not corrupt.
+  This library should allow the client programmer to conveniently check that some data is likely to be valid JPEG data, e.g., by checking for the presence of the usual JFIF headers and terminators.
 
 * Related ticket(s):
 
@@ -12,7 +12,7 @@ Validate JPEG
 
 * Goal:
 
-  To provide a concise way of validating that JPEG data is well-formed.
+  To provide a concise way of validating that some data is likely to be valid JPEG data.
 
 * Actors:
 
@@ -28,7 +28,7 @@ Validate JPEG
 
 * Basic success path:
 
-  The function returns true, as the JPEG image is valid.
+  The function returns true, as the JPEG image is likely to be valid.
 
 * Other success paths:
 
