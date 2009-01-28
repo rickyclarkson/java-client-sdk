@@ -331,7 +331,7 @@ class AbstractPicCGI
      * @param <Builder>
      *        The type of the subclass of AbstractBuilder.
      */
-    static abstract class AbstractBuilder<Builder extends AbstractBuilder<Builder>>
+    static abstract class AbstractBuilder<Builder>
     {
         /**
          * Gives this instance as a Builder, instead of an

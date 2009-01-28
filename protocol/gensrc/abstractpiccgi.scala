@@ -60,7 +60,7 @@ object abstractpiccgi {
               clazz(lines("A common supertype of DisplayPicCGI.Builder and ReplayPicCGI.Builder containing common code.") ++
                     paramDoc(Parameter('fake, Symbol("<Builder>"), "The type of the subclass of AbstractBuilder")),
                     "static abstract",
-                    "AbstractBuilder<Builder extends AbstractBuilder<Builder>>",
+                    "AbstractBuilder<Builder>", // extends AbstractBuilder<Builder>>",
                     blockComment(lines("Gives this instance as a Builder, instead of an AbstractBuilder&lt;Builder&gt;.") ++ blankLine ++
                                  returnDoc("this instance as a Builder")) ++
                     lines("abstract Builder self();") ++
