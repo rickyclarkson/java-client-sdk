@@ -36,11 +36,15 @@ object Pretty {
 
  def returnDoc(description: String) = lines("@return " +++ description)
  def blankLine = List("")
- def blankFinal(description: Iterable[String], `type`: String, name: String) = blockComment(description) ++ lines("private final " +++ `type` +++ " " +++ name +++ ";") ++ blankLine
+ def blankFinal(description: Iterable[String], `type`: String, name: String) = blockComment(description) ++ lines("final " +++ `type` +++ " " +++ name +++ ";") ++ blankLine
+ def packagePrivateStatic(description: Iterable[String], `type`: Symbol, name: Symbol, value: Iterable[String]) =
+  blockComment(description) ++ lines("static final " +++ `type` +++ " " +++ name +++ " = ") ++ append(wrapped(value), ";") ++ blankLine
+
  def privateStatic(description: Iterable[String], `type`: Symbol, name: Symbol, value: Iterable[String]) =
   blockComment(description) ++ lines("private static final " +++ `type` +++ " " +++ name +++ " = ") ++ append(wrapped(value), ";") ++ blankLine
 
  def privateField(description: Iterable[String], `type`: String, name: String, value: String) = blockComment(description) ++ lines("private " +++ `type` +++ " " +++ name +++ " = " +++ value +++ ";") ++ blankLine
+ def packagePrivateField(description: Iterable[String], `type`: String, name: String, value: String) = blockComment(description) ++ lines(`type` +++ " " +++ name +++ " = " +++ value +++ ";") ++ blankLine
 
  def checkParametersLine(parameters: List[Parameter]) = { val nonPrimitives = parameters.filter(!_.isPrimitive)
                                                           nonPrimitives match {
@@ -53,7 +57,7 @@ object Pretty {
   val nonPrimitives = parameters.filter(!_.isPrimitive)
   
   blockComment(description ++ parameters.flatMap(paramDoc) ++ throwsNpeDoc(parameters)) ++
-  lines(className.show +++ "( " +++ reduceLeftOr(parameters.map(_.typeThenName), "")(_ +++ ", " +++ _) +++ " )") ++ brace(checkParametersLine(parameters) ++ body) ++ blankLine
+  lines(className.show +++ "( " +++ reduceLeftOr(parameters.map(_.typeThenName), "")(_ +++ ", " +++ _) +++ " )") ++ brace(body) ++ blankLine
  }
 
  def nonPrimitives(parameters: List[Parameter]) = parameters.filter(!_.isPrimitive)
@@ -64,7 +68,7 @@ object Pretty {
  def publicMethod(description: Iterable[String], returnDocPart: String, returnType: Symbol, name: Symbol, parameters: List[Parameter], body: Iterable[String]) =
   Method(Public, Static(false), TypeParameters(Nil), Returns(returnType -> returnDocPart), name, parameters, description, Nil, body).toJava
 
- def clazz(description: Iterable[String], modifiers: String, name: String, body: Iterable[String]) = blockComment(description) ++ lines(modifiers +++ " class " +++ name) ++ brace(body)
+ def clazz(description: Iterable[String], modifiers: String, name: String, body: Iterable[String]) = blockComment(description) ++ lines(modifiers +++ " class " +++ name ) ++ brace(body)
  private def reduceLeftOr[T](list: List[T], or: T)(f: (T, T) => T): T = list match { case Nil => or
                                                                                      case x :: y => list.reduceLeft(f) }
  def print(lines: Iterable[String]) = {
@@ -121,7 +125,9 @@ case class Field(description: Iterable[String], visibility: Visibility, isStatic
 }
 
 case class ParaMeta(storedType: Symbol, constName: Symbol, constructor: Iterable[String], publicType: Symbol, getterName: Symbol, name: Symbol) {
- def withConstName(newName: Symbol) = ParaMeta(storedType, newName, constructor, publicType, getterName, name)
+ def setter = publicMethod(lines("Sets the " +++ name +++ " parameter in the builder."), "the Builder", 'Builder, name, List(Parameter(publicType, name, "the value to store as the " +++ name +++ " parameter")),
+                           lines("return set( " +++ constName +++ ", " +++ name +++ " );"))
+ def getter = publicMethod(lines("Gets the value of the " +++ name +++ " parameter."), "the value of the " +++ name +++ " parameter.", publicType, getterName, Nil, lines("return parameterMap.get( " +++ constName +++ " );"))
 }
 
 object intParaMeta {
@@ -209,44 +215,31 @@ object CodeGen {
    import java.util.ArrayList;
    import uk.org.netvu.util.CheckParameters;   
    """) ++ blockComment(classComment) ++ lines(
-   """public final class """ +++ className) ++ brace(
-    blankFinal(lines("The ParameterMap to get values from."), "ParameterMap", "parameterMap") ++
-    packagePrivateConstructor(lines("Constructs a " +++ className +++ ", using the values from the specified ParameterMap."), className, List(Parameter('ParameterMap, 'parameterMap, "the ParameterMap to get values from")), lines("this.parameterMap = parameterMap;")) ++
+   """public final class """ +++ className +++ " extends AbstractPicCGI") ++ brace(
+    packagePrivateConstructor(lines("Constructs a " +++ className +++ ", using the values from the specified ParameterMap."), className, List(Parameter('ParameterMap, 'parameterMap, "the ParameterMap to get values from")), lines("super( parameterMap );")) ++
     privateStatic(lines("All the parameter specifications, used in parsing URLs."), Symbol("List<ParameterDescription<?, ?>>"), 'params, lines("new ArrayList<ParameterDescription<?, ?>>()")) ++
     params.flatMap(param => privateStatic(lines("The specification of the " +++ param.name +++ " parameter."), Symbol("ParameterDescription<" +++ param.storedType +++ ", " +++ param.storedType +++ ">"), param.constName, param.constructor)) ++
-    (params ++ commonparameters.commonParams.map(p => p.withConstName(Symbol("CommonParameters." +++ p.constName)))).flatMap(param => publicMethod(lines("Gets the value of the " +++ param.name +++ " parameter."), "the value of the " +++ param.name +++ " parameter.", param.publicType, param.getterName, Nil, lines("return parameterMap.get( " +++ param.constName +++ " );"))) ++
+    params.flatMap(_.getter) ++
     clazz(lines(
      """A builder that takes in all the optional values for """ +++ className +++ " and produces a " +++ className +++ """ when build() is
         called.  Each parameter must be supplied no more than once.  A Builder can only be built once; that is, it can
         only have build() called on it once.  Calling it a second time will cause an IllegalStateException.  Setting its
-        values after calling build() will cause an IllegalStateException."""), "public static final", "Builder",
-     privateField(lines(
-      """The values supplied for each parameter so far.
-         When this is an empty Option, the Builder is in an invalid state, the reason for
-         which is stored in the Option."""),
-      "Option<ParameterMap>", "parameterMap", "Option.getFullOption( new ParameterMap() )") ++
+        values after calling build() will cause an IllegalStateException."""), "public static final", "Builder extends AbstractPicCGI.AbstractBuilder<Builder>",
      
-    (params ++ commonparameters.commonParams.map(p => p.withConstName(Symbol("CommonParameters." +++ p.constName)))).flatMap(param => publicMethod(
-     lines("Sets the " +++ param.name +++ " parameter in the builder."), "the Builder", 'Builder, param.name, List(Parameter(param.publicType, param.name, "the value to store as the " +++ param.name +++ " parameter")), 
-     lines("return set( " +++ param.constName +++ ", " +++ param.name +++ " );"))) ++ 
+          params.flatMap(param => publicMethod(
+           lines("Sets the " +++ param.name +++ " parameter in the builder."), "the Builder", 'Builder, param.name, List(Parameter(param.publicType, param.name, "the value to store as the " +++ param.name +++ " parameter")), 
+           lines("return set( " +++ param.constName +++ ", " +++ param.name +++ " );"))) ++ 
      
-     Method(Private, Static(false), TypeParameters(List('T -> "the input type of the specified parameter")), Returns('Builder -> "the Builder"), 'set,
-            List(Parameter(Symbol("ParameterDescription<T, ?>"), 'parameter, "the parameter to set a value for"), Parameter('T, 'value, "the value to give that parameter")),
-            lines("Sets the value of a parameter to a given value, and returns the Builder."), List(NameAndDescription("IllegalStateException", "if the Builder has already been built once")),
-            lines("if ( parameterMap.isEmpty() )") ++ brace(
-             lines("""final String message = "The Builder has already been built (build() has been called on it).";
-                   throw new IllegalStateException( message );""")) ++
-            lines("""parameterMap = Option.getFullOption( parameterMap.get().set( parameter, value ) );
-                  return this;""")).toJava ++
-
-     Method(Public, Static(false), TypeParameters(Nil), Returns(className -> ("a " +++ className.show +++ " containing the values from this Builder")), 'build, Nil,
-            lines("Constructs a " +++ className +++ " with the values from this Builder."), List(NameAndDescription("IllegalStateException", "if the Builder has already been built")),
-            Try(lines("return new " +++ className +++ "( parameterMap.get() );")) ++ Finally(lines("""parameterMap = Option.getEmptyOption( "This Builder has already been built once." );"""))).toJava) ++
-
-     lines("static") ++ brace((params ++ commonparameters.commonParams.map(p => p.withConstName(Symbol("CommonParameters." +++ p.constName)))) map (param => "params.add( " +++ param.constName +++" );")) ++ extras ++
-
-     blockComment(lines("Converts this " +++ className +++""" into a String containing a URL beginning with 
-                        """ +++ urlPart +" and containing the supplied parameters.") ++ returnDoc("a String containing a URL beginning with " +++ urlPart +++ " and containing the supplied parameters")) ++
+          Method(Public, Static(false), TypeParameters(Nil), Returns(className -> ("a " +++ className.show +++ " containing the values from this Builder")), 'build, Nil,
+                 lines("Constructs a " +++ className +++ " with the values from this Builder."), List(NameAndDescription("IllegalStateException", "if the Builder has already been built")),
+                 Try(lines("return new " +++ className +++ "( parameterMap.get() );")) ++ Finally(lines("""parameterMap = Option.getEmptyOption( "This Builder has already been built once." );"""))).toJava ++
+         Method(Package, Static(false), TypeParameters(Nil), Returns('Builder -> "this Builder"), 'self, Nil, lines("Returns this Builder."), Nil,
+                lines("return this;")).toJava) ++
+    
+    lines("static") ++ brace(params.map(param => "params.add( " +++ param.constName +++" );") ++ lines("params.addAll( commonParams );")) ++ extras ++
+    
+    blockComment(lines("Converts this " +++ className +++""" into a String containing a URL beginning with 
+                       """ +++ urlPart +" and containing the supplied parameters.") ++ returnDoc("a String containing a URL beginning with " +++ urlPart +++ " and containing the supplied parameters")) ++
      lines("""@Override
            public String toString()""") ++ brace(lines("return \"" +++ urlPart +++ "\" + parameterMap.toURLParameters( params );")) ++ blankLine ++
 

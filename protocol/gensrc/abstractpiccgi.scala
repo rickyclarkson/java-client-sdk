@@ -1,7 +1,7 @@
 import Pretty._
 
-object commonparameters {
- val commonParams = List(
+object abstractpiccgi {
+ val commonParams: List[ParaMeta] = List(
   intParaMeta('CAMERA, """ParameterDescription.parameter( "cam", StringConversion.integer() )
               .withDefault( 1 ).positive( Num.integer )""", 'getCamera, 'camera),
   intParaMeta('FIELD_COUNT, """ParameterDescription.parameter( "fields", StringConversion.integer() )
@@ -32,16 +32,50 @@ object commonparameters {
   intParaMeta('PROXY_RETRIES, """ParameterDescription.parameter( "proxyretry", StringConversion.integer() ).withDefault( 0 )""", 'getProxyRetries, 'proxyRetries))
 
  def main(args: Array[String]) = {
-  print(lines("package uk.org.netvu.protocol;") ++ blankLine ++
-        clazz(lines("A utility class containing ParameterDescriptions that are common between multiple CGIs."),
+  print(lines("""package uk.org.netvu.protocol;
+                 
+                 import java.util.ArrayList;
+                 import java.util.List;
+                 import uk.org.netvu.util.CheckParameters;""") ++ blankLine ++
+        clazz(lines("A common supertype of DisplayPicCGI and ReplayPicCGI containing common code."),
               "",
-              "CommonParameters",
+              "AbstractPicCGI",              
+              blankFinal(lines("The ParameterMap to get values from."), "ParameterMap", "parameterMap") ++
+              blockComment(lines("Constructs an AbstractPicCGI with the specified ParameterMap.") ++
+                           paramDoc(Parameter('ParameterMap, 'parameterMap, "The ParameterMap to store parameter values in."))
+                          ) ++
+              lines("AbstractPicCGI( ParameterMap parameterMap )") ++ brace(lines("this.parameterMap = parameterMap;")) ++
               commonParams.flatMap(param => Field(lines("The specification of the " +++ param.name +++ " parameter."),
                                                   Package,
                                                   Static(true),
                                                   Final(true),
                                                   Symbol("ParameterDescription<" +++ param.storedType +++ ", " +++ param.storedType +++ ">"),
                                                   param.constName,
-                                                  param.constructor).toJava)))
+                                                  param.constructor).toJava) ++
+              packagePrivateStatic(lines("All the common parameter specifications, used in parsing URLs."),
+                                   Symbol("List<ParameterDescription<?, ?>>"),
+                                   'commonParams, lines("new ArrayList<ParameterDescription<?, ?>>()")) ++
+              lines("static") ++ brace(commonParams map (param => "commonParams.add( " +++ param.constName +++ " );")) ++
+              commonParams.flatMap(_.getter) ++
+              clazz(lines("A common supertype of DisplayPicCGI.Builder and ReplayPicCGI.Builder containing common code.") ++
+                    paramDoc(Parameter('fake, Symbol("<Builder>"), "The type of the subclass of AbstractBuilder")),
+                    "static abstract",
+                    "AbstractBuilder<Builder extends AbstractBuilder<Builder>>",
+                    blockComment(lines("Gives this instance as a Builder, instead of an AbstractBuilder&lt;Builder&gt;.") ++ blankLine ++
+                                 returnDoc("this instance as a Builder")) ++
+                    lines("abstract Builder self();") ++
+                    packagePrivateField(lines("""The values supplied for each parameter so far.
+                                       When this is an empty Option, the Builder is in an invalid state, the reason for
+                                        which is stored in the Option."""),
+                                 "Option<ParameterMap>", "parameterMap", "Option.getFullOption( new ParameterMap() )") ++
+                    commonParams.flatMap(_.setter) ++
+                    Method(Package, Static(false), TypeParameters(List('T -> "the input type of the specified parameter")), Returns('Builder -> "the Builder"), 'set,
+                           List(Parameter(Symbol("ParameterDescription<T, ?>"), 'parameter, "the parameter to set a value for"), Parameter('T, 'value, "the value to give that parameter")),
+                           lines("Sets the value of a parameter to a given value, and returns the Builder."), List(NameAndDescription("IllegalStateException", "if the Builder has already been built once")),
+                           lines("if ( parameterMap.isEmpty() )") ++ brace(
+                            lines("""final String message = "The Builder has already been built (build() has been called on it).";
+                                  throw new IllegalStateException( message );""")) ++
+                           lines("""parameterMap = Option.getFullOption( parameterMap.get().set( parameter, value ) );
+                                 return self();""")).toJava)))
  }
 }

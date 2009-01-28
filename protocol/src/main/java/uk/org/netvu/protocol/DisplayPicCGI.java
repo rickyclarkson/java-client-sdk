@@ -11,13 +11,8 @@ import uk.org.netvu.util.CheckParameters;
  * {@link DisplayPicCGI#fromString(String)} See the <a href="http://adwiki.ad-group.adh/attachment/wiki/DevelopmentSite/AD/Client/Vserve%20Specification.pdf"
  * >Video Server Specification</a> for more detail on the display_pic.cgi query.
  */
-public final class DisplayPicCGI
+public final class DisplayPicCGI extends AbstractPicCGI
 {
-    /**
-     * The ParameterMap to get values from.
-     */
-    private final ParameterMap parameterMap;
-
     /**
      * Constructs a DisplayPicCGI, using the values from the specified
      * ParameterMap.
@@ -29,8 +24,7 @@ public final class DisplayPicCGI
      */
     DisplayPicCGI( final ParameterMap parameterMap )
     {
-        CheckParameters.areNotNull( parameterMap );
-        this.parameterMap = parameterMap;
+        super( parameterMap );
     }
 
     /**
@@ -205,166 +199,6 @@ public final class DisplayPicCGI
     }
 
     /**
-     * Gets the value of the camera parameter.
-     * 
-     * @return the value of the camera parameter.
-     */
-    public int getCamera()
-    {
-        return parameterMap.get( CommonParameters.CAMERA );
-    }
-
-    /**
-     * Gets the value of the fieldCount parameter.
-     * 
-     * @return the value of the fieldCount parameter.
-     */
-    public int getFieldCount()
-    {
-        return parameterMap.get( CommonParameters.FIELD_COUNT );
-    }
-
-    /**
-     * Gets the value of the resolution parameter.
-     * 
-     * @return the value of the resolution parameter.
-     */
-    public String getResolution()
-    {
-        return parameterMap.get( CommonParameters.RESOLUTION );
-    }
-
-    /**
-     * Gets the value of the cameraSequenceMask parameter.
-     * 
-     * @return the value of the cameraSequenceMask parameter.
-     */
-    public String getCameraSequenceMask()
-    {
-        return parameterMap.get( CommonParameters.CAMERA_SEQUENCE_MASK );
-    }
-
-    /**
-     * Gets the value of the connectionID parameter.
-     * 
-     * @return the value of the connectionID parameter.
-     */
-    public int getConnectionID()
-    {
-        return parameterMap.get( CommonParameters.CONNECTION_ID );
-    }
-
-    /**
-     * Gets the value of the maximumTransmitRate parameter.
-     * 
-     * @return the value of the maximumTransmitRate parameter.
-     */
-    public int getMaximumTransmitRate()
-    {
-        return parameterMap.get( CommonParameters.MAXIMUM_TRANSMIT_RATE );
-    }
-
-    /**
-     * Gets the value of the duration parameter.
-     * 
-     * @return the value of the duration parameter.
-     */
-    public int getDuration()
-    {
-        return parameterMap.get( CommonParameters.DURATION );
-    }
-
-    /**
-     * Gets the value of the packetSize parameter.
-     * 
-     * @return the value of the packetSize parameter.
-     */
-    public int getPacketSize()
-    {
-        return parameterMap.get( CommonParameters.PACKET_SIZE );
-    }
-
-    /**
-     * Gets the value of the udpPort parameter.
-     * 
-     * @return the value of the udpPort parameter.
-     */
-    public int getUdpPort()
-    {
-        return parameterMap.get( CommonParameters.UDP_PORT );
-    }
-
-    /**
-     * Gets the value of the format parameter.
-     * 
-     * @return the value of the format parameter.
-     */
-    public VideoFormat getFormat()
-    {
-        return parameterMap.get( CommonParameters.FORMAT );
-    }
-
-    /**
-     * Gets the value of the audioChannel parameter.
-     * 
-     * @return the value of the audioChannel parameter.
-     */
-    public int getAudioChannel()
-    {
-        return parameterMap.get( CommonParameters.AUDIO_CHANNEL );
-    }
-
-    /**
-     * Gets the value of the transmissionMode parameter.
-     * 
-     * @return the value of the transmissionMode parameter.
-     */
-    public TransmissionMode getTransmissionMode()
-    {
-        return parameterMap.get( CommonParameters.TRANSMISSION_MODE );
-    }
-
-    /**
-     * Gets the value of the slaveIP parameter.
-     * 
-     * @return the value of the slaveIP parameter.
-     */
-    public String getSlaveIP()
-    {
-        return parameterMap.get( CommonParameters.SLAVE_IP );
-    }
-
-    /**
-     * Gets the value of the outputChannel parameter.
-     * 
-     * @return the value of the outputChannel parameter.
-     */
-    public int getOutputChannel()
-    {
-        return parameterMap.get( CommonParameters.OUTPUT_CHANNEL );
-    }
-
-    /**
-     * Gets the value of the proxyMode parameter.
-     * 
-     * @return the value of the proxyMode parameter.
-     */
-    public ProxyMode getProxyMode()
-    {
-        return parameterMap.get( CommonParameters.PROXY_MODE );
-    }
-
-    /**
-     * Gets the value of the proxyRetries parameter.
-     * 
-     * @return the value of the proxyRetries parameter.
-     */
-    public int getProxyRetries()
-    {
-        return parameterMap.get( CommonParameters.PROXY_RETRIES );
-    }
-
-    /**
      * A builder that takes in all the optional values for DisplayPicCGI and
      * produces a DisplayPicCGI when build() is called. Each parameter must be
      * supplied no more than once. A Builder can only be built once; that is, it
@@ -372,15 +206,8 @@ public final class DisplayPicCGI
      * cause an IllegalStateException. Setting its values after calling build()
      * will cause an IllegalStateException.
      */
-    public static final class Builder
+    public static final class Builder extends AbstractPicCGI.AbstractBuilder<Builder>
     {
-        /**
-         * The values supplied for each parameter so far. When this is an empty
-         * Option, the Builder is in an invalid state, the reason for which is
-         * stored in the Option.
-         */
-        private Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
-
         /**
          * Sets the dwellTime parameter in the builder.
          * 
@@ -507,244 +334,6 @@ public final class DisplayPicCGI
         }
 
         /**
-         * Sets the camera parameter in the builder.
-         * 
-         * @param camera
-         *        the value to store as the camera parameter.
-         * @return the Builder
-         */
-        public Builder camera( final int camera )
-        {
-            return set( CommonParameters.CAMERA, camera );
-        }
-
-        /**
-         * Sets the fieldCount parameter in the builder.
-         * 
-         * @param fieldCount
-         *        the value to store as the fieldCount parameter.
-         * @return the Builder
-         */
-        public Builder fieldCount( final int fieldCount )
-        {
-            return set( CommonParameters.FIELD_COUNT, fieldCount );
-        }
-
-        /**
-         * Sets the resolution parameter in the builder.
-         * 
-         * @param resolution
-         *        the value to store as the resolution parameter.
-         * @return the Builder
-         * @throws NullPointerException
-         *         if resolution is null.
-         */
-        public Builder resolution( final String resolution )
-        {
-            CheckParameters.areNotNull( resolution );
-            return set( CommonParameters.RESOLUTION, resolution );
-        }
-
-        /**
-         * Sets the cameraSequenceMask parameter in the builder.
-         * 
-         * @param cameraSequenceMask
-         *        the value to store as the cameraSequenceMask parameter.
-         * @return the Builder
-         * @throws NullPointerException
-         *         if cameraSequenceMask is null.
-         */
-        public Builder cameraSequenceMask( final String cameraSequenceMask )
-        {
-            CheckParameters.areNotNull( cameraSequenceMask );
-            return set( CommonParameters.CAMERA_SEQUENCE_MASK, cameraSequenceMask );
-        }
-
-        /**
-         * Sets the connectionID parameter in the builder.
-         * 
-         * @param connectionID
-         *        the value to store as the connectionID parameter.
-         * @return the Builder
-         */
-        public Builder connectionID( final int connectionID )
-        {
-            return set( CommonParameters.CONNECTION_ID, connectionID );
-        }
-
-        /**
-         * Sets the maximumTransmitRate parameter in the builder.
-         * 
-         * @param maximumTransmitRate
-         *        the value to store as the maximumTransmitRate parameter.
-         * @return the Builder
-         */
-        public Builder maximumTransmitRate( final int maximumTransmitRate )
-        {
-            return set( CommonParameters.MAXIMUM_TRANSMIT_RATE, maximumTransmitRate );
-        }
-
-        /**
-         * Sets the duration parameter in the builder.
-         * 
-         * @param duration
-         *        the value to store as the duration parameter.
-         * @return the Builder
-         */
-        public Builder duration( final int duration )
-        {
-            return set( CommonParameters.DURATION, duration );
-        }
-
-        /**
-         * Sets the packetSize parameter in the builder.
-         * 
-         * @param packetSize
-         *        the value to store as the packetSize parameter.
-         * @return the Builder
-         */
-        public Builder packetSize( final int packetSize )
-        {
-            return set( CommonParameters.PACKET_SIZE, packetSize );
-        }
-
-        /**
-         * Sets the udpPort parameter in the builder.
-         * 
-         * @param udpPort
-         *        the value to store as the udpPort parameter.
-         * @return the Builder
-         */
-        public Builder udpPort( final int udpPort )
-        {
-            return set( CommonParameters.UDP_PORT, udpPort );
-        }
-
-        /**
-         * Sets the format parameter in the builder.
-         * 
-         * @param format
-         *        the value to store as the format parameter.
-         * @return the Builder
-         * @throws NullPointerException
-         *         if format is null.
-         */
-        public Builder format( final VideoFormat format )
-        {
-            CheckParameters.areNotNull( format );
-            return set( CommonParameters.FORMAT, format );
-        }
-
-        /**
-         * Sets the audioChannel parameter in the builder.
-         * 
-         * @param audioChannel
-         *        the value to store as the audioChannel parameter.
-         * @return the Builder
-         */
-        public Builder audioChannel( final int audioChannel )
-        {
-            return set( CommonParameters.AUDIO_CHANNEL, audioChannel );
-        }
-
-        /**
-         * Sets the transmissionMode parameter in the builder.
-         * 
-         * @param transmissionMode
-         *        the value to store as the transmissionMode parameter.
-         * @return the Builder
-         * @throws NullPointerException
-         *         if transmissionMode is null.
-         */
-        public Builder transmissionMode( final TransmissionMode transmissionMode )
-        {
-            CheckParameters.areNotNull( transmissionMode );
-            return set( CommonParameters.TRANSMISSION_MODE, transmissionMode );
-        }
-
-        /**
-         * Sets the slaveIP parameter in the builder.
-         * 
-         * @param slaveIP
-         *        the value to store as the slaveIP parameter.
-         * @return the Builder
-         * @throws NullPointerException
-         *         if slaveIP is null.
-         */
-        public Builder slaveIP( final String slaveIP )
-        {
-            CheckParameters.areNotNull( slaveIP );
-            return set( CommonParameters.SLAVE_IP, slaveIP );
-        }
-
-        /**
-         * Sets the outputChannel parameter in the builder.
-         * 
-         * @param outputChannel
-         *        the value to store as the outputChannel parameter.
-         * @return the Builder
-         */
-        public Builder outputChannel( final int outputChannel )
-        {
-            return set( CommonParameters.OUTPUT_CHANNEL, outputChannel );
-        }
-
-        /**
-         * Sets the proxyMode parameter in the builder.
-         * 
-         * @param proxyMode
-         *        the value to store as the proxyMode parameter.
-         * @return the Builder
-         * @throws NullPointerException
-         *         if proxyMode is null.
-         */
-        public Builder proxyMode( final ProxyMode proxyMode )
-        {
-            CheckParameters.areNotNull( proxyMode );
-            return set( CommonParameters.PROXY_MODE, proxyMode );
-        }
-
-        /**
-         * Sets the proxyRetries parameter in the builder.
-         * 
-         * @param proxyRetries
-         *        the value to store as the proxyRetries parameter.
-         * @return the Builder
-         */
-        public Builder proxyRetries( final int proxyRetries )
-        {
-            return set( CommonParameters.PROXY_RETRIES, proxyRetries );
-        }
-
-        /**
-         * Sets the value of a parameter to a given value, and returns the
-         * Builder.
-         * 
-         * @param <T>
-         *        the input type of the specified parameter.
-         * @param parameter
-         *        the parameter to set a value for.
-         * @param value
-         *        the value to give that parameter.
-         * @return the Builder
-         * @throws IllegalStateException
-         *         if the Builder has already been built once.
-         * @throws NullPointerException
-         *         if parameter or value are null.
-         */
-        private <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
-        {
-            CheckParameters.areNotNull( parameter, value );
-            if ( parameterMap.isEmpty() )
-            {
-                final String message = "The Builder has already been built (build() has been called on it).";
-                throw new IllegalStateException( message );
-            }
-            parameterMap = Option.getFullOption( parameterMap.get().set( parameter, value ) );
-            return this;
-        }
-
-        /**
          * Constructs a DisplayPicCGI with the values from this Builder.
          * 
          * @return a DisplayPicCGI containing the values from this Builder
@@ -763,6 +352,17 @@ public final class DisplayPicCGI
             }
         }
 
+        /**
+         * Returns this Builder.
+         * 
+         * @return this Builder
+         */
+        @Override
+        Builder self()
+        {
+            return this;
+        }
+
     }
     static
     {
@@ -776,22 +376,7 @@ public final class DisplayPicCGI
         params.add( MP4_BITRATE );
         params.add( PROXY_PRIORITY );
         params.add( BUFFER_COUNT );
-        params.add( CommonParameters.CAMERA );
-        params.add( CommonParameters.FIELD_COUNT );
-        params.add( CommonParameters.RESOLUTION );
-        params.add( CommonParameters.CAMERA_SEQUENCE_MASK );
-        params.add( CommonParameters.CONNECTION_ID );
-        params.add( CommonParameters.MAXIMUM_TRANSMIT_RATE );
-        params.add( CommonParameters.DURATION );
-        params.add( CommonParameters.PACKET_SIZE );
-        params.add( CommonParameters.UDP_PORT );
-        params.add( CommonParameters.FORMAT );
-        params.add( CommonParameters.AUDIO_CHANNEL );
-        params.add( CommonParameters.TRANSMISSION_MODE );
-        params.add( CommonParameters.SLAVE_IP );
-        params.add( CommonParameters.OUTPUT_CHANNEL );
-        params.add( CommonParameters.PROXY_MODE );
-        params.add( CommonParameters.PROXY_RETRIES );
+        params.addAll( commonParams );
     }
 
     /**
