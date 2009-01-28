@@ -33,7 +33,7 @@ class DisplayPicCGITest extends JUnit4(new Specification {
  val setters = List[Builder => Builder](_ camera 4, _ fieldCount 5, _ resolution "hi", _ cameraSequenceMask "6", _ dwellTime 7, _ connectionID 8, _ preselector 3, _ channel 1,
                                         _ maximumTransmitRate 12, _ quantisationFactor 13, _ duration 14, _ bufferCount 15, _ quantisationFactorForTelemetryImages 16, _ packetSize 17, _ udpPort 18,
                                         _ audioChannel 1, _ format VideoFormat.MP4, _ audioMode AudioMode.INLINE, _ transmissionMode TransmissionMode.BINARY, _ picturesPerSecond 19, _ mp4Bitrate 20,
-                                        _ slaveIP new IPAddress(63 << 24 + 48 << 16 + 22 << 8 + 123), _ outputChannel 21, _ proxyMode ProxyMode.PERSISTENT, _ proxyPriority 22, _ proxyRetries 23)
+                                        _ slaveIP "a.b.c", _ outputChannel 21, _ proxyMode ProxyMode.PERSISTENT, _ proxyPriority 22, _ proxyRetries 23)
  "Builder constraints" areSpecifiedBy BuildersTests.testBuilder[DisplayPicCGI, Builder](new Builder, new Builder, setters, "DisplayPicCGITest")
 
  val cgi = new Builder().build
@@ -59,7 +59,7 @@ class DisplayPicCGITest extends JUnit4(new Specification {
  getTransmissionMode mustEqual TransmissionMode.MIME
  getPicturesPerSecond mustEqual 0
  getMp4Bitrate mustEqual 0
- getSlaveIP mustEqual IPAddress.fromString("0.0.0.0").get
+ getSlaveIP mustEqual "0.0.0.0"
  getOutputChannel mustEqual -1
  getProxyMode mustEqual ProxyMode.TRANSIENT
  getProxyPriority mustEqual 1
@@ -84,9 +84,4 @@ class DisplayPicCGITest extends JUnit4(new Specification {
   DisplayPicCGI.fromString("/display_pic.cgi?proxymode=" + proxyMode).getProxyMode.toString.toLowerCase mustEqual proxyMode
 
  DisplayPicCGI.fromString("/display_pic.cgi?proxymode=tor") must throwAn[IllegalArgumentException]
-
- DisplayPicCGI.fromString("/display_pic.cgi?slaveip=192.168.0.1").getSlaveIP mustEqual IPAddress.fromString("192.168.0.1").get
- DisplayPicCGI.fromString("/display_pic.cgi?slaveip=19222.168.0.1") must throwAn[IllegalArgumentException]
- DisplayPicCGI.fromString("/display_pic.cgi?slaveip=-21.3.4.5") must throwAn[IllegalArgumentException]
- DisplayPicCGI.fromString("/display_pic.cgi?slaveip=1.2.3.4").getSlaveIP.rawValue mustEqual 1 << 24 | 2 << 16 | 3 << 8 | 4
 })

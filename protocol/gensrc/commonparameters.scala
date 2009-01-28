@@ -23,8 +23,9 @@ object commonparameters {
   intParaMeta('AUDIO_CHANNEL, """ParameterDescription.parameter( "audio", StringConversion.integer() )
                                .withDefault( 0 ).positive( Num.integer )""", 'getAudioChannel, 'audioChannel),
   ParaMeta('TransmissionMode, 'TRANSMISSION_MODE, append(prepend("""ParameterDescription.parameterWithDefault( "txmode", """, lambda("ParameterMap", "TransmissionMode", "map", "map.get( FORMAT ) == VideoFormat.JFIF ? TransmissionMode.MIME : TransmissionMode.MINIMAL")), ", StringConversion.convenientPartial( TransmissionMode.fromStringFunction() ) )"), 'TransmissionMode, 'getTransmissionMode, 'transmissionMode),
-  ParaMeta('IPAddress, 'SLAVE_IP, lines("""ParameterDescription.parameter( "slaveip", StringConversion.convenientPartial(
-                                           IPAddress.fromString )).withDefault( IPAddress.fromString( "0.0.0.0" ).get() )"""), 'IPAddress, 'getSlaveIP, 'slaveIP),
+  ParaMeta('String, 'SLAVE_IP, lines("""ParameterDescription.parameter( "slaveip", StringConversion.string() )
+                                        .withDefault( "0.0.0.0" )"""),
+           'String, 'getSlaveIP, 'slaveIP),
   intParaMeta('OUTPUT_CHANNEL, """ParameterDescription.parameter( "opchan", StringConversion.integer() ).withDefault( -1 )""", 'getOutputChannel, 'outputChannel),
   ParaMeta('ProxyMode, 'PROXY_MODE, lines("""ParameterDescription.parameter( "proxymode",
                                             StringConversion.convenientPartial( ProxyMode.fromStringFunction() ) ).withDefault( ProxyMode.TRANSIENT )"""), 'ProxyMode, 'getProxyMode, 'proxyMode),

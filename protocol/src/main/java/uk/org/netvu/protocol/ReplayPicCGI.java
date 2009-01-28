@@ -277,7 +277,7 @@ public final class ReplayPicCGI
      * 
      * @return the value of the slaveIP parameter.
      */
-    public IPAddress getSlaveIP()
+    public String getSlaveIP()
     {
         return parameterMap.get( CommonParameters.SLAVE_IP );
     }
@@ -584,7 +584,7 @@ public final class ReplayPicCGI
          * @throws NullPointerException
          *         if slaveIP is null.
          */
-        public Builder slaveIP( final IPAddress slaveIP )
+        public Builder slaveIP( final String slaveIP )
         {
             CheckParameters.areNotNull( slaveIP );
             return set( CommonParameters.SLAVE_IP, slaveIP );

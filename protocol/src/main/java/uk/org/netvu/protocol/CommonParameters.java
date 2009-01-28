@@ -97,9 +97,8 @@ class CommonParameters
     /**
      * The specification of the slaveIP parameter.
      */
-    static final ParameterDescription<IPAddress, IPAddress> SLAVE_IP =
-            ParameterDescription.parameter( "slaveip", StringConversion.convenientPartial( IPAddress.fromString ) )
-                .withDefault( IPAddress.fromString( "0.0.0.0" ).get() );
+    static final ParameterDescription<String, String> SLAVE_IP =
+            ParameterDescription.parameter( "slaveip", StringConversion.string() ).withDefault( "0.0.0.0" );
 
     /**
      * The specification of the outputChannel parameter.

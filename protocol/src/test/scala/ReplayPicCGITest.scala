@@ -45,7 +45,7 @@ class ReplayPicCGITest extends JUnit4(new Specification {
   }
  }
    
- val setters = List[Builder => Builder](_ camera 4, _ fieldCount 5, _ cameraSequenceMask "6", _ connectionID 7, _ control Control.FFWD, _ gmtTime 8, _ localTime 9, _ maximumTransmitRate 10, _ text "bob", _ timeRange 11, _ audioChannel 11, _ fastForwardMultiplier 12, _ duration 13, _ resolution "hi", _ packetSize 110, _ udpPort 6, _ refresh 14, _ format VideoFormat.MP4, _ transmissionMode TransmissionMode.BINARY, _ slaveIP IPAddress.fromString("192.168.0.1").get, _ outputChannel 15, _ proxyMode ProxyMode.PERSISTENT, _ proxyRetries 16)
+ val setters = List[Builder => Builder](_ camera 4, _ fieldCount 5, _ cameraSequenceMask "6", _ connectionID 7, _ control Control.FFWD, _ gmtTime 8, _ localTime 9, _ maximumTransmitRate 10, _ text "bob", _ timeRange 11, _ audioChannel 11, _ fastForwardMultiplier 12, _ duration 13, _ resolution "hi", _ packetSize 110, _ udpPort 6, _ refresh 14, _ format VideoFormat.MP4, _ transmissionMode TransmissionMode.BINARY, _ slaveIP "192.168.0.1", _ outputChannel 15, _ proxyMode ProxyMode.PERSISTENT, _ proxyRetries 16)
  "Builder constraints" areSpecifiedBy BuildersTests.testBuilder[ReplayPicCGI, Builder](new Builder, new Builder, setters, "ReplayPicCGITest")
 
  "The default values for ReplayPicCGI" should {
@@ -71,7 +71,7 @@ class ReplayPicCGITest extends JUnit4(new Specification {
    getRefresh mustEqual 0
    getFormat mustEqual VideoFormat.JFIF
    getTransmissionMode mustEqual TransmissionMode.MIME
-   getSlaveIP mustEqual IPAddress.fromString("0.0.0.0").get
+   getSlaveIP mustEqual "0.0.0.0"
    getOutputChannel mustEqual -1
    getProxyMode mustEqual ProxyMode.TRANSIENT
    getProxyRetries mustEqual 0
