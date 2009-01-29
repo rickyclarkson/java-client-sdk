@@ -94,11 +94,9 @@ public final class JPEGDecoders
     {
       AVCodecContext codecContext = ADFFMPEG.avcodec_alloc_context();
       AVFrame picture;
-      AVCodec codec = ADFFMPEG.avcodec_find_decoder_by_name( "mjpeg" );
 
       {
-        codecContext.setWorkaround_bugs( FF_BUG_NO_PADDING );
-        if (ADFFMPEG.avcodec_open( codecContext, codec) < 0)
+        if (ADFFMPEG.avcodec_open( codecContext, ADFFMPEG.avcodec_find_decoder_by_name("mjpeg")) < 0)
         {
           throw new InstantiationError("Unable to open native codec");
         }
