@@ -18,6 +18,8 @@ Rationale
 
  Toolkit.createImage is the oldest mechanism for decoding images in Java.  It can return to the user before decoding is complete, which then means the user typically provides a callback that gets invoked whenever more image data is available.  We expect Toolkit.createImage to outperform ImageIO in some cases, but Sun are working on ImageIO's performance and not Toolkit.createImage's performance.
 
+** JPEGCodec directly, from the JDK.
+
 ** FFmpeg
 
  While FFmpeg is designed for decoding more conventional video formats, its JPEG decoder is reported to be "ridiculously fast" by one of the FFmpeg maintainers.  We already use this decoder, but it might be worth looking into any improvements we can gain from using it differently.

@@ -5,6 +5,14 @@
         <artifactId>sdk</artifactId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
+    <dependencies>
+        <dependency>
+            <groupId>uk.org.netvu</groupId>
+            <artifactId>adffmpeg-java</artifactId>
+            <classifier>${os-platform}-${os-arch}</classifier>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
     <artifactId>jpeg</artifactId>
     <name>NetVu Connected Java Client SDK->JPEG</name>
     <description>Common utilities for decoding and retrieving metadata

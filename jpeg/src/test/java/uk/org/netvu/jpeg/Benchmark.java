@@ -16,7 +16,7 @@ public class Benchmark
           {{
             try
             {
-              add(new JLabel(new ImageIcon(JPEGDecoders.toolkitDecoder.decode(new FileInputStream("Jpegvergroessert.jpg").getChannel().map(FileChannel.MapMode.READ_ONLY, 0, new File("Jpegvergroessert.jpg").length())))));
+              add(new JLabel(new ImageIcon(JPEGDecoders.adffmpegDecoder.decode(new FileInputStream("Jpegvergroessert.jpg").getChannel().map(FileChannel.MapMode.READ_ONLY, 0, new File("Jpegvergroessert.jpg").length())))));
             }
             catch (IOException e)
               {

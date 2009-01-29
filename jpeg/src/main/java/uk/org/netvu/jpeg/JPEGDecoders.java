@@ -2,6 +2,8 @@ package uk.org.netvu.jpeg;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.nio.ByteOrder;
 import javax.imageio.ImageIO;
 import java.io.InputStream;
 import java.io.IOException;
@@ -9,6 +11,10 @@ import java.awt.Toolkit;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import javax.swing.JPanel;
+import java.awt.image.MemoryImageSource;
+
+import uk.org.netvu.adffmpeg.*;
+import static uk.org.netvu.adffmpeg.ADFFMPEGConstants.*;
 
 public final class JPEGDecoders
 {
@@ -67,7 +73,13 @@ public final class JPEGDecoders
         {
           throw new RuntimeException(e);
         }
-      
+
+      return toBufferedImage(result);
+    }
+    };
+
+  private static BufferedImage toBufferedImage(Image result)
+  {
       if (result instanceof BufferedImage)
         return (BufferedImage)result;
       else
@@ -77,5 +89,38 @@ public final class JPEGDecoders
         return bi;
       }
     }
-  };
+
+  public static final JPEGDecoder adffmpegDecoder = new JPEGDecoder()
+    {
+      AVCodecContext codecContext = ADFFMPEG.avcodec_alloc_context();
+      AVFrame picture;
+      AVCodec codec = ADFFMPEG.avcodec_find_decoder_by_name( "mjpeg" );
+
+      {
+        codecContext.setWorkaround_bugs( FF_BUG_NO_PADDING );
+        if (ADFFMPEG.avcodec_open( codecContext, codec) < 0)
+        {
+          throw new InstantiationError("Unable to open native codec");
+        }
+        picture = ADFFMPEG.avcodec_alloc_frame();
+      }
+
+      public BufferedImage decode(ByteBuffer buffer)
+      {     
+        IntBuffer got_picture = ByteBuffer.allocateDirect(4).asIntBuffer();
+        
+        int len = ADFFMPEG.avcodec_decode_video( codecContext, picture, got_picture, buffer );
+        if (len < 0)
+          throw null;
+
+        int numberOfPixels = codecContext.getWidth() * codecContext.getHeight();
+        IntBuffer decodeBuffer = ByteBuffer.allocateDirect(numberOfPixels * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
+        int[] decodedData = new int[numberOfPixels];
+        ADFFMPEG.extractPixelData(picture, codecContext, decodeBuffer);
+        decodeBuffer.get(decodedData);
+        int width = codecContext.getWidth();
+        return toBufferedImage(Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(width, codecContext.getHeight(), decodedData, 0, width)));
+      }
+    };
+
 }
