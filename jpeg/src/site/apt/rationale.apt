@@ -18,8 +18,6 @@ Rationale
 
  Toolkit.createImage is the oldest mechanism for decoding images in Java.  It can return to the user before decoding is complete, which then means the user typically provides a callback that gets invoked whenever more image data is available.  We expect Toolkit.createImage to outperform ImageIO in some cases, but Sun are working on ImageIO's performance and not Toolkit.createImage's performance.
 
-** JPEGCodec directly, from the JDK.
-
 ** FFmpeg
 
  While FFmpeg is designed for decoding more conventional video formats, its JPEG decoder is reported to be "ridiculously fast" by one of the FFmpeg maintainers.  We already use this decoder, but it might be worth looking into any improvements we can gain from using it differently.
@@ -39,6 +37,8 @@ Rationale
  This site has a more liberally licenced JPEG decoder written in C, but the latest release was made in 1998.  It appears to have been well-tested at the time, and is used by a lot of programs, possibly including the Java Virtual Machine some years ago.  The licence states that you may use the software for any purpose, but you must acknowledge the Independent JPEG Group in documentation.
 
  There is a SourceForge project, {{{http://gnuwin32.sourceforge.net/packages/jpeg.htm}gnuwin32}}that contains what looks to be a Windows-specific  version of this library, last updated in 2005 - there may be functional changes too.
+
+ A comment in the JDK's source code mentions that Java's JPEG decoding is a modification of libjpeg.
 
 ** {{{http://www.intel.com/cd/software/products/asmo-na/eng/302910.htm#vc}Intel Integrated Performance Primitives}}
 
