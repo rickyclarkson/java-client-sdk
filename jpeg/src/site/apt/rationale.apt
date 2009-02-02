@@ -4,9 +4,7 @@ Rationale
 
 * Benchmarking
 
- To help in this, we will create a benchmarking suite, contained in src/test/java/benchmark.
-
- To run the benchmarking suite, compile as usual, then run java -classpath target/classes:target/test-classes benchmark.Run (replace the : with a ; on Windows)
+ We will create a benchmarking suite for this, which will, in separate processes, run the decoders on several images, timing the results.  To take the JVM's warmup time into consideration, we will disregard results from the first 10 seconds of operation.  We will run the decoders in separate processes to avoid any interference between them.
 
 * JPEG decoders 
 
