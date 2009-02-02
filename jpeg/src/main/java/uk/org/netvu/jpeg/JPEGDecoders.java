@@ -20,8 +20,9 @@ public final class JPEGDecoders
 {
   public static final JPEGDecoder imageIODecoder = new JPEGDecoder()
     {
-      public BufferedImage decode(final ByteBuffer buffer)
+      public BufferedImage decode(ByteBuffer _buffer)
       {
+        final ByteBuffer buffer = _buffer.duplicate();
         try
         {
           return ImageIO.read(new InputStream()
@@ -53,6 +54,8 @@ public final class JPEGDecoders
   {
     public BufferedImage decode(ByteBuffer buffer)
     {
+      buffer = buffer.duplicate();
+
       byte[] bytes;
       if (buffer.hasArray())
         bytes = buffer.array();
@@ -105,6 +108,8 @@ public final class JPEGDecoders
 
       public BufferedImage decode(ByteBuffer buffer)
       {     
+        buffer = buffer.duplicate();
+
         IntBuffer got_picture = ByteBuffer.allocateDirect(4).asIntBuffer();
         
         int len = ADFFMPEG.avcodec_decode_video( codecContext, picture, got_picture, buffer );

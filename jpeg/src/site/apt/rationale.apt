@@ -20,7 +20,7 @@ Rationale
 
 ** FFmpeg
 
- While FFmpeg is designed for decoding more conventional video formats, its JPEG decoder is reported to be "ridiculously fast" by one of the FFmpeg maintainers.  We already use this decoder, but it might be worth looking into any improvements we can gain from using it differently.
+ While FFmpeg is designed for decoding more conventional video formats, its JPEG decoder is reported to be "ridiculously fast" by one of the FFmpeg maintainers.  We already use this decoder, but it might be worth looking into any improvements we can gain from using it differently.  The version we use is relatively old; we might get some benefit from a newer version.
 
 ** {{{http://webuser.hs-furtwangen.de/~dersch/}Panorama Tools}}
 
@@ -44,11 +44,15 @@ Rationale
 
  This is a library containing a JPEG decoder that targets Intel CPUs.  It costs money, though an evaluation version is available.  It is only available for Linux and Windows.  It will be interesting to see if it is markedly faster, but it would be awkward to depend on processor-specific libraries.
 
+ I tried the evaluation version for Linux, and found that it had build errors, as documented in a {{{http://software.intel.com/en-us/forums/intel-integrated-performance-primitives/topic/63383/}forum topic I started}}.  I tried to fix those myself, and it looked possible, but a timesink, so pending the forum topic yielding results, I moved on.
+
 ** {{{http://en.wikipedia.org/wiki/CUDA}Nvidia's CUDA}}
 
  Many modern PCs have high-powered graphics cards, which are particularly optimised for running many instructions in parallel.  These cards are programmable via card-specific libraries/languages like CUDA, though there may be more general tools available.  CUDA is available for free, though under a proprietary licence.
 
  Nvidia-only libraries are probably not what we will use, but it would be interesting to know how much of a speedup they would give us.  XvNC and DXVA (next in this document), or similar-level libraries, might be more practical to use directly.
+
+ I don't have an Nvidia card to try this with, but it's still worth a mention.
 
 ** {{{http://en.wikipedia.org/wiki/X-Video_Motion_Compensation}XvMC - X Video Motion Compensation}} and {{{http://en.wikipedia.org/wiki/DirectX_Video_Acceleration}DXVA - DirectX Video Acceleration}}
 
