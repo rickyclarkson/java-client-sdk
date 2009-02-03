@@ -37,7 +37,7 @@ public class Benchmark
       int whichDecoder = Integer.parseInt(args[0]);
       int whichImage = Integer.parseInt(args[1]);
       
-      final String[] filenames = { "192-168-106-206-352x256.jpg", "mews-camvu-1-320x240.jpg", "mews-camvu-2-1600x1200.jpg", "Jpegvergroessert-129x256.jpg" };
+      final String[] filenames = { "192-168-106-206-352x256.jpg", "mews-camvu-1-320x240.jpg", "mews-camvu-2-1600x1200.jpg", "192-168-106-207-320x256.jpg" };
       
       final ByteBuffer buffer = bufferFor(filenames[whichImage]);
     
