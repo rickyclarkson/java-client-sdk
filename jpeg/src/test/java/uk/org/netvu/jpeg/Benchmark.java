@@ -7,65 +7,115 @@ import java.io.IOException;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.io.*;
+import uk.org.netvu.util.Function;
+import java.awt.Image;
 
 public class Benchmark
 {
+  public static int[] rangeOver(int length)
+  {
+    int[] indices = new int[length];
+    for (int a = 0; a < indices.length; a++)
+      indices[a] = a;
+
+    return indices;
+  }
+
   public static void main(String[] args) throws IOException, InterruptedException
   {
+    JPEGDecoder[] decoders = { JPEGDecoders.adffmpegDecoder,
+                               JPEGDecoders.toolkitDecoder,
+                               JPEGDecoders.imageIODecoder };
+                               
+
+    class Resolution { final int width, height; final String filename; Resolution(int width, int height, String filename) { this.width = width;
+        this.height=height;
+        this.filename=filename;
+    } }
+   
+    Resolution[] resolutions = { new Resolution(352, 256, "192-168-106-206-352x256.jpg"),
+                                 new Resolution(320, 240, "mews-camvu-1-320x240.jpg"),
+                                 new Resolution(1600, 1200, "mews-camvu-2-1600x1200.jpg"),
+                                 new Resolution(320, 256, "192-168-106-207-320x256.jpg") };
+    
+    int[] iterationAmounts = { 100, 1000, 10000 };
+    int[] warmUpTimes = { 100, 1000, 10000 };
+    String[] inputTypes = { "byte[]", "ByteBuffer" };
+    
     if (args.length == 0)
     {
-      for (int b = 0; b < 4; b ++)
-      {
-        for (int a = 0; a < 3; a ++)
-        {
-          Process process = Runtime.getRuntime().exec(new String[]{"java", "-classpath", System.getProperty("java.class.path"), "uk.org.netvu.jpeg.Benchmark", String.valueOf(a), String.valueOf(b)});
-          process.waitFor();
-          BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
-          BufferedReader errorStreamReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
-          String line;
-          while ((line = inputStreamReader.readLine())!=null)
-            System.out.println(line);
-          while ((line = errorStreamReader.readLine())!=null)
-            System.err.println(line);
-          inputStreamReader.close();
-          errorStreamReader.close();
-        }
-      }
+      System.out.println("decoder,filename,width,height,inputType,warmUpTime,iterations,iterations per second");
+      for (int iterations: rangeOver(iterationAmounts.length))
+        for (int warmUpTime: rangeOver(warmUpTimes.length))
+          for (int decoder: rangeOver(decoders.length))
+            for (int resolution: rangeOver(resolutions.length))
+              for (int inputType: rangeOver(inputTypes.length))
+              {                
+                Process process = Runtime.getRuntime().exec(new String[]{"java", "-classpath", System.getProperty("java.class.path"), "uk.org.netvu.jpeg.Benchmark", String.valueOf(decoder),
+                                                                         String.valueOf(resolution), String.valueOf(iterations), String.valueOf(warmUpTime), String.valueOf(inputType)});
+                process.waitFor();
+                BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
+                BufferedReader errorStreamReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
+                String line;
+                while ((line = inputStreamReader.readLine())!=null)
+                  System.out.println(line);
+                while ((line = errorStreamReader.readLine())!=null)
+                  System.out.println(line);
+                inputStreamReader.close();
+                errorStreamReader.close();                  
+              }
     }
     else
     {
-      int whichDecoder = Integer.parseInt(args[0]);
-      int whichImage = Integer.parseInt(args[1]);
-      
-      final String[] filenames = { "192-168-106-206-352x256.jpg", "mews-camvu-1-320x240.jpg", "mews-camvu-2-1600x1200.jpg", "192-168-106-207-320x256.jpg" };
-      
-      final ByteBuffer buffer = bufferFor(filenames[whichImage]);
-    
-      Runnable[] decoders = { new Runnable() { public void run() { JPEGDecoders.adffmpegDecoder.decode(buffer); } public String toString() { return "adffmpeg"; } },
-                              new Runnable() { public void run() { JPEGDecoders.toolkitDecoder.decode(buffer); } public String toString() { return "toolkit"; } },
-                              new Runnable() { public void run() { JPEGDecoders.imageIODecoder.decode(buffer); } public String toString() { return "imageio"; } } };
-                            
-      time(1000, 1000, decoders[whichDecoder], filenames[whichImage]);
+      JPEGDecoder decoder = decoders[Integer.parseInt(args[0])];
+      Resolution resolution = resolutions[Integer.parseInt(args[1])];
+      int iterations = iterationAmounts[Integer.parseInt(args[2])];
+      int warmUpTime = warmUpTimes[Integer.parseInt(args[3])];
+      String inputType = inputTypes[Integer.parseInt(args[4])];
+            
+      String info = decoder.getClass().getSimpleName() + "," + resolution.filename + "," + resolution.width + "," + resolution.height + "," + inputType + "," + warmUpTime + "," + iterations;
+
+      if (inputType.equals("ByteBuffer"))
+        time(iterations, warmUpTime, decoder.decodeByteBuffer, bufferFor(resolution.filename), info);
+      else
+        time(iterations, warmUpTime, decoder.decodeByteArray, byteArrayFor(resolution.filename), info);
     }
   }
 
   public static ByteBuffer bufferFor(String filename) throws IOException
   {
-    return new FileInputStream(filename).getChannel().map(FileChannel.MapMode.READ_ONLY, 0, new File(filename).length());
+    ByteBuffer first = new FileInputStream(filename).getChannel().map(FileChannel.MapMode.READ_ONLY, 0, new File(filename).length());
+    first.position(0);
+    ByteBuffer result = ByteBuffer.allocateDirect(first.limit());
+    result.put(first);
+    result.position(0);
+    return result;
   }
 
-  public static void time(int iterations, long warmUpMillis, Runnable runnable, String extraInfo)
+  public static byte[] byteArrayFor(String filename) throws IOException
+  {
+    ByteBuffer buffer = bufferFor(filename);
+    byte[] bytes = new byte[buffer.limit()];
+    buffer.get(bytes);
+    return bytes;
+  }
+
+  public static <T> void time(int iterations, long warmUpMillis, Function<T, ?> decoder, T input, String info)
   {
     long start = System.nanoTime();
-    while (System.nanoTime() - start > warmUpMillis * 1000000)
-      runnable.run();
+    while (System.nanoTime() - start < warmUpMillis * 1000000)
+      decoder.apply(input);
 
-    start = System.nanoTime();
+    humourNetbeans(iterations, decoder, input, info);
+  }
 
+  public static <T> void humourNetbeans(int iterations, Function<T, ?> decoder, T input, String info)
+  {
+    long start = System.nanoTime();
     for (int i = 0; i < iterations; i ++)
-      runnable.run();
+      decoder.apply(input);
 
     long time = System.nanoTime() - start;
-    System.out.println(extraInfo + ": " + runnable + ": " + time + " for " + iterations + " iterations; " + time / iterations + " nanoseconds (" + time / iterations / 1000000 + " milliseconds ) per iteration or " + iterations * 1.0 / (time / 1000000000.0) + " iterations per second.");
+    System.out.println(info + "," + iterations * 1.0 / (time / 1000000000.0));
   }
 }

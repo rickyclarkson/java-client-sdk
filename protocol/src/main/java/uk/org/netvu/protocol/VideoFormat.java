@@ -1,29 +1,32 @@
 package uk.org.netvu.protocol;
 
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Option;
+
 /**
  * The possible formats that the video stream can be returned as.
  */
-public enum VideoFormat
+public  enum VideoFormat
 {
     /**
      * Complete JFIF (JPEG) image data.
      */
     JFIF,
-
+    
     /**
      * Truncated JPEG image data.
      */
     JPEG,
-
+    
     /**
      * MPEG-4 image data.
      */
     MP4;
-
+    
     /**
-     * A Function that, given a String, will produce an Option containing a
-     * member of VideoFormat if the passed-in String matches it (ignoring case),
-     * and an empty Option otherwise.
+     * A Function that, given a String, will produce an Option containing
+     * a member of VideoFormat if the passed-in String matches it (ignoring case), and an empty
+     * Option otherwise.
      * 
      * @return a Function that parses a String into a VideoFormat
      */
@@ -32,9 +35,9 @@ public enum VideoFormat
         return new Function<String, Option<VideoFormat>>()
         {
             @Override
-            public Option<VideoFormat> apply( final String s )
+            public Option<VideoFormat> apply(String s )
             {
-                for ( final VideoFormat element : values() )
+                for ( final VideoFormat element: values() )
                 {
                     if ( element.toString().equalsIgnoreCase( s ) )
                     {
@@ -45,5 +48,7 @@ public enum VideoFormat
             }
         };
     }
-
+    
 }
+
+

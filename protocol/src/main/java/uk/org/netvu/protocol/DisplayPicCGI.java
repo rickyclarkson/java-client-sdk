@@ -1,22 +1,22 @@
 package uk.org.netvu.protocol;
 
-import java.util.ArrayList;
 import java.util.List;
-
+import java.util.ArrayList;
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Option;   
+
 
 /**
- * A parameter list for a display_pic.cgi query. Use
- * {@link DisplayPicCGI.Builder} to construct a DisplayPicCGI, or
- * {@link DisplayPicCGI#fromString(String)} See the <a href="http://adwiki.ad-group.adh/attachment/wiki/DevelopmentSite/AD/Client/Vserve%20Specification.pdf"
- * >Video Server Specification</a> for more detail on the display_pic.cgi query.
+ * A parameter list for a display_pic.cgi query.
+ * Use {@link DisplayPicCGI.Builder} to construct a DisplayPicCGI, or {@link DisplayPicCGI#fromString(String)}
+ * See the <a href="http://adwiki.ad-group.adh/attachment/wiki/DevelopmentSite/AD/Client/Vserve%20Specification.pdf">Video
+ * Server Specification</a> for more detail on the display_pic.cgi query.
  */
 public final class DisplayPicCGI extends AbstractPicCGI
 {
     /**
-     * Constructs a DisplayPicCGI, using the values from the specified
-     * ParameterMap.
-     * 
+     * Constructs a DisplayPicCGI, using the values from the specified ParameterMap.
      * @param parameterMap
      *        the ParameterMap to get values from.
      * @throws NullPointerException
@@ -26,78 +26,80 @@ public final class DisplayPicCGI extends AbstractPicCGI
     {
         super( parameterMap );
     }
-
+    
     /**
      * All the parameter specifications, used in parsing URLs.
      */
-    private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>();
-
+    private static final List<ParameterDescription<?, ?>> params = 
+            new ArrayList<ParameterDescription<?, ?>>();
+    
     /**
      * The specification of the dwellTime parameter.
      */
-    private static final ParameterDescription<Integer, Integer> DWELL_TIME =
+    private static final ParameterDescription<Integer, Integer> DWELL_TIME = 
             ParameterDescription.parameter( "dwell", StringConversion.integer() ).withDefault( 0 );
-
+    
     /**
      * The specification of the preselector parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PRESELECTOR =
-            ParameterDescription.parameter( "presel", StringConversion.integer() ).withDefault( 0 ).withBounds( 0, 3,
-                    Num.integer );
-
+    private static final ParameterDescription<Integer, Integer> PRESELECTOR = 
+            ParameterDescription.parameter( "presel", StringConversion.integer() )
+            .withDefault( 0 ).withBounds( 0, 3, Num.integer );
+    
     /**
      * The specification of the channel parameter.
      */
-    private static final ParameterDescription<Integer, Integer> CHANNEL =
-            ParameterDescription.parameter( "channel", StringConversion.integer() ).withDefault( -1 ).withBounds( -1,
-                    1, Num.integer );
-
+    private static final ParameterDescription<Integer, Integer> CHANNEL = 
+            ParameterDescription.parameter( "channel", StringConversion.integer() )
+            .withDefault( -1 ).withBounds( -1, 1, Num.integer );
+    
     /**
      * The specification of the quantisationFactor parameter.
      */
-    private static final ParameterDescription<Integer, Integer> QUANTISATION_FACTOR =
-            ParameterDescription.parameter( "forcedq", StringConversion.integer() ).withDefault( 0 ).withBounds( 0,
-                    255, Num.integer ).disallowing( 1 );
-
+    private static final ParameterDescription<Integer, Integer> QUANTISATION_FACTOR = 
+            ParameterDescription.parameter( "forcedq", StringConversion.integer() )
+            .withDefault( 0 ).withBounds( 0, 255, Num.integer ).disallowing( 1 );
+    
     /**
      * The specification of the quantisationFactorForTelemetryImages parameter.
      */
-    private static final ParameterDescription<Integer, Integer> QUANTISATION_FACTOR_FOR_TELEMETRY_IMAGES =
-            ParameterDescription.parameter( "telemQ", StringConversion.integer() ).withDefault( -1 ).withBounds( -1,
-                    Integer.MAX_VALUE, Num.integer );
-
+    private static final ParameterDescription<Integer, Integer> QUANTISATION_FACTOR_FOR_TELEMETRY_IMAGES = 
+            ParameterDescription.parameter( "telemQ", StringConversion.integer() )
+            .withDefault( -1 ).withBounds( -1, Integer.MAX_VALUE, Num.integer );
+    
     /**
      * The specification of the audioMode parameter.
      */
-    private static final ParameterDescription<AudioMode, AudioMode> AUDIO_MODE =
+    private static final ParameterDescription<AudioMode, AudioMode> AUDIO_MODE = 
             ParameterDescription.parameter( "audmode",
-                    StringConversion.convenientPartial( AudioMode.fromStringFunction() ) ).withDefault( AudioMode.UDP );
-
+            StringConversion.convenientPartial( AudioMode.fromStringFunction() ) )
+            .withDefault( AudioMode.UDP );
+    
     /**
      * The specification of the picturesPerSecond parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PICTURES_PER_SECOND =
+    private static final ParameterDescription<Integer, Integer> PICTURES_PER_SECOND = 
             ParameterDescription.parameter( "pps", StringConversion.integer() ).withDefault( 0 );
-
+    
     /**
      * The specification of the mp4Bitrate parameter.
      */
-    private static final ParameterDescription<Integer, Integer> MP4_BITRATE =
+    private static final ParameterDescription<Integer, Integer> MP4_BITRATE = 
             ParameterDescription.parameter( "mp4rate", StringConversion.integer() ).withDefault( 0 );
-
+    
     /**
      * The specification of the proxyPriority parameter.
      */
-    private static final ParameterDescription<Integer, Integer> PROXY_PRIORITY =
+    private static final ParameterDescription<Integer, Integer> PROXY_PRIORITY = 
             ParameterDescription.parameter( "proxypri", StringConversion.integer() ).withDefault( 1 );
-
+    
     /**
      * The specification of the bufferCount parameter.
      */
-    private static final ParameterDescription<Integer, Integer> BUFFER_COUNT =
-            ParameterDescription.parameter( "nbuffers", StringConversion.integer() ).withDefault( 0 ).notNegative(
-                    Num.integer );
-
+    private static final ParameterDescription<Integer, Integer> BUFFER_COUNT = 
+            ParameterDescription.parameter( "nbuffers", StringConversion.integer() )
+            .withDefault( 0 ).notNegative( Num.integer );
+    
     /**
      * Gets the value of the dwellTime parameter.
      * 
@@ -107,7 +109,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( DWELL_TIME );
     }
-
+    
     /**
      * Gets the value of the preselector parameter.
      * 
@@ -117,7 +119,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( PRESELECTOR );
     }
-
+    
     /**
      * Gets the value of the channel parameter.
      * 
@@ -127,7 +129,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( CHANNEL );
     }
-
+    
     /**
      * Gets the value of the quantisationFactor parameter.
      * 
@@ -137,7 +139,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( QUANTISATION_FACTOR );
     }
-
+    
     /**
      * Gets the value of the quantisationFactorForTelemetryImages parameter.
      * 
@@ -147,7 +149,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( QUANTISATION_FACTOR_FOR_TELEMETRY_IMAGES );
     }
-
+    
     /**
      * Gets the value of the audioMode parameter.
      * 
@@ -157,7 +159,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( AUDIO_MODE );
     }
-
+    
     /**
      * Gets the value of the picturesPerSecond parameter.
      * 
@@ -167,7 +169,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( PICTURES_PER_SECOND );
     }
-
+    
     /**
      * Gets the value of the mp4Bitrate parameter.
      * 
@@ -177,7 +179,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( MP4_BITRATE );
     }
-
+    
     /**
      * Gets the value of the proxyPriority parameter.
      * 
@@ -187,7 +189,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( PROXY_PRIORITY );
     }
-
+    
     /**
      * Gets the value of the bufferCount parameter.
      * 
@@ -197,14 +199,12 @@ public final class DisplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( BUFFER_COUNT );
     }
-
+    
     /**
-     * A builder that takes in all the optional values for DisplayPicCGI and
-     * produces a DisplayPicCGI when build() is called. Each parameter must be
-     * supplied no more than once. A Builder can only be built once; that is, it
-     * can only have build() called on it once. Calling it a second time will
-     * cause an IllegalStateException. Setting its values after calling build()
-     * will cause an IllegalStateException.
+     * A builder that takes in all the optional values for DisplayPicCGI and produces a DisplayPicCGI when build() is
+     * called.  Each parameter must be supplied no more than once.  A Builder can only be built once; that is, it can
+     * only have build() called on it once.  Calling it a second time will cause an IllegalStateException.  Setting its
+     * values after calling build() will cause an IllegalStateException.
      */
     public static final class Builder extends AbstractPicCGI.AbstractBuilder<Builder>
     {
@@ -219,7 +219,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
         {
             return set( DWELL_TIME, dwellTime );
         }
-
+        
         /**
          * Sets the preselector parameter in the builder.
          * 
@@ -231,7 +231,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
         {
             return set( PRESELECTOR, preselector );
         }
-
+        
         /**
          * Sets the channel parameter in the builder.
          * 
@@ -243,7 +243,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
         {
             return set( CHANNEL, channel );
         }
-
+        
         /**
          * Sets the quantisationFactor parameter in the builder.
          * 
@@ -255,21 +255,19 @@ public final class DisplayPicCGI extends AbstractPicCGI
         {
             return set( QUANTISATION_FACTOR, quantisationFactor );
         }
-
+        
         /**
-         * Sets the quantisationFactorForTelemetryImages parameter in the
-         * builder.
+         * Sets the quantisationFactorForTelemetryImages parameter in the builder.
          * 
          * @param quantisationFactorForTelemetryImages
-         *        the value to store as the quantisationFactorForTelemetryImages
-         *        parameter.
+         *        the value to store as the quantisationFactorForTelemetryImages parameter.
          * @return the Builder
          */
         public Builder quantisationFactorForTelemetryImages( final int quantisationFactorForTelemetryImages )
         {
             return set( QUANTISATION_FACTOR_FOR_TELEMETRY_IMAGES, quantisationFactorForTelemetryImages );
         }
-
+        
         /**
          * Sets the audioMode parameter in the builder.
          * 
@@ -284,7 +282,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
             CheckParameters.areNotNull( audioMode );
             return set( AUDIO_MODE, audioMode );
         }
-
+        
         /**
          * Sets the picturesPerSecond parameter in the builder.
          * 
@@ -296,7 +294,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
         {
             return set( PICTURES_PER_SECOND, picturesPerSecond );
         }
-
+        
         /**
          * Sets the mp4Bitrate parameter in the builder.
          * 
@@ -308,7 +306,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
         {
             return set( MP4_BITRATE, mp4Bitrate );
         }
-
+        
         /**
          * Sets the proxyPriority parameter in the builder.
          * 
@@ -320,7 +318,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
         {
             return set( PROXY_PRIORITY, proxyPriority );
         }
-
+        
         /**
          * Sets the bufferCount parameter in the builder.
          * 
@@ -332,7 +330,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
         {
             return set( BUFFER_COUNT, bufferCount );
         }
-
+        
         /**
          * Constructs a DisplayPicCGI with the values from this Builder.
          * 
@@ -351,18 +349,17 @@ public final class DisplayPicCGI extends AbstractPicCGI
                 parameterMap = Option.getEmptyOption( "This Builder has already been built once." );
             }
         }
-
+        
         /**
          * Returns this Builder.
          * 
          * @return this Builder
          */
-        @Override
         Builder self()
         {
             return this;
         }
-
+        
     }
     static
     {
@@ -378,7 +375,6 @@ public final class DisplayPicCGI extends AbstractPicCGI
         params.add( BUFFER_COUNT );
         params.addAll( commonParams );
     }
-
     /**
      * The possible mechanisms for returning audio data.
      */
@@ -388,16 +384,16 @@ public final class DisplayPicCGI extends AbstractPicCGI
          * Out of band UDP data.
          */
         UDP,
-
+        
         /**
          * In-band data interleaved with images.
          */
         INLINE;
-
+        
         /**
-         * A Function that, given a String, will produce an Option containing a
-         * member of AudioMode if the passed-in String matches it (ignoring
-         * case), and an empty Option otherwise.
+         * A Function that, given a String, will produce an Option containing
+         * a member of AudioMode if the passed-in String matches it (ignoring case), and an empty
+         * Option otherwise.
          * 
          * @return a Function that parses a String into a AudioMode
          */
@@ -406,9 +402,9 @@ public final class DisplayPicCGI extends AbstractPicCGI
             return new Function<String, Option<AudioMode>>()
             {
                 @Override
-                public Option<AudioMode> apply( final String s )
+                public Option<AudioMode> apply(String s )
                 {
-                    for ( final AudioMode element : values() )
+                    for ( final AudioMode element: values() )
                     {
                         if ( element.toString().equalsIgnoreCase( s ) )
                         {
@@ -419,25 +415,22 @@ public final class DisplayPicCGI extends AbstractPicCGI
                 }
             };
         }
-
+        
     }
-
+    
     /**
-     * Converts this DisplayPicCGI into a String containing a URL beginning with
+     * Converts this DisplayPicCGI into a String containing a URL beginning with 
      * /display_pic.cgi? and containing the supplied parameters.
-     * 
-     * @return a String containing a URL beginning with /display_pic.cgi? and
-     *         containing the supplied parameters
+     * @return a String containing a URL beginning with /display_pic.cgi? and containing the supplied parameters
      */
     @Override
     public String toString()
     {
         return "/display_pic.cgi?" + parameterMap.toURLParameters( params );
     }
-
+    
     /**
-     * Converts a String containing a URL describing a /display_pic.cgi? request
-     * into a DisplayPicCGI.
+     * Converts a String containing a URL describing a /display_pic.cgi? request into a DisplayPicCGI.
      * 
      * @param string
      *        the String to parse.
@@ -461,5 +454,6 @@ public final class DisplayPicCGI extends AbstractPicCGI
         }
         return new DisplayPicCGI( map.get() );
     }
-
+    
 }
+

@@ -9,10 +9,23 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
+import java.io.ByteArrayInputStream;
 
-final class ImageIODecoder implements JPEGDecoder
+final class ImageIODecoder extends JPEGDecoder
 {
-    public BufferedImage decode( final ByteBuffer _buffer )
+  public BufferedImage decodeByteArray(byte[] array)
+  {
+    try
+    {
+      return ImageIO.read(new ByteArrayInputStream(array));
+    }
+    catch (IOException e)
+      {
+        throw new RuntimeException(e);
+      }
+  }
+
+    public BufferedImage decodeByteBuffer( final ByteBuffer _buffer )
     {
         final ByteBuffer buffer = _buffer.duplicate();
         try

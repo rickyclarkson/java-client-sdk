@@ -1,6 +1,3 @@
-/**
- * 
- */
 package uk.org.netvu.jpeg;
 
 import java.awt.Toolkit;
@@ -13,8 +10,11 @@ import java.nio.IntBuffer;
 import uk.org.netvu.adffmpeg.ADFFMPEG;
 import uk.org.netvu.adffmpeg.AVCodecContext;
 import uk.org.netvu.adffmpeg.AVFrame;
+import java.awt.Image;
+import java.io.InputStream;
+import java.io.IOException;
 
-final class ADFFMPEGDecoder implements JPEGDecoder
+final class ADFFMPEGDecoder extends JPEGDecoder
 {
     AVCodecContext codecContext = ADFFMPEG.avcodec_alloc_context();
     AVFrame picture;
@@ -27,7 +27,15 @@ final class ADFFMPEGDecoder implements JPEGDecoder
         picture = ADFFMPEG.avcodec_alloc_frame();
     }
 
-    public BufferedImage decode( ByteBuffer buffer )
+  public Image decodeByteArray(byte[] array)
+  {
+    ByteBuffer buffer = ByteBuffer.allocateDirect(array.length);
+    buffer.put(array);
+    buffer.position(0);
+    return decodeByteBuffer(buffer);
+  }
+
+    public Image decodeByteBuffer( ByteBuffer buffer )
     {
         buffer = buffer.duplicate();
 
@@ -46,7 +54,19 @@ final class ADFFMPEGDecoder implements JPEGDecoder
         ADFFMPEG.extractPixelData( picture, codecContext, decodeBuffer );
         decodeBuffer.get( decodedData );
         final int width = codecContext.getWidth();
-        return JPEGDecoders.toBufferedImage( Toolkit.getDefaultToolkit().createImage(
-                new MemoryImageSource( width, codecContext.getHeight(), decodedData, 0, width ) ) );
+        Image image = JPEGDecoders.loadFully(Toolkit.getDefaultToolkit().createImage(new MemoryImageSource( width, codecContext.getHeight(), decodedData, 0, width ) ));
+        return image;
     }
+
+  /*  public Image decodeStream( InputStream stream )
+  {
+    try
+    {
+      return decodeByteArray(JPEGDecoders.inputStreamToByteArray( stream ));
+    }
+    catch (IOException e)
+      {
+        throw new RuntimeException(e);
+      }
+      }*/
 }

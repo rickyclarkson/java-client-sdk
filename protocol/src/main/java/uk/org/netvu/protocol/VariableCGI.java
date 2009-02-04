@@ -3,6 +3,9 @@ package uk.org.netvu.protocol;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Option;
+
 /**
  * Builds and parses variable.cgi URLs.
  */

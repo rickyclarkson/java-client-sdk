@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Locale;
 
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Option;
 
 /**
  * A parameter list for a vparts.cgi query. Use {@link VPartsCGI.Builder} to

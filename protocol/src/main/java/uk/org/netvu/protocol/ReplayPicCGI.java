@@ -1,22 +1,22 @@
 package uk.org.netvu.protocol;
 
-import java.util.ArrayList;
 import java.util.List;
-
+import java.util.ArrayList;
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Option;   
+
 
 /**
- * A parameter list for a replay_pic.cgi query. Use {@link ReplayPicCGI.Builder}
- * to construct a ReplayPicCGI, or {@link ReplayPicCGI#fromString(String)}. See
- * the <a href="http://adwiki.ad-group.adh/attachment/wiki/DevelopmentSite/AD/Client/Vserve%20Specification.pdf"
- * >Video Server Specification</a> for more detail on the replay_pic.cgi query.
+ * A parameter list for a replay_pic.cgi query.
+ * Use {@link ReplayPicCGI.Builder} to construct a ReplayPicCGI, or {@link ReplayPicCGI#fromString(String)}.
+ * See the <a href="http://adwiki.ad-group.adh/attachment/wiki/DevelopmentSite/AD/Client/Vserve%20Specification.pdf">Video
+ * Server Specification</a> for more detail on the replay_pic.cgi query.
  */
 public final class ReplayPicCGI extends AbstractPicCGI
 {
     /**
-     * Constructs a ReplayPicCGI, using the values from the specified
-     * ParameterMap.
-     * 
+     * Constructs a ReplayPicCGI, using the values from the specified ParameterMap.
      * @param parameterMap
      *        the ParameterMap to get values from.
      * @throws NullPointerException
@@ -26,58 +26,61 @@ public final class ReplayPicCGI extends AbstractPicCGI
     {
         super( parameterMap );
     }
-
+    
     /**
      * All the parameter specifications, used in parsing URLs.
      */
-    private static final List<ParameterDescription<?, ?>> params = new ArrayList<ParameterDescription<?, ?>>();
-
+    private static final List<ParameterDescription<?, ?>> params = 
+            new ArrayList<ParameterDescription<?, ?>>();
+    
     /**
      * The specification of the control parameter.
      */
-    private static final ParameterDescription<Control, Control> CONTROL =
+    private static final ParameterDescription<Control, Control> CONTROL = 
             ParameterDescription.parameter( "control",
-                    StringConversion.convenientPartial( Control.fromStringFunction() ) ).withDefault( Control.STOP );
-
+            StringConversion.convenientPartial( Control.fromStringFunction() ) )
+            .withDefault( Control.STOP );
+    
     /**
      * The specification of the gmtTime parameter.
      */
-    private static final ParameterDescription<Integer, Integer> GMT_TIME =
+    private static final ParameterDescription<Integer, Integer> GMT_TIME = 
             ParameterDescription.parameter( "time", StringConversion.convenientPartial( fromTimeFunction() ) )
-                .withDefault( 0 );
-
+            .withDefault( 0 );
+    
     /**
      * The specification of the localTime parameter.
      */
-    private static final ParameterDescription<Integer, Integer> LOCAL_TIME =
+    private static final ParameterDescription<Integer, Integer> LOCAL_TIME = 
             ParameterDescription.parameter( "local", StringConversion.convenientPartial( fromTimeFunction() ) )
-                .withDefault( 0 );
-
+            .withDefault( 0 );
+    
     /**
      * The specification of the text parameter.
      */
-    private static final ParameterDescription<String, String> TEXT =
+    private static final ParameterDescription<String, String> TEXT = 
             ParameterDescription.parameter( "text", StringConversion.string() ).withDefault( "" );
-
+    
     /**
      * The specification of the timeRange parameter.
      */
-    private static final ParameterDescription<Integer, Integer> TIME_RANGE =
+    private static final ParameterDescription<Integer, Integer> TIME_RANGE = 
             ParameterDescription.parameter( "timerange", StringConversion.integer() ).withDefault( 0 );
-
+    
     /**
      * The specification of the fastForwardMultiplier parameter.
      */
-    private static final ParameterDescription<Integer, Integer> FAST_FORWARD_MULTIPLIER =
-            ParameterDescription.parameter( "ffmult", StringConversion.integer() ).withDefault( 0 ).withBounds( 0,
-                    256, Num.integer );
-
+    private static final ParameterDescription<Integer, Integer> FAST_FORWARD_MULTIPLIER = 
+            ParameterDescription.parameter( "ffmult", StringConversion.integer() )
+            .withDefault( 0 ).withBounds( 0, 256, Num.integer );
+    
     /**
      * The specification of the refresh parameter.
      */
-    private static final ParameterDescription<Integer, Integer> REFRESH =
-            ParameterDescription.parameter( "refresh", StringConversion.integer() ).withDefault( 0 );
-
+    private static final ParameterDescription<Integer, Integer> REFRESH = 
+            ParameterDescription.parameter( "refresh", StringConversion.integer() )
+            .withDefault( 0 );
+    
     /**
      * Gets the value of the control parameter.
      * 
@@ -87,7 +90,7 @@ public final class ReplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( CONTROL );
     }
-
+    
     /**
      * Gets the value of the gmtTime parameter.
      * 
@@ -97,7 +100,7 @@ public final class ReplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( GMT_TIME );
     }
-
+    
     /**
      * Gets the value of the localTime parameter.
      * 
@@ -107,7 +110,7 @@ public final class ReplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( LOCAL_TIME );
     }
-
+    
     /**
      * Gets the value of the text parameter.
      * 
@@ -117,7 +120,7 @@ public final class ReplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( TEXT );
     }
-
+    
     /**
      * Gets the value of the timeRange parameter.
      * 
@@ -127,7 +130,7 @@ public final class ReplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( TIME_RANGE );
     }
-
+    
     /**
      * Gets the value of the fastForwardMultiplier parameter.
      * 
@@ -137,7 +140,7 @@ public final class ReplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( FAST_FORWARD_MULTIPLIER );
     }
-
+    
     /**
      * Gets the value of the refresh parameter.
      * 
@@ -147,14 +150,12 @@ public final class ReplayPicCGI extends AbstractPicCGI
     {
         return parameterMap.get( REFRESH );
     }
-
+    
     /**
-     * A builder that takes in all the optional values for ReplayPicCGI and
-     * produces a ReplayPicCGI when build() is called. Each parameter must be
-     * supplied no more than once. A Builder can only be built once; that is, it
-     * can only have build() called on it once. Calling it a second time will
-     * cause an IllegalStateException. Setting its values after calling build()
-     * will cause an IllegalStateException.
+     * A builder that takes in all the optional values for ReplayPicCGI and produces a ReplayPicCGI when build() is
+     * called.  Each parameter must be supplied no more than once.  A Builder can only be built once; that is, it can
+     * only have build() called on it once.  Calling it a second time will cause an IllegalStateException.  Setting its
+     * values after calling build() will cause an IllegalStateException.
      */
     public static final class Builder extends AbstractPicCGI.AbstractBuilder<Builder>
     {
@@ -172,7 +173,7 @@ public final class ReplayPicCGI extends AbstractPicCGI
             CheckParameters.areNotNull( control );
             return set( CONTROL, control );
         }
-
+        
         /**
          * Sets the gmtTime parameter in the builder.
          * 
@@ -184,7 +185,7 @@ public final class ReplayPicCGI extends AbstractPicCGI
         {
             return set( GMT_TIME, gmtTime );
         }
-
+        
         /**
          * Sets the localTime parameter in the builder.
          * 
@@ -196,7 +197,7 @@ public final class ReplayPicCGI extends AbstractPicCGI
         {
             return set( LOCAL_TIME, localTime );
         }
-
+        
         /**
          * Sets the text parameter in the builder.
          * 
@@ -211,7 +212,7 @@ public final class ReplayPicCGI extends AbstractPicCGI
             CheckParameters.areNotNull( text );
             return set( TEXT, text );
         }
-
+        
         /**
          * Sets the timeRange parameter in the builder.
          * 
@@ -223,7 +224,7 @@ public final class ReplayPicCGI extends AbstractPicCGI
         {
             return set( TIME_RANGE, timeRange );
         }
-
+        
         /**
          * Sets the fastForwardMultiplier parameter in the builder.
          * 
@@ -235,7 +236,7 @@ public final class ReplayPicCGI extends AbstractPicCGI
         {
             return set( FAST_FORWARD_MULTIPLIER, fastForwardMultiplier );
         }
-
+        
         /**
          * Sets the refresh parameter in the builder.
          * 
@@ -247,7 +248,7 @@ public final class ReplayPicCGI extends AbstractPicCGI
         {
             return set( REFRESH, refresh );
         }
-
+        
         /**
          * Constructs a ReplayPicCGI with the values from this Builder.
          * 
@@ -266,18 +267,17 @@ public final class ReplayPicCGI extends AbstractPicCGI
                 parameterMap = Option.getEmptyOption( "This Builder has already been built once." );
             }
         }
-
+        
         /**
          * Returns this Builder.
          * 
          * @return this Builder
          */
-        @Override
         Builder self()
         {
             return this;
         }
-
+        
     }
     static
     {
@@ -290,7 +290,6 @@ public final class ReplayPicCGI extends AbstractPicCGI
         params.add( REFRESH );
         params.addAll( commonParams );
     }
-
     /**
      * Various video playback modes.
      */
@@ -300,27 +299,26 @@ public final class ReplayPicCGI extends AbstractPicCGI
          * Play video forwards at its original speed.
          */
         PLAY,
-
+        
         /**
-         * Play video forwards at a speed controlled by the fast-forward
-         * multiplier.
+         * Play video forwards at a speed controlled by the fast-forward multiplier.
          */
         FFWD,
-
+        
         /**
          * Play video backwards.
          */
         RWND,
-
+        
         /**
          * Stop playing video.
          */
         STOP;
-
+        
         /**
-         * A Function that, given a String, will produce an Option containing a
-         * member of Control if the passed-in String matches it (ignoring case),
-         * and an empty Option otherwise.
+         * A Function that, given a String, will produce an Option containing
+         * a member of Control if the passed-in String matches it (ignoring case), and an empty
+         * Option otherwise.
          * 
          * @return a Function that parses a String into a Control
          */
@@ -329,9 +327,9 @@ public final class ReplayPicCGI extends AbstractPicCGI
             return new Function<String, Option<Control>>()
             {
                 @Override
-                public Option<Control> apply( final String s )
+                public Option<Control> apply(String s )
                 {
-                    for ( final Control element : values() )
+                    for ( final Control element: values() )
                     {
                         if ( element.toString().equalsIgnoreCase( s ) )
                         {
@@ -342,12 +340,11 @@ public final class ReplayPicCGI extends AbstractPicCGI
                 }
             };
         }
-
+        
     }
-
+    
     /**
-     * A Function that parses a timestamp either in HH:mm:ss:dd:MM:yy format or
-     * as a Julian time.
+     * A Function that parses a timestamp either in HH:mm:ss:dd:MM:yy format or as a Julian time.
      * 
      * @return a Function that parses a timestamp.
      */
@@ -356,44 +353,41 @@ public final class ReplayPicCGI extends AbstractPicCGI
         return new Function<String, Option<Integer>>()
         {
             @Override
-            public Option<Integer> apply( final String s )
+            public Option<Integer> apply(String s )
             {
-                final java.text.SimpleDateFormat format = new java.text.SimpleDateFormat( "HH:mm:ss:dd:MM:yy" );
+                java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("HH:mm:ss:dd:MM:yy");
                 try
                 {
-                    return Option.getFullOption( (int) ( format.parse( s ).getTime() / 1000 ) );
+                    return Option.getFullOption((int)(format.parse(s).getTime()/1000));
                 }
-                catch ( final java.text.ParseException e )
+                catch (java.text.ParseException e)
                 {
                     try
                     {
-                        return Option.getFullOption( Integer.parseInt( s ) );
+                        return Option.getFullOption(Integer.parseInt(s));
                     }
-                    catch ( final NumberFormatException e2 )
+                    catch (NumberFormatException e2)
                     {
-                        return Option.getEmptyOption( "Cannot parse " + s + " as a timestamp." );
+                        return Option.getEmptyOption("Cannot parse " + s + " as a timestamp.");
                     }
                 }
             }
         };
     }
-
+    
     /**
-     * Converts this ReplayPicCGI into a String containing a URL beginning with
+     * Converts this ReplayPicCGI into a String containing a URL beginning with 
      * /replay_pic.cgi? and containing the supplied parameters.
-     * 
-     * @return a String containing a URL beginning with /replay_pic.cgi? and
-     *         containing the supplied parameters
+     * @return a String containing a URL beginning with /replay_pic.cgi? and containing the supplied parameters
      */
     @Override
     public String toString()
     {
         return "/replay_pic.cgi?" + parameterMap.toURLParameters( params );
     }
-
+    
     /**
-     * Converts a String containing a URL describing a /replay_pic.cgi? request
-     * into a ReplayPicCGI.
+     * Converts a String containing a URL describing a /replay_pic.cgi? request into a ReplayPicCGI.
      * 
      * @param string
      *        the String to parse.
@@ -417,5 +411,6 @@ public final class ReplayPicCGI extends AbstractPicCGI
         }
         return new ReplayPicCGI( map.get() );
     }
-
+    
 }
+

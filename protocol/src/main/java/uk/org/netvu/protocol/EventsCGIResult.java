@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Option;   
 
 /**
  * A single result from the events database. This can be used to build a result

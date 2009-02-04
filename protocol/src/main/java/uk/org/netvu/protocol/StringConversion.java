@@ -1,6 +1,8 @@
 package uk.org.netvu.protocol;
 
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Option;
 
 /**
  * A StringConversion can convert between Strings and a given type, T, though

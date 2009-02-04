@@ -1,9 +1,7 @@
-package uk.org.netvu.protocol;
+package uk.org.netvu.util;
 
 import java.util.Collections;
 import java.util.Iterator;
-
-import uk.org.netvu.util.CheckParameters;
 
 /**
  * An object that holds 0 or 1 elements.
@@ -11,7 +9,7 @@ import uk.org.netvu.util.CheckParameters;
  * @param <T>
  *        the type of the object.
  */
-abstract class Option<T> implements Iterable<T>
+public abstract class Option<T> implements Iterable<T>
 {
     /**
      * Creates an Option holding no elements.

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.TreeSet;
 
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Option;   
 
 /**
  * A set of utility methods for operating on Lists.

@@ -36,7 +36,11 @@ object abstractpiccgi {
                  
                  import java.util.ArrayList;
                  import java.util.List;
-                 import uk.org.netvu.util.CheckParameters;""") ++ blankLine ++
+                 import uk.org.netvu.util.CheckParameters;
+                 import uk.org.netvu.util.Function;
+                 import uk.org.netvu.util.Option;   
+
+""") ++ blankLine ++
         clazz(lines("A common supertype of DisplayPicCGI and ReplayPicCGI containing common code."),
               "",
               "AbstractPicCGI",              

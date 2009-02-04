@@ -2,8 +2,9 @@ package uk.org.netvu.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Option;   
 
 /**
  * A common supertype of DisplayPicCGI and ReplayPicCGI containing common code.
@@ -14,136 +15,136 @@ class AbstractPicCGI
      * The ParameterMap to get values from.
      */
     final ParameterMap parameterMap;
-
+    
     /**
      * Constructs an AbstractPicCGI with the specified ParameterMap.
-     * 
      * @param parameterMap
      *        The ParameterMap to store parameter values in..
      */
-    AbstractPicCGI( final ParameterMap parameterMap )
+    AbstractPicCGI( ParameterMap parameterMap )
     {
         this.parameterMap = parameterMap;
     }
     /**
      * The specification of the camera parameter.
      */
-    static final ParameterDescription<Integer, Integer> CAMERA =
-            ParameterDescription.parameter( "cam", StringConversion.integer() ).withDefault( 1 )
-                .positive( Num.integer );
-
+    static  final ParameterDescription<Integer, Integer> CAMERA = 
+            ParameterDescription.parameter( "cam", StringConversion.integer() )
+            .withDefault( 1 ).positive( Num.integer );
+    
     /**
      * The specification of the fieldCount parameter.
      */
-    static final ParameterDescription<Integer, Integer> FIELD_COUNT =
-            ParameterDescription.parameter( "fields", StringConversion.integer() ).withDefault( 1 ).positive(
-                    Num.integer );
-
+    static  final ParameterDescription<Integer, Integer> FIELD_COUNT = 
+            ParameterDescription.parameter( "fields", StringConversion.integer() )
+            .withDefault( 1 ).positive( Num.integer );
+    
     /**
      * The specification of the resolution parameter.
      */
-    static final ParameterDescription<String, String> RESOLUTION =
-            ParameterDescription.parameter( "res", StringConversion.string() ).withDefault( "med" ).allowedValues(
-                    "hi", "med", "lo" );
-
+    static  final ParameterDescription<String, String> RESOLUTION = 
+            ParameterDescription.parameter( "res", StringConversion.string() )
+            .withDefault( "med" ).allowedValues( "hi", "med", "lo" );
+    
     /**
      * The specification of the cameraSequenceMask parameter.
      */
-    static final ParameterDescription<String, String> CAMERA_SEQUENCE_MASK =
+    static  final ParameterDescription<String, String> CAMERA_SEQUENCE_MASK = 
             ParameterDescription.parameter( "seq", StringConversion.onlyHexDigits() ).withDefault( "0" );
-
+    
     /**
      * The specification of the connectionID parameter.
      */
-    static final ParameterDescription<Integer, Integer> CONNECTION_ID =
+    static  final ParameterDescription<Integer, Integer> CONNECTION_ID = 
             ParameterDescription.parameter( "id", StringConversion.integer() ).withDefault( 0 );
-
+    
     /**
      * The specification of the maximumTransmitRate parameter.
      */
-    static final ParameterDescription<Integer, Integer> MAXIMUM_TRANSMIT_RATE =
+    static  final ParameterDescription<Integer, Integer> MAXIMUM_TRANSMIT_RATE = 
             ParameterDescription.parameter( "rate", StringConversion.integer() ).withDefault( 0 );
-
+    
     /**
      * The specification of the duration parameter.
      */
-    static final ParameterDescription<Integer, Integer> DURATION =
-            ParameterDescription.parameter( "duration", StringConversion.integer() ).withDefault( 0 ).notNegative(
-                    Num.integer );
-
+    static  final ParameterDescription<Integer, Integer> DURATION = 
+            ParameterDescription.parameter( "duration", StringConversion.integer() )
+            .withDefault( 0 ).notNegative( Num.integer );
+    
     /**
      * The specification of the packetSize parameter.
      */
-    static final ParameterDescription<Integer, Integer> PACKET_SIZE =
-            ParameterDescription.parameterWithBoundsAndAnException( 100, 1500, 0, ParameterDescription.parameter(
-                    "pkt_size", StringConversion.integer() ).withDefault( 0 ) );
-
+    static  final ParameterDescription<Integer, Integer> PACKET_SIZE = 
+            ParameterDescription.parameterWithBoundsAndAnException( 100, 1500, 0,
+            ParameterDescription.parameter( "pkt_size", StringConversion.integer() ).withDefault( 0 ) );
+    
     /**
      * The specification of the udpPort parameter.
      */
-    static final ParameterDescription<Integer, Integer> UDP_PORT =
-            ParameterDescription.parameter( "udp_port", StringConversion.integer() ).withDefault( 0 ).withBounds( 0,
-                    65535, Num.integer );
-
+    static  final ParameterDescription<Integer, Integer> UDP_PORT = 
+            ParameterDescription.parameter( "udp_port", StringConversion.integer() ).withDefault( 0 )
+            .withBounds( 0, 65535, Num.integer );
+    
     /**
      * The specification of the format parameter.
      */
-    static final ParameterDescription<VideoFormat, VideoFormat> FORMAT =
+    static  final ParameterDescription<VideoFormat, VideoFormat> FORMAT = 
             ParameterDescription.parameter( "format",
-                    StringConversion.convenientPartial( VideoFormat.fromStringFunction() ) ).withDefault(
-                    VideoFormat.JFIF );
-
+            StringConversion.convenientPartial( VideoFormat.fromStringFunction() ) )
+            .withDefault( VideoFormat.JFIF );
+    
     /**
      * The specification of the audioChannel parameter.
      */
-    static final ParameterDescription<Integer, Integer> AUDIO_CHANNEL =
-            ParameterDescription.parameter( "audio", StringConversion.integer() ).withDefault( 0 ).positive(
-                    Num.integer );
-
+    static  final ParameterDescription<Integer, Integer> AUDIO_CHANNEL = 
+            ParameterDescription.parameter( "audio", StringConversion.integer() )
+            .withDefault( 0 ).positive( Num.integer );
+    
     /**
      * The specification of the transmissionMode parameter.
      */
-    static final ParameterDescription<TransmissionMode, TransmissionMode> TRANSMISSION_MODE =
+    static  final ParameterDescription<TransmissionMode, TransmissionMode> TRANSMISSION_MODE = 
             ParameterDescription.parameterWithDefault( "txmode", new Function<ParameterMap, TransmissionMode>()
             {
                 @Override
-                public TransmissionMode apply( final ParameterMap map )
+                public TransmissionMode apply( ParameterMap map )
                 {
                     return map.get( FORMAT ) == VideoFormat.JFIF ? TransmissionMode.MIME : TransmissionMode.MINIMAL;
                 }
             }, StringConversion.convenientPartial( TransmissionMode.fromStringFunction() ) );
-
+    
     /**
      * The specification of the slaveIP parameter.
      */
-    static final ParameterDescription<String, String> SLAVE_IP =
-            ParameterDescription.parameter( "slaveip", StringConversion.string() ).withDefault( "0.0.0.0" );
-
+    static  final ParameterDescription<String, String> SLAVE_IP = 
+            ParameterDescription.parameter( "slaveip", StringConversion.string() )
+            .withDefault( "0.0.0.0" );
+    
     /**
      * The specification of the outputChannel parameter.
      */
-    static final ParameterDescription<Integer, Integer> OUTPUT_CHANNEL =
+    static  final ParameterDescription<Integer, Integer> OUTPUT_CHANNEL = 
             ParameterDescription.parameter( "opchan", StringConversion.integer() ).withDefault( -1 );
-
+    
     /**
      * The specification of the proxyMode parameter.
      */
-    static final ParameterDescription<ProxyMode, ProxyMode> PROXY_MODE =
+    static  final ParameterDescription<ProxyMode, ProxyMode> PROXY_MODE = 
             ParameterDescription.parameter( "proxymode",
-                    StringConversion.convenientPartial( ProxyMode.fromStringFunction() ) ).withDefault(
-                    ProxyMode.TRANSIENT );
-
+            StringConversion.convenientPartial( ProxyMode.fromStringFunction() ) ).withDefault( ProxyMode.TRANSIENT );
+    
     /**
      * The specification of the proxyRetries parameter.
      */
-    static final ParameterDescription<Integer, Integer> PROXY_RETRIES =
+    static  final ParameterDescription<Integer, Integer> PROXY_RETRIES = 
             ParameterDescription.parameter( "proxyretry", StringConversion.integer() ).withDefault( 0 );
-
+    
     /**
      * All the common parameter specifications, used in parsing URLs.
      */
-    static final List<ParameterDescription<?, ?>> commonParams = new ArrayList<ParameterDescription<?, ?>>();
-
+    static final List<ParameterDescription<?, ?>> commonParams = 
+            new ArrayList<ParameterDescription<?, ?>>();
+    
     static
     {
         commonParams.add( CAMERA );
@@ -163,7 +164,6 @@ class AbstractPicCGI
         commonParams.add( PROXY_MODE );
         commonParams.add( PROXY_RETRIES );
     }
-
     /**
      * Gets the value of the camera parameter.
      * 
@@ -173,7 +173,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( CAMERA );
     }
-
+    
     /**
      * Gets the value of the fieldCount parameter.
      * 
@@ -183,7 +183,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( FIELD_COUNT );
     }
-
+    
     /**
      * Gets the value of the resolution parameter.
      * 
@@ -193,7 +193,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( RESOLUTION );
     }
-
+    
     /**
      * Gets the value of the cameraSequenceMask parameter.
      * 
@@ -203,7 +203,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( CAMERA_SEQUENCE_MASK );
     }
-
+    
     /**
      * Gets the value of the connectionID parameter.
      * 
@@ -213,7 +213,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( CONNECTION_ID );
     }
-
+    
     /**
      * Gets the value of the maximumTransmitRate parameter.
      * 
@@ -223,7 +223,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( MAXIMUM_TRANSMIT_RATE );
     }
-
+    
     /**
      * Gets the value of the duration parameter.
      * 
@@ -233,7 +233,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( DURATION );
     }
-
+    
     /**
      * Gets the value of the packetSize parameter.
      * 
@@ -243,7 +243,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( PACKET_SIZE );
     }
-
+    
     /**
      * Gets the value of the udpPort parameter.
      * 
@@ -253,7 +253,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( UDP_PORT );
     }
-
+    
     /**
      * Gets the value of the format parameter.
      * 
@@ -263,7 +263,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( FORMAT );
     }
-
+    
     /**
      * Gets the value of the audioChannel parameter.
      * 
@@ -273,7 +273,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( AUDIO_CHANNEL );
     }
-
+    
     /**
      * Gets the value of the transmissionMode parameter.
      * 
@@ -283,7 +283,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( TRANSMISSION_MODE );
     }
-
+    
     /**
      * Gets the value of the slaveIP parameter.
      * 
@@ -293,7 +293,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( SLAVE_IP );
     }
-
+    
     /**
      * Gets the value of the outputChannel parameter.
      * 
@@ -303,7 +303,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( OUTPUT_CHANNEL );
     }
-
+    
     /**
      * Gets the value of the proxyMode parameter.
      * 
@@ -313,7 +313,7 @@ class AbstractPicCGI
     {
         return parameterMap.get( PROXY_MODE );
     }
-
+    
     /**
      * Gets the value of the proxyRetries parameter.
      * 
@@ -323,30 +323,27 @@ class AbstractPicCGI
     {
         return parameterMap.get( PROXY_RETRIES );
     }
-
+    
     /**
-     * A common supertype of DisplayPicCGI.Builder and ReplayPicCGI.Builder
-     * containing common code.
-     * 
+     * A common supertype of DisplayPicCGI.Builder and ReplayPicCGI.Builder containing common code.
      * @param <Builder>
      *        The type of the subclass of AbstractBuilder.
      */
     static abstract class AbstractBuilder<Builder>
     {
         /**
-         * Gives this instance as a Builder, instead of an
-         * AbstractBuilder&lt;Builder&gt;.
+         * Gives this instance as a Builder, instead of an AbstractBuilder&lt;Builder&gt;.
          * 
          * @return this instance as a Builder
          */
         abstract Builder self();
         /**
-         * The values supplied for each parameter so far. When this is an empty
-         * Option, the Builder is in an invalid state, the reason for which is
-         * stored in the Option.
+         * The values supplied for each parameter so far.
+         * When this is an empty Option, the Builder is in an invalid state, the reason for
+         * which is stored in the Option.
          */
         Option<ParameterMap> parameterMap = Option.getFullOption( new ParameterMap() );
-
+        
         /**
          * Sets the camera parameter in the builder.
          * 
@@ -358,7 +355,7 @@ class AbstractPicCGI
         {
             return set( CAMERA, camera );
         }
-
+        
         /**
          * Sets the fieldCount parameter in the builder.
          * 
@@ -370,7 +367,7 @@ class AbstractPicCGI
         {
             return set( FIELD_COUNT, fieldCount );
         }
-
+        
         /**
          * Sets the resolution parameter in the builder.
          * 
@@ -385,7 +382,7 @@ class AbstractPicCGI
             CheckParameters.areNotNull( resolution );
             return set( RESOLUTION, resolution );
         }
-
+        
         /**
          * Sets the cameraSequenceMask parameter in the builder.
          * 
@@ -400,7 +397,7 @@ class AbstractPicCGI
             CheckParameters.areNotNull( cameraSequenceMask );
             return set( CAMERA_SEQUENCE_MASK, cameraSequenceMask );
         }
-
+        
         /**
          * Sets the connectionID parameter in the builder.
          * 
@@ -412,7 +409,7 @@ class AbstractPicCGI
         {
             return set( CONNECTION_ID, connectionID );
         }
-
+        
         /**
          * Sets the maximumTransmitRate parameter in the builder.
          * 
@@ -424,7 +421,7 @@ class AbstractPicCGI
         {
             return set( MAXIMUM_TRANSMIT_RATE, maximumTransmitRate );
         }
-
+        
         /**
          * Sets the duration parameter in the builder.
          * 
@@ -436,7 +433,7 @@ class AbstractPicCGI
         {
             return set( DURATION, duration );
         }
-
+        
         /**
          * Sets the packetSize parameter in the builder.
          * 
@@ -448,7 +445,7 @@ class AbstractPicCGI
         {
             return set( PACKET_SIZE, packetSize );
         }
-
+        
         /**
          * Sets the udpPort parameter in the builder.
          * 
@@ -460,7 +457,7 @@ class AbstractPicCGI
         {
             return set( UDP_PORT, udpPort );
         }
-
+        
         /**
          * Sets the format parameter in the builder.
          * 
@@ -475,7 +472,7 @@ class AbstractPicCGI
             CheckParameters.areNotNull( format );
             return set( FORMAT, format );
         }
-
+        
         /**
          * Sets the audioChannel parameter in the builder.
          * 
@@ -487,7 +484,7 @@ class AbstractPicCGI
         {
             return set( AUDIO_CHANNEL, audioChannel );
         }
-
+        
         /**
          * Sets the transmissionMode parameter in the builder.
          * 
@@ -502,7 +499,7 @@ class AbstractPicCGI
             CheckParameters.areNotNull( transmissionMode );
             return set( TRANSMISSION_MODE, transmissionMode );
         }
-
+        
         /**
          * Sets the slaveIP parameter in the builder.
          * 
@@ -517,7 +514,7 @@ class AbstractPicCGI
             CheckParameters.areNotNull( slaveIP );
             return set( SLAVE_IP, slaveIP );
         }
-
+        
         /**
          * Sets the outputChannel parameter in the builder.
          * 
@@ -529,7 +526,7 @@ class AbstractPicCGI
         {
             return set( OUTPUT_CHANNEL, outputChannel );
         }
-
+        
         /**
          * Sets the proxyMode parameter in the builder.
          * 
@@ -544,7 +541,7 @@ class AbstractPicCGI
             CheckParameters.areNotNull( proxyMode );
             return set( PROXY_MODE, proxyMode );
         }
-
+        
         /**
          * Sets the proxyRetries parameter in the builder.
          * 
@@ -556,10 +553,9 @@ class AbstractPicCGI
         {
             return set( PROXY_RETRIES, proxyRetries );
         }
-
+        
         /**
-         * Sets the value of a parameter to a given value, and returns the
-         * Builder.
+         * Sets the value of a parameter to a given value, and returns the Builder.
          * 
          * @param <T>
          *        the input type of the specified parameter.
@@ -573,7 +569,7 @@ class AbstractPicCGI
          * @throws NullPointerException
          *         if parameter or value are null.
          */
-        <T> Builder set( final ParameterDescription<T, ?> parameter, final T value )
+        <T>Builder set( final ParameterDescription<T, ?> parameter, final T value )
         {
             CheckParameters.areNotNull( parameter, value );
             if ( parameterMap.isEmpty() )
@@ -584,6 +580,7 @@ class AbstractPicCGI
             parameterMap = Option.getFullOption( parameterMap.get().set( parameter, value ) );
             return self();
         }
-
+        
     }
 }
+

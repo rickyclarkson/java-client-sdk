@@ -213,7 +213,10 @@ object CodeGen {
 
    import java.util.List;
    import java.util.ArrayList;
-   import uk.org.netvu.util.CheckParameters;   
+   import uk.org.netvu.util.CheckParameters;
+   import uk.org.netvu.util.Function;
+   import uk.org.netvu.util.Option;   
+
    """) ++ blockComment(classComment) ++ lines(
    """public final class """ +++ className +++ " extends AbstractPicCGI") ++ brace(
     packagePrivateConstructor(lines("Constructs a " +++ className +++ ", using the values from the specified ParameterMap."), className, List(Parameter('ParameterMap, 'parameterMap, "the ParameterMap to get values from")), lines("super( parameterMap );")) ++

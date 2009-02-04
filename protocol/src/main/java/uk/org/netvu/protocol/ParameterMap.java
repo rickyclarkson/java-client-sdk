@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Option;
 
 /**
  * An immutable object that stores the values associated with parameters and

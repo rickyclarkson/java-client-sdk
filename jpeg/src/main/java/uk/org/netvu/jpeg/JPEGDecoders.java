@@ -1,9 +1,14 @@
 package uk.org.netvu.jpeg;
 
+import javax.swing.JPanel;
+import java.awt.MediaTracker;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-
-
+import uk.org.netvu.util.Function;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 
 public final class JPEGDecoders
 {
@@ -11,21 +16,46 @@ public final class JPEGDecoders
 
     public static final JPEGDecoder toolkitDecoder = new ToolkitDecoder();
 
-    static BufferedImage toBufferedImage( final Image result )
-    {
-        if ( result instanceof BufferedImage )
+    public static final JPEGDecoder adffmpegDecoder = new ADFFMPEGDecoder();
+
+  public static Image loadFully(Image result)
+  {
+        try
         {
-            return (BufferedImage) result;
+            final MediaTracker tracker = new MediaTracker( new JPanel() );
+            tracker.addImage( result, 0 );
+            tracker.waitForAll();
         }
-        else
+        catch ( final InterruptedException e )
         {
-            final BufferedImage bi =
-                    new BufferedImage( result.getWidth( null ), result.getHeight( null ), BufferedImage.TYPE_INT_RGB );
-            bi.getGraphics().drawImage( result, 0, 0, null );
-            return bi;
+            throw new RuntimeException( e );
         }
+
+        return result;
     }
 
-    public static final JPEGDecoder adffmpegDecoder = new ADFFMPEGDecoder();
+  /**  public static byte[] inputStreamToByteArray(InputStream input) throws IOException
+  {
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    copy( input, output );
+    byte[] result = output.toByteArray();
+    if (result.length == 0)
+      throw null;
+    return result;
+  }
+
+  public static int copy(
+                         InputStream input,
+                         ByteArrayOutputStream output)
+    throws IOException {
+    byte[] buffer = new byte[1024];
+    int count = 0;
+    int n = 0;
+    while (-1 != (n = input.read(buffer))) {
+      output.write(buffer, 0, n);
+      count += n;
+    }
+    return count;
+    }*/
 
 }

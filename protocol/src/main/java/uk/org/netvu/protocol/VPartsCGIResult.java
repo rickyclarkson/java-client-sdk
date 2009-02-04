@@ -3,6 +3,8 @@ package uk.org.netvu.protocol;
 import java.util.ArrayList;
 
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Option;
 
 /**
  * Builds and parses the results from vparts.cgi requests.

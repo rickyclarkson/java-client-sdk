@@ -5,6 +5,8 @@ import java.util.List;
 
 import uk.org.netvu.protocol.ParameterMap.Validator;
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Option;
 
 /**
  * A parameter list for an events.cgi query. Use {@link EventsCGI.Builder} to

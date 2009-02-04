@@ -8,38 +8,22 @@ import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
-
+import java.io.InputStream;
+import java.io.IOException;
 import javax.swing.JPanel;
 
-final class ToolkitDecoder implements JPEGDecoder
+final class ToolkitDecoder extends JPEGDecoder
 {
-    public BufferedImage decode( ByteBuffer buffer )
+    public Image decodeByteBuffer( ByteBuffer buffer )
     {
         buffer = buffer.duplicate();
-
-        byte[] bytes;
-        if ( buffer.hasArray() )
-        {
-            bytes = buffer.array();
-        }
-        else
-        {
-            bytes = new byte[buffer.limit()];
-            buffer.get( bytes );
-        }
-
-        final Image result = Toolkit.getDefaultToolkit().createImage( bytes );
-        try
-        {
-            final MediaTracker tracker = new MediaTracker( new JPanel() );
-            tracker.addImage( result, 0 );
-            tracker.waitForAll();
-        }
-        catch ( final InterruptedException e )
-        {
-            throw new RuntimeException( e );
-        }
-
-        return JPEGDecoders.toBufferedImage( result );
+        byte[] bytes = new byte[buffer.limit()];
+        buffer.get( bytes );
+        return decodeByteArray(bytes);
     }
+
+  public Image decodeByteArray( byte[] bytes)
+  {
+    return JPEGDecoders.loadFully(Toolkit.getDefaultToolkit().createImage( bytes ));
+  }
 }
