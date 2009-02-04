@@ -21,23 +21,22 @@ public class Benchmark
     return indices;
   }
 
-  public static void main(String[] args) throws IOException, InterruptedException
-  {
-    JPEGDecoder[] decoders = { JPEGDecoders.adffmpegDecoder,
-                               JPEGDecoders.toolkitDecoder,
-                               JPEGDecoders.imageIODecoder };
-                               
-
-    class Resolution { final int width, height; final String filename; Resolution(int width, int height, String filename) { this.width = width;
+  public static final JPEGDecoder[] decoders = { JPEGDecoders.adffmpegDecoder,
+                                                 JPEGDecoders.toolkitDecoder,
+                                                 JPEGDecoders.imageIODecoder
+ };
+  static class Resolution { final int width, height; final String filename; Resolution(int width, int height, String filename) { this.width = width;
         this.height=height;
         this.filename=filename;
     } }
    
-    Resolution[] resolutions = { new Resolution(352, 256, "192-168-106-206-352x256.jpg"),
-                                 new Resolution(320, 240, "mews-camvu-1-320x240.jpg"),
-                                 new Resolution(1600, 1200, "mews-camvu-2-1600x1200.jpg"),
-                                 new Resolution(320, 256, "192-168-106-207-320x256.jpg") };
-    
+  public static Resolution[] resolutions = { new Resolution(352, 256, "192-168-106-206-352x256.jpg"),
+                                             new Resolution(320, 240, "mews-camvu-1-320x240.jpg"),
+                                             new Resolution(1600, 1200, "mews-camvu-2-1600x1200.jpg"),
+                                             new Resolution(320, 256, "192-168-106-207-320x256.jpg") };
+
+  public static void main(String[] args) throws IOException, InterruptedException
+  {
     int[] iterationAmounts = { 100, 1000, 10000 };
     int[] warmUpTimes = { 100, 1000, 10000 };
     String[] inputTypes = { "byte[]", "ByteBuffer" };
