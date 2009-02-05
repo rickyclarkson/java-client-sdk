@@ -25,15 +25,16 @@ public class Benchmark
                                                  JPEGDecoders.toolkitDecoder,
                                                  JPEGDecoders.imageIODecoder
  };
-  static class Resolution { final int width, height; final String filename; Resolution(int width, int height, String filename) { this.width = width;
+  static class SampleFile { final int width, height; final String filename; SampleFile(int width, int height, String filename) { this.width = width;
         this.height=height;
         this.filename=filename;
     } }
    
-  public static Resolution[] resolutions = { new Resolution(352, 256, "192-168-106-206-352x256.jpg"),
-                                             new Resolution(320, 240, "mews-camvu-1-320x240.jpg"),
-                                             new Resolution(1600, 1200, "mews-camvu-2-1600x1200.jpg"),
-                                             new Resolution(320, 256, "192-168-106-207-320x256.jpg") };
+  public static SampleFile[] sampleFiles = { new SampleFile(352, 256, "192-168-106-206-352x256.jpg"),
+                                             new SampleFile(320, 240, "mews-camvu-1-320x240.jpg"),
+                                             new SampleFile(1600, 1200, "mews-camvu-2-1600x1200.jpg"),
+                                             new SampleFile(320, 256, "192-168-106-207-320x256.jpg"),
+                                             new SampleFile(352, 256, "dvip3s-ad-dev-adh-352x256.jpeg") };
 
   public static void main(String[] args) throws IOException, InterruptedException
   {
@@ -47,7 +48,7 @@ public class Benchmark
       for (int iterations: rangeOver(iterationAmounts.length))
         for (int warmUpTime: rangeOver(warmUpTimes.length))
           for (int decoder: rangeOver(decoders.length))
-            for (int resolution: rangeOver(resolutions.length))
+            for (int resolution: rangeOver(sampleFiles.length))
               for (int inputType: rangeOver(inputTypes.length))
               {                
                 Process process = Runtime.getRuntime().exec(new String[]{"java", "-classpath", System.getProperty("java.class.path"), "uk.org.netvu.jpeg.Benchmark", String.valueOf(decoder),
@@ -67,17 +68,17 @@ public class Benchmark
     else
     {
       JPEGDecoder decoder = decoders[Integer.parseInt(args[0])];
-      Resolution resolution = resolutions[Integer.parseInt(args[1])];
+      SampleFile sampleFile = sampleFiles[Integer.parseInt(args[1])];
       int iterations = iterationAmounts[Integer.parseInt(args[2])];
       int warmUpTime = warmUpTimes[Integer.parseInt(args[3])];
       String inputType = inputTypes[Integer.parseInt(args[4])];
             
-      String info = decoder.getClass().getSimpleName() + "," + resolution.filename + "," + resolution.width + "," + resolution.height + "," + inputType + "," + warmUpTime + "," + iterations;
+      String info = decoder.getClass().getSimpleName() + "," + sampleFile.filename + "," + sampleFile.width + "," + sampleFile.height + "," + inputType + "," + warmUpTime + "," + iterations;
 
       if (inputType.equals("ByteBuffer"))
-        time(iterations, warmUpTime, decoder.decodeByteBuffer, bufferFor(resolution.filename), info);
+        time(iterations, warmUpTime, decoder.decodeByteBuffer, bufferFor(sampleFile.filename), info);
       else
-        time(iterations, warmUpTime, decoder.decodeByteArray, byteArrayFor(resolution.filename), info);
+        time(iterations, warmUpTime, decoder.decodeByteArray, byteArrayFor(sampleFile.filename), info);
     }
   }
 

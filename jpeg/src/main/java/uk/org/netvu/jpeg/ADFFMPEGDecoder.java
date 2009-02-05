@@ -31,7 +31,7 @@ final class ADFFMPEGDecoder extends JPEGDecoder
 
   public Image decodeByteArray(byte[] array)
   {
-    ByteBuffer buffer = ByteBuffer.allocateDirect(array.length);
+    ByteBuffer buffer = ByteBuffer.allocateDirect(array.length); //direct
     buffer.put(array);
     buffer.position(0);
     return decodeByteBuffer(buffer);
