@@ -9,7 +9,7 @@ public abstract class JPEGDecoder
 {
     public abstract Image decodeByteBuffer( ByteBuffer buffer );
 
-    public abstract Image decodeByteArray( byte[] array );
+    abstract Image decodeByteArray( byte[] array );
 
     final Function<ByteBuffer, Image> decodeByteBuffer = new Function<ByteBuffer, Image>()
     {
@@ -19,6 +19,7 @@ public abstract class JPEGDecoder
             return decodeByteBuffer( buffer );
         }
     };
+
     final Function<byte[], Image> decodeByteArray = new Function<byte[], Image>()
     {
         @Override

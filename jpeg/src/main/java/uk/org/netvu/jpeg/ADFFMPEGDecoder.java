@@ -13,11 +13,27 @@ import uk.org.netvu.adffmpeg.AVCodec;
 import uk.org.netvu.adffmpeg.AVCodecContext;
 import uk.org.netvu.adffmpeg.AVFrame;
 
+/**
+ * A JPEG decoder that uses the ADFFMPEG Java bindings.
+ */
 final class ADFFMPEGDecoder extends JPEGDecoder
 {
-    AVCodecContext codecContext = ADFFMPEG.avcodec_alloc_context();
-    AVFrame picture;
-    AVCodec codec = ADFFMPEG.avcodec_find_decoder_by_name( "mjpeg" );
+    /**
+     * The context instance for ADFFMPEG. Currently this is cleared for every
+     * frame. An optimisation might be to reuse the same context for multiple
+     * frames if they have the same resolution.
+     */
+    private AVCodecContext codecContext = ADFFMPEG.avcodec_alloc_context();
+
+    /**
+     * The frame used for storing decoded data.
+     */
+    private AVFrame picture;
+
+    /**
+     * The MJPEG codec used for decoding JPEG frames.
+     */
+    private final AVCodec codec = ADFFMPEG.avcodec_find_decoder_by_name( "mjpeg" );
     {
         if ( ADFFMPEG.avcodec_open( codecContext, codec ) < 0 )
         {
@@ -26,8 +42,11 @@ final class ADFFMPEGDecoder extends JPEGDecoder
         picture = ADFFMPEG.avcodec_alloc_frame();
     }
 
+    /**
+     * ${inheritDoc}
+     */
     @Override
-    public Image decodeByteArray( final byte[] array )
+    Image decodeByteArray( final byte[] array )
     {
         final ByteBuffer buffer = ByteBuffer.allocateDirect( array.length );
         buffer.put( array );
@@ -35,8 +54,15 @@ final class ADFFMPEGDecoder extends JPEGDecoder
         return decodeByteBuffer( buffer );
     }
 
+    /**
+     * Prevents this decoder from being used concurrently or recursively, as
+     * ADFFMPEG is known to behave indeterministically in such cases.
+     */
     private static final Semaphore semaphore = new Semaphore( 1, true );
 
+    /**
+     * ${inheritDoc}
+     */
     @Override
     public Image decodeByteBuffer( ByteBuffer buffer )
     {
@@ -56,9 +82,9 @@ final class ADFFMPEGDecoder extends JPEGDecoder
             codecContext = ADFFMPEG.avcodec_alloc_context();
             ADFFMPEG.avcodec_open( codecContext, codec );
 
-            final IntBuffer got_picture = ByteBuffer.allocateDirect( 4 ).asIntBuffer();
+            final IntBuffer gotPicture = ByteBuffer.allocateDirect( 4 ).asIntBuffer();
 
-            final int len = ADFFMPEG.avcodec_decode_video( codecContext, picture, got_picture, buffer );
+            final int len = ADFFMPEG.avcodec_decode_video( codecContext, picture, gotPicture, buffer );
             if ( len < 0 )
             {
                 throw null;

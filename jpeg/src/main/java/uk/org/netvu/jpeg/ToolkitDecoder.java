@@ -1,14 +1,17 @@
-/**
- * 
- */
 package uk.org.netvu.jpeg;
 
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.nio.ByteBuffer;
 
+/**
+ * A JPEG decoder that uses java.awt.Toolkit.
+ */
 final class ToolkitDecoder extends JPEGDecoder
 {
+    /**
+     * ${inheritDoc}
+     */
     @Override
     public Image decodeByteBuffer( ByteBuffer buffer )
     {
@@ -18,8 +21,11 @@ final class ToolkitDecoder extends JPEGDecoder
         return decodeByteArray( bytes );
     }
 
+    /**
+     * ${inheritDoc}
+     */
     @Override
-    public Image decodeByteArray( final byte[] bytes )
+    Image decodeByteArray( final byte[] bytes )
     {
         return JPEGDecoders.loadFully( Toolkit.getDefaultToolkit().createImage( bytes ) );
     }

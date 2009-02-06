@@ -1,6 +1,3 @@
-/**
- * 
- */
 package uk.org.netvu.jpeg;
 
 import java.awt.image.BufferedImage;
@@ -11,8 +8,14 @@ import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
+/**
+ * A JPEG decoder that uses javax.imageio.
+ */
 final class ImageIODecoder extends JPEGDecoder
 {
+    /**
+     * ${inheritDoc}
+     */
     @Override
     public BufferedImage decodeByteArray( final byte[] array )
     {
@@ -26,6 +29,9 @@ final class ImageIODecoder extends JPEGDecoder
         }
     }
 
+    /**
+     * ${inheritDoc}
+     */
     @Override
     public BufferedImage decodeByteBuffer( final ByteBuffer _buffer )
     {
