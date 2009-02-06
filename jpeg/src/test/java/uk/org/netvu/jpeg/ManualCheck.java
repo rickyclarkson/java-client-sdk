@@ -18,7 +18,7 @@ public class ManualCheck
             {
               try
               {
-                for (JPEGDecoder decoder: Benchmark.decoders)
+                for (JPEGDecoder decoder: SubBenchmark.decoders)
                   for (SampleFile sampleFile: Benchmark.sampleFiles)
                     add(new JLabel(new ImageIcon(decoder.decodeByteArray(Benchmark.byteArrayFor(sampleFile.filename)))));
               }
