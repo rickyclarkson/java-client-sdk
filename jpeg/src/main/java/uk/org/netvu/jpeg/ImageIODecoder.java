@@ -4,27 +4,29 @@
 package uk.org.netvu.jpeg;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
-import java.io.ByteArrayInputStream;
 
 final class ImageIODecoder extends JPEGDecoder
 {
-  public BufferedImage decodeByteArray(byte[] array)
-  {
-    try
+    @Override
+    public BufferedImage decodeByteArray( final byte[] array )
     {
-      return ImageIO.read(new ByteArrayInputStream(array));
+        try
+        {
+            return ImageIO.read( new ByteArrayInputStream( array ) );
+        }
+        catch ( final IOException e )
+        {
+            throw new RuntimeException( e );
+        }
     }
-    catch (IOException e)
-      {
-        throw new RuntimeException(e);
-      }
-  }
 
+    @Override
     public BufferedImage decodeByteBuffer( final ByteBuffer _buffer )
     {
         final ByteBuffer buffer = _buffer.duplicate();

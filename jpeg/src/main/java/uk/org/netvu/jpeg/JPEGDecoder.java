@@ -14,7 +14,7 @@ public abstract class JPEGDecoder
     final Function<ByteBuffer, Image> decodeByteBuffer = new Function<ByteBuffer, Image>()
     {
         @Override
-        public Image apply( final ByteBuffer buffer )/* => */
+        public Image apply( final ByteBuffer buffer )
         {
             return decodeByteBuffer( buffer );
         }
