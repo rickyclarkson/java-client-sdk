@@ -32,7 +32,7 @@ Rationale
 
 ** {{{http://www.ijg.org/}The Independent JPEG Group's libjpeg}}
 
- This site has a more liberally licenced JPEG decoder written in C, but the latest release was made in 1998.  It appears to have been well-tested at the time, and is used by a lot of programs, possibly including the Java Virtual Machine some years ago.  The licence states that you may use the software for any purpose, but you must acknowledge the Independent JPEG Group in documentation.
+ This site has a more liberally licenced JPEG decoder written in C, but the latest release was made in 1998.  It appears to have been well-tested at the time, and is used by a lot of programs.  The licence states that you may use the software for any purpose, but you must acknowledge the Independent JPEG Group in documentation.
 
  There is a SourceForge project, {{{http://gnuwin32.sourceforge.net/packages/jpeg.htm}gnuwin32}}that contains what looks to be a Windows-specific  version of this library, last updated in 2005 - there may be functional changes too.
 

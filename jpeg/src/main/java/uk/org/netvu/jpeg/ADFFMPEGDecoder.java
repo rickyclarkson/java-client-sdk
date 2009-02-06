@@ -51,7 +51,7 @@ final class ADFFMPEGDecoder extends JPEGDecoder
         final ByteBuffer buffer = ByteBuffer.allocateDirect( array.length );
         buffer.put( array );
         buffer.position( 0 );
-        return decodeByteBuffer( buffer );
+        return decode( buffer );
     }
 
     /**
@@ -64,7 +64,7 @@ final class ADFFMPEGDecoder extends JPEGDecoder
      * ${inheritDoc}
      */
     @Override
-    public Image decodeByteBuffer( ByteBuffer buffer )
+    public Image decode( ByteBuffer buffer )
     {
         try
         {

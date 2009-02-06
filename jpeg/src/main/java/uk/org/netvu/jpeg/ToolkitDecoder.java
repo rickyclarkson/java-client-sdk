@@ -13,7 +13,7 @@ final class ToolkitDecoder extends JPEGDecoder
      * ${inheritDoc}
      */
     @Override
-    public Image decodeByteBuffer( ByteBuffer buffer )
+    public Image decode( ByteBuffer buffer )
     {
         buffer = buffer.duplicate();
         final byte[] bytes = new byte[buffer.limit()];

@@ -17,7 +17,7 @@ final class ImageIODecoder extends JPEGDecoder
      * ${inheritDoc}
      */
     @Override
-    public BufferedImage decodeByteArray( final byte[] array )
+    BufferedImage decodeByteArray( final byte[] array )
     {
         try
         {
@@ -33,7 +33,7 @@ final class ImageIODecoder extends JPEGDecoder
      * ${inheritDoc}
      */
     @Override
-    public BufferedImage decodeByteBuffer( final ByteBuffer _buffer )
+    public BufferedImage decode( final ByteBuffer _buffer )
     {
         final ByteBuffer buffer = _buffer.duplicate();
         try

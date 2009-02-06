@@ -1,9 +1,9 @@
 package uk.org.netvu.jpeg;
 
+import java.awt.Container;
 import java.awt.Image;
 import java.awt.MediaTracker;
 
-import javax.swing.JPanel;
 
 /**
  * A class providing access to all the available JPEG decoder implementations.
@@ -29,7 +29,7 @@ public final class JPEGDecoders
     {
         try
         {
-            final MediaTracker tracker = new MediaTracker( new JPanel() );
+            final MediaTracker tracker = new MediaTracker( new Container() );
             tracker.addImage( result, 0 );
             tracker.waitForAll();
         }

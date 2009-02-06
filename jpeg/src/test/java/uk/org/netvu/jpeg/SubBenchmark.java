@@ -20,6 +20,15 @@ public class SubBenchmark
     public static final JPEGDecoder[] decoders =
             { JPEGDecoders.adffmpegDecoder, JPEGDecoders.toolkitDecoder, JPEGDecoders.imageIODecoder };
 
+    public static <T> void humourousNetbeans(final int iterations, final Function<T, ?> decoder, final T input, long start, final String info) {
+        start = System.nanoTime();
+        for (int i = 0; i < iterations; i++) {
+            decoder.apply(input);
+        }
+        final long time = System.nanoTime() - start;
+        System.out.println(info + "," + iterations * 1.0 / (time / 1000000000.0));
+    }
+
     /**
      * Executes the specified decoder with the specified constraints.
      * 
@@ -47,7 +56,7 @@ public class SubBenchmark
 
         if ( inputType.equals( "ByteBuffer" ) )
         {
-            time( iterations, warmUpTime, decoder.decodeByteBuffer, bufferFor( sampleFile.filename ), info );
+            time( iterations, warmUpTime, decoder.decode, bufferFor( sampleFile.filename ), info );
         }
         else
         {
@@ -119,14 +128,6 @@ public class SubBenchmark
         {
             decoder.apply( input );
         }
-
-        start = System.nanoTime();
-        for ( int i = 0; i < iterations; i++ )
-        {
-            decoder.apply( input );
-        }
-
-        final long time = System.nanoTime() - start;
-        System.out.println( info + "," + iterations * 1.0 / ( time / 1000000000.0 ) );
+        humourousNetbeans( iterations, decoder, input, start, info);
     }
 }

@@ -7,16 +7,16 @@ import uk.org.netvu.util.Function;
 
 public abstract class JPEGDecoder
 {
-    public abstract Image decodeByteBuffer( ByteBuffer buffer );
+    public abstract Image decode( ByteBuffer buffer );
 
     abstract Image decodeByteArray( byte[] array );
 
-    final Function<ByteBuffer, Image> decodeByteBuffer = new Function<ByteBuffer, Image>()
+    final Function<ByteBuffer, Image> decode = new Function<ByteBuffer, Image>()
     {
         @Override
         public Image apply( final ByteBuffer buffer )
         {
-            return decodeByteBuffer( buffer );
+            return decode( buffer );
         }
     };
 
