@@ -8,12 +8,32 @@ import java.nio.channels.FileChannel;
 
 import uk.org.netvu.util.Function;
 
+/**
+ * A program that is launched many times by Benchmark, to time the execution of
+ * a given number of iterations of a given decoder with a given test image.
+ */
 public class SubBenchmark
 {
+    /**
+     * The decoders to benchmark.
+     */
     public static final JPEGDecoder[] decoders =
             { JPEGDecoders.adffmpegDecoder, JPEGDecoders.toolkitDecoder, JPEGDecoders.imageIODecoder };
 
-    public static void main( final String[] args ) throws IOException, InterruptedException
+    /**
+     * Executes the specified decoder with the specified constraints.
+     * 
+     * @param args
+     *        the arguments to the process. The first argument is the index of
+     *        the decoder. The second argument is the index of the test data
+     *        file. The third argument is the index of the number of iterations
+     *        to perform. The fourth argument is the index of the number of
+     *        warmup times to perform. The fifth argument is the index of the
+     *        input type to use.
+     * @throws IOException
+     *         if any I/O error occurred.
+     */
+    public static void main( final String[] args ) throws IOException
     {
         final JPEGDecoder decoder = decoders[Integer.parseInt( args[0] )];
         final SampleFile sampleFile = Benchmark.sampleFiles[Integer.parseInt( args[1] )];
@@ -35,6 +55,15 @@ public class SubBenchmark
         }
     }
 
+    /**
+     * Constructs a ByteBuffer containing the data from the specified file.
+     * 
+     * @param filename
+     *        the name of the file that contains the data to read.
+     * @return a ByteBuffer containing the data from the specified file.
+     * @throws IOException
+     *         if any I/O error occurs.
+     */
     public static ByteBuffer bufferFor( final String filename ) throws IOException
     {
         final ByteBuffer first =
@@ -47,6 +76,15 @@ public class SubBenchmark
         return result;
     }
 
+    /**
+     * Constructs an array of bytes containing the data from the specified file.
+     * 
+     * @param filename
+     *        the name of the file that contains the data to read.
+     * @return an array of bytes containing the data from the specified file.
+     * @throws IOException
+     *         if any I/O error occurs.
+     */
     public static byte[] byteArrayFor( final String filename ) throws IOException
     {
         final ByteBuffer buffer = bufferFor( filename );
@@ -55,22 +93,34 @@ public class SubBenchmark
         return bytes;
     }
 
+    /**
+     * Executes the specified decoder with the specified input for the specified
+     * number of iterations, after warming the decoder up by executing it for at
+     * least the specified number of milliseconds, printing the results to
+     * System.out as CSV.
+     * 
+     * @param iterations
+     *        the number of iterations to time.
+     * @param warmUpMillis
+     *        the number of milliseconds to give the decoder to warm up before
+     *        timing it.
+     * @param decoder
+     *        a Function that invokes the JPEGDecoder when applied.
+     * @param input
+     *        the input to the decoder.
+     * @param info
+     *        extra info to include in the output.
+     */
     public static <T> void time( final int iterations, final long warmUpMillis, final Function<T, ?> decoder,
             final T input, final String info )
     {
-        final long start = System.nanoTime();
+        long start = System.nanoTime();
         while ( System.nanoTime() - start < warmUpMillis * 1000000 )
         {
             decoder.apply( input );
         }
 
-        humourNetbeans( iterations, decoder, input, info );
-    }
-
-    public static <T> void humourNetbeans( final int iterations, final Function<T, ?> decoder, final T input,
-            final String info )
-    {
-        final long start = System.nanoTime();
+        start = System.nanoTime();
         for ( int i = 0; i < iterations; i++ )
         {
             decoder.apply( input );

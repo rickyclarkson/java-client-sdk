@@ -9,8 +9,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+/**
+ * A simple graphical program to help visually check that all the decoders are
+ * decoding all the images correctly.
+ */
 public class ManualCheck
 {
+    /**
+     * Displays a JFrame containing a JScrollPane containing a JPanel containing
+     * all the test images decoded by each of the decoders in a grid.
+     * 
+     * @param args
+     *        ignored.
+     */
     public static void main( final String[] args )
     {
         new JFrame()
