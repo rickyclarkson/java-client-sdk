@@ -36,7 +36,7 @@ public class Benchmark
                                              new SampleFile(320, 256, "192-168-106-207-320x256.jpg"),
                                              new SampleFile(352, 256, "dvip3s-ad-dev-adh-352x256.jpeg") };
 
-  public static void main(String[] args) throws IOException, InterruptedException
+  public static void main(final String[] args) throws IOException, InterruptedException
   {
     int[] iterationAmounts = { 100, 1000, 10000 };
     int[] warmUpTimes = { 100, 1000, 10000 };
@@ -51,10 +51,41 @@ public class Benchmark
             for (int resolution: rangeOver(sampleFiles.length))
               for (int inputType: rangeOver(inputTypes.length))
               {                
-                Process process = Runtime.getRuntime().exec(new String[]{"java", "-classpath", System.getProperty("java.class.path"), "uk.org.netvu.jpeg.Benchmark", String.valueOf(decoder),
+                final Process process = Runtime.getRuntime().exec(new String[]{"java", "-classpath", System.getProperty("java.class.path"), "uk.org.netvu.jpeg.Benchmark", String.valueOf(decoder),
                                                                          String.valueOf(resolution), String.valueOf(iterations), String.valueOf(warmUpTime), String.valueOf(inputType)});
+                //try moving waitFor
+                //try one thread per stream.
                 process.waitFor();
-                BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
+                new Thread(new Runnable(){public void run(){
+                  try
+                  {
+                    BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
+                    String line;
+                    while ((line = inputStreamReader.readLine())!=null)
+                      synchronized(args) { System.out.println(line); }
+                    inputStreamReader.close();
+                  }
+                  catch (Exception e)
+                    {
+                      throw new RuntimeException(e);
+                    }
+                }}).start();
+                new Thread(new Runnable(){public void run(){
+                  try
+                  {
+                    BufferedReader errorStreamReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
+                    String line;
+                    while ((line = errorStreamReader.readLine())!=null)
+                      synchronized(args) { System.out.println(line); }
+                    errorStreamReader.close();
+                  }
+                  catch (Exception e)
+                    {
+                      throw new RuntimeException(e);
+                    }
+                }}).start();
+                      
+                /*                BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
                 BufferedReader errorStreamReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
                 String line;
                 while ((line = inputStreamReader.readLine())!=null)
@@ -62,7 +93,7 @@ public class Benchmark
                 while ((line = errorStreamReader.readLine())!=null)
                   System.out.println(line);
                 inputStreamReader.close();
-                errorStreamReader.close();                  
+                errorStreamReader.close();                  */
               }
     }
     else
