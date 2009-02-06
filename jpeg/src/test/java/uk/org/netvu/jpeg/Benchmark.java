@@ -21,9 +21,9 @@ public class Benchmark
     return indices;
   }
 
-  public static final JPEGDecoder[] decoders = { JPEGDecoders.adffmpegDecoder,
-                                                 JPEGDecoders.toolkitDecoder,
-                                                 JPEGDecoders.imageIODecoder
+  public static final String[] decoders = { "JPEGDecoders.adffmpegDecoder",
+                                                 "JPEGDecoders.toolkitDecoder",
+                                                 "JPEGDecoders.imageIODecoder"
  };
   static class SampleFile { final int width, height; final String filename; SampleFile(int width, int height, String filename) { this.width = width;
         this.height=height;
@@ -51,12 +51,12 @@ public class Benchmark
             for (int resolution: rangeOver(sampleFiles.length))
               for (int inputType: rangeOver(inputTypes.length))
               {                
-                final Process process = Runtime.getRuntime().exec(new String[]{"java", "-classpath", System.getProperty("java.class.path"), "uk.org.netvu.jpeg.Benchmark", String.valueOf(decoder),
+                final Process process = Runtime.getRuntime().exec(new String[]{"java", "-classpath", System.getProperty("java.class.path"), "uk.org.netvu.jpeg.SubBenchmark", String.valueOf(decoder),
                                                                          String.valueOf(resolution), String.valueOf(iterations), String.valueOf(warmUpTime), String.valueOf(inputType)});
                 //try moving waitFor
                 //try one thread per stream.
-                process.waitFor();
-                new Thread(new Runnable(){public void run(){
+
+                Thread inputThread = new Thread(new Runnable(){public void run(){
                   try
                   {
                     BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
@@ -69,8 +69,9 @@ public class Benchmark
                     {
                       throw new RuntimeException(e);
                     }
-                }}).start();
-                new Thread(new Runnable(){public void run(){
+                }});
+                inputThread.start();
+                Thread errorThread = new Thread(new Runnable(){public void run(){
                   try
                   {
                     BufferedReader errorStreamReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
@@ -83,7 +84,10 @@ public class Benchmark
                     {
                       throw new RuntimeException(e);
                     }
-                }}).start();
+                }});
+                errorThread.start();
+
+                process.waitFor();
                       
                 /*                BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
                 BufferedReader errorStreamReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF-8"));
@@ -97,20 +101,7 @@ public class Benchmark
               }
     }
     else
-    {
-      JPEGDecoder decoder = decoders[Integer.parseInt(args[0])];
-      SampleFile sampleFile = sampleFiles[Integer.parseInt(args[1])];
-      int iterations = iterationAmounts[Integer.parseInt(args[2])];
-      int warmUpTime = warmUpTimes[Integer.parseInt(args[3])];
-      String inputType = inputTypes[Integer.parseInt(args[4])];
-            
-      String info = decoder.getClass().getSimpleName() + "," + sampleFile.filename + "," + sampleFile.width + "," + sampleFile.height + "," + inputType + "," + warmUpTime + "," + iterations;
-
-      if (inputType.equals("ByteBuffer"))
-        time(iterations, warmUpTime, decoder.decodeByteBuffer, bufferFor(sampleFile.filename), info);
-      else
-        time(iterations, warmUpTime, decoder.decodeByteArray, byteArrayFor(sampleFile.filename), info);
-    }
+      throw null;
   }
 
   public static ByteBuffer bufferFor(String filename) throws IOException
