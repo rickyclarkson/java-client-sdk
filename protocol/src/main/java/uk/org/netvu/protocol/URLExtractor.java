@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import uk.org.netvu.util.Function;
 import uk.org.netvu.util.Option;   
+import uk.org.netvu.util.Pair;
 
 /**
  * A utility class for parsing Strings into URL parts.

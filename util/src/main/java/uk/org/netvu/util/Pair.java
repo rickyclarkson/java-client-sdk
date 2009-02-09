@@ -1,6 +1,4 @@
-package uk.org.netvu.protocol;
-
-import uk.org.netvu.util.CheckParameters;
+package uk.org.netvu.util;
 
 /**
  * An object containing two objects.
@@ -10,7 +8,7 @@ import uk.org.netvu.util.CheckParameters;
  * @param <U>
  *        the type of the second object.
  */
-final class Pair<T, U>
+public final class Pair<T, U>
 {
     private final T t;
 

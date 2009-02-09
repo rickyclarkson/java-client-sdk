@@ -7,6 +7,9 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Pair;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A program that is launched many times by Benchmark, to time the execution of
@@ -17,8 +20,15 @@ public class SubBenchmark
     /**
      * The decoders to benchmark.
      */
-    public static final JPEGDecoder[] decoders =
-            { JPEGDecoders.adffmpegDecoder, JPEGDecoders.toolkitDecoder, JPEGDecoders.imageIODecoder };
+  public static final List<Pair<JPEGDecoder, JPEGDecoderFromArray>> decoders = new ArrayList<Pair<JPEGDecoder, JPEGDecoderFromArray>>()
+  {
+    {
+      //this is an anonymous initialiser.
+      add(new Pair<JPEGDecoder, JPEGDecoderFromArray>(JPEGDecoders.adffmpegDecoder, JPEGDecoders.adffmpegDecoder));
+      add(new Pair<JPEGDecoder, JPEGDecoderFromArray>(JPEGDecoders.toolkitDecoder, JPEGDecoders.toolkitDecoder));
+      add(new Pair<JPEGDecoder, JPEGDecoderFromArray>(JPEGDecoders.imageIODecoder, JPEGDecoders.imageIODecoder));
+    }
+  };
 
     public static <T> void humourousNetbeans(final int iterations, final Function<T, ?> decoder, final T input, long start, final String info) {
         start = System.nanoTime();
@@ -44,23 +54,23 @@ public class SubBenchmark
      */
     public static void main( final String[] args ) throws IOException
     {
-        final JPEGDecoder decoder = decoders[Integer.parseInt( args[0] )];
+      final Pair<JPEGDecoder, JPEGDecoderFromArray> decoder = decoders.get(Integer.parseInt( args[0] ));
         final SampleFile sampleFile = Benchmark.sampleFiles[Integer.parseInt( args[1] )];
         final int iterations = Benchmark.iterationAmounts[Integer.parseInt( args[2] )];
         final int warmUpTime = Benchmark.warmUpTimes[Integer.parseInt( args[3] )];
         final String inputType = Benchmark.inputTypes[Integer.parseInt( args[4] )];
 
         final String info =
-                decoder.getClass().getSimpleName() + "," + sampleFile.filename + "," + sampleFile.width + ","
+          decoder.getFirstComponent().getClass().getSimpleName() + "," + sampleFile.filename + "," + sampleFile.width + ","
                         + sampleFile.height + "," + inputType + "," + warmUpTime + "," + iterations;
 
         if ( inputType.equals( "ByteBuffer" ) )
         {
-            time( iterations, warmUpTime, decoder.decode, bufferFor( sampleFile.filename ), info );
+          time( iterations, warmUpTime, JPEGDecoders.decodeJPEG(decoder.getFirstComponent()), bufferFor( sampleFile.filename ), info );
         }
         else
         {
-            time( iterations, warmUpTime, decoder.decodeByteArray, byteArrayFor( sampleFile.filename ), info );
+          time( iterations, warmUpTime, JPEGDecoders.decodeJPEGFromArray(decoder.getSecondComponent()), byteArrayFor( sampleFile.filename ), info );
         }
     }
 

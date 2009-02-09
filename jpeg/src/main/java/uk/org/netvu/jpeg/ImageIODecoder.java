@@ -11,13 +11,13 @@ import javax.imageio.ImageIO;
 /**
  * A JPEG decoder that uses javax.imageio.
  */
-final class ImageIODecoder extends JPEGDecoder
+final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
 {
     /**
      * ${inheritDoc}
      */
     @Override
-    BufferedImage decodeByteArray( final byte[] array )
+    public BufferedImage decodeJPEGFromArray( final byte[] array )
     {
         try
         {
@@ -33,7 +33,7 @@ final class ImageIODecoder extends JPEGDecoder
      * ${inheritDoc}
      */
     @Override
-    public BufferedImage decode( final ByteBuffer _buffer )
+    public BufferedImage decodeJPEG( final ByteBuffer _buffer )
     {
         final ByteBuffer buffer = _buffer.duplicate();
         try

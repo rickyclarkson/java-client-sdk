@@ -7,25 +7,24 @@ import java.nio.ByteBuffer;
 /**
  * A JPEG decoder that uses java.awt.Toolkit.
  */
-final class ToolkitDecoder extends JPEGDecoder
+final class ToolkitDecoder implements JPEGDecoder, JPEGDecoderFromArray
 {
     /**
      * ${inheritDoc}
      */
     @Override
-    public Image decode( ByteBuffer buffer )
+    public Image decodeJPEG( ByteBuffer buffer )
     {
         buffer = buffer.duplicate();
         final byte[] bytes = new byte[buffer.limit()];
         buffer.get( bytes );
-        return decodeByteArray( bytes );
+        return decodeJPEGFromArray( bytes );
     }
 
     /**
      * ${inheritDoc}
      */
-    @Override
-    Image decodeByteArray( final byte[] bytes )
+    public Image decodeJPEGFromArray( final byte[] bytes )
     {
         return JPEGDecoders.loadFully( Toolkit.getDefaultToolkit().createImage( bytes ) );
     }

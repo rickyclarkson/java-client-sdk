@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import uk.org.netvu.util.CheckParameters;
 import uk.org.netvu.util.Function;
 import uk.org.netvu.util.Option;
+import uk.org.netvu.util.Pair;
 
 /**
  * An object that describes a parameter for a Builder, including conversions

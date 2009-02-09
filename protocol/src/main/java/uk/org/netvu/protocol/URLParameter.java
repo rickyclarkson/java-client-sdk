@@ -3,6 +3,7 @@ package uk.org.netvu.protocol;
 import uk.org.netvu.util.CheckParameters;
 import uk.org.netvu.util.Function;
 import uk.org.netvu.util.Option;
+import uk.org.netvu.util.Pair;
 
 /**
  * A representation of a URL Parameter (foo=bar).

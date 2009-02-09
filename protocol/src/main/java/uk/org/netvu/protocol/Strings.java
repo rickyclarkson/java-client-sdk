@@ -7,6 +7,7 @@ import java.util.List;
 import uk.org.netvu.util.CheckParameters;
 import uk.org.netvu.util.Function;
 import uk.org.netvu.util.Option;
+import uk.org.netvu.util.Pair;
 
 /**
  * Utility methods for dealing with Strings.

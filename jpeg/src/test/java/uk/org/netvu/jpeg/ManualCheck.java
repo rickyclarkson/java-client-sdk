@@ -9,6 +9,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import uk.org.netvu.util.Pair;
+
 /**
  * A simple graphical program to help visually check that all the decoders are
  * decoding all the images correctly.
@@ -28,17 +30,17 @@ public class ManualCheck
         {
             {
                 setSize( 800, 600 );
-                add( new JScrollPane( new JPanel( new GridLayout( SubBenchmark.decoders.length,
+                add( new JScrollPane( new JPanel( new GridLayout( SubBenchmark.decoders.size(),
                         Benchmark.sampleFiles.length ) )
                 {
                     {
                         try
                         {
-                            for ( final JPEGDecoder decoder : SubBenchmark.decoders )
+                          for ( final Pair<JPEGDecoder, JPEGDecoderFromArray> decoder : SubBenchmark.decoders )
                             {
                                 for ( final SampleFile sampleFile : Benchmark.sampleFiles )
                                 {
-                                    add( new JLabel( new ImageIcon( decoder.decodeByteArray( SubBenchmark
+                                  add( new JLabel( new ImageIcon( decoder.getSecondComponent().decodeJPEGFromArray( SubBenchmark
                                         .byteArrayFor( sampleFile.filename ) ) ) ) );
                                 }
                             }

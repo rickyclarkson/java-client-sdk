@@ -16,7 +16,7 @@ import uk.org.netvu.adffmpeg.AVFrame;
 /**
  * A JPEG decoder that uses the ADFFMPEG Java bindings.
  */
-final class ADFFMPEGDecoder extends JPEGDecoder
+final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
 {
     /**
      * The context instance for ADFFMPEG. Currently this is cleared for every
@@ -46,12 +46,12 @@ final class ADFFMPEGDecoder extends JPEGDecoder
      * ${inheritDoc}
      */
     @Override
-    Image decodeByteArray( final byte[] array )
+    public Image decodeJPEGFromArray( final byte[] array )
     {
         final ByteBuffer buffer = ByteBuffer.allocateDirect( array.length );
         buffer.put( array );
         buffer.position( 0 );
-        return decode( buffer );
+        return decodeJPEG( buffer );
     }
 
     /**
@@ -64,7 +64,7 @@ final class ADFFMPEGDecoder extends JPEGDecoder
      * ${inheritDoc}
      */
     @Override
-    public Image decode( ByteBuffer buffer )
+    public Image decodeJPEG( ByteBuffer buffer )
     {
         try
         {

@@ -12,7 +12,7 @@ import uk.org.netvu.protocol.ParameterDescription.SparseArrayParameterDescriptio
 import uk.org.netvu.util.CheckParameters;
 import uk.org.netvu.util.Function;
 import uk.org.netvu.util.Option;   
-
+import uk.org.netvu.util.Pair;
 
 /**
  * A parameter list for a decoder query. Use {@link DecoderCGI.Builder} to
