@@ -16,7 +16,6 @@ public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
     /**
      * ${inheritDoc}
      */
-    @Override
     public BufferedImage decodeJPEGFromArray( final byte[] array )
     {
         try
@@ -32,7 +31,6 @@ public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
     /**
      * ${inheritDoc}
      */
-    @Override
     public BufferedImage decodeJPEG( final ByteBuffer _buffer )
     {
         final ByteBuffer buffer = _buffer.duplicate();
@@ -66,8 +64,8 @@ public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
         }
     }
 
-  public static ImageIODecoder getInstance()
-  {
-    return new ImageIODecoder();
-  }
+    public static ImageIODecoder getInstance()
+    {
+        return new ImageIODecoder();
+    }
 }

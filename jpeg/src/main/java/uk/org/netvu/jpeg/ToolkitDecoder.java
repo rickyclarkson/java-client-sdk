@@ -12,7 +12,6 @@ public final class ToolkitDecoder implements JPEGDecoder, JPEGDecoderFromArray
     /**
      * ${inheritDoc}
      */
-    @Override
     public Image decodeJPEG( ByteBuffer buffer )
     {
         buffer = buffer.duplicate();
@@ -29,8 +28,8 @@ public final class ToolkitDecoder implements JPEGDecoder, JPEGDecoderFromArray
         return JPEGDecoders.loadFully( Toolkit.getDefaultToolkit().createImage( bytes ) );
     }
 
-  public static ToolkitDecoder getInstance()
-  {
-    return new ToolkitDecoder();
-  }
+    public static ToolkitDecoder getInstance()
+    {
+        return new ToolkitDecoder();
+    }
 }

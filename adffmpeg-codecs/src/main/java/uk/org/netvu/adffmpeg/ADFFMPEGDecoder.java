@@ -8,10 +8,6 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.concurrent.Semaphore;
 
-import uk.org.netvu.adffmpeg.ADFFMPEG;
-import uk.org.netvu.adffmpeg.AVCodec;
-import uk.org.netvu.adffmpeg.AVCodecContext;
-import uk.org.netvu.adffmpeg.AVFrame;
 import uk.org.netvu.jpeg.JPEGDecoder;
 import uk.org.netvu.jpeg.JPEGDecoderFromArray;
 import uk.org.netvu.jpeg.JPEGDecoders;
@@ -48,7 +44,6 @@ public final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
     /**
      * ${inheritDoc}
      */
-    @Override
     public Image decodeJPEGFromArray( final byte[] array )
     {
         final ByteBuffer buffer = ByteBuffer.allocateDirect( array.length );
@@ -66,7 +61,6 @@ public final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
     /**
      * ${inheritDoc}
      */
-    @Override
     public Image decodeJPEG( ByteBuffer buffer )
     {
         try
@@ -90,7 +84,7 @@ public final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
             final int len = ADFFMPEG.avcodec_decode_video( codecContext, picture, gotPicture, buffer );
             if ( len < 0 )
             {
-                throw null;
+                throw new IllegalStateException( "ADFFMPEG did not decode any bytes" );
             }
 
             final int numberOfPixels = codecContext.getWidth() * codecContext.getHeight();
@@ -111,10 +105,10 @@ public final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
         }
     }
 
-  private static final ADFFMPEGDecoder instance = new ADFFMPEGDecoder();
+    private static final ADFFMPEGDecoder instance = new ADFFMPEGDecoder();
 
-  public static ADFFMPEGDecoder getInstance()
-  {
-    return instance;
-  }
+    public static ADFFMPEGDecoder getInstance()
+    {
+        return instance;
+    }
 }

@@ -3,8 +3,9 @@ package uk.org.netvu.jpeg;
 import java.awt.Container;
 import java.awt.Image;
 import java.awt.MediaTracker;
-import uk.org.netvu.util.Function;
 import java.nio.ByteBuffer;
+
+import uk.org.netvu.util.Function;
 
 /**
  * A class providing access to all the available JPEG decoder implementations.
@@ -37,25 +38,27 @@ public final class JPEGDecoders
         return result;
     }
 
-  public static Function<ByteBuffer, Image> decodeJPEG(final JPEGDecoder decoder)
-  {
-    return new Function<ByteBuffer, Image>()
-      {
-        public Image apply(ByteBuffer buffer)
+    public static Function<ByteBuffer, Image> decodeJPEG( final JPEGDecoder decoder )
+    {
+        return new Function<ByteBuffer, Image>()
         {
-          return decoder.decodeJPEG(buffer);
-        }
-      };
-  }
+            @Override
+            public Image apply( final ByteBuffer buffer )
+            {
+                return decoder.decodeJPEG( buffer );
+            }
+        };
+    }
 
-  public static Function<byte[], Image> decodeJPEGFromArray(final JPEGDecoderFromArray decoder)
-  {
-    return new Function<byte[], Image>()
-      {
-        public Image apply(byte[] array)
+    public static Function<byte[], Image> decodeJPEGFromArray( final JPEGDecoderFromArray decoder )
+    {
+        return new Function<byte[], Image>()
         {
-          return decoder.decodeJPEGFromArray(array);
-        }
-      };
-  }
+            @Override
+            public Image apply( final byte[] array )
+            {
+                return decoder.decodeJPEGFromArray( array );
+            }
+        };
+    }
 }

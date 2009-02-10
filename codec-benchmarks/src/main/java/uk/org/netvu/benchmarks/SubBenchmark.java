@@ -1,21 +1,21 @@
-package uk.org.netvu.codecbenchmarks;
+package uk.org.netvu.benchmarks;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-
-import uk.org.netvu.util.Function;
-import uk.org.netvu.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
+
 import uk.org.netvu.adffmpeg.ADFFMPEGDecoder;
-import uk.org.netvu.jpeg.JPEGDecoder;
-import uk.org.netvu.jpeg.JPEGDecoders;
-import uk.org.netvu.jpeg.JPEGDecoderFromArray;
-import uk.org.netvu.jpeg.ToolkitDecoder;
 import uk.org.netvu.jpeg.ImageIODecoder;
+import uk.org.netvu.jpeg.JPEGDecoder;
+import uk.org.netvu.jpeg.JPEGDecoderFromArray;
+import uk.org.netvu.jpeg.JPEGDecoders;
+import uk.org.netvu.jpeg.ToolkitDecoder;
+import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Pair;
 
 /**
  * A program that is launched many times by Benchmark, to time the execution of
@@ -26,24 +26,19 @@ public class SubBenchmark
     /**
      * The decoders to benchmark.
      */
-  public static final List<Pair<JPEGDecoder, JPEGDecoderFromArray>> decoders = new ArrayList<Pair<JPEGDecoder, JPEGDecoderFromArray>>()
-  {
-    {
-      //this is an anonymous initialiser.
-      add(new Pair<JPEGDecoder, JPEGDecoderFromArray>(ADFFMPEGDecoder.getInstance(), ADFFMPEGDecoder.getInstance()));
-      add(new Pair<JPEGDecoder, JPEGDecoderFromArray>(ToolkitDecoder.getInstance(), ToolkitDecoder.getInstance()));
-      add(new Pair<JPEGDecoder, JPEGDecoderFromArray>(ImageIODecoder.getInstance(), ImageIODecoder.getInstance()));
-    }
-  };
-
-    public static <T> void humourousNetbeans(final int iterations, final Function<T, ?> decoder, final T input, long start, final String info) {
-        start = System.nanoTime();
-        for (int i = 0; i < iterations; i++) {
-            decoder.apply(input);
-        }
-        final long time = System.nanoTime() - start;
-        System.out.println(info + "," + iterations * 1.0 / (time / 1000000000.0));
-    }
+    public static final List<Pair<JPEGDecoder, JPEGDecoderFromArray>> decoders =
+            new ArrayList<Pair<JPEGDecoder, JPEGDecoderFromArray>>()
+            {
+                {
+                    // this is an anonymous initialiser.
+                    add( new Pair<JPEGDecoder, JPEGDecoderFromArray>( ADFFMPEGDecoder.getInstance(), ADFFMPEGDecoder
+                        .getInstance() ) );
+                    add( new Pair<JPEGDecoder, JPEGDecoderFromArray>( ToolkitDecoder.getInstance(), ToolkitDecoder
+                        .getInstance() ) );
+                    add( new Pair<JPEGDecoder, JPEGDecoderFromArray>( ImageIODecoder.getInstance(), ImageIODecoder
+                        .getInstance() ) );
+                }
+            };
 
     /**
      * Executes the specified decoder with the specified constraints.
@@ -60,23 +55,26 @@ public class SubBenchmark
      */
     public static void main( final String[] args ) throws IOException
     {
-      final Pair<JPEGDecoder, JPEGDecoderFromArray> decoder = decoders.get(Integer.parseInt( args[0] ));
+        final Pair<JPEGDecoder, JPEGDecoderFromArray> decoder = decoders.get( Integer.parseInt( args[0] ) );
         final SampleFile sampleFile = Benchmark.sampleFiles[Integer.parseInt( args[1] )];
         final int iterations = Benchmark.iterationAmounts[Integer.parseInt( args[2] )];
         final int warmUpTime = Benchmark.warmUpTimes[Integer.parseInt( args[3] )];
         final String inputType = Benchmark.inputTypes[Integer.parseInt( args[4] )];
 
         final String info =
-          decoder.getFirstComponent().getClass().getSimpleName() + "," + sampleFile.filename + "," + sampleFile.width + ","
-                        + sampleFile.height + "," + inputType + "," + warmUpTime + "," + iterations;
+                decoder.getFirstComponent().getClass().getSimpleName() + "," + sampleFile.filename + ","
+                        + sampleFile.width + "," + sampleFile.height + "," + inputType + "," + warmUpTime + ","
+                        + iterations;
 
         if ( inputType.equals( "ByteBuffer" ) )
         {
-          time( iterations, warmUpTime, JPEGDecoders.decodeJPEG(decoder.getFirstComponent()), bufferFor( sampleFile.filename ), info );
+            time( iterations, warmUpTime, JPEGDecoders.decodeJPEG( decoder.getFirstComponent() ),
+                    bufferFor( sampleFile.filename ), info );
         }
         else
         {
-          time( iterations, warmUpTime, JPEGDecoders.decodeJPEGFromArray(decoder.getSecondComponent()), byteArrayFor( sampleFile.filename ), info );
+            time( iterations, warmUpTime, JPEGDecoders.decodeJPEGFromArray( decoder.getSecondComponent() ),
+                    byteArrayFor( sampleFile.filename ), info );
         }
     }
 
@@ -144,6 +142,12 @@ public class SubBenchmark
         {
             decoder.apply( input );
         }
-        humourousNetbeans( iterations, decoder, input, start, info);
+        start = System.nanoTime();
+        for ( int i = 0; i < iterations; i++ )
+        {
+            decoder.apply( input );
+        }
+        final long time = System.nanoTime() - start;
+        System.out.println( info + "," + iterations * 1.0 / ( time / 1000000000.0 ) );
     }
 }

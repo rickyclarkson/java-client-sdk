@@ -1,8 +1,8 @@
 package uk.org.netvu.util;
 
-import java.io.IOException;
-import java.io.FileInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
@@ -28,7 +28,6 @@ public final class Buffers
         result.position( 0 );
         return result;
     }
-
 
     /**
      * Constructs an array of bytes containing the data from the specified file.

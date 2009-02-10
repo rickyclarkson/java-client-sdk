@@ -8,7 +8,8 @@ import java.util.Locale;
 public enum OperatingSystem
 {
     /**
-     * The operating system is not recognized or supported by the Java Client SDK.
+     * The operating system is not recognized or supported by the Java Client
+     * SDK.
      */
     Unknown,
     /**
@@ -23,18 +24,18 @@ public enum OperatingSystem
      * Mac OS X.
      */
     MacOSX;
-    
+
     /**
-     * Returns the current {@code OperatingSystem} or {@code Unknown} if the operating system is not 
-     * recognized or supported.
-     *
-     * @return the current {@code OperatingSystem} or {@code Unknown} if the operating system is not 
-     * recognized or supported
+     * Returns the current {@code OperatingSystem} or {@code Unknown} if the
+     * operating system is not recognized or supported.
+     * 
+     * @return the current {@code OperatingSystem} or {@code Unknown} if the
+     *         operating system is not recognized or supported
      */
     public static OperatingSystem getOperatingSystem()
     {
         final String os = System.getProperty( "os.name" ).toLowerCase( Locale.ENGLISH );
-        
+
         if ( os.startsWith( "windows xp" ) )
         {
             return WindowsXP;

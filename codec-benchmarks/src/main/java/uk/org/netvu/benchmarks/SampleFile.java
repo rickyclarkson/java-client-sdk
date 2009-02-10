@@ -1,4 +1,4 @@
-package uk.org.netvu.codecbenchmarks;
+package uk.org.netvu.benchmarks;
 
 /**
  * Information about a sample image file.

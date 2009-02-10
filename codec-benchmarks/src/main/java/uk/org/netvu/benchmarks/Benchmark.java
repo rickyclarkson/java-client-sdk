@@ -1,4 +1,4 @@
-package uk.org.netvu.codecbenchmarks;
+package uk.org.netvu.benchmarks;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -78,95 +78,88 @@ public class Benchmark
      */
     public static void main( final String[] args ) throws IOException, InterruptedException
     {
-        if ( args.length == 0 )
+        System.out.println( "decoder,filename,width,height,inputType,warmUpTime,iterations,iterations per second" );
+        for ( final int iterations : rangeOver( iterationAmounts.length ) )
         {
-            System.out.println( "decoder,filename,width,height,inputType,warmUpTime,iterations,iterations per second" );
-            for ( final int iterations : rangeOver( iterationAmounts.length ) )
+            for ( final int warmUpTime : rangeOver( warmUpTimes.length ) )
             {
-                for ( final int warmUpTime : rangeOver( warmUpTimes.length ) )
+                for ( final int decoder : rangeOver( numberOfDecoders ) )
                 {
-                    for ( final int decoder : rangeOver( numberOfDecoders ) )
+                    for ( final int resolution : rangeOver( sampleFiles.length ) )
                     {
-                        for ( final int resolution : rangeOver( sampleFiles.length ) )
+                        for ( final int inputType : rangeOver( inputTypes.length ) )
                         {
-                            for ( final int inputType : rangeOver( inputTypes.length ) )
+                            final Process process =
+                                    Runtime.getRuntime().exec(
+                                            new String[] { "java", "-classpath",
+                                                System.getProperty( "java.class.path" ),
+                                                "uk.org.netvu.jpeg.SubBenchmark", String.valueOf( decoder ),
+                                                String.valueOf( resolution ), String.valueOf( iterations ),
+                                                String.valueOf( warmUpTime ), String.valueOf( inputType ) } );
+                            // try moving waitFor
+                            // try one thread per stream.
+
+                            final Thread inputThread = new Thread( new Runnable()
                             {
-                                final Process process =
-                                        Runtime.getRuntime().exec(
-                                                new String[] { "java", "-classpath",
-                                                    System.getProperty( "java.class.path" ),
-                                                    "uk.org.netvu.jpeg.SubBenchmark", String.valueOf( decoder ),
-                                                    String.valueOf( resolution ), String.valueOf( iterations ),
-                                                    String.valueOf( warmUpTime ), String.valueOf( inputType ) } );
-                                // try moving waitFor
-                                // try one thread per stream.
-
-                                final Thread inputThread = new Thread( new Runnable()
+                                public void run()
                                 {
-                                    public void run()
+                                    try
                                     {
-                                        try
+                                        final BufferedReader inputStreamReader =
+                                                new BufferedReader( new InputStreamReader( process.getInputStream(),
+                                                        "UTF-8" ) );
+                                        String line;
+                                        while ( ( line = inputStreamReader.readLine() ) != null )
                                         {
-                                            final BufferedReader inputStreamReader =
-                                                    new BufferedReader( new InputStreamReader( process
-                                                        .getInputStream(), "UTF-8" ) );
-                                            String line;
-                                            while ( ( line = inputStreamReader.readLine() ) != null )
+                                            synchronized ( args )
                                             {
-                                                synchronized ( args )
-                                                {
-                                                    System.out.println( line );
-                                                }
+                                                System.out.println( line );
                                             }
-                                            inputStreamReader.close();
                                         }
-                                        catch ( final Exception e )
-                                        {
-                                            throw new RuntimeException( e );
-                                        }
+                                        inputStreamReader.close();
                                     }
-                                } );
-                                inputThread.start();
-                                final Thread errorThread = new Thread( new Runnable()
+                                    catch ( final Exception e )
+                                    {
+                                        throw new RuntimeException( e );
+                                    }
+                                }
+                            } );
+                            inputThread.start();
+                            final Thread errorThread = new Thread( new Runnable()
+                            {
+                                public void run()
                                 {
-                                    public void run()
+                                    try
                                     {
-                                        try
+                                        final BufferedReader errorStreamReader =
+                                                new BufferedReader( new InputStreamReader( process.getErrorStream(),
+                                                        "UTF-8" ) );
+                                        String line;
+                                        while ( ( line = errorStreamReader.readLine() ) != null )
                                         {
-                                            final BufferedReader errorStreamReader =
-                                                    new BufferedReader( new InputStreamReader( process
-                                                        .getErrorStream(), "UTF-8" ) );
-                                            String line;
-                                            while ( ( line = errorStreamReader.readLine() ) != null )
+                                            synchronized ( args )
                                             {
-                                                synchronized ( args )
-                                                {
-                                                    System.out.println( line );
-                                                }
+                                                System.out.println( line );
                                             }
-                                            errorStreamReader.close();
                                         }
-                                        catch ( final Exception e )
-                                        {
-                                            throw new RuntimeException( e );
-                                        }
+                                        errorStreamReader.close();
                                     }
-                                } );
-                                errorThread.start();
+                                    catch ( final Exception e )
+                                    {
+                                        throw new RuntimeException( e );
+                                    }
+                                }
+                            } );
+                            errorThread.start();
 
-                                process.waitFor();
+                            process.waitFor();
 
-                                inputThread.join();
-                                errorThread.join();
-                            }
+                            inputThread.join();
+                            errorThread.join();
                         }
                     }
                 }
             }
-        }
-        else
-        {
-            throw null;
         }
     }
 }
