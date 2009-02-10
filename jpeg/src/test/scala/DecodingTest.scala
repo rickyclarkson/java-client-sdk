@@ -16,10 +16,10 @@ class DecodingTest extends JUnit4(new Specification {
                     ( 352, 256, "dvip3s-ad-dev-adh-352x256.jpeg" )) } {
         ("Decoding " + file._3) should {
          "give an Image whose width and height are the same as documented" in {
-          JPEGDecoders.decodeJPEG(decoder).apply(Buffers.bufferFor(file._3)) match { case image => image.getWidth(null) mustEqual file._1
-                                                                                                   image.getHeight(null) mustEqual file._2 }
-          JPEGDecoders.decodeJPEGFromArray(decoder).apply(Buffers.byteArrayFor(file._3)) match { case image => image.getWidth(null) mustEqual file._1
-                                                                                                               image.getHeight(null) mustEqual file._2 }
+          decoder.decodeJPEG(Buffers.bufferFor(file._3)) match { case image => image.getWidth(null) mustEqual file._1
+                                                                               image.getHeight(null) mustEqual file._2 }
+          decoder.decodeJPEGFromArray(Buffers.byteArrayFor(file._3)) match { case image => image.getWidth(null) mustEqual file._1
+                                                                                           image.getHeight(null) mustEqual file._2 }
          }
         }
        }

@@ -3,25 +3,20 @@ package uk.org.netvu.jpeg;
 import java.awt.Container;
 import java.awt.Image;
 import java.awt.MediaTracker;
-import java.nio.ByteBuffer;
-
-import uk.org.netvu.util.Function;
 
 /**
- * A class providing access to all the available JPEG decoder implementations.
+ * A class providing utility methods relating to JPEGDecoder and
+ * JPEGDecoderFromArray implementations.
  */
 public final class JPEGDecoders
 {
     /**
-     * A JPEG decoder that uses javax.imageio.
+     * Blocks until an Image is fully loaded.
+     * 
+     * @param the
+     *        Image to fully load.
+     * @return the fully loaded Image.
      */
-    public static final ImageIODecoder imageIODecoder = new ImageIODecoder();
-
-    /**
-     * A JPEG decoder that uses java.awt.Toolkit.
-     */
-    public static final ToolkitDecoder toolkitDecoder = new ToolkitDecoder();
-
     public static Image loadFully( final Image result )
     {
         try
@@ -36,29 +31,5 @@ public final class JPEGDecoders
         }
 
         return result;
-    }
-
-    public static Function<ByteBuffer, Image> decodeJPEG( final JPEGDecoder decoder )
-    {
-        return new Function<ByteBuffer, Image>()
-        {
-            @Override
-            public Image apply( final ByteBuffer buffer )
-            {
-                return decoder.decodeJPEG( buffer );
-            }
-        };
-    }
-
-    public static Function<byte[], Image> decodeJPEGFromArray( final JPEGDecoderFromArray decoder )
-    {
-        return new Function<byte[], Image>()
-        {
-            @Override
-            public Image apply( final byte[] array )
-            {
-                return decoder.decodeJPEGFromArray( array );
-            }
-        };
     }
 }

@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
 {
     /**
-     * ${inheritDoc}
+     * {@inheritDoc}
      */
     public BufferedImage decodeJPEGFromArray( final byte[] array )
     {
@@ -29,11 +29,11 @@ public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
     }
 
     /**
-     * ${inheritDoc}
+     * {@inheritDoc}
      */
-    public BufferedImage decodeJPEG( final ByteBuffer _buffer )
+    public BufferedImage decodeJPEG( final ByteBuffer original )
     {
-        final ByteBuffer buffer = _buffer.duplicate();
+        final ByteBuffer buffer = original.duplicate();
         try
         {
             return ImageIO.read( new InputStream()
@@ -45,14 +45,14 @@ public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
                 }
 
                 @Override
-                public int read( final byte[] bytes, final int offset, int length ) throws IOException
+                public int read( final byte[] bytes, final int offset, final int originalLength ) throws IOException
                 {
                     if ( buffer.remaining() == 0 )
                     {
                         return -1;
                     }
 
-                    length = Math.min( length, buffer.remaining() );
+                    final int length = Math.min( originalLength, buffer.remaining() );
                     buffer.get( bytes, offset, length );
                     return length;
                 }
@@ -64,6 +64,11 @@ public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
         }
     }
 
+    /**
+     * Gets an instance of ImageIODecoder.
+     * 
+     * @return an instance of ImageIODecoder.
+     */
     public static ImageIODecoder getInstance()
     {
         return new ImageIODecoder();

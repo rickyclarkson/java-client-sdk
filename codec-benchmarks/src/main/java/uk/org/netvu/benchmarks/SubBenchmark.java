@@ -1,5 +1,6 @@
 package uk.org.netvu.benchmarks;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,7 +13,6 @@ import uk.org.netvu.adffmpeg.ADFFMPEGDecoder;
 import uk.org.netvu.jpeg.ImageIODecoder;
 import uk.org.netvu.jpeg.JPEGDecoder;
 import uk.org.netvu.jpeg.JPEGDecoderFromArray;
-import uk.org.netvu.jpeg.JPEGDecoders;
 import uk.org.netvu.jpeg.ToolkitDecoder;
 import uk.org.netvu.util.Function;
 import uk.org.netvu.util.Pair;
@@ -68,12 +68,12 @@ public class SubBenchmark
 
         if ( inputType.equals( "ByteBuffer" ) )
         {
-            time( iterations, warmUpTime, JPEGDecoders.decodeJPEG( decoder.getFirstComponent() ),
-                    bufferFor( sampleFile.filename ), info );
+            time( iterations, warmUpTime, decodeJPEG( decoder.getFirstComponent() ), bufferFor( sampleFile.filename ),
+                    info );
         }
         else
         {
-            time( iterations, warmUpTime, JPEGDecoders.decodeJPEGFromArray( decoder.getSecondComponent() ),
+            time( iterations, warmUpTime, decodeJPEGFromArray( decoder.getSecondComponent() ),
                     byteArrayFor( sampleFile.filename ), info );
         }
     }
@@ -149,5 +149,29 @@ public class SubBenchmark
         }
         final long time = System.nanoTime() - start;
         System.out.println( info + "," + iterations * 1.0 / ( time / 1000000000.0 ) );
+    }
+
+    public static Function<ByteBuffer, Image> decodeJPEG( final JPEGDecoder decoder )
+    {
+        return new Function<ByteBuffer, Image>()
+        {
+            @Override
+            public Image apply( final ByteBuffer buffer )
+            {
+                return decoder.decodeJPEG( buffer );
+            }
+        };
+    }
+
+    public static Function<byte[], Image> decodeJPEGFromArray( final JPEGDecoderFromArray decoder )
+    {
+        return new Function<byte[], Image>()
+        {
+            @Override
+            public Image apply( final byte[] array )
+            {
+                return decoder.decodeJPEGFromArray( array );
+            }
+        };
     }
 }

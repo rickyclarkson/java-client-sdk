@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 public final class ToolkitDecoder implements JPEGDecoder, JPEGDecoderFromArray
 {
     /**
-     * ${inheritDoc}
+     * {@inheritDoc}
      */
     public Image decodeJPEG( ByteBuffer buffer )
     {
@@ -21,13 +21,18 @@ public final class ToolkitDecoder implements JPEGDecoder, JPEGDecoderFromArray
     }
 
     /**
-     * ${inheritDoc}
+     * {@inheritDoc}
      */
     public Image decodeJPEGFromArray( final byte[] bytes )
     {
         return JPEGDecoders.loadFully( Toolkit.getDefaultToolkit().createImage( bytes ) );
     }
 
+    /**
+     * Gives an instance of ToolkitDecoder.
+     * 
+     * @return an instance of ToolkitDecoder.
+     */
     public static ToolkitDecoder getInstance()
     {
         return new ToolkitDecoder();

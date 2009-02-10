@@ -93,11 +93,10 @@ public class Benchmark
                                     Runtime.getRuntime().exec(
                                             new String[] { "java", "-classpath",
                                                 System.getProperty( "java.class.path" ),
-                                                "uk.org.netvu.jpeg.SubBenchmark", String.valueOf( decoder ),
-                                                String.valueOf( resolution ), String.valueOf( iterations ),
-                                                String.valueOf( warmUpTime ), String.valueOf( inputType ) } );
-                            // try moving waitFor
-                            // try one thread per stream.
+                                                "uk.org.netvu.codecbenchmarks.SubBenchmark",
+                                                String.valueOf( decoder ), String.valueOf( resolution ),
+                                                String.valueOf( iterations ), String.valueOf( warmUpTime ),
+                                                String.valueOf( inputType ) } );
 
                             final Thread inputThread = new Thread( new Runnable()
                             {

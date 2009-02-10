@@ -1,4 +1,4 @@
-Decode JPEG Data
+Decode JPEG
 
   Provide a concise way of decoding a ByteBuffer containing a JPEG frame into a java.awt.image.BufferedImage.
 
