@@ -1,4 +1,4 @@
-package uk.org.netvu.jpeg;
+package uk.org.netvu.adffmpeg;
 
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -12,11 +12,14 @@ import uk.org.netvu.adffmpeg.ADFFMPEG;
 import uk.org.netvu.adffmpeg.AVCodec;
 import uk.org.netvu.adffmpeg.AVCodecContext;
 import uk.org.netvu.adffmpeg.AVFrame;
+import uk.org.netvu.jpeg.JPEGDecoder;
+import uk.org.netvu.jpeg.JPEGDecoderFromArray;
+import uk.org.netvu.jpeg.JPEGDecoders;
 
 /**
  * A JPEG decoder that uses the ADFFMPEG Java bindings.
  */
-final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
+public final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
 {
     /**
      * The context instance for ADFFMPEG. Currently this is cleared for every
@@ -107,4 +110,11 @@ final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
             semaphore.release();
         }
     }
+
+  private static final ADFFMPEGDecoder instance = new ADFFMPEGDecoder();
+
+  public static ADFFMPEGDecoder getInstance()
+  {
+    return instance;
+  }
 }

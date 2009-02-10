@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 /**
  * A JPEG decoder that uses javax.imageio.
  */
-final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
+public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
 {
     /**
      * ${inheritDoc}
@@ -65,4 +65,9 @@ final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
             throw new RuntimeException( e );
         }
     }
+
+  public static ImageIODecoder getInstance()
+  {
+    return new ImageIODecoder();
+  }
 }

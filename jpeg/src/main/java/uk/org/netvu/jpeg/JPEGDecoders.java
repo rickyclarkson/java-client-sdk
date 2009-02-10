@@ -21,11 +21,6 @@ public final class JPEGDecoders
      */
     public static final ToolkitDecoder toolkitDecoder = new ToolkitDecoder();
 
-    /**
-     * A JPEG decoder that uses the ADFFMPEG Java bindings.
-     */
-    public static final ADFFMPEGDecoder adffmpegDecoder = new ADFFMPEGDecoder();
-
     public static Image loadFully( final Image result )
     {
         try
@@ -42,7 +37,7 @@ public final class JPEGDecoders
         return result;
     }
 
-  static Function<ByteBuffer, Image> decodeJPEG(final JPEGDecoder decoder)
+  public static Function<ByteBuffer, Image> decodeJPEG(final JPEGDecoder decoder)
   {
     return new Function<ByteBuffer, Image>()
       {
@@ -53,7 +48,7 @@ public final class JPEGDecoders
       };
   }
 
-  static Function<byte[], Image> decodeJPEGFromArray(final JPEGDecoderFromArray decoder)
+  public static Function<byte[], Image> decodeJPEGFromArray(final JPEGDecoderFromArray decoder)
   {
     return new Function<byte[], Image>()
       {

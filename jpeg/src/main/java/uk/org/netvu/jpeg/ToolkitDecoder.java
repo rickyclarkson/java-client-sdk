@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 /**
  * A JPEG decoder that uses java.awt.Toolkit.
  */
-final class ToolkitDecoder implements JPEGDecoder, JPEGDecoderFromArray
+public final class ToolkitDecoder implements JPEGDecoder, JPEGDecoderFromArray
 {
     /**
      * ${inheritDoc}
@@ -28,4 +28,9 @@ final class ToolkitDecoder implements JPEGDecoder, JPEGDecoderFromArray
     {
         return JPEGDecoders.loadFully( Toolkit.getDefaultToolkit().createImage( bytes ) );
     }
+
+  public static ToolkitDecoder getInstance()
+  {
+    return new ToolkitDecoder();
+  }
 }
