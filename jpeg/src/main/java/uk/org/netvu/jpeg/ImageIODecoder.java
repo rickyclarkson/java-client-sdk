@@ -14,6 +14,48 @@ import javax.imageio.ImageIO;
 public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
 {
     /**
+     * Provides an InputStream interface to a ByteBuffer.
+     */
+    private static final class ByteBufferInputStream extends InputStream
+    {
+        /**
+         * The ByteBuffer to get data from.
+         */
+        private final ByteBuffer buffer;
+
+        /**
+         * Constructs a ByteBufferInputStream with the specified ByteBuffer
+         * source.
+         * 
+         * @param buffer
+         *        the ByteBuffer to get data from.
+         */
+        private ByteBufferInputStream( final ByteBuffer buffer )
+        {
+            this.buffer = buffer;
+        }
+
+        @Override
+        public int read() throws IOException
+        {
+            return buffer.hasRemaining() ? buffer.get() : -1;
+        }
+
+        @Override
+        public int read( final byte[] bytes, final int offset, final int originalLength ) throws IOException
+        {
+            if ( buffer.remaining() == 0 )
+            {
+                return -1;
+            }
+
+            final int length = Math.min( originalLength, buffer.remaining() );
+            buffer.get( bytes, offset, length );
+            return length;
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     public BufferedImage decodeJPEGFromArray( final byte[] array )
@@ -36,27 +78,7 @@ public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
         final ByteBuffer buffer = original.duplicate();
         try
         {
-            return ImageIO.read( new InputStream()
-            {
-                @Override
-                public int read() throws IOException
-                {
-                    return buffer.hasRemaining() ? buffer.get() : -1;
-                }
-
-                @Override
-                public int read( final byte[] bytes, final int offset, final int originalLength ) throws IOException
-                {
-                    if ( buffer.remaining() == 0 )
-                    {
-                        return -1;
-                    }
-
-                    final int length = Math.min( originalLength, buffer.remaining() );
-                    buffer.get( bytes, offset, length );
-                    return length;
-                }
-            } );
+            return ImageIO.read( new ByteBufferInputStream( buffer ) );
         }
         catch ( final IOException e )
         {

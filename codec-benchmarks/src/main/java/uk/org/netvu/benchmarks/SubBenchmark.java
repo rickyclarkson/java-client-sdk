@@ -24,6 +24,13 @@ import uk.org.netvu.util.Pair;
 public class SubBenchmark
 {
     /**
+     * To prevent instantiation.
+     */
+    private SubBenchmark()
+    {
+    }
+
+    /**
      * The decoders to benchmark.
      */
     public static final List<Pair<JPEGDecoder, JPEGDecoderFromArray>> decoders =
@@ -151,7 +158,14 @@ public class SubBenchmark
         System.out.println( info + "," + iterations * 1.0 / ( time / 1000000000.0 ) );
     }
 
-    public static Function<ByteBuffer, Image> decodeJPEG( final JPEGDecoder decoder )
+    /**
+     * A method that returns JPEGDecoder.decodeJPEG as a Function on the specified JPEGDecoder.
+     * This is used to allow the method to be passed as a value into time().
+     *
+     * @param decoder the JPEGDecoder that the returned Function uses to decode JPEGs.
+     * @return a Function that takes in a ByteBuffer containing JPEG data, and returns it as an Image after using the specified JPEGDecoder to decode it.
+     */
+    private static Function<ByteBuffer, Image> decodeJPEG( final JPEGDecoder decoder )
     {
         return new Function<ByteBuffer, Image>()
         {
@@ -163,6 +177,13 @@ public class SubBenchmark
         };
     }
 
+    /**
+     * A method that returns JPEGDecoderFromArray.decodeJPEGFromArray as a Function on the specified JPEGDecoderFromArray.
+     * This is used to allow the method to be passed as a value into time().
+     *
+     * @param decoder the JPEGDecoderFromArray that the returned Function uses to decode JPEGs.
+     * @return a Function that takes in an array of bytes containing JPEG data, and returns it as an Image after using the specified JPEGDecoderFromArray to decode it.
+     */
     public static Function<byte[], Image> decodeJPEGFromArray( final JPEGDecoderFromArray decoder )
     {
         return new Function<byte[], Image>()

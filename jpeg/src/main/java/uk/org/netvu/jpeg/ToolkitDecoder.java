@@ -12,9 +12,9 @@ public final class ToolkitDecoder implements JPEGDecoder, JPEGDecoderFromArray
     /**
      * {@inheritDoc}
      */
-    public Image decodeJPEG( ByteBuffer buffer )
+    public Image decodeJPEG( final ByteBuffer originalBuffer )
     {
-        buffer = buffer.duplicate();
+        final ByteBuffer buffer = originalBuffer.duplicate();
         final byte[] bytes = new byte[buffer.limit()];
         buffer.get( bytes );
         return decodeJPEGFromArray( bytes );

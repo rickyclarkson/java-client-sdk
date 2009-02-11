@@ -20,6 +20,13 @@ import uk.org.netvu.util.Pair;
 public class ManualCheck
 {
     /**
+     * To prevent instantiation.
+     */
+    private ManualCheck()
+    {
+    }
+
+    /**
      * Displays a JFrame containing a JScrollPane containing a JPanel containing
      * all the test images decoded by each of the decoders in a grid.
      * 

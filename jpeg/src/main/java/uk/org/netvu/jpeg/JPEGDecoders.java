@@ -11,10 +11,17 @@ import java.awt.MediaTracker;
 public final class JPEGDecoders
 {
     /**
+     * To prevent instantiation.
+     */
+    private JPEGDecoders()
+    {
+    }
+
+    /**
      * Blocks until an Image is fully loaded.
      * 
-     * @param the
-     *        Image to fully load.
+     * @param result
+     *        the Image to fully load.
      * @return the fully loaded Image.
      */
     public static Image loadFully( final Image result )

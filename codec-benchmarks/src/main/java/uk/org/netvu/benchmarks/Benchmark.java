@@ -2,7 +2,10 @@ package uk.org.netvu.benchmarks;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import uk.org.netvu.util.Function;
 
 /**
  * The controller for benchmarks. It runs each benchmark in a child process, and
@@ -13,6 +16,13 @@ import java.io.InputStreamReader;
  */
 public class Benchmark
 {
+    /**
+     * Prevents instantiation.
+     */
+    private Benchmark()
+    {
+    }
+
     /**
      * Gives an array containing the integers from 0 until the specified length,
      * exclusively.
@@ -98,58 +108,45 @@ public class Benchmark
                                                 String.valueOf( iterations ), String.valueOf( warmUpTime ),
                                                 String.valueOf( inputType ) } );
 
-                            final Thread inputThread = new Thread( new Runnable()
+                            final Function<InputStream, Thread> consume = new Function<InputStream, Thread>()
                             {
-                                public void run()
+                                @Override
+                                public Thread apply( final InputStream inputStream )
                                 {
-                                    try
+                                    final Thread thread = new Thread( new Runnable()
                                     {
-                                        final BufferedReader inputStreamReader =
-                                                new BufferedReader( new InputStreamReader( process.getInputStream(),
-                                                        "UTF-8" ) );
-                                        String line;
-                                        while ( ( line = inputStreamReader.readLine() ) != null )
+                                        public void run()
                                         {
-                                            synchronized ( args )
+                                            try
                                             {
-                                                System.out.println( line );
+                                                final InputStreamReader isReader =
+                                                        new InputStreamReader( inputStream, "UTF-8" );
+                                                final BufferedReader reader = new BufferedReader( isReader );
+                                                String line;
+                                                while ( ( line = reader.readLine() ) != null )
+                                                {
+                                                    synchronized ( args )
+                                                    {
+                                                        System.out.println( line );
+                                                    }
+                                                }
+                                                reader.close();
+                                                isReader.close();
+
+                                            }
+                                            catch ( final IOException e )
+                                            {
+                                                throw new RuntimeException( e );
                                             }
                                         }
-                                        inputStreamReader.close();
-                                    }
-                                    catch ( final Exception e )
-                                    {
-                                        throw new RuntimeException( e );
-                                    }
+                                    } );
+                                    thread.start();
+                                    return thread;
                                 }
-                            } );
-                            inputThread.start();
-                            final Thread errorThread = new Thread( new Runnable()
-                            {
-                                public void run()
-                                {
-                                    try
-                                    {
-                                        final BufferedReader errorStreamReader =
-                                                new BufferedReader( new InputStreamReader( process.getErrorStream(),
-                                                        "UTF-8" ) );
-                                        String line;
-                                        while ( ( line = errorStreamReader.readLine() ) != null )
-                                        {
-                                            synchronized ( args )
-                                            {
-                                                System.out.println( line );
-                                            }
-                                        }
-                                        errorStreamReader.close();
-                                    }
-                                    catch ( final Exception e )
-                                    {
-                                        throw new RuntimeException( e );
-                                    }
-                                }
-                            } );
-                            errorThread.start();
+                            };
+
+                            final Thread inputThread = consume.apply( process.getInputStream() );
+                            final Thread errorThread = consume.apply( process.getErrorStream() );
 
                             process.waitFor();
 
