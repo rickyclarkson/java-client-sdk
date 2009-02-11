@@ -42,7 +42,7 @@ public final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
     }
 
     /**
-     * ${inheritDoc}
+     * {@inheritDoc}
      */
     public Image decodeJPEGFromArray( final byte[] array )
     {
@@ -59,9 +59,9 @@ public final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
     private static final Semaphore semaphore = new Semaphore( 1, true );
 
     /**
-     * ${inheritDoc}
+     * {@inheritDoc}
      */
-    public Image decodeJPEG( ByteBuffer buffer )
+    public Image decodeJPEG( final ByteBuffer originalBuffer )
     {
         try
         {
@@ -73,7 +73,7 @@ public final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
         }
         try
         {
-            buffer = buffer.duplicate();
+            final ByteBuffer buffer = originalBuffer.duplicate();
             ADFFMPEG.avcodec_close( codecContext );
             ADFFMPEG.av_free( codecContext.getVoidPointer() );
             codecContext = ADFFMPEG.avcodec_alloc_context();
@@ -107,6 +107,11 @@ public final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
 
     private static final ADFFMPEGDecoder instance = new ADFFMPEGDecoder();
 
+    /**
+     * Gives an instance of ADFFMPEGDecoder.
+     *
+     * @return an instance of ADFFMPEGDecoder.
+     */
     public static ADFFMPEGDecoder getInstance()
     {
         return instance;
