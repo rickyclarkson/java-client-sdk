@@ -87,11 +87,11 @@
         </site>
     </distributionManagement>
     <modules>
-        <module>protocol</module>
-        <module>data</module>
-        <module>util</module>
         <module>jpeg</module>
         <module>adffmpeg-codecs</module>
         <module>codec-benchmarks</module>
+        <module>protocol</module>
+        <module>data</module>
+        <module>util</module>
     </modules>
 </project>
