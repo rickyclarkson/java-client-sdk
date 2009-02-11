@@ -163,7 +163,8 @@ public class SubBenchmark
      * This is used to allow the method to be passed as a value into time().
      *
      * @param decoder the JPEGDecoder that the returned Function uses to decode JPEGs.
-     * @return a Function that takes in a ByteBuffer containing JPEG data, and returns it as an Image after using the specified JPEGDecoder to decode it.
+     * @return a Function that takes in a ByteBuffer containing JPEG data, and returns it as an
+     * Image after using the specified JPEGDecoder to decode it.
      */
     private static Function<ByteBuffer, Image> decodeJPEG( final JPEGDecoder decoder )
     {
@@ -178,11 +179,14 @@ public class SubBenchmark
     }
 
     /**
-     * A method that returns JPEGDecoderFromArray.decodeJPEGFromArray as a Function on the specified JPEGDecoderFromArray.
+     * A method that returns JPEGDecoderFromArray.decodeJPEGFromArray as a Function on the
+     * specified JPEGDecoderFromArray.
+     *
      * This is used to allow the method to be passed as a value into time().
      *
      * @param decoder the JPEGDecoderFromArray that the returned Function uses to decode JPEGs.
-     * @return a Function that takes in an array of bytes containing JPEG data, and returns it as an Image after using the specified JPEGDecoderFromArray to decode it.
+     * @return a Function that takes in an array of bytes containing JPEG data, and returns it
+     * as an Image after using the specified JPEGDecoderFromArray to decode it.
      */
     public static Function<byte[], Image> decodeJPEGFromArray( final JPEGDecoderFromArray decoder )
     {
