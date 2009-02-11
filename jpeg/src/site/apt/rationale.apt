@@ -6,6 +6,10 @@ Rationale
 
  We will create a benchmarking suite for this, which will, in separate processes, run the decoders on several images, timing the results.  To take the JVM's warmup time into consideration, we will disregard results from the first 10 seconds of operation.  We will run the decoders in separate processes to avoid any interference between them.
 
+ Having created and executed this benchmarking suite, we found that ByteBuffer was very slightly slower on average than byte[] as an input type, but far more convenient for our uses, so we made JPEGDecoder only support decodeJPEG(ByteBuffer).  There is a single test image on which using ByteBuffer as an input type causes the overall speed to halve, but tests against other images of the same size show that to be a one-off.  The benchmarking suite was executed on Linux and Windows XP.  To be able to keep byte[] as a possible input type for performance tests, we created JPEGDecoderFromArray, which has to be exposed as public because both the adffmpeg and jpeg packages need to implement it.
+
+ We also found that Toolkit beats ADFFMPEG on most small images and is comparable on large images, so we are optimistic that we can take out the ADFFMPEG dependency, at least for JPEG decoding.  ImageIO turned out to be slower than the others, but in larger performance tests involving actual rendering ImageIO might perform better because it delivers a BufferedImage, which can benefit from hardware acceleration.
+
 * JPEG decoders 
 
 ** ImageIO

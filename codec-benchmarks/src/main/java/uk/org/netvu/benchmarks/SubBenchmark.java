@@ -16,6 +16,7 @@ import uk.org.netvu.jpeg.JPEGDecoderFromArray;
 import uk.org.netvu.jpeg.ToolkitDecoder;
 import uk.org.netvu.util.Function;
 import uk.org.netvu.util.Pair;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A program that is launched many times by Benchmark, to time the execution of
@@ -59,9 +60,12 @@ public class SubBenchmark
      *        input type to use.
      * @throws IOException
      *         if any I/O error occurred.
+     * @throws NullPointerException
+     *         if args is null.
      */
     public static void main( final String[] args ) throws IOException
     {
+        CheckParameters.areNotNull( args );
         final Pair<JPEGDecoder, JPEGDecoderFromArray> decoder = decoders.get( Integer.parseInt( args[0] ) );
         final SampleFile sampleFile = Benchmark.sampleFiles[Integer.parseInt( args[1] )];
         final int iterations = Benchmark.iterationAmounts[Integer.parseInt( args[2] )];
@@ -93,9 +97,12 @@ public class SubBenchmark
      * @return a ByteBuffer containing the data from the specified file.
      * @throws IOException
      *         if any I/O error occurs.
+     * @throws NullPointerException
+     *         if filename is null.
      */
     public static ByteBuffer bufferFor( final String filename ) throws IOException
     {
+        CheckParameters.areNotNull( filename );
         final ByteBuffer first =
                 new FileInputStream( filename ).getChannel().map( FileChannel.MapMode.READ_ONLY, 0,
                         new File( filename ).length() );
@@ -114,9 +121,12 @@ public class SubBenchmark
      * @return an array of bytes containing the data from the specified file.
      * @throws IOException
      *         if any I/O error occurs.
+     * @throws NullPointerException
+     *         if filename is null.
      */
     public static byte[] byteArrayFor( final String filename ) throws IOException
     {
+        CheckParameters.areNotNull( filename );
         final ByteBuffer buffer = bufferFor( filename );
         final byte[] bytes = new byte[buffer.limit()];
         buffer.get( bytes );
@@ -140,10 +150,12 @@ public class SubBenchmark
      *        the input to the decoder.
      * @param info
      *        extra info to include in the output.
+     * @throws NullPointerException if decoder, input or info are null.
      */
     public static <T> void time( final int iterations, final long warmUpMillis, final Function<T, ?> decoder,
             final T input, final String info )
     {
+        CheckParameters.areNotNull( decoder, input, info );
         long start = System.nanoTime();
         while ( System.nanoTime() - start < warmUpMillis * 1000000 )
         {
@@ -165,9 +177,11 @@ public class SubBenchmark
      * @param decoder the JPEGDecoder that the returned Function uses to decode JPEGs.
      * @return a Function that takes in a ByteBuffer containing JPEG data, and returns it as an
      * Image after using the specified JPEGDecoder to decode it.
+     * @throws NullPointerException if decoder is null.
      */
     private static Function<ByteBuffer, Image> decodeJPEG( final JPEGDecoder decoder )
     {
+        CheckParameters.areNotNull( decoder );
         return new Function<ByteBuffer, Image>()
         {
             @Override
@@ -187,9 +201,11 @@ public class SubBenchmark
      * @param decoder the JPEGDecoderFromArray that the returned Function uses to decode JPEGs.
      * @return a Function that takes in an array of bytes containing JPEG data, and returns it
      * as an Image after using the specified JPEGDecoderFromArray to decode it.
+     * @throws NullPointerException if decoder is null.
      */
     public static Function<byte[], Image> decodeJPEGFromArray( final JPEGDecoderFromArray decoder )
     {
+        CheckParameters.areNotNull( decoder );
         return new Function<byte[], Image>()
         {
             @Override

@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A JPEG decoder that uses javax.imageio.
@@ -29,9 +30,11 @@ public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
          * 
          * @param buffer
          *        the ByteBuffer to get data from.
+         * @throws NullPointerException if buffer is null.
          */
         private ByteBufferInputStream( final ByteBuffer buffer )
         {
+            CheckParameters.areNotNull( buffer );
             this.buffer = buffer;
         }
 
@@ -44,6 +47,7 @@ public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
         @Override
         public int read( final byte[] bytes, final int offset, final int originalLength ) throws IOException
         {
+            CheckParameters.areNotNull( bytes );
             if ( buffer.remaining() == 0 )
             {
                 return -1;

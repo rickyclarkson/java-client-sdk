@@ -1,0 +1,3 @@
+Rationale
+
+ The reason for the existence of the code in this module is documented in the jpeg module.  The reason for its location is that we do not want to force the caller to load ADFFMPEG if they don't need it, so a caller can use the jpeg module alone or use it in conjunction with this module.

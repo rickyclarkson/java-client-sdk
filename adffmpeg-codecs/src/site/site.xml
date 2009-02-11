@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <body>
+        <menu name="Design">
+            <item name="Rationale" href="rationale.html"/>
+        </menu>
+        <menu ref="reports"/>
+    </body>
+</project>
+            
+            

@@ -14,6 +14,7 @@ public interface JPEGDecoder
      * 
      * @param buffer
      *        the ByteBuffer containing JPEG data.
+     * @throws NullPointerException if buffer is null.
      * @return the decoded Image.
      */
     Image decodeJPEG( ByteBuffer buffer );

@@ -13,6 +13,7 @@ public interface JPEGDecoderFromArray
      * 
      * @param array
      *        the JPEG data.
+     * @throws NullPointerException if array is null.
      * @return the decoded Image.
      */
     Image decodeJPEGFromArray( byte[] array );

@@ -12,6 +12,7 @@ import javax.swing.JScrollPane;
 import uk.org.netvu.jpeg.JPEGDecoder;
 import uk.org.netvu.jpeg.JPEGDecoderFromArray;
 import uk.org.netvu.util.Pair;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A simple graphical program to help visually check that all the decoders are
@@ -32,9 +33,12 @@ public class ManualCheck
      * 
      * @param args
      *        ignored.
+     * @throws NullPointerException if args is null.
      */
     public static void main( final String[] args )
     {
+        CheckParameters.areNotNull( args );
+
         new JFrame()
         {
             {

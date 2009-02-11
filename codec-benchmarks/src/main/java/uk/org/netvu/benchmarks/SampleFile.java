@@ -1,5 +1,7 @@
 package uk.org.netvu.benchmarks;
 
+import uk.org.netvu.util.CheckParameters;
+
 /**
  * Information about a sample image file.
  */
@@ -29,9 +31,11 @@ class SampleFile
      *        the height of the image.
      * @param filename
      *        the filename of the image.
+     * @throws NullPointerException if filename is null.
      */
     SampleFile( final int width, final int height, final String filename )
     {
+        CheckParameters.areNotNull( filename );
         this.width = width;
         this.height = height;
         this.filename = filename;

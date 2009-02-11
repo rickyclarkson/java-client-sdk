@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import uk.org.netvu.util.Function;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * The controller for benchmarks. It runs each benchmark in a child process, and
@@ -85,9 +86,12 @@ public class Benchmark
      *         if any I/O fails.
      * @throws InterruptedException
      *         if the parent is interrupted while waiting for the child process.
+     * @throws NullPointerException
+     *         if args is null.
      */
     public static void main( final String[] args ) throws IOException, InterruptedException
     {
+        CheckParameters.areNotNull( args );
         System.out.println( "decoder,filename,width,height,inputType,warmUpTime,iterations,iterations per second" );
         for ( final int iterations : rangeOver( iterationAmounts.length ) )
         {
@@ -110,7 +114,10 @@ public class Benchmark
 
                             final Function<InputStream, Thread> consume = new Function<InputStream, Thread>()
                             {
-                                @Override
+                                /**
+                                 * {@inheritDoc}
+                                 */
+                                @Override                                
                                 public Thread apply( final InputStream inputStream )
                                 {
                                     final Thread thread = new Thread( new Runnable()
