@@ -64,18 +64,18 @@ public class Benchmark
     /**
      * The numbers of iterations to benchmark with.
      */
-    public static final int[] iterationAmounts = { 100, 1000, 10000 };
+    static final int[] iterationAmounts = { 100, 1000, 10000 };
 
     /**
      * The number of milliseconds to iterate for before timing the code. This
      * gives the JVM time to warm up to give more accurate results.
      */
-    public static final int[] warmUpTimes = { 100, 1000, 10000 };
+    static final int[] warmUpTimes = { 100, 1000, 10000 };
 
     /**
      * The type that the data should be passed in to the decoder as.
      */
-    public static final String[] inputTypes = { "byte[]", "ByteBuffer" };
+    static final String[] inputTypes = { "byte[]", "ByteBuffer" };
 
     /**
      * Runs the benchmarks.
