@@ -93,5 +93,6 @@
         <module>protocol</module>
         <module>data</module>
         <module>util</module>
+        <module>mpeg</module>
     </modules>
 </project>
