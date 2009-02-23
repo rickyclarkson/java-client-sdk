@@ -10,10 +10,11 @@ import java.awt.image.MemoryImageSource;
 import java.awt.Toolkit;
 import uk.org.netvu.jpeg.JPEGDecoders;
 import uk.org.netvu.util.CheckParameters;
+import java.lang.reflect.Field;
 
 public final class ADFFMPEG4Decoder implements MPEGDecoder
 {
-    private AVCodecContext codecContext = ADFFMPEG.avcodec_alloc_context();
+    private AVCodecContext codecContext;
     private AVFrame picture;
     private static final Semaphore semaphore = new Semaphore(1, true);
 
@@ -30,6 +31,7 @@ public final class ADFFMPEG4Decoder implements MPEGDecoder
             if (ADFFMPEG.avcodec_open(codecContext, codec) <0)
                 throw new InstantiationError("Unable to open native codec");
             picture = ADFFMPEG.avcodec_alloc_frame();
+            System.out.println("picture.getData()[0] = " + getUnsafe().getInt((long)picture.getData().getPointer()));
         }
         catch (InterruptedException e)
         {
@@ -69,7 +71,10 @@ public final class ADFFMPEG4Decoder implements MPEGDecoder
             System.out.println("codecContext.width = " + codecContext.getWidth());
             System.out.println("codecContext.height = " + codecContext.getHeight());
             System.out.println("codecContext.pix_fmt = " + codecContext.getPix_fmt());
-            ADFFMPEG.extractPixelData(picture, codecContext, decodeBuffer);
+           
+            System.out.println("picture.getData()[0] = " + getUnsafe().getInt((long)picture.getData().getPointer()));
+            Thread.sleep(1000);
+            ADFFMPEG.extractPixelData(codecContext.getCoded_frame(), codecContext, decodeBuffer);
             System.out.println("extractPixelData happened");
             decodeBuffer.get(decodedData);
             final int width = codecContext.getWidth();
@@ -84,6 +89,20 @@ public final class ADFFMPEG4Decoder implements MPEGDecoder
         {
             semaphore.release();
         }                                                                                              
+    }
+
+    public static sun.misc.Unsafe getUnsafe()
+    {
+        try
+        {
+            Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+            field.setAccessible(true);
+            return (sun.misc.Unsafe)field.get(null);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     public static ADFFMPEG4Decoder getInstance()
