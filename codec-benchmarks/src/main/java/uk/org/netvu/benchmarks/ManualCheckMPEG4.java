@@ -16,6 +16,8 @@ import uk.org.netvu.util.CheckParameters;
 import uk.org.netvu.adffmpeg.ADFFMPEG4Decoder;
 import java.io.FileInputStream;
 import uk.org.netvu.data.*;
+import javax.swing.JButton;
+
 /**
  * A simple graphical program to help visually check that all the decoders are
  * decoding all the images correctly.
@@ -45,12 +47,12 @@ public class ManualCheckMPEG4
         {
             {
                 setSize( 800, 600 );
-                add( new JScrollPane( new JPanel( new GridLayout( 10, 10 )
+                add( new JScrollPane( new JPanel( new GridLayout( 10, 10 ) )
                 {
-                    {                        
+                    {      
                         try
                         {
-                            ParserFactory.parserFor(StreamType.BINARY).parse( new FileInputStream("/home/ricky/java-client-sdk/trunk/codec-benchmarks/192-168-106-206-mp4"), new Object(), new StreamHandler()
+                            ParserFactory.parserFor(StreamType.BINARY).parse( new FileInputStream("../codec-benchmarks/192-168-106-206-mp4"), new Object(), new StreamHandler()
                                 {
                                     @Override
                                     public void audioDataArrived(Packet packet)
@@ -80,9 +82,12 @@ public class ManualCheckMPEG4
                                     @Override
                                     public void mpeg4FrameArrived(Packet packet)
                                     {
+                                        
                                         System.out.println("mpeg 4 frame arrived");
-                                        if (first)
-                                            add( new JLabel( new ImageIcon( ADFFMPEG4Decoder.getInstance().decodeMPEG4(packet.getData()))));
+                                        //                                        if (first)
+                                            {
+                                            add( new JLabel( new ImageIcon( ADFFMPEG4Decoder.getInstance().decodeMPEG4(packet.getData()))));                                            
+                                            }
                                         first = false;
                                     }
                                 });
@@ -92,7 +97,9 @@ public class ManualCheckMPEG4
                             throw new RuntimeException( e );
                         }
                     }
-                } ) ) );
+                } ) );
+            
+                pack();
             }
         }.setVisible( true );
     }
