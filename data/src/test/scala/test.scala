@@ -243,7 +243,8 @@ class ParseBinaryStreamsTest extends JUnit4(new Specification {
       
       if (isIFrame)
        numValidFrames += 1
-      
+      else
+       numValidFrames -= 1
       index += 1
      }
      def infoArrived(packet: Packet) = ()

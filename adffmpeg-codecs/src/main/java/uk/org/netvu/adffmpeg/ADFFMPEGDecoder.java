@@ -109,7 +109,7 @@ public final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
 
     /**
      * Gives an instance of ADFFMPEGDecoder.
-     *
+     * 
      * @return an instance of ADFFMPEGDecoder.
      */
     public static ADFFMPEGDecoder getInstance()

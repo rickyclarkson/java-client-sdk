@@ -17,6 +17,8 @@ import uk.org.netvu.adffmpeg.ADFFMPEG4Decoder;
 import java.io.FileInputStream;
 import uk.org.netvu.data.*;
 import javax.swing.JButton;
+import java.nio.ByteBuffer;
+import java.net.*;
 
 /**
  * A simple graphical program to help visually check that all the decoders are
@@ -47,12 +49,15 @@ public class ManualCheckMPEG4
         {
             {
                 setSize( 800, 600 );
-                add( new JScrollPane( new JPanel( new GridLayout( 10, 10 ) )
+                add( new JScrollPane( new JPanel( new GridLayout( 1, 1 ) )
                 {
                     {      
                         try
                         {
-                            ParserFactory.parserFor(StreamType.BINARY).parse( new FileInputStream("../codec-benchmarks/192-168-106-206-mp4"), new Object(), new StreamHandler()
+                            ParserFactory.parserFor(StreamType.BINARY).parse( new URL("http://localhost:2356/").openConnection().getInputStream(),
+
+//new FileInputStream("../data/testdata/192-168-106-207-minimal-mp4"),
+                                                                              new Object(), new StreamHandler()
                                 {
                                     @Override
                                     public void audioDataArrived(Packet packet)
@@ -84,7 +89,19 @@ public class ManualCheckMPEG4
                                     {
                                         
                                         System.out.println("mpeg 4 frame arrived");
-                                        //                                        if (first)
+                                        ByteBuffer buffer = packet.getData();
+                                        for (int a=0;a<buffer.limit();a++)
+                                        {
+                                            String hex = Integer.toHexString(buffer.get() & 0xFF);
+                                            if (hex.length() == 1) hex = "0" + hex;
+                                            System.out.print(hex);
+                                            if (a % 4 == 0)
+                                                System.out.print(" ");
+                                            if (a % 64 == 0)
+                                                System.out.println();
+                                        }
+                                        
+                                        // if (first)
                                             {
                                             add( new JLabel( new ImageIcon( ADFFMPEG4Decoder.getInstance().decodeMPEG4(packet.getData()))));                                            
                                             }
