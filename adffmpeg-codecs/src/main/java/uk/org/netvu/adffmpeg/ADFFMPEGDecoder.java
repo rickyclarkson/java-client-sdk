@@ -18,6 +18,14 @@ import uk.org.netvu.jpeg.JPEGDecoders;
 public final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
 {
     /**
+     * Private to prevent direct instanation - {@link #getInstance()} should be
+     * used instead.
+     */
+    private ADFFMPEGDecoder()
+    {
+    }
+
+    /**
      * The context instance for ADFFMPEG. Currently this is cleared for every
      * frame. An optimisation might be to reuse the same context for multiple
      * frames if they have the same resolution.

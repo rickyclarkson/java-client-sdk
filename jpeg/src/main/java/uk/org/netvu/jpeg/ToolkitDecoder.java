@@ -10,6 +10,14 @@ import java.nio.ByteBuffer;
 public final class ToolkitDecoder implements JPEGDecoder, JPEGDecoderFromArray
 {
     /**
+     * Private to prevent instantiation - {@link #getInstance()} should be used
+     * instead.
+     */
+    private ToolkitDecoder()
+    {
+    }
+
+    /**
      * {@inheritDoc}
      */
     public Image decodeJPEG( final ByteBuffer originalBuffer )

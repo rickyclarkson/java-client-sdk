@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
+
 import uk.org.netvu.util.CheckParameters;
 
 /**
@@ -14,6 +15,14 @@ import uk.org.netvu.util.CheckParameters;
  */
 public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
 {
+    /**
+     * Private to prevent instantiation - instead {@link #getInstance()} should
+     * be used.
+     */
+    private ImageIODecoder()
+    {
+    }
+
     /**
      * Provides an InputStream interface to a ByteBuffer.
      */
@@ -30,7 +39,8 @@ public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
          * 
          * @param buffer
          *        the ByteBuffer to get data from.
-         * @throws NullPointerException if buffer is null.
+         * @throws NullPointerException
+         *         if buffer is null.
          */
         private ByteBufferInputStream( final ByteBuffer buffer )
         {
