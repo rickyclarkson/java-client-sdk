@@ -52,15 +52,15 @@ public final class ADFFMPEG4Decoder implements MPEGDecoder
             final ByteBuffer buffer = originalBuffer.duplicate();
             final IntBuffer gotPicture = ByteBuffer.allocateDirect( 4 ).asIntBuffer();
             final ByteBuffer directBuffer = ByteBuffer.allocateDirect( buffer.limit() + 10 ); // +10
-                                                                                              // is
-                                                                                              // an
-                                                                                              // experiment
+            // is
+            // an
+            // experiment
             directBuffer.put( buffer );
             for ( int a = 0; a < 10; a++ )
             {
                 directBuffer.put( (byte) 0 );
             }
-            directBuffer.flip();
+            directBuffer.position( 0 );
             final int len = ADFFMPEG.avcodec_decode_video( codecContext, picture, gotPicture, directBuffer );
             if ( len < 0 )
             {
