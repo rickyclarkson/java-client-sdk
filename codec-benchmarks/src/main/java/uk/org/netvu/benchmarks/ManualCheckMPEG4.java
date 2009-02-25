@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import uk.org.netvu.adffmpeg.ADFFMPEG4Decoder;
+import uk.org.netvu.mpeg.MPEGDecoder;
 import uk.org.netvu.util.CheckParameters;
 
 /**
@@ -112,7 +113,9 @@ public class ManualCheckMPEG4
                             // }
                             // });
 
-                            for ( int a = 0; a < 80; a++ )
+                            MPEGDecoder decoder = ADFFMPEG4Decoder.getInstance();
+
+                            for ( int a = 0; a < 10; a++ )
                             {
                                 System.out.println( a );
                                 final File file = new File( "/home/ricky/next" + a );
@@ -128,7 +131,7 @@ public class ManualCheckMPEG4
                                 final ByteBuffer buffer = ByteBuffer.allocateDirect( bytes.length );
                                 buffer.put( bytes );
                                 buffer.position( 0 );
-                                add( new JLabel( new ImageIcon( ADFFMPEG4Decoder.getInstance().decodeMPEG4( buffer ) ) ) );
+                                add( new JLabel( new ImageIcon( decoder.decodeMPEG4( buffer ) ) ) );
                             }
                         }
                         catch ( final IOException e )

@@ -1,6 +1,6 @@
 Decode JPEG
 
-  Provide a concise way of decoding a ByteBuffer containing a JPEG frame into a java.awt.image.BufferedImage.
+  Provide a concise way of decoding a ByteBuffer containing a JPEG frame into a java.awt.Image.
 
 * Summary:
 
@@ -12,7 +12,7 @@ Decode JPEG
 
 * Goal:
 
-  To provide a concise way of decoding a ByteBuffer containing a JPEG frame into a java.awt.image.BufferedImage.
+  To provide a concise way of decoding a ByteBuffer containing a JPEG frame into a java.awt.Image.
 
 * Actors:
 
@@ -28,7 +28,7 @@ Decode JPEG
 
 * Basic success path:
 
-  The JPEG frame is decoded and a BufferedImage is available for the client to handle.
+  The JPEG frame is decoded and an Image is available for the client to handle.
 
 * Other success paths:
 
