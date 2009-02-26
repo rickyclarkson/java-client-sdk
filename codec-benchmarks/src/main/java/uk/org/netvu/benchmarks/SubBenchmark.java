@@ -35,7 +35,7 @@ public class SubBenchmark
     /**
      * The decoders to benchmark.
      */
-    public static final List<JPEGDecoder> decoders = Arrays.asList(ADFFMPEGDecoder.getInstance(), ToolkitDecoder.getInstance(), ImageIODecoder.getInstance());
+    public static final List<JPEGDecoder> decoders = Arrays.asList(ADFFMPEGDecoder.getInstance(), ToolkitDecoder.createInstance(), ImageIODecoder.createInstance());
 
     /**
      * Executes the specified decoder with the specified constraints.

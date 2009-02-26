@@ -29,11 +29,11 @@ public final class ToolkitDecoder implements JPEGDecoder
     }
 
     /**
-     * Gives an instance of ToolkitDecoder.
+     * Creates an instance of ToolkitDecoder.
      * 
      * @return an instance of ToolkitDecoder.
      */
-    public static ToolkitDecoder getInstance()
+    public static ToolkitDecoder createInstance()
     {
         return new ToolkitDecoder();
     }

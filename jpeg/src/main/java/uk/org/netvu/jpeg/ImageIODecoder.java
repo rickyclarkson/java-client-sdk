@@ -86,11 +86,11 @@ public final class ImageIODecoder implements JPEGDecoder
     }
 
     /**
-     * Gets an instance of ImageIODecoder.
+     * Creates an instance of ImageIODecoder.
      * 
      * @return an instance of ImageIODecoder.
      */
-    public static ImageIODecoder getInstance()
+    public static ImageIODecoder createInstance()
     {
         return new ImageIODecoder();
     }

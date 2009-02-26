@@ -8,7 +8,7 @@ import java.awt.Image
 import uk.org.netvu.util.Buffers
 
 class DecodingTest extends JUnit4(new Specification {
- for (decoder <- List(ToolkitDecoder.getInstance(), ImageIODecoder.getInstance()))
+ for (decoder <- List(ToolkitDecoder.createInstance(), ImageIODecoder.createInstance()))
   decoder.toString + isSpecifiedBy(ValidDecoder(decoder))
 })
 
