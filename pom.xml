@@ -93,5 +93,6 @@
         <module>data</module>
         <module>util</module>
         <module>mpeg</module>
+        <module>filter</module>
     </modules>
 </project>
