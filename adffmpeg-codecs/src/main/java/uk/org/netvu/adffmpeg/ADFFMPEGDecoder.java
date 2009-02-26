@@ -62,43 +62,43 @@ public final class ADFFMPEGDecoder implements JPEGDecoder
         try
         {
             semaphore.acquire();
+            try
+            {
+                final ByteBuffer buffer = originalBuffer.duplicate();
+                ADFFMPEG.avcodec_close( codecContext );
+                ADFFMPEG.av_free( codecContext.getVoidPointer() );
+                codecContext = ADFFMPEG.avcodec_alloc_context();
+                ADFFMPEG.avcodec_open( codecContext, codec );
+                
+                final IntBuffer gotPicture = ByteBuffer.allocateDirect( 4 ).asIntBuffer();
+                
+                final int len = ADFFMPEG.avcodec_decode_video( codecContext, picture, gotPicture, buffer );
+                if ( len < 0 )
+                {
+                    throw new IllegalStateException( "ADFFMPEG did not decode any bytes" );
+                }
+
+                final int numberOfPixels = codecContext.getWidth() * codecContext.getHeight();
+                final IntBuffer decodeBuffer =
+                    ByteBuffer.allocateDirect( numberOfPixels * 4 ).order( ByteOrder.nativeOrder() ).asIntBuffer();
+                final int[] decodedData = new int[numberOfPixels];
+                ADFFMPEG.extractPixelData( picture, codecContext, decodeBuffer );
+                decodeBuffer.get( decodedData );
+                final int width = codecContext.getWidth();
+                final Image image =
+                    Images.loadFully( Toolkit.getDefaultToolkit().createImage(new MemoryImageSource( width, codecContext.getHeight(), decodedData, 0, width ) ) );
+                return image;
+            }
+            finally
+            {
+                semaphore.release();
+            }
         }
         catch ( final InterruptedException e )
         {
             throw new RuntimeException( e );
         }
-        try
-        {
-            final ByteBuffer buffer = originalBuffer.duplicate();
-            ADFFMPEG.avcodec_close( codecContext );
-            ADFFMPEG.av_free( codecContext.getVoidPointer() );
-            codecContext = ADFFMPEG.avcodec_alloc_context();
-            ADFFMPEG.avcodec_open( codecContext, codec );
 
-            final IntBuffer gotPicture = ByteBuffer.allocateDirect( 4 ).asIntBuffer();
-
-            final int len = ADFFMPEG.avcodec_decode_video( codecContext, picture, gotPicture, buffer );
-            if ( len < 0 )
-            {
-                throw new IllegalStateException( "ADFFMPEG did not decode any bytes" );
-            }
-
-            final int numberOfPixels = codecContext.getWidth() * codecContext.getHeight();
-            final IntBuffer decodeBuffer =
-                    ByteBuffer.allocateDirect( numberOfPixels * 4 ).order( ByteOrder.nativeOrder() ).asIntBuffer();
-            final int[] decodedData = new int[numberOfPixels];
-            ADFFMPEG.extractPixelData( picture, codecContext, decodeBuffer );
-            decodeBuffer.get( decodedData );
-            final int width = codecContext.getWidth();
-            final Image image =
-                    Images.loadFully( Toolkit.getDefaultToolkit().createImage(
-                            new MemoryImageSource( width, codecContext.getHeight(), decodedData, 0, width ) ) );
-            return image;
-        }
-        finally
-        {
-            semaphore.release();
-        }
     }
 
     private static final ADFFMPEGDecoder instance = new ADFFMPEGDecoder();
