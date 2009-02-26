@@ -13,7 +13,7 @@ import uk.org.netvu.util.CheckParameters;
 /**
  * A JPEG decoder that uses javax.imageio.
  */
-public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
+public final class ImageIODecoder implements JPEGDecoder
 {
     /**
      * Private to prevent instantiation - instead {@link #getInstance()} should
@@ -66,21 +66,6 @@ public final class ImageIODecoder implements JPEGDecoder, JPEGDecoderFromArray
             final int length = Math.min( originalLength, buffer.remaining() );
             buffer.get( bytes, offset, length );
             return length;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public BufferedImage decodeJPEGFromArray( final byte[] array )
-    {
-        try
-        {
-            return ImageIO.read( new ByteArrayInputStream( array ) );
-        }
-        catch ( final IOException e )
-        {
-            throw new RuntimeException( e );
         }
     }
 

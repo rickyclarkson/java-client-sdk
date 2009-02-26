@@ -10,9 +10,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import uk.org.netvu.jpeg.JPEGDecoder;
-import uk.org.netvu.jpeg.JPEGDecoderFromArray;
 import uk.org.netvu.util.Pair;
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.Buffers;
 
 /**
  * A simple graphical program to help visually check that all the decoders are
@@ -49,12 +49,12 @@ public class ManualCheck
                     {
                         try
                         {
-                            for ( final Pair<JPEGDecoder, JPEGDecoderFromArray> decoder : SubBenchmark.decoders )
+                            for ( final JPEGDecoder decoder : SubBenchmark.decoders )
                             {
                                 for ( final SampleFile sampleFile : Benchmark.sampleFiles )
                                 {
-                                    add( new JLabel( new ImageIcon( decoder.getSecondComponent().decodeJPEGFromArray(
-                                            SubBenchmark.byteArrayFor( sampleFile.filename ) ) ) ) );
+                                    add( new JLabel( new ImageIcon( decoder.decodeJPEG(
+                                            Buffers.bufferFor( sampleFile.filename ) ) ) ) );
                                 }
                             }
                         }

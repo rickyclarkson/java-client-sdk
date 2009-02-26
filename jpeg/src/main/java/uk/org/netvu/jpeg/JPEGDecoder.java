@@ -3,6 +3,8 @@ package uk.org.netvu.jpeg;
 import java.awt.Image;
 import java.nio.ByteBuffer;
 
+// In SVN revision 2500, there is a second interface JPEGDecoderFromArray, which may still be worth benchmarking, but cannot be in the public API.
+
 /**
  * An interface that all decoders capable of decoding a ByteBuffer containing
  * JPEG data into an Image implement.

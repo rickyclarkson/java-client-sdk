@@ -12,11 +12,12 @@ import java.util.List;
 import uk.org.netvu.adffmpeg.ADFFMPEGDecoder;
 import uk.org.netvu.jpeg.ImageIODecoder;
 import uk.org.netvu.jpeg.JPEGDecoder;
-import uk.org.netvu.jpeg.JPEGDecoderFromArray;
 import uk.org.netvu.jpeg.ToolkitDecoder;
 import uk.org.netvu.util.Function;
 import uk.org.netvu.util.Pair;
 import uk.org.netvu.util.CheckParameters;
+
+import java.util.Arrays;
 
 /**
  * A program that is launched many times by Benchmark, to time the execution of
@@ -34,19 +35,7 @@ public class SubBenchmark
     /**
      * The decoders to benchmark.
      */
-    public static final List<Pair<JPEGDecoder, JPEGDecoderFromArray>> decoders =
-            new ArrayList<Pair<JPEGDecoder, JPEGDecoderFromArray>>()
-            {
-                {
-                    // this is an anonymous initialiser.
-                    add( new Pair<JPEGDecoder, JPEGDecoderFromArray>( ADFFMPEGDecoder.getInstance(), ADFFMPEGDecoder
-                        .getInstance() ) );
-                    add( new Pair<JPEGDecoder, JPEGDecoderFromArray>( ToolkitDecoder.getInstance(), ToolkitDecoder
-                        .getInstance() ) );
-                    add( new Pair<JPEGDecoder, JPEGDecoderFromArray>( ImageIODecoder.getInstance(), ImageIODecoder
-                        .getInstance() ) );
-                }
-            };
+    public static final List<JPEGDecoder> decoders = Arrays.asList(ADFFMPEGDecoder.getInstance(), ToolkitDecoder.getInstance(), ImageIODecoder.getInstance());
 
     /**
      * Executes the specified decoder with the specified constraints.
@@ -66,27 +55,17 @@ public class SubBenchmark
     public static void main( final String[] args ) throws IOException
     {
         CheckParameters.areNotNull( args );
-        final Pair<JPEGDecoder, JPEGDecoderFromArray> decoder = decoders.get( Integer.parseInt( args[0] ) );
+        final JPEGDecoder decoder = decoders.get( Integer.parseInt( args[0] ) );
         final SampleFile sampleFile = Benchmark.sampleFiles[Integer.parseInt( args[1] )];
         final int iterations = Benchmark.iterationAmounts[Integer.parseInt( args[2] )];
         final int warmUpTime = Benchmark.warmUpTimes[Integer.parseInt( args[3] )];
-        final String inputType = Benchmark.inputTypes[Integer.parseInt( args[4] )];
 
         final String info =
-                decoder.getFirstComponent().getClass().getSimpleName() + "," + sampleFile.filename + ","
-                        + sampleFile.width + "," + sampleFile.height + "," + inputType + "," + warmUpTime + ","
+                decoder.getClass().getSimpleName() + "," + sampleFile.filename + ","
+                        + sampleFile.width + "," + sampleFile.height + "," + + warmUpTime + ","
                         + iterations;
 
-        if ( inputType.equals( "ByteBuffer" ) )
-        {
-            time( iterations, warmUpTime, decodeJPEG( decoder.getFirstComponent() ), bufferFor( sampleFile.filename ),
-                    info );
-        }
-        else
-        {
-            time( iterations, warmUpTime, decodeJPEGFromArray( decoder.getSecondComponent() ),
-                    byteArrayFor( sampleFile.filename ), info );
-        }
+        time( iterations, warmUpTime, decoder, bufferFor( sampleFile.filename ), info );
     }
 
     /**
@@ -114,26 +93,6 @@ public class SubBenchmark
     }
 
     /**
-     * Constructs an array of bytes containing the data from the specified file.
-     * 
-     * @param filename
-     *        the name of the file that contains the data to read.
-     * @return an array of bytes containing the data from the specified file.
-     * @throws IOException
-     *         if any I/O error occurs.
-     * @throws NullPointerException
-     *         if filename is null.
-     */
-    public static byte[] byteArrayFor( final String filename ) throws IOException
-    {
-        CheckParameters.areNotNull( filename );
-        final ByteBuffer buffer = bufferFor( filename );
-        final byte[] bytes = new byte[buffer.limit()];
-        buffer.get( bytes );
-        return bytes;
-    }
-
-    /**
      * Executes the specified decoder with the specified input for the specified
      * number of iterations, after warming the decoder up by executing it for at
      * least the specified number of milliseconds, printing the results to
@@ -145,26 +104,26 @@ public class SubBenchmark
      *        the number of milliseconds to give the decoder to warm up before
      *        timing it.
      * @param decoder
-     *        a Function that invokes the JPEGDecoder when applied.
+     *        the JPEGDecoder to use.
      * @param input
      *        the input to the decoder.
      * @param info
      *        extra info to include in the output.
      * @throws NullPointerException if decoder, input or info are null.
      */
-    public static <T> void time( final int iterations, final long warmUpMillis, final Function<T, ?> decoder,
-            final T input, final String info )
+    public static void time( final int iterations, final long warmUpMillis, final JPEGDecoder decoder,
+            final ByteBuffer input, final String info )
     {
         CheckParameters.areNotNull( decoder, input, info );
         long start = System.nanoTime();
         while ( System.nanoTime() - start < warmUpMillis * 1000000 )
         {
-            decoder.apply( input );
+            decoder.decodeJPEG( input );
         }
         start = System.nanoTime();
         for ( int i = 0; i < iterations; i++ )
         {
-            decoder.apply( input );
+            decoder.decodeJPEG( input );
         }
         final long time = System.nanoTime() - start;
         System.out.println( info + "," + iterations * 1.0 / ( time / 1000000000.0 ) );
@@ -188,30 +147,6 @@ public class SubBenchmark
             public Image apply( final ByteBuffer buffer )
             {
                 return decoder.decodeJPEG( buffer );
-            }
-        };
-    }
-
-    /**
-     * A method that returns JPEGDecoderFromArray.decodeJPEGFromArray as a Function on the
-     * specified JPEGDecoderFromArray.
-     *
-     * This is used to allow the method to be passed as a value into time().
-     *
-     * @param decoder the JPEGDecoderFromArray that the returned Function uses to decode JPEGs.
-     * @return a Function that takes in an array of bytes containing JPEG data, and returns it
-     * as an Image after using the specified JPEGDecoderFromArray to decode it.
-     * @throws NullPointerException if decoder is null.
-     */
-    public static Function<byte[], Image> decodeJPEGFromArray( final JPEGDecoderFromArray decoder )
-    {
-        CheckParameters.areNotNull( decoder );
-        return new Function<byte[], Image>()
-        {
-            @Override
-            public Image apply( final byte[] array )
-            {
-                return decoder.decodeJPEGFromArray( array );
             }
         };
     }

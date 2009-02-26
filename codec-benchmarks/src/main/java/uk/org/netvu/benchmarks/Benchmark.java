@@ -92,7 +92,7 @@ public class Benchmark
     public static void main( final String[] args ) throws IOException, InterruptedException
     {
         CheckParameters.areNotNull( args );
-        System.out.println( "decoder,filename,width,height,inputType,warmUpTime,iterations,iterations per second" );
+        System.out.println( "decoder,filename,width,height,warmUpTime,iterations,iterations per second" );
         for ( final int iterations : rangeOver( iterationAmounts.length ) )
         {
             for ( final int warmUpTime : rangeOver( warmUpTimes.length ) )

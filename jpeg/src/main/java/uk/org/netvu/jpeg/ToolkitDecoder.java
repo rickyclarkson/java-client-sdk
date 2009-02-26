@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 /**
  * A JPEG decoder that uses java.awt.Toolkit.
  */
-public final class ToolkitDecoder implements JPEGDecoder, JPEGDecoderFromArray
+public final class ToolkitDecoder implements JPEGDecoder
 {
     /**
      * Private to prevent instantiation - {@link #getInstance()} should be used
@@ -25,14 +25,6 @@ public final class ToolkitDecoder implements JPEGDecoder, JPEGDecoderFromArray
         final ByteBuffer buffer = originalBuffer.duplicate();
         final byte[] bytes = new byte[buffer.limit()];
         buffer.get( bytes );
-        return decodeJPEGFromArray( bytes );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Image decodeJPEGFromArray( final byte[] bytes )
-    {
         return JPEGDecoders.loadFully( Toolkit.getDefaultToolkit().createImage( bytes ) );
     }
 

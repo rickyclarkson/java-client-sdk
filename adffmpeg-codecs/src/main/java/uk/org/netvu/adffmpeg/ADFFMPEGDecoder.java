@@ -9,13 +9,12 @@ import java.nio.IntBuffer;
 import java.util.concurrent.Semaphore;
 
 import uk.org.netvu.jpeg.JPEGDecoder;
-import uk.org.netvu.jpeg.JPEGDecoderFromArray;
 import uk.org.netvu.jpeg.JPEGDecoders;
 
 /**
  * A JPEG decoder that uses the ADFFMPEG Java bindings.
  */
-public final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
+public final class ADFFMPEGDecoder implements JPEGDecoder
 {
     /**
      * Private to prevent direct instanation - {@link #getInstance()} should be
@@ -47,17 +46,6 @@ public final class ADFFMPEGDecoder implements JPEGDecoder, JPEGDecoderFromArray
             throw new InstantiationError( "Unable to open native codec" );
         }
         picture = ADFFMPEG.avcodec_alloc_frame();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Image decodeJPEGFromArray( final byte[] array )
-    {
-        final ByteBuffer buffer = ByteBuffer.allocateDirect( array.length );
-        buffer.put( array );
-        buffer.position( 0 );
-        return decodeJPEG( buffer );
     }
 
     /**
