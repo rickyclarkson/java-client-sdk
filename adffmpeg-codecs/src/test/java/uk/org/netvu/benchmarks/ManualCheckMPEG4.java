@@ -42,94 +42,24 @@ public class ManualCheckMPEG4
      */
     public static void main( final String[] args )
     {
-        CheckParameters.areNotNull( args );
+        CheckParameters.areNotNull( (Object) args );
+        CheckParameters.areNotNull( (Object[]) args );
 
         new JFrame()
         {
             {
                 setSize( 800, 600 );
-                add( new JScrollPane( new JPanel( new GridLayout( 1, 1 ) )
+                add( new JScrollPane( new JPanel( new GridLayout( 3, 2 ) )
                 {
                     {
                         try
                         {
-                            // ParserFactory.parserFor( StreamType.BINARY
-                            // ).parse(
-                            // new URL( "http://localhost:2356/"
-                            // ).openConnection().getInputStream(),
-                            //
-                            // // new FileInputStream(
-                            // // "../data/testdata/192-168-106-207-minimal-mp4"
-                            // // ), new Object(),
-                            // new StreamHandler()
-                            // {
-                            // @Override
-                            // public void audioDataArrived( Packet packet )
-                            // {
-                            // throw null;
-                            // }
-                            //
-                            // @Override
-                            // public void infoArrived( Packet packet )
-                            // {
-                            // throw null;
-                            // }
-                            //
-                            // @Override
-                            // public void jpegFrameArrived( Packet packet )
-                            // {
-                            // throw null;
-                            // }
-                            //
-                            // @Override
-                            // public void unknownDataArrived( Packet packet )
-                            // {
-                            // throw null;
-                            // }
-                            //
-                            // boolean first = true;
-                            //
-                            // @Override
-                            // public void mpeg4FrameArrived( Packet packet )
-                            // {
-                            //
-                            // System.out.println( "mpeg 4 frame arrived" );
-                            // ByteBuffer buffer = packet.getData();
-                            // for ( int a = 0; a < buffer.limit(); a++ )
-                            // {
-                            // String hex = Integer.toHexString( buffer.get() &
-                            // 0xFF );
-                            // if ( hex.length() == 1 )
-                            // {
-                            // hex = "0" + hex;
-                            // }
-                            // System.out.print( hex );
-                            // if ( a % 4 == 0 )
-                            // {
-                            // System.out.print( " " );
-                            // }
-                            // if ( a % 64 == 0 )
-                            // {
-                            // System.out.println();
-                            // }
-                            // }
-                            //
-                            // // if (first)
-                            // {
-                            // add( new JLabel( new ImageIcon(
-                            // ADFFMPEG4Decoder.getInstance()
-                            // .decodeMPEG4( packet.getData() ) ) ) );
-                            // }
-                            // first = false;
-                            // }
-                            // } );
-
                             final MPEGDecoder decoder = ADFFMPEG4Decoder.getInstance();
 
-                            for ( int a = 0; a < 10; a++ )
+                            for ( int a = 0; a < 5; a++ )
                             {
                                 System.out.println( a );
-                                final File file = new File( "/home/ricky/next" + a );
+                                final File file = new File( "testdata/mpeg4frames/" + a);
                                 final InputStream in = new FileInputStream( file );
                                 final ByteArrayOutputStream out = new ByteArrayOutputStream();
                                 int b;
@@ -149,12 +79,6 @@ public class ManualCheckMPEG4
                         {
                             throw new RuntimeException( e );
                         }
-                    }
-
-                    private Object FileInputStream( final String string )
-                    {
-                        // TODO Auto-generated method stub
-                        return null;
                     }
                 } ) );
 
