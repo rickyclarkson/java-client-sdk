@@ -104,7 +104,7 @@ public final class ADFFMPEGDecoder implements JPEGDecoder
     private static final ADFFMPEGDecoder instance = new ADFFMPEGDecoder();
 
     /**
-     * Gives an instance of ADFFMPEGDecoder.
+     * Gives an instance of ADFFMPEGDecoder.  ADFFMPEGDecoder is implemented as a singleton, to control access to the underlying codec, which is not thread-safe.
      * 
      * @return an instance of ADFFMPEGDecoder.
      */

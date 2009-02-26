@@ -44,19 +44,6 @@ public final class ADFFMPEG4Decoder implements MPEGDecoder
         }
     }
 
-    FFMPEGCodec ffmpegCodec = new FFMPEGCodec( "mpeg4" );
-
-    // remove
-    public Image decodeMPEG4Original( final ByteBuffer originalBuffer )
-    {
-        final byte[] array = new byte[originalBuffer.limit()];
-        originalBuffer.get( array );
-        final int[] decoded = ffmpegCodec.decode( array, array.length );
-        final int width = ffmpegCodec.getFrameWidth();
-        return Images.loadFully( Toolkit.getDefaultToolkit().createImage(
-                new MemoryImageSource( width, ffmpegCodec.getFrameHeight(), decoded, 0, width ) ) );
-    }
-
     public Image decodeMPEG4( final ByteBuffer originalBuffer )
     {
         try
