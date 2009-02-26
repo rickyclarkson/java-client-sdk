@@ -1,20 +1,19 @@
-package uk.org.netvu.jpeg;
+package uk.org.netvu.util;
 
 import java.awt.Container;
 import java.awt.Image;
 import java.awt.MediaTracker;
-import uk.org.netvu.util.CheckParameters;
 
 /**
- * A class providing utility methods relating to JPEGDecoder and
+ * A class providing utility methods for processing Images.
  * JPEGDecoderFromArray implementations.
  */
-public final class JPEGDecoders
+public final class Images
 {
     /**
      * To prevent instantiation.
      */
-    private JPEGDecoders()
+    private Images()
     {
     }
 

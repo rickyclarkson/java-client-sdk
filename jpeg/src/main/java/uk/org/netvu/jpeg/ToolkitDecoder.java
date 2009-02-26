@@ -4,6 +4,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.nio.ByteBuffer;
 
+import uk.org.netvu.util.Images;
+
 /**
  * A JPEG decoder that uses java.awt.Toolkit.
  */
@@ -25,7 +27,7 @@ public final class ToolkitDecoder implements JPEGDecoder
         final ByteBuffer buffer = originalBuffer.duplicate();
         final byte[] bytes = new byte[buffer.limit()];
         buffer.get( bytes );
-        return JPEGDecoders.loadFully( Toolkit.getDefaultToolkit().createImage( bytes ) );
+        return Images.loadFully( Toolkit.getDefaultToolkit().createImage( bytes ) );
     }
 
     /**

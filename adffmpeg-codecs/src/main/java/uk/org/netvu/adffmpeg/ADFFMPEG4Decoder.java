@@ -8,7 +8,7 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.concurrent.Semaphore;
 
-import uk.org.netvu.jpeg.JPEGDecoders;
+import uk.org.netvu.util.Images;
 import uk.org.netvu.mpeg.MPEGDecoder;
 import uk.org.netvu.util.CheckParameters;
 
@@ -53,7 +53,7 @@ public final class ADFFMPEG4Decoder implements MPEGDecoder
         originalBuffer.get( array );
         final int[] decoded = ffmpegCodec.decode( array, array.length );
         final int width = ffmpegCodec.getFrameWidth();
-        return JPEGDecoders.loadFully( Toolkit.getDefaultToolkit().createImage(
+        return Images.loadFully( Toolkit.getDefaultToolkit().createImage(
                 new MemoryImageSource( width, ffmpegCodec.getFrameHeight(), decoded, 0, width ) ) );
     }
 
@@ -87,7 +87,7 @@ public final class ADFFMPEG4Decoder implements MPEGDecoder
             decodeBuffer.get( decodedData );
             final int width = codecContext.getWidth();
             final Image image =
-                    JPEGDecoders.loadFully( Toolkit.getDefaultToolkit().createImage(
+                    Images.loadFully( Toolkit.getDefaultToolkit().createImage(
                             new MemoryImageSource( width, codecContext.getHeight(), decodedData, 0, width ) ) );
             return image;
         }

@@ -9,7 +9,7 @@ import java.nio.IntBuffer;
 import java.util.concurrent.Semaphore;
 
 import uk.org.netvu.jpeg.JPEGDecoder;
-import uk.org.netvu.jpeg.JPEGDecoders;
+import uk.org.netvu.util.Images;
 
 /**
  * A JPEG decoder that uses the ADFFMPEG Java bindings.
@@ -91,7 +91,7 @@ public final class ADFFMPEGDecoder implements JPEGDecoder
             decodeBuffer.get( decodedData );
             final int width = codecContext.getWidth();
             final Image image =
-                    JPEGDecoders.loadFully( Toolkit.getDefaultToolkit().createImage(
+                    Images.loadFully( Toolkit.getDefaultToolkit().createImage(
                             new MemoryImageSource( width, codecContext.getHeight(), decodedData, 0, width ) ) );
             return image;
         }
