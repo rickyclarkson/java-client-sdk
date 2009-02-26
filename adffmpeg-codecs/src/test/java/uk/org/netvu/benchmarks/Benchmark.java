@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import uk.org.netvu.util.Function;
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.Function;
 
 /**
  * The controller for benchmarks. It runs each benchmark in a child process, and
@@ -117,7 +117,7 @@ public class Benchmark
                                 /**
                                  * {@inheritDoc}
                                  */
-                                @Override                                
+                                @Override
                                 public Thread apply( final InputStream inputStream )
                                 {
                                     final Thread thread = new Thread( new Runnable()

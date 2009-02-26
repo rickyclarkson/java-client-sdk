@@ -10,9 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import uk.org.netvu.jpeg.JPEGDecoder;
-import uk.org.netvu.util.Pair;
-import uk.org.netvu.util.CheckParameters;
 import uk.org.netvu.util.Buffers;
+import uk.org.netvu.util.CheckParameters;
 
 /**
  * A simple graphical program to help visually check that all the decoders are
@@ -33,7 +32,8 @@ public class ManualCheck
      * 
      * @param args
      *        ignored.
-     * @throws NullPointerException if args is null.
+     * @throws NullPointerException
+     *         if args is null.
      */
     public static void main( final String[] args )
     {
@@ -53,8 +53,8 @@ public class ManualCheck
                             {
                                 for ( final SampleFile sampleFile : Benchmark.sampleFiles )
                                 {
-                                    add( new JLabel( new ImageIcon( decoder.decodeJPEG(
-                                            Buffers.bufferFor( sampleFile.filename ) ) ) ) );
+                                    add( new JLabel( new ImageIcon( decoder.decodeJPEG( Buffers
+                                        .bufferFor( sampleFile.filename ) ) ) ) );
                                 }
                             }
                         }

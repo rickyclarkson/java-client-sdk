@@ -59,7 +59,7 @@ public class ManualCheckMPEG4
                             for ( int a = 0; a < 5; a++ )
                             {
                                 System.out.println( a );
-                                final File file = new File( "testdata/mpeg4frames/" + a);
+                                final File file = new File( "testdata/mpeg4frames/" + a );
                                 final InputStream in = new FileInputStream( file );
                                 final ByteArrayOutputStream out = new ByteArrayOutputStream();
                                 int b;

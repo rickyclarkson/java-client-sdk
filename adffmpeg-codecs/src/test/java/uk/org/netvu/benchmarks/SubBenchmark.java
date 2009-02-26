@@ -6,18 +6,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import uk.org.netvu.adffmpeg.ADFFMPEGDecoder;
 import uk.org.netvu.jpeg.ImageIODecoder;
 import uk.org.netvu.jpeg.JPEGDecoder;
 import uk.org.netvu.jpeg.ToolkitDecoder;
-import uk.org.netvu.util.Function;
-import uk.org.netvu.util.Pair;
 import uk.org.netvu.util.CheckParameters;
-
-import java.util.Arrays;
+import uk.org.netvu.util.Function;
 
 /**
  * A program that is launched many times by Benchmark, to time the execution of
@@ -35,7 +32,9 @@ public class SubBenchmark
     /**
      * The decoders to benchmark.
      */
-    public static final List<JPEGDecoder> decoders = Arrays.asList(ADFFMPEGDecoder.getInstance(), ToolkitDecoder.createInstance(), ImageIODecoder.createInstance());
+    public static final List<JPEGDecoder> decoders =
+            Arrays.asList( ADFFMPEGDecoder.getInstance(), ToolkitDecoder.createInstance(), ImageIODecoder
+                .createInstance() );
 
     /**
      * Executes the specified decoder with the specified constraints.
@@ -61,9 +60,8 @@ public class SubBenchmark
         final int warmUpTime = Benchmark.warmUpTimes[Integer.parseInt( args[3] )];
 
         final String info =
-                decoder.getClass().getSimpleName() + "," + sampleFile.filename + ","
-                        + sampleFile.width + "," + sampleFile.height + "," + + warmUpTime + ","
-                        + iterations;
+                decoder.getClass().getSimpleName() + "," + sampleFile.filename + "," + sampleFile.width + ","
+                        + sampleFile.height + "," + +warmUpTime + "," + iterations;
 
         time( iterations, warmUpTime, decoder, bufferFor( sampleFile.filename ), info );
     }
@@ -109,7 +107,8 @@ public class SubBenchmark
      *        the input to the decoder.
      * @param info
      *        extra info to include in the output.
-     * @throws NullPointerException if decoder, input or info are null.
+     * @throws NullPointerException
+     *         if decoder, input or info are null.
      */
     public static void time( final int iterations, final long warmUpMillis, final JPEGDecoder decoder,
             final ByteBuffer input, final String info )
@@ -130,13 +129,17 @@ public class SubBenchmark
     }
 
     /**
-     * A method that returns JPEGDecoder.decodeJPEG as a Function on the specified JPEGDecoder.
-     * This is used to allow the method to be passed as a value into time().
-     *
-     * @param decoder the JPEGDecoder that the returned Function uses to decode JPEGs.
-     * @return a Function that takes in a ByteBuffer containing JPEG data, and returns it as an
-     * Image after using the specified JPEGDecoder to decode it.
-     * @throws NullPointerException if decoder is null.
+     * A method that returns JPEGDecoder.decodeJPEG as a Function on the
+     * specified JPEGDecoder. This is used to allow the method to be passed as a
+     * value into time().
+     * 
+     * @param decoder
+     *        the JPEGDecoder that the returned Function uses to decode JPEGs.
+     * @return a Function that takes in a ByteBuffer containing JPEG data, and
+     *         returns it as an Image after using the specified JPEGDecoder to
+     *         decode it.
+     * @throws NullPointerException
+     *         if decoder is null.
      */
     private static Function<ByteBuffer, Image> decodeJPEG( final JPEGDecoder decoder )
     {

@@ -8,9 +8,9 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.concurrent.Semaphore;
 
-import uk.org.netvu.util.Images;
 import uk.org.netvu.mpeg.MPEGDecoder;
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.util.Images;
 
 public final class ADFFMPEG4Decoder implements MPEGDecoder
 {

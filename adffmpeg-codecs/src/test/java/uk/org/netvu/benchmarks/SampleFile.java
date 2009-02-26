@@ -31,7 +31,8 @@ class SampleFile
      *        the height of the image.
      * @param filename
      *        the filename of the image.
-     * @throws NullPointerException if filename is null.
+     * @throws NullPointerException
+     *         if filename is null.
      */
     SampleFile( final int width, final int height, final String filename )
     {
