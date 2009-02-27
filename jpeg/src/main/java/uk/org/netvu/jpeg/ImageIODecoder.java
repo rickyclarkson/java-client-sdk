@@ -15,8 +15,8 @@ import uk.org.netvu.util.CheckParameters;
 public final class ImageIODecoder implements JPEGDecoder
 {
     /**
-     * Private to prevent instantiation - instead {@link #getInstance()} should
-     * be used.
+     * Private to prevent instantiation - instead {@link #createInstance()}
+     * should be used.
      */
     private ImageIODecoder()
     {
@@ -47,12 +47,18 @@ public final class ImageIODecoder implements JPEGDecoder
             this.buffer = buffer;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int read() throws IOException
         {
             return buffer.hasRemaining() ? buffer.get() : -1;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int read( final byte[] bytes, final int offset, final int originalLength ) throws IOException
         {

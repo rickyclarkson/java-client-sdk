@@ -1,6 +1,5 @@
 package uk.org.netvu.benchmarks;
 
-import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,7 +13,6 @@ import uk.org.netvu.jpeg.ImageIODecoder;
 import uk.org.netvu.jpeg.JPEGDecoder;
 import uk.org.netvu.jpeg.ToolkitDecoder;
 import uk.org.netvu.util.CheckParameters;
-import uk.org.netvu.util.Function;
 
 /**
  * A program that is launched many times by Benchmark, to time the execution of
@@ -53,7 +51,9 @@ public class SubBenchmark
      */
     public static void main( final String[] args ) throws IOException
     {
-        CheckParameters.areNotNull( args );
+        CheckParameters.areNotNull( (Object) args );
+        CheckParameters.areNotNull( (Object[]) args );
+
         final JPEGDecoder decoder = decoders.get( Integer.parseInt( args[0] ) );
         final SampleFile sampleFile = Benchmark.sampleFiles[Integer.parseInt( args[1] )];
         final int iterations = Benchmark.iterationAmounts[Integer.parseInt( args[2] )];
@@ -126,31 +126,5 @@ public class SubBenchmark
         }
         final long time = System.nanoTime() - start;
         System.out.println( info + "," + iterations * 1.0 / ( time / 1000000000.0 ) );
-    }
-
-    /**
-     * A method that returns JPEGDecoder.decodeJPEG as a Function on the
-     * specified JPEGDecoder. This is used to allow the method to be passed as a
-     * value into time().
-     * 
-     * @param decoder
-     *        the JPEGDecoder that the returned Function uses to decode JPEGs.
-     * @return a Function that takes in a ByteBuffer containing JPEG data, and
-     *         returns it as an Image after using the specified JPEGDecoder to
-     *         decode it.
-     * @throws NullPointerException
-     *         if decoder is null.
-     */
-    private static Function<ByteBuffer, Image> decodeJPEG( final JPEGDecoder decoder )
-    {
-        CheckParameters.areNotNull( decoder );
-        return new Function<ByteBuffer, Image>()
-        {
-            @Override
-            public Image apply( final ByteBuffer buffer )
-            {
-                return decoder.decodeJPEG( buffer );
-            }
-        };
     }
 }

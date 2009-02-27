@@ -102,6 +102,9 @@ public final class ADFFMPEGDecoder implements JPEGDecoder
 
     }
 
+    /**
+     * The single instance of ADFFMPEGDecoder to give out to clients.
+     */
     private static final ADFFMPEGDecoder instance = new ADFFMPEGDecoder();
 
     /**

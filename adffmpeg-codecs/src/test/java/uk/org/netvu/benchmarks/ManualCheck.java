@@ -37,7 +37,8 @@ public class ManualCheck
      */
     public static void main( final String[] args )
     {
-        CheckParameters.areNotNull( args );
+        CheckParameters.areNotNull( (Object) args );
+        CheckParameters.areNotNull( (Object[]) args );
 
         new JFrame()
         {

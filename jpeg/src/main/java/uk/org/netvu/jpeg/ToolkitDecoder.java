@@ -12,8 +12,8 @@ import uk.org.netvu.util.Images;
 public final class ToolkitDecoder implements JPEGDecoder
 {
     /**
-     * Private to prevent instantiation - {@link #getInstance()} should be used
-     * instead.
+     * Private to prevent instantiation - {@link #createInstance()} should be
+     * used instead.
      */
     private ToolkitDecoder()
     {

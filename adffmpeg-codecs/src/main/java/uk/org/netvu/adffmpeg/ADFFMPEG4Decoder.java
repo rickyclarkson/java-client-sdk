@@ -12,14 +12,37 @@ import uk.org.netvu.mpeg.MPEGDecoder;
 import uk.org.netvu.util.CheckParameters;
 import uk.org.netvu.util.Images;
 
+/**
+ * A
+ */
 public final class ADFFMPEG4Decoder implements MPEGDecoder
 {
+    /**
+     * The context instance for ADFFMPEG.
+     */
     private AVCodecContext codecContext;
+
+    /**
+     * The frame used for storing decoded data.
+     */
     private AVFrame picture;
+
+    /**
+     * Prevents this decoder from being used concurrently or recursively, as
+     * ADFFMPEG is known to behave indeterministically in such cases.
+     */
     private static final Semaphore semaphore = new Semaphore( 1, true );
 
+    /**
+     * The codec used for decoding MPEG-4 frames.
+     */
     private final AVCodec codec;
 
+    /**
+     * Private to prevent direct instantiation - {@link #getInstance()} should
+     * be used instead.
+     */
+    private ADFFMPEG4Decoder()
     {
         try
         {
@@ -44,6 +67,9 @@ public final class ADFFMPEG4Decoder implements MPEGDecoder
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Image decodeMPEG4( final ByteBuffer originalBuffer )
     {
         try
@@ -88,6 +114,13 @@ public final class ADFFMPEG4Decoder implements MPEGDecoder
         }
     }
 
+    /**
+     * Gives an instance of ADFFMPEG4Decoder. ADFFMPEG4Decoder is implemented as
+     * a singleton, to control access to the underlying codec, which is not
+     * thread-safe.
+     * 
+     * @return an instance of ADFFMPEG4Decoder.
+     */
     public static ADFFMPEG4Decoder getInstance()
     {
         return new ADFFMPEG4Decoder();
