@@ -13,7 +13,7 @@ import uk.org.netvu.util.CheckParameters;
 import uk.org.netvu.util.Images;
 
 /**
- * A
+ * An MPEG-4 decoder that uses the ADFFMPEG Java bindings.
  */
 public final class ADFFMPEG4Decoder implements MPEGDecoder
 {
