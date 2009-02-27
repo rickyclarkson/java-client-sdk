@@ -1,3 +1,16 @@
 Rationale
 
- We will create an MPEG-4 decoder, using ADFFMPEG, and provide a general interface to it so that we can replace it with another decoder easily.
+ We will create an MPEG-4 decoder, using ADFFMPEG, and provide a general interface to it so that we can replace it with another decoder easily.  We will investigate other decoders.
+
+* QuickTime For Java
+
+ For Windows and OS X, Apple's Quicktime has Java bindings that can decode single frames.  I have tried these out but the Java Virtual Machine crashes when attempting to allocate an empty Movie, or even a QTHandle.  It appears that these Java bindings are due to disappear - {{{http://lists.apple.com/archives/quicktime-java/2008/Jun/msg00018.html}}a quicktime-java mailing list thread}.  Numerous posters on that list have suggested using QuickTime directly via JNI/JNA, which I will include as a separate option here.
+
+* QuickTime C API
+
+ This appears to be much better documented than the Java bindings, and it provides a lot of functionality that the Java bindings do not.  I am still trying this out.
+
+* IBM Toolkit for MPEG-4
+
+ This is a pure Java toolkit that can play MPEG-4 video, but it gives no capability of decoding individual frames, and the source is not available.  It would be possible to decompile it and then add this capability.
+

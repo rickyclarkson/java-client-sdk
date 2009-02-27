@@ -77,10 +77,7 @@ public final class ADFFMPEG4Decoder implements MPEGDecoder
             semaphore.acquire();
             final ByteBuffer buffer = originalBuffer.duplicate();
             final IntBuffer gotPicture = ByteBuffer.allocateDirect( 4 ).asIntBuffer();
-            final ByteBuffer directBuffer = ByteBuffer.allocateDirect( buffer.limit() + 10 ); // +10
-            // is
-            // an
-            // experiment
+            final ByteBuffer directBuffer = ByteBuffer.allocateDirect( buffer.limit() + 10 );
             directBuffer.put( buffer );
             for ( int a = 0; a < 10; a++ )
             {
