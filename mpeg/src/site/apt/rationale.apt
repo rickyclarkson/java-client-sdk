@@ -1,0 +1,3 @@
+Rationale
+
+ We will create an MPEG-4 decoder, using ADFFMPEG, and provide a general interface to it so that we can replace it with another decoder easily.

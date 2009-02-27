@@ -1,0 +1,43 @@
+Decode MPEG-4
+
+  Provide a concise way of decoding a ByteBuffer containing an MPEG-4 frame into a java.awt.Image.
+
+* Summary:
+
+  This library should abstract over the MPEG-4 decoding libraries that are used, so that we can easily switch to another library should one show advantages over another or should the appropriate choice of library differ between operating systems and architectures.
+
+* Related ticket(s):
+
+ {{{http://adwiki.ad-group.adh/ticket/3568}#3568 Provide a general interface for decoding MPEG-4 frames.}}
+
+* Goal:
+
+  To provide a concise way of decoding a ByteBuffer containing an MPEG-4 frame into a java.awt.Image.
+
+* Actors:
+
+  NetVu ObserVer.
+
+* Preconditions:
+
+  None.
+
+* Triggers:
+
+  The client calls a function to decode an MPEG-4 frame.
+
+* Basic success path:
+
+  The MPEG-4 frame is decoded and an Image is available for the client to handle.
+
+* Other success paths:
+
+  None.
+
+* Exception paths:
+
+  The frame is corrupt.
+
+* Notes:
+
+  None.
