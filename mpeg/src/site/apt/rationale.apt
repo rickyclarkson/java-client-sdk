@@ -12,5 +12,7 @@ Rationale
 
 * IBM Toolkit for MPEG-4
 
- This is a pure Java toolkit that can play MPEG-4 video, but it gives no capability of decoding individual frames, and the source is not available.  It would be possible to decompile it and then add this capability.
+ This is a pure Java toolkit that can play MPEG-4 video, but it gives no capability of decoding individual frames, and the source is not available.  It would be possible to decompile it and then add this capability, but I expect that the results of doing this would not be redistributable.
+
+
 
