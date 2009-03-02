@@ -31,7 +31,7 @@ public final class ADFFMPEG4Decoder implements MPEGDecoder
      * Prevents this decoder from being used concurrently or recursively, as
      * ADFFMPEG is known to behave indeterministically in such cases.
      */
-    private static final Semaphore semaphore = new Semaphore( 1, true );
+    private static final Semaphore semaphore = ADFFMPEGDecoder.semaphore;//new Semaphore( 1, true );
 
     /**
      * The codec used for decoding MPEG-4 frames.

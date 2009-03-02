@@ -52,7 +52,7 @@ public final class ADFFMPEGDecoder implements JPEGDecoder
      * Prevents this decoder from being used concurrently or recursively, as
      * ADFFMPEG is known to behave indeterministically in such cases.
      */
-    private static final Semaphore semaphore = new Semaphore( 1, true );
+    static final Semaphore semaphore = new Semaphore( 1, true );
 
     /**
      * {@inheritDoc}
