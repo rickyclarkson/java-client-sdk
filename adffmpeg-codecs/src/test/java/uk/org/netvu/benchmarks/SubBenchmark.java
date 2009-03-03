@@ -8,7 +8,7 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.List;
 
-import uk.org.netvu.adffmpeg.ADFFMPEGDecoder;
+import uk.org.netvu.adffmpeg.ADFFMPEGDecoders;
 import uk.org.netvu.jpeg.ImageIODecoder;
 import uk.org.netvu.jpeg.JPEGDecoder;
 import uk.org.netvu.jpeg.ToolkitDecoder;
@@ -31,7 +31,7 @@ public class SubBenchmark
      * The decoders to benchmark.
      */
     public static final List<JPEGDecoder> decoders =
-            Arrays.asList( ADFFMPEGDecoder.getInstance(), ToolkitDecoder.createInstance(), ImageIODecoder
+            Arrays.asList( ADFFMPEGDecoders.getJPEGDecoder(), ToolkitDecoder.createInstance(), ImageIODecoder
                 .createInstance() );
 
     /**

@@ -11,12 +11,12 @@ import uk.org.netvu.jpeg.DecodingTests
 import java.io.{File, FileInputStream, ByteArrayOutputStream}
 
 class JPEGDecodingTest extends JUnit4(new Specification {
- for (decoder <- List[JPEGDecoder](ADFFMPEGDecoder.getInstance()))
+ for (decoder <- List[JPEGDecoder](ADFFMPEGDecoders.getJPEGDecoder()))
   decoder.toString + isSpecifiedBy(DecodingTests.validDecoder(decoder))
 })
 
 class MPEG4DecodingTest extends JUnit4(new Specification {
- val decoder = ADFFMPEG4Decoder.getInstance
+ val decoder = ADFFMPEGDecoders.getMPEG4Decoder
 
  for {
   a <- 0 until 5
