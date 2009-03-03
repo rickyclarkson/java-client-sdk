@@ -11,8 +11,8 @@ import java.util.concurrent.Semaphore;
 import uk.org.netvu.jpeg.JPEGDecoder;
 import uk.org.netvu.mpeg.MPEGDecoder;
 import uk.org.netvu.util.CheckParameters;
-import uk.org.netvu.util.Images;
 import uk.org.netvu.util.Function;
+import uk.org.netvu.util.Images;
 
 /**
  * ADFFMPEGDecoders provides access to the decoders that depend on ADFFMPEG. Use
@@ -43,7 +43,7 @@ public final class ADFFMPEGDecoders
          */
         private final AVCodec codec = ADFFMPEG.avcodec_find_decoder_by_name( "mjpeg" );
 
-        //anonymous initialiser
+        // anonymous initialiser
         {
             if ( ADFFMPEG.avcodec_open( codecContext, codec ) < 0 )
             {
@@ -69,9 +69,8 @@ public final class ADFFMPEGDecoders
                     codecContext = ADFFMPEG.avcodec_alloc_context();
                     ADFFMPEG.avcodec_open( codecContext, codec );
 
-                    final IntBuffer gotPicture = ByteBuffer.allocateDirect( 4 ).asIntBuffer();
-
-                    return helper(codecContext, picture, gotPicture, buffer, Function.<AVCodecContext, AVFrame>constant(picture));
+                    return helper( codecContext, picture, buffer, Function
+                        .<AVCodecContext, AVFrame> constant( picture ) );
                 }
                 finally
                 {
@@ -143,33 +142,34 @@ public final class ADFFMPEGDecoders
             {
                 semaphore.acquire();
                 try
-                {                
+                {
                     final ByteBuffer buffer = originalBuffer.duplicate();
-                    final IntBuffer gotPicture = ByteBuffer.allocateDirect( 4 ).asIntBuffer();
+
                     final ByteBuffer directBuffer = ByteBuffer.allocateDirect( buffer.limit() + 10 );
                     directBuffer.put( buffer );
                     for ( int a = 0; a < 10; a++ )
                     {
                         directBuffer.put( (byte) 0 );
                     }
-                    
+
                     directBuffer.position( 0 );
-                    return helper(codecContext, picture, gotPicture, directBuffer, new Function<AVCodecContext, AVFrame>()
-                                  {
-                                      public AVFrame apply(AVCodecContext codecContext)
-                                      {
-                                          return codecContext.getCoded_frame();
-                                      }
-                                  });
+                    return helper( codecContext, picture, directBuffer, new Function<AVCodecContext, AVFrame>()
+                    {
+                        @Override
+                        public AVFrame apply( final AVCodecContext codecContext )
+                        {
+                            return codecContext.getCoded_frame();
+                        }
+                    } );
                 }
                 finally
                 {
                     semaphore.release();
-                }                
+                }
             }
-            catch (InterruptedException e)
+            catch ( final InterruptedException e )
             {
-                throw new RuntimeException(e);
+                throw new RuntimeException( e );
             }
         }
     }
@@ -223,21 +223,44 @@ public final class ADFFMPEGDecoders
         return mpeg4;
     }
 
-    private static Image helper(AVCodecContext codecContext, AVFrame picture, IntBuffer gotPicture, ByteBuffer buffer, Function<AVCodecContext, AVFrame> extractInto)
+    /**
+     * Decodes a ByteBuffer and produces an Image from the resulting pixel data.
+     * 
+     * @param codecContext
+     *        the ADFFMPEG context to use.
+     * @param picture
+     *        the AVFrame to supply to
+     *        {@link ADFFMPEG#avcodec_decode_video(AVCodecContext, AVFrame, IntBuffer, ByteBuffer)}
+     * @param buffer
+     *        the ByteBuffer to read data from.
+     * @param extractInto
+     *        a Function that, given the AVCodecContext, returns the AVFrame to
+     *        decode image data into. This is passed in as a Function instead of
+     *        a value because the order of operation is important (
+     *        {@link AVCodecContext#getCoded_frame()} depends on
+     *        {@link ADFFMPEG#avcodec_decode_video(AVCodecContext, AVFrame, IntBuffer, ByteBuffer)}
+     *        occurring first).
+     * @return an Image containing the decoded data.
+     */
+    private static Image helper( final AVCodecContext codecContext, final AVFrame picture, final ByteBuffer buffer,
+            final Function<AVCodecContext, AVFrame> extractInto )
+    {
+        final int len =
+                ADFFMPEG.avcodec_decode_video( codecContext, picture, ByteBuffer.allocateDirect( 4 ).asIntBuffer(),
+                        buffer );
+        if ( len < 0 )
         {
-            final int len = ADFFMPEG.avcodec_decode_video( codecContext, picture, gotPicture, buffer );
-            if ( len < 0 )
-            {
-                throw new IllegalStateException( "ADFFMPEG did not decode any bytes" );
-            }
-
-            final int numberOfPixels = codecContext.getWidth() * codecContext.getHeight();
-            final IntBuffer decodeBuffer =
-                ByteBuffer.allocateDirect( numberOfPixels * 4 ).order( ByteOrder.nativeOrder() ).asIntBuffer();
-            final int[] decodedData = new int[numberOfPixels];
-            ADFFMPEG.extractPixelData( extractInto.apply(codecContext), codecContext, decodeBuffer );
-            decodeBuffer.get(decodedData);
-            final int width = codecContext.getWidth();
-            return Images.loadFully( Toolkit.getDefaultToolkit().createImage( new MemoryImageSource(width, codecContext.getHeight(), decodedData, 0, width)));
+            throw new IllegalStateException( "ADFFMPEG did not decode any bytes" );
         }
+
+        final int numberOfPixels = codecContext.getWidth() * codecContext.getHeight();
+        final IntBuffer decodeBuffer =
+                ByteBuffer.allocateDirect( numberOfPixels * 4 ).order( ByteOrder.nativeOrder() ).asIntBuffer();
+        final int[] decodedData = new int[numberOfPixels];
+        ADFFMPEG.extractPixelData( extractInto.apply( codecContext ), codecContext, decodeBuffer );
+        decodeBuffer.get( decodedData );
+        final int width = codecContext.getWidth();
+        return Images.loadFully( Toolkit.getDefaultToolkit().createImage(
+                new MemoryImageSource( width, codecContext.getHeight(), decodedData, 0, width ) ) );
+    }
 }
