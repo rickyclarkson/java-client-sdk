@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import uk.org.netvu.adffmpeg.ADFFMPEGDecoders;
-import uk.org.netvu.mpeg.MPEGDecoder;
+import uk.org.netvu.mpeg.MPEG4Decoder;
 import uk.org.netvu.util.CheckParameters;
 
 /**
@@ -54,7 +54,7 @@ public class ManualCheckMPEG4
                     {
                         try
                         {
-                            final MPEGDecoder decoder = ADFFMPEGDecoders.getMPEG4Decoder();
+                            final MPEG4Decoder decoder = ADFFMPEGDecoders.getMPEG4Decoder();
 
                             for ( int a = 0; a < 5; a++ )
                             {

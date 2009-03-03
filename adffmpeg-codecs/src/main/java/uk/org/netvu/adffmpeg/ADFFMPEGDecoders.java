@@ -9,7 +9,7 @@ import java.nio.IntBuffer;
 import java.util.concurrent.Semaphore;
 
 import uk.org.netvu.jpeg.JPEGDecoder;
-import uk.org.netvu.mpeg.MPEGDecoder;
+import uk.org.netvu.mpeg.MPEG4Decoder;
 import uk.org.netvu.util.CheckParameters;
 import uk.org.netvu.util.Function;
 import uk.org.netvu.util.Images;
@@ -69,7 +69,7 @@ public final class ADFFMPEGDecoders
                     codecContext = ADFFMPEG.avcodec_alloc_context();
                     ADFFMPEG.avcodec_open( codecContext, codec );
 
-                    return helper( codecContext, picture, buffer, Function
+                    return decodeFrame( codecContext, picture, buffer, Function
                         .<AVCodecContext, AVFrame> constant( picture ) );
                 }
                 finally
@@ -87,7 +87,7 @@ public final class ADFFMPEGDecoders
     /**
      * An MPEG4 decoder that uses ADFFMPEG.
      */
-    private static final class MPEG4 implements MPEGDecoder
+    private static final class MPEG4 implements MPEG4Decoder
     {
         /**
          * The context instance for ADFFMPEG.
@@ -153,7 +153,7 @@ public final class ADFFMPEGDecoders
                     }
 
                     directBuffer.position( 0 );
-                    return helper( codecContext, picture, directBuffer, new Function<AVCodecContext, AVFrame>()
+                    return decodeFrame( codecContext, picture, directBuffer, new Function<AVCodecContext, AVFrame>()
                     {
                         @Override
                         public AVFrame apply( final AVCodecContext codecContext )
@@ -211,14 +211,14 @@ public final class ADFFMPEGDecoders
     }
 
     /**
-     * Gives the singleton instance of a private implementation of MPEGDecoder.
+     * Gives the singleton instance of a private implementation of MPEG4Decoder.
      * It is a singleton to control access to the underlying codec, which is not
      * thread-safe.
      * 
      * @return the singleton instance of a private implementation of
-     *         MPEGDecoder.
+     *         MPEG4Decoder.
      */
-    public static MPEGDecoder getMPEG4Decoder()
+    public static MPEG4Decoder getMPEG4Decoder()
     {
         return mpeg4;
     }
@@ -242,8 +242,8 @@ public final class ADFFMPEGDecoders
      *        occurring first).
      * @return an Image containing the decoded data.
      */
-    private static Image helper( final AVCodecContext codecContext, final AVFrame picture, final ByteBuffer buffer,
-            final Function<AVCodecContext, AVFrame> extractInto )
+    private static Image decodeFrame( final AVCodecContext codecContext, final AVFrame picture,
+            final ByteBuffer buffer, final Function<AVCodecContext, AVFrame> extractInto )
     {
         final int len =
                 ADFFMPEG.avcodec_decode_video( codecContext, picture, ByteBuffer.allocateDirect( 4 ).asIntBuffer(),
