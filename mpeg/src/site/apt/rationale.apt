@@ -22,3 +22,7 @@ Rationale
 
  {{{http://www.divx.com}}DivX} is a proprietary MPEG-4 codec for Windows.  At the time of this writing, the webserver hosting their {{{http://labs.divx.com}}developer documentation} was offline, so I didn't investigate it further.
 
+* On2 4100 MPEG-4 codec
+
+ {{{http://www.on2.com/index.php?98}}This codec} is particularly optimised for speed, particularly for embedded devices.  It is proprietary, and no evaluation version is available, at least without speaking to an On2 representative.  Investigation did not reveal any Java bindings, but On2 have a Java player that can play the formats that On2 support, as an applet, and On2 has links with Sun via JavaFX.
+
