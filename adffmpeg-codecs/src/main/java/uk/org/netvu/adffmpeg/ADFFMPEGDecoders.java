@@ -153,14 +153,7 @@ public final class ADFFMPEGDecoders
                     }
 
                     directBuffer.position( 0 );
-                    return decodeFrame( codecContext, picture, directBuffer, new Function<AVCodecContext, AVFrame>()
-                    {
-                        @Override
-                        public AVFrame apply( final AVCodecContext codecContext )
-                        {
-                            return codecContext.getCoded_frame();
-                        }
-                    } );
+                    return decodeFrame( codecContext, picture, directBuffer, getCodedFrame);
                 }
                 finally
                 {
@@ -263,4 +256,12 @@ public final class ADFFMPEGDecoders
         return Images.loadFully( Toolkit.getDefaultToolkit().createImage(
                 new MemoryImageSource( width, codecContext.getHeight(), decodedData, 0, width ) ) );
     }
+
+    private static final Function<AVCodecContext, AVFrame> getCodedFrame = new Function<AVCodecContext, AVFrame>()
+    {
+        public AVFrame apply(AVCodecContext context)
+        {
+            return context.getCoded_frame();
+        }
+    };
 }
