@@ -4,15 +4,21 @@ Rationale
 
 * QuickTime For Java
 
- For Windows and OS X, Apple's Quicktime has Java bindings that can decode single frames.  I have tried these out but the Java Virtual Machine crashes when attempting to allocate an empty Movie, or even a QTHandle.  It appears that these Java bindings are due to disappear - {{{http://lists.apple.com/archives/quicktime-java/2008/Jun/msg00018.html}}a quicktime-java mailing list thread}.  Numerous posters on that list have suggested using QuickTime directly via JNI/JNA, which I will include as a separate option here.
+ For Windows and OS X, Apple's Quicktime has Java bindings that can output single decoded video frames.  I have tried these out but from what I can see they require a normal MPEG-4 video stream or file as input, rather than individual encoded frames.  These Java bindings are expected to disappear - {{{http://lists.apple.com/archives/quicktime-java/2008/Jun/msg00018.html}}a quicktime-java mailing list thread}.  Numerous posters on that list have suggested using QuickTime directly via JNI/JNA, which I will include as a separate option here.
 
 * QuickTime C API
 
- This appears to be much better documented than the Java bindings, and it provides a lot of functionality that the Java bindings do not.  I am still trying this out.
+ This appears to be much better documented than the Java bindings, and it provides a lot of functionality that the Java bindings do not.  Unfortunately, the {{{http://developer.apple.com/samplecode/CreateMovieFromReferences/index.html}}most relevant example program} that Apple provides doesn't work (exits with no error message), at least on Windows, making it difficult to make progress.
 
 * IBM Toolkit for MPEG-4
 
  This is a pure Java toolkit that can play MPEG-4 video, but it gives no capability of decoding individual frames, and the source is not available.  It would be possible to decompile it and then add this capability, but I expect that the results of doing this would not be redistributable.
 
+* Xvid
 
+ {{{http://www.xvid.org/}}Xvid} is a GPL MPEG-4 codec that focuses on rendering quality.  Firstly, the GPL (GNU Public License) makes it impossible to legally distribute software that uses it without that software being released under the GPL too.  Secondly, {{{http://techdigger.wordpress.com/2008/05/28/mpeg-avi-decoding-divx-vs-xvid/}}existing benchmarks} show that Xvid's performance is worse than FFmpeg's.
+
+* DivX
+
+ {{{http://www.divx.com}}DivX} is a proprietary MPEG-4 codec for Windows.  At the time of this writing, the webserver hosting their {{{http://labs.divx.com}}developer documentation} was offline, so I didn't investigate it further.
 
