@@ -4,7 +4,7 @@ Rationale
 
 * QuickTime For Java
 
- For Windows and OS X, Apple's Quicktime has Java bindings that can output single decoded video frames.  I have tried these out but from what I can see they require a normal MPEG-4 video stream or file as input, rather than individual encoded frames.  These Java bindings are expected to disappear - {{{http://lists.apple.com/archives/quicktime-java/2008/Jun/msg00018.html}}a quicktime-java mailing list thread}.  Numerous posters on that list have suggested using QuickTime directly via JNI/JNA, which I will include as a separate option here.
+ For Windows and OS X, Apple's Quicktime has Java bindings that can output single decoded video frames.  A small proof of concept program was created, but it appeared that QuickTime for Java requires a normal MPEG-4 video stream or file as input, rather than individual encoded frames.  These Java bindings are expected to disappear - {{{http://lists.apple.com/archives/quicktime-java/2008/Jun/msg00018.html}}a quicktime-java mailing list thread}.  Numerous posters on that list have suggested using QuickTime's C API directly via JNI/JNA, which has been included as a separate option here.
 
 * QuickTime C API
 
@@ -12,7 +12,7 @@ Rationale
 
 * IBM Toolkit for MPEG-4
 
- This is a pure Java toolkit that can play MPEG-4 video, but it gives no capability of decoding individual frames, and the source is not available.  It would be possible to decompile it and then add this capability, but I expect that the results of doing this would not be redistributable.
+ This is a pure Java toolkit that can play MPEG-4 video, but it gives no capability of decoding individual frames, and the source is not available.  It would be possible to decompile it and then add this capability, but the resulting library or program would not be legally redistributable.
 
 * Xvid
 
@@ -20,9 +20,8 @@ Rationale
 
 * DivX
 
- {{{http://www.divx.com}}DivX} is a proprietary MPEG-4 codec for Windows.  At the time of this writing, the webserver hosting their {{{http://labs.divx.com}}developer documentation} was offline, so I didn't investigate it further.
+ {{{http://www.divx.com}}DivX} is a proprietary MPEG-4 codec for Windows.  At the time of this writing, the webserver hosting their {{{http://labs.divx.com}}developer documentation} was offline, so DivX was not investigated further.
 
 * On2 4100 MPEG-4 codec
 
- {{{http://www.on2.com/index.php?98}}This codec} is particularly optimised for speed, particularly for embedded devices.  It is proprietary, and no evaluation version is available, at least without speaking to an On2 representative.  Investigation did not reveal any Java bindings, but On2 have a Java player that can play the formats that On2 support, as an applet, and On2 has links with Sun via JavaFX.
-
+ {{{http://www.on2.com/index.php?98}}This codec} is particularly optimised for speed, particularly for embedded devices.  It is proprietary, and no evaluation version is available, at least without speaking to an On2 representative.  Investigation did not reveal any Java bindings, but On2 have a Java player that can play the formats that On2 support, as an applet.  On2 also has links with Sun via JavaFX, so they might at least be open to the idea of Java bindings.
