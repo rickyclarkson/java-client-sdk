@@ -2,12 +2,27 @@ package uk.org.netvu.filter;
 
 import java.awt.image.DataBuffer;
 
+/**
+ * A utility class for obtaining brightness filters.
+ */
 public final class BrightnessFilter
 {
+    /**
+     * Private to prevent instantiation.
+     */
     private BrightnessFilter()
     {
     }
 
+    /**
+     * A brightness filter that multiplies each pixel value by a constant
+     * factor.
+     * 
+     * @param brightness
+     *        the constant factor by which to multiply each pixel value.
+     * @return a brightness filter that multiplies each pixel value by the
+     *         specified brightness.
+     */
     public static ImageFilter simpleBrightnessFilter( final double brightness )
     {
         return Filters.createFilter( new PixelProcessor()
@@ -26,6 +41,15 @@ public final class BrightnessFilter
         } );
     }
 
+    /**
+     * A brightness filter that linearly scales all pixel values to the range
+     * between minValue and 255.
+     * 
+     * @param minValue
+     *        the minimum pixel value in the output Image.
+     * @return a brightness filter that linearly scales all pixel values to the
+     *         range between minValue and 255.
+     */
     public static ImageFilter betterBrightnessFilter( final int minValue )
     {
         return Filters.createFilter( new PixelProcessor()

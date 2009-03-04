@@ -252,13 +252,25 @@ public abstract class Option<T> implements Iterable<T>
      */
     private static final class Empty<T> extends Option<T>
     {
+        /**
+         * The reason that this Option is empty.
+         */
         private final String reason;
 
+        /**
+         * Constructs an Empty with the specified reason.
+         * 
+         * @param reason
+         *        the reason that this Option is empty.
+         */
         private Empty( final String reason )
         {
             this.reason = reason;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public <U> Option<U> bind( final Function<T, Option<U>> function )
         {
@@ -267,6 +279,9 @@ public abstract class Option<T> implements Iterable<T>
             return Option.getEmptyOption( reason );
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public <U> U fold( final U ifEmpty, final Function<T, U> ifFull )
         {
@@ -275,6 +290,9 @@ public abstract class Option<T> implements Iterable<T>
             return ifEmpty;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public T get()
         {
@@ -283,17 +301,26 @@ public abstract class Option<T> implements Iterable<T>
                             + reason );
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean isEmpty()
         {
             return true;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public Iterator<T> iterator()
         {
             return Collections.<T> emptyList().iterator();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public <U> Option<U> map( final Function<T, U> function )
         {
@@ -302,6 +329,9 @@ public abstract class Option<T> implements Iterable<T>
             return Option.getEmptyOption( reason );
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String reason()
         {
@@ -317,19 +347,34 @@ public abstract class Option<T> implements Iterable<T>
      */
     private static final class Full<T> extends Option<T>
     {
+        /**
+         * The value held by this Full.
+         */
         private final T t;
 
+        /**
+         * Constructs a Full with the specified value.
+         * 
+         * @param t
+         *        the value held by this Full.
+         */
         private Full( final T t )
         {
             this.t = t;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public <U> Option<U> bind( final Function<T, Option<U>> conversion )
         {
             return conversion.apply( t );
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public <U> U fold( final U ifEmpty, final Function<T, U> ifFull )
         {
@@ -338,29 +383,44 @@ public abstract class Option<T> implements Iterable<T>
             return ifFull.apply( t );
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public T get()
         {
             return t;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean isEmpty()
         {
             return false;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public Iterator<T> iterator()
         {
             return Collections.singletonList( t ).iterator();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public <U> Option<U> map( final Function<T, U> conversion )
         {
             return Option.getFullOption( conversion.apply( t ) );
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String reason()
         {

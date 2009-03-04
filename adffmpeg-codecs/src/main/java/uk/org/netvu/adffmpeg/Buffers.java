@@ -1,4 +1,4 @@
-package uk.org.netvu.util;
+package uk.org.netvu.adffmpeg;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
+/**
+ * A utility class for operating on ByteBuffers.
+ */
 public final class Buffers
 {
     /**
@@ -27,22 +30,5 @@ public final class Buffers
         result.put( first );
         result.position( 0 );
         return result;
-    }
-
-    /**
-     * Constructs an array of bytes containing the data from the specified file.
-     * 
-     * @param filename
-     *        the name of the file that contains the data to read.
-     * @return an array of bytes containing the data from the specified file.
-     * @throws IOException
-     *         if any I/O error occurs.
-     */
-    public static byte[] byteArrayFor( final String filename ) throws IOException
-    {
-        final ByteBuffer buffer = bufferFor( filename );
-        final byte[] bytes = new byte[buffer.limit()];
-        buffer.get( bytes );
-        return bytes;
     }
 }

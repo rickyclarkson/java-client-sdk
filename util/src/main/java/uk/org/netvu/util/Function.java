@@ -300,6 +300,9 @@ public abstract class Function<T, R>
      */
     private static final class HexStringToIntFunction extends Function<String, Option<Integer>>
     {
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Option<Integer> apply( final String t )
         {
@@ -329,6 +332,9 @@ public abstract class Function<T, R>
      */
     private static final class HexStringToLongFunction extends Function<String, Option<Long>>
     {
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Option<Long> apply( final String string )
         {

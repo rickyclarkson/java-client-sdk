@@ -10,8 +10,14 @@ package uk.org.netvu.util;
  */
 public final class Pair<T, U>
 {
+    /**
+     * The first value held by this Pair.
+     */
     private final T t;
 
+    /**
+     * The second value held by this Pair.
+     */
     private final U u;
 
     /**

@@ -2,12 +2,28 @@ package uk.org.netvu.filter;
 
 import java.awt.image.DataBuffer;
 
+/**
+ * A utility class for obtaining contrast filters.
+ */
 public final class ContrastFilter
 {
+    /**
+     * Private to prevent instantiation.
+     */
     private ContrastFilter()
     {
     }
 
+    /**
+     * Gives a contrast filter that applies the specified contrast shift to
+     * images.
+     * 
+     * @param contrast
+     *        the amount to change the contrast by - 1.0 keeps the contrast the
+     *        same, 0.5 halves the contrast, 2.0 doubles the contrast.
+     * @return a contrast filter that applies the specified contrast shift to
+     *         images.
+     */
     public static ImageFilter contrastFilter( final double contrast )
     {
         return Filters.createFilter( new PixelProcessor()

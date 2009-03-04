@@ -257,6 +257,10 @@ public final class ADFFMPEGDecoders
                 new MemoryImageSource( width, codecContext.getHeight(), decodedData, 0, width ) ) );
     }
 
+    /**
+     * A Function that gives the result of calling
+     * {@link AVCodecContext#getCoded_frame()} on its input.
+     */
     private static final Function<AVCodecContext, AVFrame> getCodedFrame = new Function<AVCodecContext, AVFrame>()
     {
         @Override
