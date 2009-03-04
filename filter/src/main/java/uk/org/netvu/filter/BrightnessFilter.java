@@ -4,6 +4,10 @@ import java.awt.image.DataBuffer;
 
 public final class BrightnessFilter
 {
+    private BrightnessFilter()
+    {
+    }
+
     public static ImageFilter simpleBrightnessFilter( final double brightness )
     {
         return Filters.createFilter( new PixelProcessor()

@@ -19,17 +19,6 @@ final class Filters
         return x < 0 ? 0 : x > 255 ? 255 : x;
     }
 
-    public static ImageFilter andThen( final ImageFilter first, final ImageFilter second )
-    {
-        return new ImageFilter()
-        {
-            public Image filter( final Image image )
-            {
-                return first.filter( second.filter( image ) );
-            }
-        };
-    }
-
     public static ImageFilter createFilter( final PixelProcessor processor )
     {
         return new ImageFilter()

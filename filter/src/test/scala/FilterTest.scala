@@ -18,4 +18,17 @@ class FilterTest extends JUnit4(new Specification {
    result.getWidth(null) mustEqual(original.getWidth(null))
    result.getHeight(null) mustEqual(original.getHeight(null))
   } }
+
+ "Filters.bound" should {
+  "always give numbers between 0 and 255" in {
+   for (x <- List(-10, -1, 0, 1, 120, 254, 255, 256, 10000)) {
+    Filters.bound(x) >= 0 mustBe true
+    Filters.bound(x) <= 255 mustBe true
+   }
+  }
+  "be the identity function for numbers between 0 and 255" in {
+   for (x <- 0 to 255)
+    Filters.bound(x) mustEqual x
+  }
+ }
 })
