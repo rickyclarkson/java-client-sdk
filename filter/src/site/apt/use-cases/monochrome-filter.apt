@@ -1,0 +1,43 @@
+Monochrome Filter
+
+  Provide a concise way of converting a colour Image to a monochrome Image.
+
+* Summary:
+
+  This library should provide a way of converting a colour Image to a monochrome Image.
+
+* Related ticket(s):
+
+ {{{http://adwiki.ad-group.adh/ticket/3611}#3611 Provide a monochrome filter.}}
+
+* Goal:
+
+  To provide a concise way of converting a colour Image to a monochrome Image.
+
+* Actors:
+
+  NetVu ObserVer.
+
+* Preconditions:
+
+  None.
+
+* Triggers:
+
+  The client calls a function to convert a colour Image to a monochrome Image.
+
+* Basic success path:
+
+  A new monochrome Image is created from the pixel data in the first Image.
+
+* Other success paths:
+
+  None.
+
+* Exception paths:
+
+  None.
+
+* Notes:
+
+  None.

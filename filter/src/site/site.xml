@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project>
+    <body>
+        <menu name="Requirements">
+            <item name="Use Cases" href="use-cases/index.html" collapse="true">
+                <item name="Monochrome Filter" href="use-cases/monochrome-filter.html"/>
+                <item name="Contrast Filter" href="use-cases/contrast-filter.html"/>
+                <item name="Brightness Filter" href="use-cases/brightness-filter.html"/>
+            </item>
+        </menu>
+        <menu name="Design">
+            <item name="Rationale" href="rationale.html"/>
+        </menu>
+        <menu ref="reports"/>
+    </body>
+</project>

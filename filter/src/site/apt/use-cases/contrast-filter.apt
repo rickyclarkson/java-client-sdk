@@ -1,0 +1,43 @@
+Contrast Filter
+
+  Provide a concise way of altering the contrast of an Image.
+
+* Summary:
+
+  This library should provide a way of altering the contrast of an Image.
+
+* Related ticket(s):
+
+ {{{http://adwiki.ad-group.adh/ticket/3612}#3612 Provide a contrast filter.}}
+
+* Goal:
+
+  To provide a concise way of altering the contrast of an Image.
+
+* Actors:
+
+  NetVu ObserVer.
+
+* Preconditions:
+
+  None.
+
+* Triggers:
+
+  The client calls a function to alter the contrast of an Image.
+
+* Basic success path:
+
+  A new Image is created with the specified contrast, from the pixel data in the first Image.
+
+* Other success paths:
+
+  None.
+
+* Exception paths:
+
+  None.
+
+* Notes:
+
+  None.
