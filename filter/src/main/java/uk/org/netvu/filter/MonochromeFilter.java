@@ -29,4 +29,6 @@ public final class MonochromeFilter
             }
         } );
     }
+
+    public static final ImageFilter standardLuminanceMonochromeFilter = monochromeFilter(0.2126, 0.7152, 0.0722);
 }
