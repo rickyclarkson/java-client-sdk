@@ -54,5 +54,5 @@ public final class ContrastFilter implements ImageFilter
         }
 
         return Images.loadFully(Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(source.getWidth(null), source.getHeight(null), array, 0, source.getWidth(null))));
-    }    
+    }
 }
