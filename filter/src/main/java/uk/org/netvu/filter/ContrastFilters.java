@@ -5,12 +5,12 @@ import java.awt.image.DataBuffer;
 /**
  * A utility class for obtaining contrast filters.
  */
-public final class ContrastFilter
+public final class ContrastFilters
 {
     /**
      * Private to prevent instantiation.
      */
-    private ContrastFilter()
+    private ContrastFilters()
     {
     }
 

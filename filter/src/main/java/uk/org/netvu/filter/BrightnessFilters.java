@@ -5,12 +5,12 @@ import java.awt.image.DataBuffer;
 /**
  * A utility class for obtaining brightness filters.
  */
-public final class BrightnessFilter
+public final class BrightnessFilters
 {
     /**
      * Private to prevent instantiation.
      */
-    private BrightnessFilter()
+    private BrightnessFilters()
     {
     }
 

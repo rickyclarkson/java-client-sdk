@@ -5,12 +5,12 @@ import java.awt.image.DataBuffer;
 /**
  * A utility class for obtaining monochrome filters.
  */
-public final class MonochromeFilter
+public final class MonochromeFilters
 {
     /**
      * Private to prevent instantiation.
      */
-    private MonochromeFilter()
+    private MonochromeFilters()
     {
     }
 

@@ -11,13 +11,13 @@ object ManualCheck { def main(args: Array[String]) = {
  val frame = new JFrame
  frame setLayout new GridLayout(3, 3)
  val filters: List[(ImageFilter, String)] = List(new ImageFilter { def filter(image: Image) = image } -> "No filter",
-                                                 MonochromeFilter.monochromeFilter(1.0/3, 1.0/3, 1.0/3) -> "Averaged monochrome filter",
-                                                 MonochromeFilter.standardLuminanceMonochromeFilter -> "Standard luminance monochrome filter",
-                                                 ContrastFilter.contrastFilter(1.5) -> "Contrast",
-                                                 BrightnessFilter.simpleBrightnessFilter(1.5) -> "Simple brightness filter",
-                                                 BrightnessFilter.betterBrightnessFilter(30) -> "Better brightness filter",
-                                                 andThen(ContrastFilter.contrastFilter(1.5), BrightnessFilter.betterBrightnessFilter(30)) -> "Contrast filter then brightness filter",
-                                                 andThen(MonochromeFilter.monochromeFilter(0.5, 0.2, 0.3), BrightnessFilter.betterBrightnessFilter(30)) -> "Monochrome filter then brightness filter")
+                                                 MonochromeFilters.monochromeFilter(1.0/3, 1.0/3, 1.0/3) -> "Averaged monochrome filter",
+                                                 MonochromeFilters.standardLuminanceMonochromeFilter -> "Standard luminance monochrome filter",
+                                                 ContrastFilters.contrastFilter(1.5) -> "Contrast",
+                                                 BrightnessFilters.simpleBrightnessFilter(1.5) -> "Simple brightness filter",
+                                                 BrightnessFilters.betterBrightnessFilter(30) -> "Better brightness filter",
+                                                 andThen(ContrastFilters.contrastFilter(1.5), BrightnessFilters.betterBrightnessFilter(30)) -> "Contrast filter then brightness filter",
+                                                 andThen(MonochromeFilters.monochromeFilter(0.5, 0.2, 0.3), BrightnessFilters.betterBrightnessFilter(30)) -> "Monochrome filter then brightness filter")
 
  for ((filter, name) <- filters)
   frame add { val label = new JLabel(new ImageIcon(filter filter ImageIO.read(new File("../jpeg/dvip3s-ad-dev-adh-352x256.jpeg"))))
