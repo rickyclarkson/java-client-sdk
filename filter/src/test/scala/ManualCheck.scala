@@ -11,7 +11,7 @@ object ManualCheck { def main(args: Array[String]) = {
  frame add new JLabel(new ImageIcon("../jpeg/dvip3s-ad-dev-adh-352x256.jpeg"))
  frame add new JLabel(new ImageIcon(new MonochromeFilter().filter(ImageIO.read(new File("../jpeg/dvip3s-ad-dev-adh-352x256.jpeg")))))
  frame add new JLabel(new ImageIcon(new ContrastFilter(1.5).filter(ImageIO.read(new File("../jpeg/dvip3s-ad-dev-adh-352x256.jpeg")))))
- frame add new JLabel(new ImageIcon(new BrightnessFilter(2).filter(ImageIO.read(new File("../jpeg/dvip3s-ad-dev-adh-352x256.jpeg")))))
+ frame add new JLabel(new ImageIcon(BrightnessFilter.betterBrightnessFilter(200).filter(ImageIO.read(new File("../jpeg/dvip3s-ad-dev-adh-352x256.jpeg")))))
  frame.pack
  frame setVisible true
 } }

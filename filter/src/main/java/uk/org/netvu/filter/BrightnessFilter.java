@@ -9,29 +9,53 @@ import java.awt.image.DataBuffer;
 
 public final class BrightnessFilter
 {
-    private final double brightness;
-
-    public BrightnessFilter(double brightness)
+    public static ImageFilter simpleBrightnessFilter(final double brightness)
     {
-        this.brightness = brightness;
+        return new ImageFilter()
+        {
+            public Image filter(Image source)
+            {
+                BufferedImage image = new BufferedImage(source.getWidth(null), source.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                image.getGraphics().drawImage(source, 0, 0, null);
+                DataBuffer dataBuffer = image.getData().getDataBuffer();
+                int[] array = new int[dataBuffer.getSize()];
+                
+                for (int a = 0; a < array.length; a++)
+                {
+                    int elem = dataBuffer.getElem(a);
+                    int red = Filters.bound((int)((elem >> 16 & 0xFF) * brightness));
+                    int green = Filters.bound((int)((elem >> 8 & 0xFF) * brightness));
+                    int blue = Filters.bound((int)((elem & 0xFF) * brightness));
+                    array[a] = (0xFF << 24) | (red << 16) | (green << 8) | blue;            
+                }
+
+                return Images.loadFully(Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(source.getWidth(null), source.getHeight(null), array, 0, source.getWidth(null))));
+            }
+        };
     }
 
-    public Image filter(Image source)
+    public static ImageFilter betterBrightnessFilter(final int minValue)
     {
-        BufferedImage image = new BufferedImage(source.getWidth(null), source.getHeight(null), BufferedImage.TYPE_INT_RGB);
-        image.getGraphics().drawImage(source, 0, 0, null);
-        DataBuffer dataBuffer = image.getData().getDataBuffer();
-        int[] array = new int[dataBuffer.getSize()];
-
-        for (int a = 0; a < array.length; a++)
+        return new ImageFilter()
         {
-            int elem = dataBuffer.getElem(a);
-            int red = Filters.bound((int)((elem >> 16 & 0xFF) * brightness));
-            int green = Filters.bound((int)((elem >> 8 & 0xFF) * brightness));
-            int blue = Filters.bound((int)((elem & 0xFF) * brightness));
-            array[a] = (0xFF << 24) | (red << 16) | (green << 8) | blue;            
-        }
+            public Image filter(Image source)
+            {
+                BufferedImage image = new BufferedImage(source.getWidth(null), source.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                image.getGraphics().drawImage(source, 0, 0, null);
+                DataBuffer dataBuffer = image.getData().getDataBuffer();
+                int[] array = new int[dataBuffer.getSize()];
+                
+                for (int a = 0; a<array.length;a++)
+                {
+                    int elem = dataBuffer.getElem(a);
+                    int red = (elem >> 16 & 0xFF) * (256-minValue) / 255 + minValue;
+                    int green = (elem >> 8 & 0xFF) * (256-minValue) / 255 + minValue;
+                    int blue = (elem & 0xFF) * (256-minValue) / 255 + minValue;
+                    array[a] = (0xFF << 24) | (red << 16) | (green << 8) | blue;
+                }
 
-        return Images.loadFully(Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(source.getWidth(null), source.getHeight(null), array, 0, source.getWidth(null))));
-    }    
+                return Images.loadFully(Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(source.getWidth(null), source.getHeight(null), array, 0, source.getWidth(null))));
+            }
+        };
+    }          
 }
