@@ -4,5 +4,5 @@ import java.awt.image.DataBuffer;
 
 interface PixelProcessor
 {
-    void setPixels(int[] pixels, DataBuffer originalData);
+    void setPixels( int[] pixels, DataBuffer originalData );
 }

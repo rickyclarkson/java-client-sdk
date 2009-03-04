@@ -4,5 +4,5 @@ import java.awt.Image;
 
 public interface ImageFilter
 {
-    Image filter(Image source);
+    Image filter( Image source );
 }

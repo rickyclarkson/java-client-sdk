@@ -5,8 +5,8 @@ import java.awt.Image;
 import java.awt.MediaTracker;
 
 /**
- * A class providing utility methods for processing Images.
- * JPEGDecoderFromArray implementations.
+ * A class providing utility methods for processing Images. JPEGDecoderFromArray
+ * implementations.
  */
 public final class Images
 {
@@ -22,7 +22,8 @@ public final class Images
      * 
      * @param result
      *        the Image to fully load.
-     * @throws NullPointerException if result is null.
+     * @throws NullPointerException
+     *         if result is null.
      * @return the fully loaded Image.
      */
     public static Image loadFully( final Image result )

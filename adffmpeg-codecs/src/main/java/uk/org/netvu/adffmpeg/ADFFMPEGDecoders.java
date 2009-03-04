@@ -153,7 +153,7 @@ public final class ADFFMPEGDecoders
                     }
 
                     directBuffer.position( 0 );
-                    return decodeFrame( codecContext, picture, directBuffer, getCodedFrame);
+                    return decodeFrame( codecContext, picture, directBuffer, getCodedFrame );
                 }
                 finally
                 {
@@ -259,7 +259,8 @@ public final class ADFFMPEGDecoders
 
     private static final Function<AVCodecContext, AVFrame> getCodedFrame = new Function<AVCodecContext, AVFrame>()
     {
-        public AVFrame apply(AVCodecContext context)
+        @Override
+        public AVFrame apply( final AVCodecContext context )
         {
             return context.getCoded_frame();
         }
