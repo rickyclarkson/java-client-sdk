@@ -5,8 +5,8 @@ import specs.Specification
 import specs.runner.JUnit4
 import java.nio.ByteBuffer
 import java.awt.Image
-import uk.org.netvu.util.Buffers
 import java.awt.image.BufferedImage
+import uk.org.netvu.util.Buffers
 
 object DecodingTests {
  val data = List((352, 256, "192-168-106-206-352x256.jpg"),
