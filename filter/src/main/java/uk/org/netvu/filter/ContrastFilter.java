@@ -9,6 +9,13 @@ import java.awt.image.DataBuffer;
 
 public final class ContrastFilter implements ImageFilter
 {
+    private final double contrast;
+
+    public ContrastFilter(double contrast)
+    {
+        this.contrast = contrast;
+    }
+
     public Image filter(Image source)
     {
         BufferedImage image = new BufferedImage(source.getWidth(null), source.getHeight(null), BufferedImage.TYPE_INT_RGB);
@@ -34,10 +41,16 @@ public final class ContrastFilter implements ImageFilter
         for (int a = 0; a < array.length; a++)
         {
             int elem = dataBuffer.getElem(a);
-            int red = (int)(totalRed + ((elem >> 16 & 0xFF) - totalRed) / 2);
-            int green = (int)(totalGreen + ((elem >> 8 & 0xFF) - totalGreen) / 2);
-            int blue = (int)(totalBlue + (elem & 0xFF) / 2);
-            array[a] = (0xFF << 24) | (red << 16) | (green << 8) | blue;            
+            int red = (int)Math.round(totalRed + ((elem >> 16 & 0xFF) - totalRed) * contrast);
+            int green = (int)Math.round(totalGreen + ((elem >> 8 & 0xFF) - totalGreen) * contrast);
+            int blue = (int)Math.round(totalBlue + ((elem & 0xFF) - totalBlue) * contrast);
+            red = Math.min(255, red);
+            green = Math.min(255, green);
+            blue = Math.min(255, blue);
+            red = Math.max(0, red);
+            green = Math.max(0, green);
+            blue = Math.max(0, blue);
+            array[a] = (0xFF << 24) | (red << 16) | (green << 8) | blue;
         }
 
         return Images.loadFully(Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(source.getWidth(null), source.getHeight(null), array, 0, source.getWidth(null))));
