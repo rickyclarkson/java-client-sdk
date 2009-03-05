@@ -9,7 +9,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import uk.org.netvu.codecs.JPEGDecoder;
+import uk.org.netvu.codecs.VideoDecoder;
+import uk.org.netvu.codecs.VideoCodec;
 import uk.org.netvu.util.Buffers;
 import uk.org.netvu.util.CheckParameters;
 
@@ -50,11 +51,11 @@ public class ManualCheck
                     {
                         try
                         {
-                            for ( final JPEGDecoder decoder : SubBenchmark.decoders )
+                            for ( final VideoDecoder<VideoCodec.JPEG> decoder : SubBenchmark.decoders )
                             {
                                 for ( final SampleFile sampleFile : Benchmark.sampleFiles )
                                 {
-                                    add( new JLabel( new ImageIcon( decoder.decodeJPEG( Buffers
+                                    add( new JLabel( new ImageIcon( decoder.decode( Buffers
                                         .bufferFor( sampleFile.filename ) ) ) ) );
                                 }
                             }

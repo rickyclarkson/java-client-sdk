@@ -17,18 +17,18 @@ object DecodingTests {
                                                                                                             val height = _height
                                                                                                             val name = _name } }
 
- def validDecoder(decoder: JPEGDecoder) = new Specification {
+ def validDecoder(decoder: VideoDecoder[VideoCodec.JPEG]) = new Specification {
   for (file <- data) {
    ("Decoding " + file.name) should {
     "give an Image whose width and height are the same as documented" in {
-     decoder.decodeJPEG(Buffers.bufferFor(file.name)) match { case image => image.getWidth(null) mustEqual file.width
+     decoder.decode(Buffers.bufferFor(file.name)) match { case image => image.getWidth(null) mustEqual file.width
                                                              image.getHeight(null) mustEqual file.height }
     }
    }
   }
 
   for (file <- data) {
-   def decodeToIntArray(decoder: JPEGDecoder): Array[Int] = { val image = decoder decodeJPEG Buffers.bufferFor(file.name)
+   def decodeToIntArray(decoder: VideoDecoder[VideoCodec.JPEG]): Array[Int] = { val image = decoder decode Buffers.bufferFor(file.name)
                                                               val bufferedImage = new BufferedImage(image getWidth null, image getHeight null, BufferedImage.TYPE_INT_ARGB)
                                                               bufferedImage.getGraphics.drawImage(image, 0, 0, null)
                                                               val dataBuffer = bufferedImage.getData.getDataBuffer

@@ -15,7 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import uk.org.netvu.adffmpeg.ADFFMPEGDecoders;
-import uk.org.netvu.mpeg.MPEG4Decoder;
+import uk.org.netvu.codecs.VideoDecoder;
+import uk.org.netvu.codecs.VideoCodec;
 import uk.org.netvu.util.CheckParameters;
 
 /**
@@ -54,7 +55,7 @@ public class ManualCheckMPEG4
                     {
                         try
                         {
-                            final MPEG4Decoder decoder = ADFFMPEGDecoders.getMPEG4Decoder();
+                            final VideoDecoder<VideoCodec.MPEG4> decoder = ADFFMPEGDecoders.getMPEG4Decoder();
 
                             for ( int a = 0; a < 5; a++ )
                             {
@@ -71,7 +72,7 @@ public class ManualCheckMPEG4
                                 final ByteBuffer buffer = ByteBuffer.allocateDirect( bytes.length );
                                 buffer.put( bytes );
                                 buffer.position( 0 );
-                                add( new JLabel( new ImageIcon( decoder.decodeMPEG4( buffer ) ) ) );
+                                add( new JLabel( new ImageIcon( decoder.decode( buffer ) ) ) );
                             }
                         }
                         catch ( final IOException e )

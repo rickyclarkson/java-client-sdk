@@ -6,12 +6,13 @@ import specs.runner.JUnit4
 import java.nio.ByteBuffer
 import java.awt.Image
 import uk.org.netvu.util.Buffers
-import uk.org.netvu.codecs.JPEGDecoder
+import uk.org.netvu.codecs.VideoDecoder
+import uk.org.netvu.codecs.VideoCodec
 import uk.org.netvu.codecs.DecodingTests
 import java.io.{File, FileInputStream, ByteArrayOutputStream}
 
 class JPEGDecodingTest extends JUnit4(new Specification {
- for (decoder <- List[JPEGDecoder](ADFFMPEGDecoders.getJPEGDecoder()))
+ for (decoder <- List[VideoDecoder[VideoCodec.JPEG]](ADFFMPEGDecoders.getJPEGDecoder()))
   decoder.toString + isSpecifiedBy(DecodingTests.validDecoder(decoder))
 })
 
@@ -32,7 +33,7 @@ class MPEG4DecodingTest extends JUnit4(new Specification {
   val buffer = ByteBuffer allocateDirect bytes.length
   buffer put bytes
   buffer position 0
-  val image = decoder.decodeMPEG4(buffer)
+  val image = decoder.decode(buffer)
   image.getWidth(null) > 10 mustBe true
   image.getHeight(null) > 10 mustBe true
   a += 1

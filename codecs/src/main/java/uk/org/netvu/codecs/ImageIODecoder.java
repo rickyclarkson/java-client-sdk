@@ -12,7 +12,7 @@ import uk.org.netvu.util.CheckParameters;
 /**
  * A JPEG decoder that uses javax.imageio.
  */
-public final class ImageIODecoder implements JPEGDecoder
+public final class ImageIODecoder implements VideoDecoder<VideoCodec.JPEG>
 {
     /**
      * Private to prevent instantiation - instead {@link #createInstance()}
@@ -77,7 +77,7 @@ public final class ImageIODecoder implements JPEGDecoder
     /**
      * {@inheritDoc}
      */
-    public BufferedImage decodeJPEG( final ByteBuffer original )
+    public BufferedImage decode( final ByteBuffer original )
     {
         final ByteBuffer buffer = original.duplicate();
         try
@@ -88,6 +88,10 @@ public final class ImageIODecoder implements JPEGDecoder
         {
             throw new RuntimeException( e );
         }
+    }
+
+    public void dispose()
+    {
     }
 
     /**

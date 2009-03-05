@@ -8,9 +8,9 @@ import java.nio.ByteBuffer;
 
 /**
  * An interface that all decoders capable of decoding a ByteBuffer containing
- * JPEG data into an Image implement.
+ * video data into an Image implement.
  */
-public interface JPEGDecoder
+public interface VideoDecoder<T extends VideoCodec>
 {
     /**
      * Decodes a ByteBuffer containing JPEG data into an Image.
@@ -21,5 +21,7 @@ public interface JPEGDecoder
      *         if buffer is null.
      * @return the decoded Image.
      */
-    Image decodeJPEG( ByteBuffer buffer );
+    Image decode( ByteBuffer buffer );
+
+    void dispose();
 }

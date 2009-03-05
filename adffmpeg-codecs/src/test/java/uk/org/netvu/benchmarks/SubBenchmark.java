@@ -10,7 +10,8 @@ import java.util.List;
 
 import uk.org.netvu.adffmpeg.ADFFMPEGDecoders;
 import uk.org.netvu.codecs.ImageIODecoder;
-import uk.org.netvu.codecs.JPEGDecoder;
+import uk.org.netvu.codecs.VideoDecoder;
+import uk.org.netvu.codecs.VideoCodec;
 import uk.org.netvu.codecs.ToolkitDecoder;
 import uk.org.netvu.util.CheckParameters;
 
@@ -30,7 +31,7 @@ public class SubBenchmark
     /**
      * The decoders to benchmark.
      */
-    public static final List<JPEGDecoder> decoders =
+    public static final List<VideoDecoder<VideoCodec.JPEG>> decoders =
             Arrays.asList( ADFFMPEGDecoders.getJPEGDecoder(), ToolkitDecoder.createInstance(), ImageIODecoder
                 .createInstance() );
 
@@ -54,7 +55,7 @@ public class SubBenchmark
         CheckParameters.areNotNull( (Object) args );
         CheckParameters.areNotNull( (Object[]) args );
 
-        final JPEGDecoder decoder = decoders.get( Integer.parseInt( args[0] ) );
+        final VideoDecoder<VideoCodec.JPEG> decoder = decoders.get( Integer.parseInt( args[0] ) );
         final SampleFile sampleFile = Benchmark.sampleFiles[Integer.parseInt( args[1] )];
         final int iterations = Benchmark.iterationAmounts[Integer.parseInt( args[2] )];
         final int warmUpTime = Benchmark.warmUpTimes[Integer.parseInt( args[3] )];
@@ -110,19 +111,19 @@ public class SubBenchmark
      * @throws NullPointerException
      *         if decoder, input or info are null.
      */
-    public static void time( final int iterations, final long warmUpMillis, final JPEGDecoder decoder,
+    public static void time( final int iterations, final long warmUpMillis, final VideoDecoder<VideoCodec.JPEG> decoder,
             final ByteBuffer input, final String info )
     {
         CheckParameters.areNotNull( decoder, input, info );
         long start = System.nanoTime();
         while ( System.nanoTime() - start < warmUpMillis * 1000000 )
         {
-            decoder.decodeJPEG( input );
+            decoder.decode( input );
         }
         start = System.nanoTime();
         for ( int i = 0; i < iterations; i++ )
         {
-            decoder.decodeJPEG( input );
+            decoder.decode( input );
         }
         final long time = System.nanoTime() - start;
         System.out.println( info + "," + iterations * 1.0 / ( time / 1000000000.0 ) );

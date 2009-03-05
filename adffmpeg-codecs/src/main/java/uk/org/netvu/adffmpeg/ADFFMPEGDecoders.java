@@ -8,8 +8,8 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.concurrent.Semaphore;
 
-import uk.org.netvu.codecs.JPEGDecoder;
-import uk.org.netvu.mpeg.MPEG4Decoder;
+import uk.org.netvu.codecs.VideoDecoder;
+import uk.org.netvu.codecs.VideoCodec;
 import uk.org.netvu.util.CheckParameters;
 import uk.org.netvu.util.Function;
 import uk.org.netvu.util.Images;
@@ -24,7 +24,7 @@ public final class ADFFMPEGDecoders
     /**
      * A JPEGDecoder that uses ADFFMPEG.
      */
-    private static final class JPEG implements JPEGDecoder
+    private static final class JPEG implements VideoDecoder<VideoCodec.JPEG>
     {
         /**
          * The context instance for ADFFMPEG. Currently this is cleared for
@@ -55,7 +55,7 @@ public final class ADFFMPEGDecoders
         /**
          * {@inheritDoc}
          */
-        public Image decodeJPEG( final ByteBuffer originalBuffer )
+        public Image decode( final ByteBuffer originalBuffer )
         {
             CheckParameters.areNotNull( originalBuffer );
             try
@@ -82,12 +82,16 @@ public final class ADFFMPEGDecoders
                 throw new RuntimeException( e );
             }
         }
+
+        public void dispose()
+        {
+        }
     }
 
     /**
      * An MPEG4 decoder that uses ADFFMPEG.
      */
-    private static final class MPEG4 implements MPEG4Decoder
+    private static final class MPEG4 implements VideoDecoder<VideoCodec.MPEG4>
     {
         /**
          * The context instance for ADFFMPEG.
@@ -135,7 +139,7 @@ public final class ADFFMPEGDecoders
         /**
          * {@inheritDoc}
          */
-        public Image decodeMPEG4( final ByteBuffer originalBuffer )
+        public Image decode( final ByteBuffer originalBuffer )
         {
             CheckParameters.areNotNull( originalBuffer );
             try
@@ -164,6 +168,10 @@ public final class ADFFMPEGDecoders
             {
                 throw new RuntimeException( e );
             }
+        }
+
+        public void dispose()
+        {
         }
     }
 
@@ -198,7 +206,7 @@ public final class ADFFMPEGDecoders
      * @return the singleton instance of a private implementation of
      *         JPEGDecoder.
      */
-    public static JPEGDecoder getJPEGDecoder()
+    public static VideoDecoder<VideoCodec.JPEG> getJPEGDecoder()
     {
         return jpeg;
     }
@@ -211,7 +219,7 @@ public final class ADFFMPEGDecoders
      * @return the singleton instance of a private implementation of
      *         MPEG4Decoder.
      */
-    public static MPEG4Decoder getMPEG4Decoder()
+    public static VideoDecoder<VideoCodec.MPEG4> getMPEG4Decoder()
     {
         return mpeg4;
     }
