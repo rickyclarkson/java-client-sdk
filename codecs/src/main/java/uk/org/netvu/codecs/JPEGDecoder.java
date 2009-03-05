@@ -1,4 +1,4 @@
-package uk.org.netvu.jpeg;
+package uk.org.netvu.codecs;
 
 import java.awt.Image;
 import java.nio.ByteBuffer;

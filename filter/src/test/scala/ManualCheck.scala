@@ -20,7 +20,7 @@ object ManualCheck { def main(args: Array[String]) = {
                                                  andThen(MonochromeFilters.monochromeFilter(0.5, 0.2, 0.3), BrightnessFilters.betterBrightnessFilter(30)) -> "Monochrome filter then brightness filter")
 
  for ((filter, name) <- filters)
-  frame add { val label = new JLabel(new ImageIcon(filter filter ImageIO.read(new File("../jpeg/dvip3s-ad-dev-adh-352x256.jpeg"))))
+  frame add { val label = new JLabel(new ImageIcon(filter filter ImageIO.read(new File("../codecs/dvip3s-ad-dev-adh-352x256.jpeg"))))
               label setToolTipText name
               label }
  frame.pack

@@ -87,7 +87,7 @@
         </site>
     </distributionManagement>
     <modules>
-        <module>jpeg</module>
+        <module>codecs</module>
         <module>adffmpeg-codecs</module>
         <module>protocol</module>
         <module>data</module>

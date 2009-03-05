@@ -24,12 +24,11 @@
             <scope>test</scope>
         </dependency> -->
     </dependencies>
-    <artifactId>jpeg</artifactId>
-    <name>NetVu Connected Java Client SDK->JPEG</name>
-    <description>Common utilities for decoding and retrieving metadata
-    from JPEG images.</description>
+    <artifactId>codecs</artifactId>
+    <name>NetVu Connected Java Client SDK->Codecs</name>
+    <description>Video decoders and encoders, and common utilities for retrieving metadata from video.</description>
     <build>
-        <finalName>jpeg-${project.version}</finalName>
+        <finalName>codecs-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

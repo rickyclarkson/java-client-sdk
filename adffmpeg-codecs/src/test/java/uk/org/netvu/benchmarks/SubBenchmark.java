@@ -9,9 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import uk.org.netvu.adffmpeg.ADFFMPEGDecoders;
-import uk.org.netvu.jpeg.ImageIODecoder;
-import uk.org.netvu.jpeg.JPEGDecoder;
-import uk.org.netvu.jpeg.ToolkitDecoder;
+import uk.org.netvu.codecs.ImageIODecoder;
+import uk.org.netvu.codecs.JPEGDecoder;
+import uk.org.netvu.codecs.ToolkitDecoder;
 import uk.org.netvu.util.CheckParameters;
 
 /**

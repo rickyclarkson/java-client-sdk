@@ -8,7 +8,7 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.concurrent.Semaphore;
 
-import uk.org.netvu.jpeg.JPEGDecoder;
+import uk.org.netvu.codecs.JPEGDecoder;
 import uk.org.netvu.mpeg.MPEG4Decoder;
 import uk.org.netvu.util.CheckParameters;
 import uk.org.netvu.util.Function;

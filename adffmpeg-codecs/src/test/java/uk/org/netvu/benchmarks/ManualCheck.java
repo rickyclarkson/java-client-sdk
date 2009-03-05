@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import uk.org.netvu.jpeg.JPEGDecoder;
+import uk.org.netvu.codecs.JPEGDecoder;
 import uk.org.netvu.util.Buffers;
 import uk.org.netvu.util.CheckParameters;
 

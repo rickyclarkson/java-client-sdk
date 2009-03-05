@@ -6,8 +6,8 @@ import specs.runner.JUnit4
 import java.nio.ByteBuffer
 import java.awt.Image
 import uk.org.netvu.util.Buffers
-import uk.org.netvu.jpeg.JPEGDecoder
-import uk.org.netvu.jpeg.DecodingTests
+import uk.org.netvu.codecs.JPEGDecoder
+import uk.org.netvu.codecs.DecodingTests
 import java.io.{File, FileInputStream, ByteArrayOutputStream}
 
 class JPEGDecodingTest extends JUnit4(new Specification {

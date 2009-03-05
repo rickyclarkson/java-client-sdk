@@ -14,11 +14,11 @@ class FilterTest extends JUnit4(new Specification {
                                                  BrightnessFilters.simpleBrightnessFilter(1.5) -> "BrightnessFilter.simpleBrightnessFilter",
                                                  BrightnessFilters.betterBrightnessFilter(30) -> "BrightnessFilter.betterBrightnessFilter")
 
- val original = ImageIO.read(new File("../jpeg/dvip3s-ad-dev-adh-352x256.jpeg"))
+ val original = ImageIO.read(new File("../codecs/dvip3s-ad-dev-adh-352x256.jpeg"))
 
  for ((filter, name) <- filters)
   name should { "be able to filter an image to give an image of the same dimensions" in {
-   val original = ImageIO.read(new File("../jpeg/dvip3s-ad-dev-adh-352x256.jpeg"))
+   val original = ImageIO.read(new File("../codecs/dvip3s-ad-dev-adh-352x256.jpeg"))
    val result = filter.filter(original)
    result.getWidth(null) mustEqual(original.getWidth(null))
    result.getHeight(null) mustEqual(original.getHeight(null))
