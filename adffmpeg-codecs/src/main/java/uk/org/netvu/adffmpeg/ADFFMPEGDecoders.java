@@ -172,6 +172,25 @@ public final class ADFFMPEGDecoders
 
         public void dispose()
         {
+            try
+            {
+                semaphore.acquire();
+                try
+                {
+                    ADFFMPEG.avcodec_close(codecContext);
+                    ADFFMPEG.av_free(codecContext.getVoidPointer());
+                    ADFFMPEG.av_free(codec.getVoidPointer());
+                    ADFFMPEG.av_free(picture.getVoidPointer());
+                }
+                finally
+                {
+                    semaphore.release();
+                }
+            }
+            catch (InterruptedException e)
+            {
+                throw new RuntimeException(e);
+            }
         }
     }
 
