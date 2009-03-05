@@ -4,8 +4,8 @@ import java.awt.Image;
 import java.nio.ByteBuffer;
 
 /**
- * An interface that all decoders capable of decoding a ByteBuffer containing an
- * MPEG-4 frame into an Image implement.
+ * An interface implemented by all decoders capable of decoding a ByteBuffer containing an
+ * MPEG-4 frame into an Image.
  */
 public interface MPEG4Decoder
 {
