@@ -15,7 +15,7 @@ class JPEGDecodingTest extends JUnit4(new Specification {
   decoder.toString + isSpecifiedBy(DecodingTests.validDecoder(decoder))
 })
 
-class MPEG4DecodingTest extends JUnit4(new Specification {
+/*class MPEG4DecodingTest extends JUnit4(new Specification {
  val decoder = ADFFMPEGDecoders.getMPEG4Decoder
 
  var a = 0
@@ -37,4 +37,4 @@ class MPEG4DecodingTest extends JUnit4(new Specification {
   image.getHeight(null) > 10 mustBe true
   a += 1
  }
-})
+})*/
