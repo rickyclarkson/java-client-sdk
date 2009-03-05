@@ -60,8 +60,8 @@ object DecodingTests {
  }
 }
  
-class DecodingTest extends JUnit4(new Specification {
+/*class DecodingTest extends JUnit4(new Specification {
  for (decoder <- List(ToolkitDecoder.createInstance(), ImageIODecoder.createInstance()))
   decoder.toString + isSpecifiedBy(DecodingTests.validDecoder(decoder))
-})
+})*/
 
