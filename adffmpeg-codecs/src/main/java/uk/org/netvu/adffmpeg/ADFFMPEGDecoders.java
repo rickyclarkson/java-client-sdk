@@ -24,32 +24,20 @@ public final class ADFFMPEGDecoders
     /**
      * A JPEGDecoder that uses ADFFMPEG.
      */
-    private static final class JPEG implements VideoDecoder<VideoCodec.JPEG>
+    private static final class JPEG extends ADFFMPEGDecoder<VideoCodec.JPEG>
     {
-        /**
-         * The context instance for ADFFMPEG. Currently this is cleared for
-         * every frame. An optimisation might be to reuse the same context for
-         * multiple frames if they have the same resolution.
-         */
-        private AVCodecContext codecContext = ADFFMPEG.avcodec_alloc_context();
-
-        /**
-         * The frame used for storing decoded data.
-         */
-        private AVFrame picture;
-
-        /**
-         * The MJPEG codec used for decoding JPEG frames.
-         */
-        private final AVCodec codec = ADFFMPEG.avcodec_find_decoder_by_name( "mjpeg" );
-
-        // anonymous initialiser
+        AVCodec initialiseCodec()
         {
+            AVCodec codec = ADFFMPEG.avcodec_find_decoder_by_name( "mjpeg" );
+            
             if ( ADFFMPEG.avcodec_open( codecContext, codec ) < 0 )
             {
                 throw new InstantiationError( "Unable to open native codec" );
             }
+
             picture = ADFFMPEG.avcodec_alloc_frame();
+
+            return codec;
         }
 
         /**
@@ -91,31 +79,16 @@ public final class ADFFMPEGDecoders
     /**
      * An MPEG4 decoder that uses ADFFMPEG.
      */
-    private static final class MPEG4 implements VideoDecoder<VideoCodec.MPEG4>
+    private static final class MPEG4 extends ADFFMPEGDecoder<VideoCodec.MPEG4>
     {
-        /**
-         * The context instance for ADFFMPEG.
-         */
-        private AVCodecContext codecContext;
-
-        /**
-         * The frame used for storing decoded data.
-         */
-        private AVFrame picture;
-
-        /**
-         * The codec used for decoding MPEG-4 frames.
-         */
-        private final AVCodec codec;
-
-        // anonymous initialiser
+        AVCodec initialiseCodec()
         {
             try
             {
                 semaphore.acquire();
                 try
                 {
-                    codec = ADFFMPEG.avcodec_find_decoder_by_name( "mpeg4" );
+                    AVCodec codec = ADFFMPEG.avcodec_find_decoder_by_name( "mpeg4" );
                     codecContext = ADFFMPEG.avcodec_alloc_context();
                     CheckParameters.areNotNull( codec, codecContext );
                     codecContext.setWorkaround_bugs( ADFFMPEGConstants.FF_BUG_NO_PADDING );
@@ -124,6 +97,7 @@ public final class ADFFMPEGDecoders
                         throw new InstantiationError( "Unable to open native codec" );
                     }
                     picture = ADFFMPEG.avcodec_alloc_frame();
+                    return codec;
                 }
                 finally
                 {
@@ -179,7 +153,7 @@ public final class ADFFMPEGDecoders
                 {
                     ADFFMPEG.avcodec_close(codecContext);
                     ADFFMPEG.av_free(codecContext.getVoidPointer());
-                    ADFFMPEG.av_free(codec.getVoidPointer());
+                    //ADFFMPEG.av_free(codec.getVoidPointer());
                     ADFFMPEG.av_free(picture.getVoidPointer());
                 }
                 finally
@@ -296,4 +270,26 @@ public final class ADFFMPEGDecoders
             return context.getCoded_frame();
         }
     };
+
+    private static abstract class ADFFMPEGDecoder<T extends VideoCodec> implements VideoDecoder<T>
+    {
+        /**
+         * The context instance for ADFFMPEG. Currently this is cleared for
+         * every frame. An optimisation might be to reuse the same context for
+         * multiple frames if they have the same resolution.
+         */
+        AVCodecContext codecContext = ADFFMPEG.avcodec_alloc_context();
+
+        /**
+         * The frame used for storing decoded data.
+         */
+        AVFrame picture = ADFFMPEG.avcodec_alloc_frame();
+
+        /**
+         * The MJPEG codec used for decoding JPEG frames.
+         */
+        final AVCodec codec = initialiseCodec();
+
+        abstract AVCodec initialiseCodec();
+    }
 }

@@ -12,8 +12,10 @@ import uk.org.netvu.codecs.DecodingTests
 import java.io.{File, FileInputStream, ByteArrayOutputStream}
 
 class JPEGDecodingTest extends JUnit4(new Specification {
- for (decoder <- List[VideoDecoder[VideoCodec.JPEG]](ADFFMPEGDecoders.getJPEGDecoder()))
+ for (decoder <- List[VideoDecoder[VideoCodec.JPEG]](ADFFMPEGDecoders.getJPEGDecoder())) {
   decoder.toString + isSpecifiedBy(DecodingTests.validDecoder(decoder))
+  decoder.dispose
+ }
 })
 
 class MPEG4DecodingTest extends JUnit4(new Specification {
@@ -38,4 +40,6 @@ class MPEG4DecodingTest extends JUnit4(new Specification {
   image.getHeight(null) > 10 mustBe true
   a += 1
  }
+
+ decoder.dispose
 })

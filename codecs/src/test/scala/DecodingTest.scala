@@ -28,13 +28,15 @@ object DecodingTests {
   }
 
   for (file <- data) {
-   def decodeToIntArray(decoder: VideoDecoder[VideoCodec.JPEG]): Array[Int] = { val image = decoder decode Buffers.bufferFor(file.name)
-                                                              val bufferedImage = new BufferedImage(image getWidth null, image getHeight null, BufferedImage.TYPE_INT_ARGB)
-                                                              bufferedImage.getGraphics.drawImage(image, 0, 0, null)
-                                                              val dataBuffer = bufferedImage.getData.getDataBuffer
-                                                              val array = new Array[Int](dataBuffer.getSize)
-                                                              for (i <- 0 until array.length) array(i) = dataBuffer.getElem(i)
-                                                              array }
+   def decodeToIntArray(decoder: VideoDecoder[VideoCodec.JPEG]): Array[Int] = {
+    val image = decoder decode Buffers.bufferFor(file.name)
+    val bufferedImage = new BufferedImage(image getWidth null, image getHeight null, BufferedImage.TYPE_INT_ARGB)
+    bufferedImage.getGraphics.drawImage(image, 0, 0, null)
+    val dataBuffer = bufferedImage.getData.getDataBuffer
+    val array = new Array[Int](dataBuffer.getSize)
+    for (i <- 0 until array.length) array(i) = dataBuffer.getElem(i)
+    array
+   }
 
    val control = decodeToIntArray(ToolkitDecoder.createInstance)
    val fromImageIO = decodeToIntArray(decoder)
@@ -60,8 +62,10 @@ object DecodingTests {
  }
 }
  
-/*class DecodingTest extends JUnit4(new Specification {
- for (decoder <- List(ToolkitDecoder.createInstance(), ImageIODecoder.createInstance()))
+class DecodingTest extends JUnit4(new Specification {
+ for (decoder <- List(ToolkitDecoder.createInstance(), ImageIODecoder.createInstance())) {
   decoder.toString + isSpecifiedBy(DecodingTests.validDecoder(decoder))
-})*/
+  decoder.dispose
+ }
+})
 
