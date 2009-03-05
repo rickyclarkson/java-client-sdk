@@ -4,11 +4,11 @@ Rationale
 
 * QuickTime For Java
 
- For Windows and OS X, Apple's Quicktime has Java bindings that can output single decoded video frames.  A small proof of concept program was created, but it appeared that QuickTime for Java requires a normal MPEG-4 video stream or file as input, rather than individual encoded frames.  These Java bindings are expected to disappear - {{{http://lists.apple.com/archives/quicktime-java/2008/Jun/msg00018.html}}a quicktime-java mailing list thread}.  Numerous posters on that list have suggested using QuickTime's C API directly via JNI/JNA, which has been included as a separate option here.
+ For Windows and OS X, Apple's Quicktime has Java bindings that can output single decoded video frames.  A small proof of concept program was created, but it appeared that QuickTime for Java requires a normal MPEG-4 video stream or file as input, rather than individual encoded frames.  These Java bindings are expected to disappear - {{{http://lists.apple.com/archives/quicktime-java/2008/Jun/msg00018.html} a quicktime-java mailing list thread}}.  Numerous posters on that list have suggested using QuickTime's C API directly via JNI/JNA, which has been included as a separate option here.
 
 * QuickTime C API
 
- This appears to be much better documented than the Java bindings, and it provides a lot of functionality that the Java bindings do not.  Unfortunately, the {{{http://developer.apple.com/samplecode/CreateMovieFromReferences/index.html}}most relevant example program} that Apple provides doesn't work (exits with no error message), at least on Windows, making it difficult to make progress.
+ This appears to be much better documented than the Java bindings, and it provides a lot of functionality that the Java bindings do not.  Unfortunately, the {{{http://developer.apple.com/samplecode/CreateMovieFromReferences/index.html}most relevant example program}} that Apple provides doesn't work (exits with no error message), at least on Windows, making it difficult to make progress.
 
 * IBM Toolkit for MPEG-4
 
@@ -16,12 +16,12 @@ Rationale
 
 * Xvid
 
- {{{http://www.xvid.org/}}Xvid} is a GPL MPEG-4 codec that focuses on rendering quality.  Firstly, the GPL (GNU Public License) makes it impossible to legally distribute software that uses it without that software being released under the GPL too.  Secondly, {{{http://techdigger.wordpress.com/2008/05/28/mpeg-avi-decoding-divx-vs-xvid/}}existing benchmarks} show that Xvid's performance is worse than FFmpeg's.
+ {{{http://www.xvid.org/}Xvid}} is a GPL MPEG-4 codec that focuses on rendering quality.  Firstly, the GPL (GNU Public License) makes it impossible to legally distribute software that uses it without that software being released under the GPL too.  Secondly, {{{http://techdigger.wordpress.com/2008/05/28/mpeg-avi-decoding-divx-vs-xvid/}existing benchmarks}} show that Xvid's performance is worse than FFmpeg's.
 
 * DivX
 
- {{{http://www.divx.com}}DivX} is a proprietary MPEG-4 codec for Windows.  At the time of this writing, the webserver hosting their {{{http://labs.divx.com}}developer documentation} was offline, so DivX was not investigated further.
+ {{{http://www.divx.com}DivX}} is a proprietary MPEG-4 codec for Windows.  At the time of this writing, the webserver hosting their {{{http://labs.divx.com}developer documentation}} was offline, so DivX was not investigated further.
 
 * On2 4100 MPEG-4 codec
 
- {{{http://www.on2.com/index.php?98}}This codec} is particularly optimised for speed, particularly for embedded devices.  It is proprietary, and no evaluation version is available, at least without speaking to an On2 representative.  Investigation did not reveal any Java bindings, but On2 have a Java player that can play the formats that On2 support, as an applet.  On2 also has links with Sun via JavaFX, so they might at least be open to the idea of Java bindings.
+ {{{http://www.on2.com/index.php?98}This codec}} is particularly optimised for speed, particularly for embedded devices.  It is proprietary, and no evaluation version is available, at least without speaking to an On2 representative.  Investigation did not reveal any Java bindings, but On2 have a Java player that can play the formats that On2 support, as an applet.  On2 also has links with Sun via JavaFX, so they might at least be open to the idea of Java bindings.
