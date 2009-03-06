@@ -3,3 +3,5 @@ Rationale
  We decided to implement the filters in Java, rather than use the filters available in ADFFMPEG, to avoid adding an ADFFMPEG dependency in this module.
 
  We made all the filters configurable, rather than hard-coding defaults, to allow the caller to customise their use of the filters.
+
+ A monochrome filter using the {{{http://en.wikipedia.org/wiki/Luminance_(relative)}}luminosity function} is provided - for daylight conditions this is a well-tested set of coefficients for how humans perceive intensity.

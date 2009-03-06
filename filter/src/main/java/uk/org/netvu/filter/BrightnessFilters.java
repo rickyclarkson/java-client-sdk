@@ -2,6 +2,8 @@ package uk.org.netvu.filter;
 
 import java.awt.image.DataBuffer;
 
+import uk.org.netvu.util.CheckParameters;
+
 /**
  * A utility class for obtaining brightness filters.
  */
@@ -47,11 +49,14 @@ public final class BrightnessFilters
      * 
      * @param minValue
      *        the minimum pixel value in the output Image.
+     * @throws IllegalArgumentException
+     *         if minValue is not between 0 and 255.
      * @return a brightness filter that linearly scales all pixel values to the
      *         range between minValue and 255.
      */
     public static ImageFilter betterBrightnessFilter( final int minValue )
     {
+        CheckParameters.from( 0 ).to( 255 ).bounds( minValue );
         return Filters.createFilter( new PixelProcessor()
         {
             public void setPixels( final int[] array, final DataBuffer dataBuffer )
