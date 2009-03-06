@@ -1,6 +1,8 @@
 package uk.org.netvu.benchmarks;
 
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.imageio.ImageIO;
 
 import uk.org.netvu.adffmpeg.ADFFMPEGDecoders;
 import uk.org.netvu.codecs.VideoDecoder;
@@ -72,7 +75,12 @@ public class ManualCheckMPEG4
                                 final ByteBuffer buffer = ByteBuffer.allocateDirect( bytes.length );
                                 buffer.put( bytes );
                                 buffer.position( 0 );
-                                add( new JLabel( new ImageIcon( decoder.decode( buffer ) ) ) );
+                                final Image image = decoder.decode( buffer );
+                                BufferedImage bi = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                                bi.getGraphics().drawImage(image, 0, 0, null);
+                                ImageIO.write(bi, "png", new File("testdata/png/" + a + ".png"));
+                                add( new JLabel( new ImageIcon( image ) ) );
+                                add( new JLabel( new ImageIcon( ImageIO.read(new File("testdata/png/" + a + ".png")))));
                             }
                         }
                         catch ( final IOException e )

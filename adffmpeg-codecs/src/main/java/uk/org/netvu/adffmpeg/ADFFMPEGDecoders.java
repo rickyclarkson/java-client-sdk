@@ -8,10 +8,9 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.concurrent.Semaphore;
 
-import uk.org.netvu.codecs.VideoDecoder;
 import uk.org.netvu.codecs.VideoCodec;
+import uk.org.netvu.codecs.VideoDecoder;
 import uk.org.netvu.util.CheckParameters;
-import uk.org.netvu.util.Function;
 import uk.org.netvu.util.Images;
 
 /**
@@ -26,10 +25,11 @@ public final class ADFFMPEGDecoders
      */
     private static final class JPEG extends ADFFMPEGDecoder<VideoCodec.JPEG>
     {
+        @Override
         AVCodec initialiseCodec()
         {
-            AVCodec codec = ADFFMPEG.avcodec_find_decoder_by_name( "mjpeg" );
-            
+            final AVCodec codec = ADFFMPEG.avcodec_find_decoder_by_name( "mjpeg" );
+
             if ( ADFFMPEG.avcodec_open( codecContext, codec ) < 0 )
             {
                 throw new InstantiationError( "Unable to open native codec" );
@@ -38,6 +38,12 @@ public final class ADFFMPEGDecoders
             picture = ADFFMPEG.avcodec_alloc_frame();
 
             return codec;
+        }
+
+        @Override
+        AVFrame extractInto()
+        {
+            return picture;
         }
 
         /**
@@ -57,8 +63,7 @@ public final class ADFFMPEGDecoders
                     codecContext = ADFFMPEG.avcodec_alloc_context();
                     ADFFMPEG.avcodec_open( codecContext, codec );
 
-                    return decodeFrame( codecContext, picture, buffer, Function
-                        .<AVCodecContext, AVFrame> constant( picture ) );
+                    return decodeFrame( buffer );
                 }
                 finally
                 {
@@ -81,6 +86,7 @@ public final class ADFFMPEGDecoders
      */
     private static final class MPEG4 extends ADFFMPEGDecoder<VideoCodec.MPEG4>
     {
+        @Override
         AVCodec initialiseCodec()
         {
             try
@@ -88,7 +94,7 @@ public final class ADFFMPEGDecoders
                 semaphore.acquire();
                 try
                 {
-                    AVCodec codec = ADFFMPEG.avcodec_find_decoder_by_name( "mpeg4" );
+                    final AVCodec codec = ADFFMPEG.avcodec_find_decoder_by_name( "mpeg4" );
                     codecContext = ADFFMPEG.avcodec_alloc_context();
                     CheckParameters.areNotNull( codec, codecContext );
                     codecContext.setWorkaround_bugs( ADFFMPEGConstants.FF_BUG_NO_PADDING );
@@ -131,7 +137,7 @@ public final class ADFFMPEGDecoders
                     }
 
                     directBuffer.position( 0 );
-                    return decodeFrame( codecContext, picture, directBuffer, getCodedFrame );
+                    return decodeFrame( directBuffer );
                 }
                 finally
                 {
@@ -151,20 +157,26 @@ public final class ADFFMPEGDecoders
                 semaphore.acquire();
                 try
                 {
-                    ADFFMPEG.avcodec_close(codecContext);
-                    ADFFMPEG.av_free(codecContext.getVoidPointer());
-                    //ADFFMPEG.av_free(codec.getVoidPointer());
-                    ADFFMPEG.av_free(picture.getVoidPointer());
+                    ADFFMPEG.avcodec_close( codecContext );
+                    ADFFMPEG.av_free( codecContext.getVoidPointer() );
+                    // ADFFMPEG.av_free(codec.getVoidPointer());
+                    ADFFMPEG.av_free( picture.getVoidPointer() );
                 }
                 finally
                 {
                     semaphore.release();
                 }
             }
-            catch (InterruptedException e)
+            catch ( final InterruptedException e )
             {
-                throw new RuntimeException(e);
+                throw new RuntimeException( e );
             }
+        }
+
+        @Override
+        AVFrame extractInto()
+        {
+            return codecContext.getCoded_frame();
         }
     }
 
@@ -192,12 +204,10 @@ public final class ADFFMPEGDecoders
     private static final MPEG4 mpeg4 = new MPEG4();
 
     /**
-     * Gives the singleton instance of a private implementation of JPEGDecoder.
-     * It is a singleton to control access to the underlying codec, which is not
-     * thread-safe.
+     * Gives an instance of a private implementation of
+     * VideoDecoder<VideoCodec.JPEG>.
      * 
-     * @return the singleton instance of a private implementation of
-     *         JPEGDecoder.
+     * @return an instance of a private implementation of JPEGDecoder.
      */
     public static VideoDecoder<VideoCodec.JPEG> getJPEGDecoder()
     {
@@ -205,71 +215,16 @@ public final class ADFFMPEGDecoders
     }
 
     /**
-     * Gives the singleton instance of a private implementation of MPEG4Decoder.
-     * It is a singleton to control access to the underlying codec, which is not
-     * thread-safe.
+     * Gives an instance of a private implementation of
+     * VideoDecoder<VideoCodec.MPEG4>
      * 
-     * @return the singleton instance of a private implementation of
-     *         MPEG4Decoder.
+     * @return an instance of a private implementation of
+     *         VideoDecoder<VideoCodec.MPEG4>
      */
     public static VideoDecoder<VideoCodec.MPEG4> getMPEG4Decoder()
     {
         return mpeg4;
     }
-
-    /**
-     * Decodes a ByteBuffer and produces an Image from the resulting pixel data.
-     * 
-     * @param codecContext
-     *        the ADFFMPEG context to use.
-     * @param picture
-     *        the AVFrame to supply to
-     *        {@link ADFFMPEG#avcodec_decode_video(AVCodecContext, AVFrame, IntBuffer, ByteBuffer)}
-     * @param buffer
-     *        the ByteBuffer to read data from.
-     * @param extractInto
-     *        a Function that, given the AVCodecContext, returns the AVFrame to
-     *        decode image data into. This is passed in as a Function instead of
-     *        a value because the order of operation is important (
-     *        {@link AVCodecContext#getCoded_frame()} depends on
-     *        {@link ADFFMPEG#avcodec_decode_video(AVCodecContext, AVFrame, IntBuffer, ByteBuffer)}
-     *        occurring first).
-     * @return an Image containing the decoded data.
-     */
-    private static Image decodeFrame( final AVCodecContext codecContext, final AVFrame picture,
-            final ByteBuffer buffer, final Function<AVCodecContext, AVFrame> extractInto )
-    {
-        final int len =
-                ADFFMPEG.avcodec_decode_video( codecContext, picture, ByteBuffer.allocateDirect( 4 ).asIntBuffer(),
-                        buffer );
-        if ( len < 0 )
-        {
-            throw new IllegalStateException( "ADFFMPEG did not decode any bytes" );
-        }
-
-        final int numberOfPixels = codecContext.getWidth() * codecContext.getHeight();
-        final IntBuffer decodeBuffer =
-                ByteBuffer.allocateDirect( numberOfPixels * 4 ).order( ByteOrder.nativeOrder() ).asIntBuffer();
-        final int[] decodedData = new int[numberOfPixels];
-        ADFFMPEG.extractPixelData( extractInto.apply( codecContext ), codecContext, decodeBuffer );
-        decodeBuffer.get( decodedData );
-        final int width = codecContext.getWidth();
-        return Images.loadFully( Toolkit.getDefaultToolkit().createImage(
-                new MemoryImageSource( width, codecContext.getHeight(), decodedData, 0, width ) ) );
-    }
-
-    /**
-     * A Function that gives the result of calling
-     * {@link AVCodecContext#getCoded_frame()} on its input.
-     */
-    private static final Function<AVCodecContext, AVFrame> getCodedFrame = new Function<AVCodecContext, AVFrame>()
-    {
-        @Override
-        public AVFrame apply( final AVCodecContext context )
-        {
-            return context.getCoded_frame();
-        }
-    };
 
     private static abstract class ADFFMPEGDecoder<T extends VideoCodec> implements VideoDecoder<T>
     {
@@ -291,5 +246,48 @@ public final class ADFFMPEGDecoders
         final AVCodec codec = initialiseCodec();
 
         abstract AVCodec initialiseCodec();
+
+        abstract AVFrame extractInto();
+
+        /**
+         * Decodes a ByteBuffer and produces an Image from the resulting pixel
+         * data.
+         * 
+         * @param codecContext
+         *        the ADFFMPEG context to use.
+         * @param picture
+         *        the AVFrame to supply to
+         *        {@link ADFFMPEG#avcodec_decode_video(AVCodecContext, AVFrame, IntBuffer, ByteBuffer)}
+         * @param buffer
+         *        the ByteBuffer to read data from.
+         * @param extractInto
+         *        a Function that, given the AVCodecContext, returns the AVFrame
+         *        to decode image data into. This is passed in as a Function
+         *        instead of a value because the order of operation is important
+         *        ( {@link AVCodecContext#getCoded_frame()} depends on
+         *        {@link ADFFMPEG#avcodec_decode_video(AVCodecContext, AVFrame, IntBuffer, ByteBuffer)}
+         *        occurring first).
+         * @return an Image containing the decoded data.
+         */
+        Image decodeFrame( final ByteBuffer buffer )
+        {
+            final int len =
+                    ADFFMPEG.avcodec_decode_video( codecContext, picture,
+                            ByteBuffer.allocateDirect( 4 ).asIntBuffer(), buffer );
+            if ( len < 0 )
+            {
+                throw new IllegalStateException( "ADFFMPEG did not decode any bytes" );
+            }
+
+            final int numberOfPixels = codecContext.getWidth() * codecContext.getHeight();
+            final IntBuffer decodeBuffer =
+                    ByteBuffer.allocateDirect( numberOfPixels * 4 ).order( ByteOrder.nativeOrder() ).asIntBuffer();
+            final int[] decodedData = new int[numberOfPixels];
+            ADFFMPEG.extractPixelData( extractInto(), codecContext, decodeBuffer );
+            decodeBuffer.get( decodedData );
+            final int width = codecContext.getWidth();
+            return Images.loadFully( Toolkit.getDefaultToolkit().createImage(
+                    new MemoryImageSource( width, codecContext.getHeight(), decodedData, 0, width ) ) );
+        }
     }
 }

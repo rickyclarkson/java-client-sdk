@@ -10,19 +10,19 @@ import uk.org.netvu.codecs.VideoDecoder
 import uk.org.netvu.codecs.VideoCodec
 import uk.org.netvu.codecs.DecodingTests
 import java.io.{File, FileInputStream, ByteArrayOutputStream}
+import uk.org.netvu.util.Images
+import javax.imageio.ImageIO
 
 class JPEGDecodingTest extends JUnit4(new Specification {
- for (decoder <- List[VideoDecoder[VideoCodec.JPEG]](ADFFMPEGDecoders.getJPEGDecoder())) {
-  decoder.toString + isSpecifiedBy(DecodingTests.validDecoder(decoder))
-  decoder.dispose
- }
+ val decoder = ADFFMPEGDecoders.getJPEGDecoder()
+ decoder.toString + isSpecifiedBy(DecodingTests.validDecoder(decoder))
+ decoder.dispose
 })
 
 class MPEG4DecodingTest extends JUnit4(new Specification {
  val decoder = ADFFMPEGDecoders.getMPEG4Decoder
 
- var a = 0
- while (a < 5) {
+ for (a <- 0 to 4) {
   val file = new File("testdata/mpeg4frames/" + a)
   val in = new FileInputStream(file)
   val out = new ByteArrayOutputStream
@@ -36,9 +36,11 @@ class MPEG4DecodingTest extends JUnit4(new Specification {
   buffer put bytes
   buffer position 0
   val image = decoder.decode(buffer)
+  Images.equal(image, ImageIO.read({ val file = new File("testdata/png/" + a + ".png")
+                                     println("file.exists = " + file.getAbsoluteFile)
+                                     file }), 20) mustBe true
   image.getWidth(null) > 10 mustBe true
   image.getHeight(null) > 10 mustBe true
-  a += 1
  }
 
  decoder.dispose
