@@ -33,7 +33,7 @@ public class Benchmark
      * @return an array containing the integers from 0 until the specified
      *         length, exclusively.
      */
-    private static int[] rangeOver( final int length )
+    static int[] rangeOver( final int length )
     {
         final int[] indices = new int[length];
         for ( int a = 0; a < indices.length; a++ )
@@ -72,6 +72,7 @@ public class Benchmark
      */
     static final int[] warmUpTimes = { 100, 1000, 10000 };
 
+    // TODO delete this?
     /**
      * The type that the data should be passed in to the decoder as.
      */
@@ -109,7 +110,7 @@ public class Benchmark
                                     Runtime.getRuntime().exec(
                                             new String[] { "java", "-classpath",
                                                 System.getProperty( "java.class.path" ),
-                                                "uk.org.netvu.codecbenchmarks.SubBenchmark",
+                                                "uk.org.netvu.benchmarks.SubBenchmark",
                                                 String.valueOf( decoder ), String.valueOf( resolution ),
                                                 String.valueOf( iterations ), String.valueOf( warmUpTime ),
                                                 String.valueOf( inputType ) } );
