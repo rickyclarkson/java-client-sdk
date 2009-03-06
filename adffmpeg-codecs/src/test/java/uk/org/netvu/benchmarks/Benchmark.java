@@ -25,26 +25,6 @@ public class Benchmark
     }
 
     /**
-     * Gives an array containing the integers from 0 until the specified length,
-     * exclusively.
-     * 
-     * @param length
-     *        the length of the array to create.
-     * @return an array containing the integers from 0 until the specified
-     *         length, exclusively.
-     */
-    static int[] rangeOver( final int length )
-    {
-        final int[] indices = new int[length];
-        for ( int a = 0; a < indices.length; a++ )
-        {
-            indices[a] = a;
-        }
-
-        return indices;
-    }
-
-    /**
      * The number of decoders in use. This must always be equal to
      * SubBenchmark.decoders.length, but cannot be written that way as otherwise
      * the ADFFMPEG library will be loaded in the parent process.
@@ -61,22 +41,6 @@ public class Benchmark
                 new SampleFile( 320, 256, "192-168-106-207-320x256.jpg" ),
                 new SampleFile( 352, 256, "dvip3s-ad-dev-adh-352x256.jpeg" ) };
 
-    /**
-     * The numbers of iterations to benchmark with.
-     */
-    static final int[] iterationAmounts = { 100, 1000, 10000 };
-
-    /**
-     * The number of milliseconds to iterate for before timing the code. This
-     * gives the JVM time to warm up to give more accurate results.
-     */
-    static final int[] warmUpTimes = { 100, 1000, 10000 };
-
-    // TODO delete this?
-    /**
-     * The type that the data should be passed in to the decoder as.
-     */
-    static final String[] inputTypes = { "byte[]", "ByteBuffer" };
 
     /**
      * Runs the benchmarks.
@@ -96,74 +60,21 @@ public class Benchmark
         CheckParameters.areNotNull( (Object[]) args );
 
         System.out.println( "decoder,filename,width,height,warmUpTime,iterations,iterations per second" );
-        for ( final int iterations : rangeOver( iterationAmounts.length ) )
+        for ( final int iterations : Benchmarks.rangeOver( Benchmarks.iterationAmounts.length ) )
         {
-            for ( final int warmUpTime : rangeOver( warmUpTimes.length ) )
+            for ( final int warmUpTime : Benchmarks.rangeOver( Benchmarks.warmUpTimes.length ) )
             {
-                for ( final int decoder : rangeOver( numberOfDecoders ) )
+                for ( final int decoder : Benchmarks.rangeOver( numberOfDecoders ) )
                 {
-                    for ( final int resolution : rangeOver( sampleFiles.length ) )
+                    for ( final int resolution : Benchmarks.rangeOver( sampleFiles.length ) )
                     {
-                        for ( final int inputType : rangeOver( inputTypes.length ) )
-                        {
-                            final Process process =
-                                    Runtime.getRuntime().exec(
-                                            new String[] { "java", "-classpath",
-                                                System.getProperty( "java.class.path" ),
-                                                "uk.org.netvu.benchmarks.SubBenchmark",
-                                                String.valueOf( decoder ), String.valueOf( resolution ),
-                                                String.valueOf( iterations ), String.valueOf( warmUpTime ),
-                                                String.valueOf( inputType ) } );
-
-                            final Function<InputStream, Thread> consume = new Function<InputStream, Thread>()
-                            {
-                                /**
-                                 * {@inheritDoc}
-                                 */
-                                @Override
-                                public Thread apply( final InputStream inputStream )
-                                {
-                                    final Thread thread = new Thread( new Runnable()
-                                    {
-                                        public void run()
-                                        {
-                                            try
-                                            {
-                                                final InputStreamReader isReader =
-                                                        new InputStreamReader( inputStream, "UTF-8" );
-                                                final BufferedReader reader = new BufferedReader( isReader );
-                                                String line;
-                                                while ( ( line = reader.readLine() ) != null )
-                                                {
-                                                    synchronized ( args )
-                                                    {
-                                                        System.out.println( line );
-                                                    }
-                                                }
-                                                reader.close();
-                                                isReader.close();
-
-                                            }
-                                            catch ( final IOException e )
-                                            {
-                                                throw new RuntimeException( e );
-                                            }
-                                        }
-                                    } );
-                                    thread.start();
-                                    return thread;
-                                }
-                            };
-
-                            final Thread inputThread = consume.apply( process.getInputStream() );
-                            final Thread errorThread = consume.apply( process.getErrorStream() );
-
-                            process.waitFor();
-
-                            inputThread.join();
-                            errorThread.join();
-                        }
-                    }
+                        Benchmarks.dump(Runtime.getRuntime().exec(
+                                                                  new String[] { "java", "-classpath",
+                                                                                 System.getProperty( "java.class.path" ),
+                                                                                 "uk.org.netvu.benchmarks.SubBenchmark",
+                                                                                 String.valueOf( decoder ), String.valueOf( resolution ),
+                                                                                 String.valueOf( iterations ), String.valueOf( warmUpTime ) } ));
+                    }                    
                 }
             }
         }

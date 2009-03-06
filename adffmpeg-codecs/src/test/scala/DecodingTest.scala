@@ -36,9 +36,7 @@ class MPEG4DecodingTest extends JUnit4(new Specification {
   buffer put bytes
   buffer position 0
   val image = decoder.decode(buffer)
-  Images.equal(image, ImageIO.read({ val file = new File("testdata/png/" + a + ".png")
-                                     println("file.exists = " + file.getAbsoluteFile)
-                                     file }), 20) mustBe true
+  Images.equal(image, ImageIO.read(new File("testdata/png/" + a + ".png")), 20) mustBe true
   image.getWidth(null) > 10 mustBe true
   image.getHeight(null) > 10 mustBe true
  }

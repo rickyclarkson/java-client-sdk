@@ -57,75 +57,13 @@ public class SubBenchmark
 
         final VideoDecoder<VideoCodec.JPEG> decoder = decoders.get( Integer.parseInt( args[0] ) );
         final SampleFile sampleFile = Benchmark.sampleFiles[Integer.parseInt( args[1] )];
-        final int iterations = Benchmark.iterationAmounts[Integer.parseInt( args[2] )];
-        final int warmUpTime = Benchmark.warmUpTimes[Integer.parseInt( args[3] )];
+        final int iterations = Benchmarks.iterationAmounts[Integer.parseInt( args[2] )];
+        final int warmUpTime = Benchmarks.warmUpTimes[Integer.parseInt( args[3] )];
 
         final String info =
                 decoder.getClass().getSimpleName() + "," + sampleFile.filename + "," + sampleFile.width + ","
                         + sampleFile.height + "," + +warmUpTime + "," + iterations;
 
-        time( iterations, warmUpTime, decoder, bufferFor( sampleFile.filename ), info );
-    }
-
-    /**
-     * Constructs a ByteBuffer containing the data from the specified file.
-     * 
-     * @param filename
-     *        the name of the file that contains the data to read.
-     * @return a ByteBuffer containing the data from the specified file.
-     * @throws IOException
-     *         if any I/O error occurs.
-     * @throws NullPointerException
-     *         if filename is null.
-     */
-    public static ByteBuffer bufferFor( final String filename ) throws IOException
-    {
-        CheckParameters.areNotNull( filename );
-        final ByteBuffer first =
-                new FileInputStream( filename ).getChannel().map( FileChannel.MapMode.READ_ONLY, 0,
-                        new File( filename ).length() );
-        first.position( 0 );
-        final ByteBuffer result = ByteBuffer.allocateDirect( first.limit() );
-        result.put( first );
-        result.position( 0 );
-        return result;
-    }
-
-    /**
-     * Executes the specified decoder with the specified input for the specified
-     * number of iterations, after warming the decoder up by executing it for at
-     * least the specified number of milliseconds, printing the results to
-     * System.out as CSV.
-     * 
-     * @param iterations
-     *        the number of iterations to time.
-     * @param warmUpMillis
-     *        the number of milliseconds to give the decoder to warm up before
-     *        timing it.
-     * @param decoder
-     *        the JPEGDecoder to use.
-     * @param input
-     *        the input to the decoder.
-     * @param info
-     *        extra info to include in the output.
-     * @throws NullPointerException
-     *         if decoder, input or info are null.
-     */
-    public static void time( final int iterations, final long warmUpMillis, final VideoDecoder<VideoCodec.JPEG> decoder,
-            final ByteBuffer input, final String info )
-    {
-        CheckParameters.areNotNull( decoder, input, info );
-        long start = System.nanoTime();
-        while ( System.nanoTime() - start < warmUpMillis * 1000000 )
-        {
-            decoder.decode( input );
-        }
-        start = System.nanoTime();
-        for ( int i = 0; i < iterations; i++ )
-        {
-            decoder.decode( input );
-        }
-        final long time = System.nanoTime() - start;
-        System.out.println( info + "," + iterations * 1.0 / ( time / 1000000000.0 ) );
+        Benchmarks.time( decoder, iterations, warmUpTime, Benchmarks.bufferFor( sampleFile.filename ), info );
     }
 }
