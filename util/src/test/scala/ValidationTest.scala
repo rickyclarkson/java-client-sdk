@@ -1,4 +1,4 @@
-package uk.org.netvu.codecs
+package uk.org.netvu.util
 
 import _root_.org.{specs, scalacheck}
 import specs.Specification

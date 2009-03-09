@@ -1,4 +1,4 @@
-package uk.org.netvu.codecs;
+package uk.org.netvu.util;
 
 import java.nio.ByteBuffer;
 import uk.org.netvu.util.CheckParameters;

@@ -9,7 +9,7 @@ import java.util.Scanner;
 import java.util.regex.MatchResult;
 
 import uk.org.netvu.util.CheckParameters;
-import uk.org.netvu.codecs.Validation;
+import uk.org.netvu.util.Validation;
 
 /**
  * A parser for MIME streams containing JFIF images.

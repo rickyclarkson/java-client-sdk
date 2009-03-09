@@ -8,7 +8,7 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 import uk.org.netvu.util.CheckParameters;
-import uk.org.netvu.codecs.Validation;
+import uk.org.netvu.util.Validation;
 
 /**
  * A parser for the 'binary' stream format.
