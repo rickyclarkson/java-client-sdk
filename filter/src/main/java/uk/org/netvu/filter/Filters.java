@@ -22,16 +22,20 @@ public final class Filters
     }
 
     /**
-     * Ensures that the specified number is bound between 0 and 255 inclusive.
+     * Ensures that the specified number is bound between the specified lower and upper bounds inclusively.
      * This is useful in preventing overflow of colour components in
      * implementing ImageFilters.
      * 
      * @param x
      *        the number to bound.
-     * @return x if x is between 0 and 255 inclusive, 0 if x is less than 0, 255
-     *         if x is greater than 255.
+     * @param lower
+     *        the lower bound.
+     * @param upper
+     *        the upper bound.
+     * @return x if x is between lower and upper inclusive, lower if x is less than lower, upper
+     *         if x is greater than upper.
      */
-    public static int bound( final int x )
+    public static int bindToWithin( final int x, final int lower, final int upper )
     {
         return x < 0 ? 0 : x > 255 ? 255 : x;
     }
@@ -82,9 +86,9 @@ public final class Filters
                 for ( int a = 0; a < array.length; a++ )
                 {
                     final int elem = dataBuffer.getElem( a );
-                    final int red = Filters.bound( (int) ( ( elem >> 16 & 0xFF ) * brightness ) );
-                    final int green = Filters.bound( (int) ( ( elem >> 8 & 0xFF ) * brightness ) );
-                    final int blue = Filters.bound( (int) ( ( elem & 0xFF ) * brightness ) );
+                    final int red = Filters.bindToWithin( (int) ( ( elem >> 16 & 0xFF ) * brightness ), 0, 255 );
+                    final int green = Filters.bindToWithin( (int) ( ( elem >> 8 & 0xFF ) * brightness ) , 0, 255);
+                    final int blue = Filters.bindToWithin( (int) ( ( elem & 0xFF ) * brightness ), 0, 255 );
                     array[a] = 0xFF << 24 | red << 16 | green << 8 | blue;
                 }
             }
@@ -149,8 +153,8 @@ public final class Filters
                     final int green = elem >> 8 & 0xFF;
                     final int blue = elem & 0xFF;
                     final int grey =
-                            Filters.bound( (int) Math
-                                .round( red * redWeight + green * greenWeight + blue * blueWeight ) );
+                            Filters.bindToWithin( (int) Math
+                                           .round( red * redWeight + green * greenWeight + blue * blueWeight ), 0, 255 );
                     array[a] = 0xFF << 24 | grey << 16 | grey << 8 | grey;
                 }
             }
