@@ -1,12 +1,7 @@
 package uk.org.netvu.filter;
 
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
-import java.awt.image.MemoryImageSource;
 
-import uk.org.netvu.util.Images;
 import uk.org.netvu.util.CheckParameters;
 
 /**
@@ -22,9 +17,9 @@ public final class Filters
     }
 
     /**
-     * Ensures that the specified number is bound between the specified lower and upper bounds inclusively.
-     * This is useful in preventing overflow of colour components in
-     * implementing ImageFilters.
+     * Ensures that the specified number is bound between the specified lower
+     * and upper bounds inclusively. This is useful in preventing overflow of
+     * colour components in implementing ImageFilters.
      * 
      * @param x
      *        the number to bound.
@@ -32,8 +27,8 @@ public final class Filters
      *        the lower bound.
      * @param upper
      *        the upper bound.
-     * @return x if x is between lower and upper inclusive, lower if x is less than lower, upper
-     *         if x is greater than upper.
+     * @return x if x is between lower and upper inclusive, lower if x is less
+     *         than lower, upper if x is greater than upper.
      */
     public static int bindToWithin( final int x, final int lower, final int upper )
     {
@@ -53,20 +48,21 @@ public final class Filters
     {
         return new AbstractFilter()
         {
+            @Override
             public void process( final BufferedImage image )
             {
-                for ( int x = 0; x < image.getWidth(null); x++)
+                for ( int x = 0; x < image.getWidth( null ); x++ )
                 {
-                    for (int y = 0; y < image.getHeight(null); y++)
+                    for ( int y = 0; y < image.getHeight( null ); y++ )
                     {
                         final int elem = image.getRGB( x, y );
                         final int red = Filters.bindToWithin( (int) ( ( elem >> 16 & 0xFF ) * brightness ), 0, 255 );
-                        final int green = Filters.bindToWithin( (int) ( ( elem >> 8 & 0xFF ) * brightness ) , 0, 255);
+                        final int green = Filters.bindToWithin( (int) ( ( elem >> 8 & 0xFF ) * brightness ), 0, 255 );
                         final int blue = Filters.bindToWithin( (int) ( ( elem & 0xFF ) * brightness ), 0, 255 );
-                        image.setRGB(x, y, 0xFF << 24 | red << 16 | green << 8 | blue);
+                        image.setRGB( x, y, 0xFF << 24 | red << 16 | green << 8 | blue );
                     }
                 }
-            }            
+            }
         };
     }
 
@@ -84,20 +80,21 @@ public final class Filters
     public static ImageFilter betterBrightnessFilter( final int minValue )
     {
         CheckParameters.from( 0 ).to( 255 ).bounds( minValue );
-       
+
         return new AbstractFilter()
         {
+            @Override
             public void process( final BufferedImage image )
             {
-                for ( int x = 0; x < image.getWidth(null); x++)
+                for ( int x = 0; x < image.getWidth( null ); x++ )
                 {
-                    for (int y = 0;y<image.getHeight(null);y++)
+                    for ( int y = 0; y < image.getHeight( null ); y++ )
                     {
-                        final int elem = image.getRGB(x, y);
+                        final int elem = image.getRGB( x, y );
                         final int red = ( elem >> 16 & 0xFF ) * ( 256 - minValue ) / 255 + minValue;
                         final int green = ( elem >> 8 & 0xFF ) * ( 256 - minValue ) / 255 + minValue;
                         final int blue = ( elem & 0xFF ) * ( 256 - minValue ) / 255 + minValue;
-                        image.setRGB(x, y, 0xFF << 24 | red << 16 | green << 8 | blue);
+                        image.setRGB( x, y, 0xFF << 24 | red << 16 | green << 8 | blue );
                     }
                 }
             }
@@ -123,20 +120,21 @@ public final class Filters
     {
         return new AbstractFilter()
         {
+            @Override
             public void process( final BufferedImage image )
             {
-                for (int x = 0 ; x<image.getWidth(null); x++)
+                for ( int x = 0; x < image.getWidth( null ); x++ )
                 {
-                    for (int y = 0; y< image.getHeight(null); y++)
+                    for ( int y = 0; y < image.getHeight( null ); y++ )
                     {
                         final int elem = image.getRGB( x, y );
                         final int red = elem >> 16 & 0xFF;
                         final int green = elem >> 8 & 0xFF;
                         final int blue = elem & 0xFF;
                         final int grey =
-                            Filters.bindToWithin( (int) Math
-                                                  .round( red * redWeight + green * greenWeight + blue * blueWeight ), 0, 255 );
-                        image.setRGB(x, y, 0xFF << 24 | grey << 16 | grey << 8 | grey);
+                                Filters.bindToWithin( (int) Math.round( red * redWeight + green * greenWeight + blue
+                                        * blueWeight ), 0, 255 );
+                        image.setRGB( x, y, 0xFF << 24 | grey << 16 | grey << 8 | grey );
                     }
                 }
             }
@@ -164,32 +162,33 @@ public final class Filters
     {
         return new AbstractFilter()
         {
-            public void process( final BufferedImage image)
+            @Override
+            public void process( final BufferedImage image )
             {
                 double totalRed = 0;
                 double totalGreen = 0;
                 double totalBlue = 0;
 
-                for ( int x = 0; x < image.getWidth(null); x++)
+                for ( int x = 0; x < image.getWidth( null ); x++ )
                 {
-                    for (int y = 0; y< image.getHeight(null); y++)
+                    for ( int y = 0; y < image.getHeight( null ); y++ )
                     {
-                        final int elem = image.getRGB(x, y);
+                        final int elem = image.getRGB( x, y );
                         totalRed += elem >> 16 & 0xFF;
                         totalGreen += elem >> 8 & 0xFF;
                         totalBlue += elem & 0xFF;
                     }
                 }
 
-                final int numPixels = image.getWidth(null) * image.getHeight(null);
+                final int numPixels = image.getWidth( null ) * image.getHeight( null );
 
                 totalRed /= numPixels;
                 totalGreen /= numPixels;
                 totalBlue /= numPixels;
 
-                for ( int x = 0; x < image.getWidth(null); x++)
+                for ( int x = 0; x < image.getWidth( null ); x++ )
                 {
-                    for (int y = 0; y< image.getHeight(null);y ++)
+                    for ( int y = 0; y < image.getHeight( null ); y++ )
                     {
                         final int elem = image.getRGB( x, y );
                         int red = (int) Math.round( totalRed + ( ( elem >> 16 & 0xFF ) - totalRed ) * contrast );
@@ -201,7 +200,7 @@ public final class Filters
                         red = Math.max( 0, red );
                         green = Math.max( 0, green );
                         blue = Math.max( 0, blue );
-                        image.setRGB(x, y, 0xFF << 24 | red << 16 | green << 8 | blue);
+                        image.setRGB( x, y, 0xFF << 24 | red << 16 | green << 8 | blue );
                     }
                 }
             }
