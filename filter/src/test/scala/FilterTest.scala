@@ -9,10 +9,11 @@ import java.awt.image.BufferedImage
 import java.awt.Image
 
 class FilterTest extends JUnit4(new Specification {
- val filters: List[(ImageFilter, String)] = List(MonochromeFilters.monochromeFilter(0.5, 0.2, 0.3) -> "MonochromeFilter",
-                                                 ContrastFilters.contrastFilter(1.5) -> "ContrastFilter",
-                                                 BrightnessFilters.simpleBrightnessFilter(1.5) -> "BrightnessFilter.simpleBrightnessFilter",
-                                                 BrightnessFilters.betterBrightnessFilter(30) -> "BrightnessFilter.betterBrightnessFilter")
+ import Filters._
+ val filters: List[(ImageFilter, String)] = List(monochromeFilter(0.5, 0.2, 0.3) -> "monochromeFilter",
+                                                 contrastFilter(1.5) -> "contrastFilter",
+                                                 simpleBrightnessFilter(1.5) -> "simpleBrightnessFilter",
+                                                 betterBrightnessFilter(30) -> "betterBrightnessFilter")
 
  val original = ImageIO.read(new File("../codecs/dvip3s-ad-dev-adh-352x256.jpeg"))
 
@@ -53,15 +54,15 @@ class FilterTest extends JUnit4(new Specification {
   pixels.foldLeft(0.0)((acc, x) => acc + (x >> 16 & 0xFF) + (x >> 8 & 0xFF) + (x & 0xFF))
  }
                                       
- "BrightnessFilters.simpleBrightnessFilter(1.5)" should {
+ "simpleBrightnessFilter(1.5)" should {
   "make the image brighter" in {
-   brightness(BrightnessFilters.simpleBrightnessFilter(1.5).filter(original)) > brightness(original) mustBe true
+   brightness(simpleBrightnessFilter(1.5).filter(original)) > brightness(original) mustBe true
   }
  }
 
- "BrightnessFilters.betterBrightnessFilter(40)" should {
+ "betterBrightnessFilter(40)" should {
   "make the image brighter" in {
-   brightness(BrightnessFilters.betterBrightnessFilter(40).filter(original)) > brightness(original) mustBe true
+   brightness(betterBrightnessFilter(40).filter(original)) > brightness(original) mustBe true
   }
  }
 
@@ -81,17 +82,17 @@ class FilterTest extends JUnit4(new Specification {
   contrast
  }
 
- "ContrastFilters.contrastFilter(1.5)" should {
+ "contrastFilter(1.5)" should {
   "make the image have more contrast" in {
-   contrast(ContrastFilters.contrastFilter(1.5).filter(original)) > contrast(original) mustBe true
+   contrast(contrastFilter(1.5).filter(original)) > contrast(original) mustBe true
   }
  }
 
  def grey(image: Image) = !pixelsFor(image).exists(p => (p & 0xFF) != ((p >> 8) & 0xFF) || (p & 0xFF) != ((p >> 16) & 0xFF))
 
- "MonochromeFilters.monochromeFilter(0.6, 0.3, 0.1)" should {
+ "monochromeFilter(0.6, 0.3, 0.1)" should {
   "produce a grey image" in {
-   grey(MonochromeFilters.monochromeFilter(0.6, 0.3, 0.1).filter(original)) mustBe true
+   grey(monochromeFilter(0.6, 0.3, 0.1).filter(original)) mustBe true
   }
  }
 })
