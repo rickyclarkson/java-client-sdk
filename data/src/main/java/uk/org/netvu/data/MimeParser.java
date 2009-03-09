@@ -9,63 +9,13 @@ import java.util.Scanner;
 import java.util.regex.MatchResult;
 
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.codecs.Validation;
 
 /**
  * A parser for MIME streams containing JFIF images.
  */
 class MimeParser implements Parser
 {
-    /**
-     * The beginning header for VOP information in an MPEG-4 frame.
-     */
-    private static final byte[] MPEG4_VOP_START = { 0x00, 0x00, 0x01, (byte) 0xB6 };
-
-    /**
-     * Identifies whether the data in the ByteBuffer is an MPEG-4 I-frame, by
-     * finding and parsing VOP headers.
-     * 
-     * @param data
-     *        the ByteBuffer to search.
-     * @return true if the data is an I-frame, false otherwise.
-     * @throws NullPointerException
-     *         if data is null.
-     */
-    static boolean isIFrame( final ByteBuffer data )
-    {
-        CheckParameters.areNotNull( data );
-        boolean foundVOP = false;
-        byte[] startCode;
-        int pos = 0;
-
-        startCode = new byte[4];
-        while ( !foundVOP && pos + 4 < data.limit() )
-        {
-            data.position( pos );
-            data.get( startCode );
-
-            if ( Arrays.equals( startCode, MPEG4_VOP_START ) )
-            {
-                foundVOP = true;
-            }
-            pos++;
-        }
-        pos += 3;
-        if ( foundVOP )
-        {
-            final int pictureType = data.get( pos ) >> 6 & 0xFF;
-            if ( pictureType == 0 )
-            {
-
-                return true;
-            }
-        }
-        else
-        {
-            throw new IllegalStateException( "Cannot find MPEG-4 VOP start code; cannot tell if I-frame" );
-        }
-        return false;
-    }
-
     /**
      * Parses a comment block read from a JFIF image, to retrieve the channel.
      * 
@@ -162,7 +112,7 @@ class MimeParser implements Parser
                             @Override
                             public ByteBuffer getOnDiskFormat()
                             {
-                                final boolean isIFrame = isIFrame( IO.duplicate( packet.data ) );
+                                final boolean isIFrame = Validation.isIFrame( IO.duplicate( packet.data ) );
 
                                 final ImageDataStruct imageDataStruct =
                                         ImageDataStruct.construct( packet.data, comment,

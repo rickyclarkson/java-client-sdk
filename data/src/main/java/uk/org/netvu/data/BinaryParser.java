@@ -8,6 +8,7 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.codecs.Validation;
 
 /**
  * A parser for the 'binary' stream format.
@@ -193,7 +194,7 @@ final class BinaryParser implements Parser
                             @Override
                             public ByteBuffer getOnDiskFormat()
                             {
-                                final boolean iFrame = MimeParser.isIFrame( IO.duplicate( data ) );
+                                final boolean iFrame = Validation.isIFrame( IO.duplicate( data ) );
                                 final VideoFormat videoFormat =
                                         iFrame ? VideoFormat.MPEG4_I_FRAME : VideoFormat.MPEG4_P_FRAME;
                                 return ImageDataStruct.construct( data, "", videoFormat, constantHorizontal,
