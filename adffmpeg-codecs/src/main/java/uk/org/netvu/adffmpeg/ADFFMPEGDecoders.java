@@ -127,16 +127,18 @@ public final class ADFFMPEGDecoders
                 semaphore.acquire();
                 try
                 {
-                    final ByteBuffer buffer = originalBuffer.duplicate();
-
-                    final ByteBuffer directBuffer = ByteBuffer.allocateDirect( buffer.limit() + 10 );
-                    directBuffer.put( buffer );
-                    for ( int a = 0; a < 10; a++ )
+                    final ByteBuffer directBuffer;
+                    if (originalBuffer.isDirect())
                     {
-                        directBuffer.put( (byte) 0 );
+                        directBuffer = originalBuffer;
                     }
-
-                    directBuffer.position( 0 );
+                    else
+                    {
+                        final ByteBuffer buffer = originalBuffer.duplicate();
+                        directBuffer = ByteBuffer.allocateDirect( buffer.limit() );
+                        directBuffer.put( buffer );
+                        directBuffer.position( 0 );
+                    }
                     return decodeFrame( directBuffer );
                 }
                 finally
