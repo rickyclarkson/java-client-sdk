@@ -30,6 +30,9 @@ public final class ToolkitDecoder implements VideoDecoder<VideoCodec.JPEG>
         return Images.loadFully( Toolkit.getDefaultToolkit().createImage( bytes ) );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void dispose()
     {
     }

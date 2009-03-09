@@ -90,6 +90,9 @@ public final class ImageIODecoder implements VideoDecoder<VideoCodec.JPEG>
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void dispose()
     {
     }
