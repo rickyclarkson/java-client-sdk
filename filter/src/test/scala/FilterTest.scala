@@ -47,6 +47,9 @@ class FilterTest extends JUnit4(new Specification {
  def pixelsFor(image: Image) = { val dataBuffer = pixelData(image)
                                  for (a <- 0 until dataBuffer.getSize) yield dataBuffer.getElem(a) }
 
+ // Gives the brightness of the image, just a total of the pixel intensities.
+ // The actual value isn't important, only that it is greater for a brighter image.
+ // The comparison would be invalid for images of different sizes.
  def brightness(image: Image) = {
   val dataBuffer = pixelData(image)
   
@@ -66,6 +69,10 @@ class FilterTest extends JUnit4(new Specification {
   }
  }
 
+ // Gives the contrast of the image as a total of the difference between each pixel and the mean
+ // for each colour component.  The actual value isn't important, only that it is greater for an
+ // image with more contrast.
+ // The comparison would be invalid for images of different sizes.
  def contrast(image: Image) = {
   val dataBuffer = pixelData(image)
   val pixels = for (a <- 0 until dataBuffer.getSize) yield dataBuffer.getElem(a)
@@ -88,6 +95,7 @@ class FilterTest extends JUnit4(new Specification {
   }
  }
 
+ // Tests that the image is greyscale, i.e., that red, green and blue are equal for each pixel.
  def grey(image: Image) = !pixelsFor(image).exists(p => (p & 0xFF) != ((p >> 8) & 0xFF) || (p & 0xFF) != ((p >> 16) & 0xFF))
 
  "monochromeFilter(0.6, 0.3, 0.1)" should {

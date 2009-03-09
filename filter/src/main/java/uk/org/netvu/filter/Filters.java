@@ -51,9 +51,9 @@ public final class Filters
             @Override
             public void process( final BufferedImage image )
             {
-                for ( int x = 0; x < image.getWidth( null ); x++ )
+                for ( int x = 0; x < image.getWidth( ); x++ )
                 {
-                    for ( int y = 0; y < image.getHeight( null ); y++ )
+                    for ( int y = 0; y < image.getHeight( ); y++ )
                     {
                         final int elem = image.getRGB( x, y );
                         final int red = Filters.bindToWithin( (int) ( ( elem >> 16 & 0xFF ) * brightness ), 0, 255 );
@@ -86,9 +86,9 @@ public final class Filters
             @Override
             public void process( final BufferedImage image )
             {
-                for ( int x = 0; x < image.getWidth( null ); x++ )
+                for ( int x = 0; x < image.getWidth( ); x++ )
                 {
-                    for ( int y = 0; y < image.getHeight( null ); y++ )
+                    for ( int y = 0; y < image.getHeight( ); y++ )
                     {
                         final int elem = image.getRGB( x, y );
                         final int red = ( elem >> 16 & 0xFF ) * ( 256 - minValue ) / 255 + minValue;
@@ -123,9 +123,9 @@ public final class Filters
             @Override
             public void process( final BufferedImage image )
             {
-                for ( int x = 0; x < image.getWidth( null ); x++ )
+                for ( int x = 0; x < image.getWidth( ); x++ )
                 {
-                    for ( int y = 0; y < image.getHeight( null ); y++ )
+                    for ( int y = 0; y < image.getHeight( ); y++ )
                     {
                         final int elem = image.getRGB( x, y );
                         final int red = elem >> 16 & 0xFF;
@@ -169,9 +169,9 @@ public final class Filters
                 double totalGreen = 0;
                 double totalBlue = 0;
 
-                for ( int x = 0; x < image.getWidth( null ); x++ )
+                for ( int x = 0; x < image.getWidth( ); x++ )
                 {
-                    for ( int y = 0; y < image.getHeight( null ); y++ )
+                    for ( int y = 0; y < image.getHeight( ); y++ )
                     {
                         final int elem = image.getRGB( x, y );
                         totalRed += elem >> 16 & 0xFF;
@@ -180,15 +180,15 @@ public final class Filters
                     }
                 }
 
-                final int numPixels = image.getWidth( null ) * image.getHeight( null );
+                final int numPixels = image.getWidth( ) * image.getHeight( null );
 
                 totalRed /= numPixels;
                 totalGreen /= numPixels;
                 totalBlue /= numPixels;
 
-                for ( int x = 0; x < image.getWidth( null ); x++ )
+                for ( int x = 0; x < image.getWidth( ); x++ )
                 {
-                    for ( int y = 0; y < image.getHeight( null ); y++ )
+                    for ( int y = 0; y < image.getHeight( ); y++ )
                     {
                         final int elem = image.getRGB( x, y );
                         int red = (int) Math.round( totalRed + ( ( elem >> 16 & 0xFF ) - totalRed ) * contrast );
