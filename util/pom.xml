@@ -3,9 +3,9 @@
     <parent>
         <groupId>uk.org.netvu</groupId>
         <artifactId>sdk</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.1.0</version>
     </parent>
     <artifactId>util</artifactId>
-    <name>NetVu Connected Java Client SDK->Util</name>
+    <name>NetVu Connected Java Client SDK-&gt;Util</name>
     <description>Utility classes for use with SDK, platform and deployment scenarios.</description>
 </project>

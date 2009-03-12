@@ -3,16 +3,16 @@
     <parent>
         <groupId>uk.org.netvu</groupId>
         <artifactId>sdk</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.1.0</version>
     </parent>
     <artifactId>protocol</artifactId>
-    <name>NetVu Connected Java Client SDK->Protocol</name>
+    <name>NetVu Connected Java Client SDK-&gt;Protocol</name>
     <description>Common Utilities for sending messages to and from servers.</description>
     <dependencies>
         <dependency>
             <groupId>uk.org.netvu</groupId>
             <artifactId>util</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.1.0</version>
         </dependency>
     </dependencies>
     <build>
