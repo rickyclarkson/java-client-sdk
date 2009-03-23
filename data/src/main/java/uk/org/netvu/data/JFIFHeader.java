@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import uk.org.netvu.util.CheckParameters;
+import uk.org.netvu.codecs.JPEGMetadata;
 
 /**
  * A class for converting the minimised JFIF header into a valid JFIF header.
@@ -162,23 +163,7 @@ final class JFIFHeader
      */
     static String getComments( final ByteBuffer jfif ) throws BufferUnderflowException
     {
-        while ( true )
-        {
-            if ( ( jfif.get() & 0xFF ) == 0xFF && ( jfif.get() & 0xFF ) == 0xFE )
-            {
-                final short commentLength = jfif.getShort();
-                final byte[] comment = new byte[commentLength];
-                jfif.get( comment );
-                try
-                {
-                    return new String( comment );
-                }
-                finally
-                {
-                    jfif.position( 0 );
-                }
-            }
-        }
+        return JPEGMetadata.getCommentData( jfif );
     }
 
     /**
