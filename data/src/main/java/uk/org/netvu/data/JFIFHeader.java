@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import uk.org.netvu.util.CheckParameters;
-import uk.org.netvu.codecs.JPEGMetadata;
+import uk.org.netvu.util.JPEGMetadata;
 
 /**
  * A class for converting the minimised JFIF header into a valid JFIF header.
