@@ -1,11 +1,9 @@
 package uk.org.netvu.filter;
 
-import java.awt.image.BufferedImage;
-
 import uk.org.netvu.util.CheckParameters;
 
 /**
- * Utility methods for implementing ImageFilters.
+ * Implementations of ImageFilter.
  */
 public final class Filters
 {
@@ -46,22 +44,20 @@ public final class Filters
      */
     public static ImageFilter simpleBrightnessFilter( final double brightness )
     {
-        return new AbstractFilter()
+        return new ImageFilter()
         {
-            @Override
-            public void process( final BufferedImage image )
+            public int[] filter( final int[] pixels )
             {
-                for ( int x = 0; x < image.getWidth(); x++ )
+                for ( int a = 0; a < pixels.length; a++ )
                 {
-                    for ( int y = 0; y < image.getHeight(); y++ )
-                    {
-                        final int elem = image.getRGB( x, y );
-                        final int red = Filters.bindToWithin( (int) ( ( elem >> 16 & 0xFF ) * brightness ), 0, 255 );
-                        final int green = Filters.bindToWithin( (int) ( ( elem >> 8 & 0xFF ) * brightness ), 0, 255 );
-                        final int blue = Filters.bindToWithin( (int) ( ( elem & 0xFF ) * brightness ), 0, 255 );
-                        image.setRGB( x, y, 0xFF << 24 | red << 16 | green << 8 | blue );
-                    }
+                    final int elem = pixels[a];
+                    final int red = Filters.bindToWithin( (int) ( ( elem >> 16 & 0xFF ) * brightness ), 0, 255 );
+                    final int green = Filters.bindToWithin( (int) ( ( elem >> 8 & 0xFF ) * brightness ), 0, 255 );
+                    final int blue = Filters.bindToWithin( (int) ( ( elem & 0xFF ) * brightness ), 0, 255 );
+                    pixels[a] = 0xFF << 24 | red << 16 | green << 8 | blue;                    
                 }
+                
+                return pixels;
             }
         };
     }
@@ -81,22 +77,20 @@ public final class Filters
     {
         CheckParameters.from( 0 ).to( 255 ).bounds( minValue );
 
-        return new AbstractFilter()
+        return new ImageFilter()
         {
-            @Override
-            public void process( final BufferedImage image )
+            public int[] filter( final int[] pixels )
             {
-                for ( int x = 0; x < image.getWidth(); x++ )
+                for ( int a = 0; a < pixels.length; a++ )
                 {
-                    for ( int y = 0; y < image.getHeight(); y++ )
-                    {
-                        final int elem = image.getRGB( x, y );
-                        final int red = ( elem >> 16 & 0xFF ) * ( 256 - minValue ) / 255 + minValue;
-                        final int green = ( elem >> 8 & 0xFF ) * ( 256 - minValue ) / 255 + minValue;
-                        final int blue = ( elem & 0xFF ) * ( 256 - minValue ) / 255 + minValue;
-                        image.setRGB( x, y, 0xFF << 24 | red << 16 | green << 8 | blue );
-                    }
-                }
+                    final int elem = pixels[a];
+                    final int red = Filters.bindToWithin( ( elem >> 16 & 0xFF ) * ( 256 - minValue ) / 255 + minValue, 0, 255 );
+                    final int green = Filters.bindToWithin( ( elem >> 8 & 0xFF ) * ( 256 - minValue ) / 255 + minValue, 0, 255 );
+                    final int blue = Filters.bindToWithin( ( elem & 0xFF ) * ( 256 - minValue ) / 255 + minValue, 0, 255 );
+                    pixels[a] = 0xFF << 24 | red << 16 | green << 8 | blue;
+                }      
+                
+                return pixels;
             }
         };
     }
@@ -118,25 +112,23 @@ public final class Filters
     public static ImageFilter monochromeFilter( final double redWeight, final double greenWeight,
             final double blueWeight )
     {
-        return new AbstractFilter()
-        {
-            @Override
-            public void process( final BufferedImage image )
+        return new ImageFilter()
+        {            
+            public int[] filter( final int[] pixels )
             {
-                for ( int x = 0; x < image.getWidth(); x++ )
+                for ( int a = 0; a < pixels.length; a++ )
                 {
-                    for ( int y = 0; y < image.getHeight(); y++ )
-                    {
-                        final int elem = image.getRGB( x, y );
-                        final int red = elem >> 16 & 0xFF;
-                        final int green = elem >> 8 & 0xFF;
-                        final int blue = elem & 0xFF;
-                        final int grey =
-                                Filters.bindToWithin( (int) Math.round( red * redWeight + green * greenWeight + blue
-                                        * blueWeight ), 0, 255 );
-                        image.setRGB( x, y, 0xFF << 24 | grey << 16 | grey << 8 | grey );
-                    }
+                    final int elem = pixels[a];
+                    final int red = elem >> 16 & 0xFF;
+                    final int green = elem >> 8 & 0xFF;
+                    final int blue = elem & 0xFF;
+                    final int grey =
+                        Filters.bindToWithin( (int) Math.round( red * redWeight + green * greenWeight + blue
+                                * blueWeight ), 0, 255 );
+                    pixels[a] = 0xFF << 24 | grey << 16 | grey << 8 | grey;                    
                 }
+                
+                return pixels;
             }
         };
     }
@@ -147,7 +139,7 @@ public final class Filters
      * luminance</a>.
      */
     public static final ImageFilter standardLuminanceMonochromeFilter = monochromeFilter( 0.2126, 0.7152, 0.0722 );
-
+        
     /**
      * Gives a contrast filter that applies the specified contrast shift to
      * images.
@@ -160,49 +152,42 @@ public final class Filters
      */
     public static ImageFilter contrastFilter( final double contrast )
     {
-        return new AbstractFilter()
-        {
-            @Override
-            public void process( final BufferedImage image )
+        return new ImageFilter()
+        {            
+            public int[] filter( final int[] pixels )
             {
                 double totalRed = 0;
                 double totalGreen = 0;
                 double totalBlue = 0;
 
-                for ( int x = 0; x < image.getWidth(); x++ )
+                for ( int a = 0; a < pixels.length; a++ )
                 {
-                    for ( int y = 0; y < image.getHeight(); y++ )
-                    {
-                        final int elem = image.getRGB( x, y );
-                        totalRed += elem >> 16 & 0xFF;
-                        totalGreen += elem >> 8 & 0xFF;
-                        totalBlue += elem & 0xFF;
-                    }
+                    final int elem = pixels[a];
+                    totalRed += elem >> 16 & 0xFF;
+                    totalGreen += elem >> 8 & 0xFF;
+                    totalBlue += elem & 0xFF;
                 }
 
-                final int numPixels = image.getWidth() * image.getHeight( null );
+                totalRed /= pixels.length;
+                totalGreen /= pixels.length; 
+                totalBlue /= pixels.length;
 
-                totalRed /= numPixels;
-                totalGreen /= numPixels;
-                totalBlue /= numPixels;
-
-                for ( int x = 0; x < image.getWidth(); x++ )
+                for ( int a = 0; a < pixels.length; a++ )
                 {
-                    for ( int y = 0; y < image.getHeight(); y++ )
-                    {
-                        final int elem = image.getRGB( x, y );
-                        int red = (int) Math.round( totalRed + ( ( elem >> 16 & 0xFF ) - totalRed ) * contrast );
-                        int green = (int) Math.round( totalGreen + ( ( elem >> 8 & 0xFF ) - totalGreen ) * contrast );
-                        int blue = (int) Math.round( totalBlue + ( ( elem & 0xFF ) - totalBlue ) * contrast );
-                        red = Math.min( 255, red );
-                        green = Math.min( 255, green );
-                        blue = Math.min( 255, blue );
-                        red = Math.max( 0, red );
-                        green = Math.max( 0, green );
-                        blue = Math.max( 0, blue );
-                        image.setRGB( x, y, 0xFF << 24 | red << 16 | green << 8 | blue );
-                    }
+                    final int elem = pixels[a];
+                    int red = (int) Math.round( totalRed + ( ( elem >> 16 & 0xFF ) - totalRed ) * contrast );
+                    int green = (int) Math.round( totalGreen + ( ( elem >> 8 & 0xFF ) - totalGreen ) * contrast );
+                    int blue = (int) Math.round( totalBlue + ( ( elem & 0xFF ) - totalBlue ) * contrast );
+                    red = Math.min( 255, red );
+                    green = Math.min( 255, green );
+                    blue = Math.min( 255, blue );
+                    red = Math.max( 0, red );
+                    green = Math.max( 0, green );
+                    blue = Math.max( 0, blue );
+                    pixels[a] = 0xFF << 24 | red << 16 | green << 8 | blue;
                 }
+                
+                return pixels;
             }
         };
     }
