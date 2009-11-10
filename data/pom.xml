@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.org.netvu</groupId>
         <artifactId>sdk</artifactId>
-        <version>0.2.2-SNAPSHOT</version>
+        <version>0.2.3-SNAPSHOT</version>
     </parent>
     <artifactId>data</artifactId>
     <name>NetVu Connected Java Client SDK-&gt;Data</name>
