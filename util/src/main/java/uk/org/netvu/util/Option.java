@@ -230,19 +230,10 @@ public abstract class Option<T> implements Iterable<T>
      */
     public abstract String reason() throws NullPointerException;
 
-    /**
-     * Throws an UnsupportedOperationException to catch any accidental
-     * toString() calls early.
-     * 
-     * @throws UnsupportedOperationException
-     *         in all cases.
-     */
+    public abstract T getOrElse(T ifEmpty);
+
     @Override
-    public final String toString()
-    {
-        throw new UnsupportedOperationException(
-                "toString() not supported, to catch any accidental toString() calls early" );
-    }
+    public abstract String toString();
 
     /**
      * An Option that does not hold a value.
@@ -337,6 +328,16 @@ public abstract class Option<T> implements Iterable<T>
         {
             return reason;
         }
+
+        @Override
+        public T getOrElse(T ifEmpty) {
+            return ifEmpty;
+        }
+
+        @Override
+        public String toString() {
+            return "Option.none(" + reason + ')';
+        }
     }
 
     /**
@@ -425,6 +426,16 @@ public abstract class Option<T> implements Iterable<T>
         public String reason()
         {
             throw new IllegalStateException( "This Option has a value; reason() is only valid on an empty Option" );
+        }
+
+        @Override
+        public T getOrElse(T ifEmpty) {
+            return t;
+        }
+
+        @Override
+        public String toString() {
+            return "Option.some(" + t + ')';
         }
     }
 }
