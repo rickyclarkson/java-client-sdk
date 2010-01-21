@@ -156,13 +156,6 @@ class OptionTest extends JUnit4(new Specification with Scalacheck {
   }
  }                                                      
 
- "toString" should {
-  "throw an UnsupportedOperationException" in {
-   getEmptyOption[Int]("foo").toString must throwA[UnsupportedOperationException]
-   getFullOption(5).toString must throwA[UnsupportedOperationException]
-  }
- }
-
  "reason" should {
   "throw an IllegalStateException" in { getFullOption(5).reason must throwA[IllegalStateException] }
   "give a String" in { getEmptyOption("foo").reason mustEqual "foo" }
