@@ -191,4 +191,12 @@ public final class Filters
             }
         };
     }
+
+    public static ImageFilter andThen(final ImageFilter first, final ImageFilter second) {
+        return new ImageFilter() {
+            public int[] filter(int[] pixels) {
+                return second.filter(first.filter(pixels));
+            }
+        };
+    }
 }
