@@ -152,7 +152,6 @@ final class ParameterMap
      *        the parameter of interest.
      * @return the stored value for the specified parameter.
      */
-    @SuppressWarnings( "unchecked" )
     public <T> T get( final ParameterDescription<?, T> parameterDescription )
     {
         return values.containsKey( parameterDescription ) ? (T) values.get( parameterDescription )
