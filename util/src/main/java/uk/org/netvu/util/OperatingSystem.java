@@ -21,6 +21,10 @@ public enum OperatingSystem
      */
     WindowsXP,
     /**
+     * Windows 200X.
+     */
+    Windows200X,
+    /**
      * Mac OS X.
      */
     MacOSX;
@@ -44,6 +48,10 @@ public enum OperatingSystem
         {
             return WindowsVista;
         }
+	else if ( os.startsWith( "windows 2000" ) || os.startsWith( "windows 2003" ) )
+	{
+	    return Windows200X;
+	}
         else if ( os.startsWith( "mac os x" ) )
         {
             return MacOSX;

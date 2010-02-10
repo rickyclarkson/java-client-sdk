@@ -22,8 +22,8 @@ class OperatingSystemSpecsTest extends JUnit4(new Specification with DataTables 
     "Mac OS X"      ! OperatingSystem.MacOSX       |
     "Solaris"       ! OperatingSystem.Unknown      |
     "SunOS"         ! OperatingSystem.Unknown      |
-    "Windows 2000"  ! OperatingSystem.Unknown      |
-    "Windows 2003"  ! OperatingSystem.Unknown      |
+    "Windows 2000"  ! OperatingSystem.Windows200X  |
+    "Windows 2003"  ! OperatingSystem.Windows200X  |
     "Windows 95"    ! OperatingSystem.Unknown      |
     "Windows 98"    ! OperatingSystem.Unknown      |
     "Windows CE"    ! OperatingSystem.Unknown      |
