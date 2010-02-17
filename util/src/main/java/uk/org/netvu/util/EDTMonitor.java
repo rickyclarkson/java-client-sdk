@@ -24,7 +24,7 @@ public class EDTMonitor {
                     }
                 });
             }
-        }, 5000, 10000);
+        }, 50000, 20000);
     }
 
     public static void threadDump() {
