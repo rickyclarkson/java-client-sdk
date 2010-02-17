@@ -27,7 +27,7 @@ class FilterTest extends JUnit4(new Specification {
                                                  simpleBrightnessFilter(1.5) -> "simpleBrightnessFilter",
                                                  betterBrightnessFilter(30) -> "betterBrightnessFilter")
 
- val original = pixelsFor(ImageIO.read(new File("../codecs/dvip3s-ad-dev-adh-352x256.jpeg"))).toList
+ val original = pixelsFor(ImageIO.read(new File("dvip3s-ad-dev-adh-352x256.jpeg"))).toList
 
  "Filters.bindToWithin(x, 0, 255)" should {
   "always give numbers between 0 and 255" in {
