@@ -273,6 +273,7 @@ public final class ReplayPicCGI extends AbstractPicCGI
          * 
          * @return this Builder
          */
+        @Override
         Builder self()
         {
             return this;

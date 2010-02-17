@@ -355,6 +355,7 @@ public final class DisplayPicCGI extends AbstractPicCGI
          * 
          * @return this Builder
          */
+        @Override
         Builder self()
         {
             return this;
