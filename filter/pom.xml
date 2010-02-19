@@ -3,13 +3,13 @@
     <parent>
         <groupId>uk.org.netvu</groupId>
         <artifactId>sdk</artifactId>
-        <version>0.2.9-SNAPSHOT</version>
+        <version>0.2.8-SNAPSHOT</version>
     </parent>
     <dependencies>
         <dependency>
             <groupId>uk.org.netvu</groupId>
             <artifactId>util</artifactId>
-            <version>0.2.9-SNAPSHOT</version>
+            <version>0.2.8-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <artifactId>filter</artifactId>
