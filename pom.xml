@@ -4,11 +4,11 @@
     <artifactId>sdk</artifactId>
     <packaging>pom</packaging>
     <name>NetVu Connected Java Client SDK</name>
-    <version>0.2.9</version>
+    <version>0.2.10-SNAPSHOT</version>
     <scm>
-        <connection>scm:svn:https://192.168.106.29/svn/java-client-sdk/tags/sdk-0.2.9</connection>
-        <developerConnection>scm:svn:https://192.168.106.29/svn/java-client-sdk/tags/sdk-0.2.9</developerConnection>
-        <url>https://192.168.106.29/svn/java-client-sdk/tags/sdk-0.2.9</url>
+        <connection>scm:svn:https://192.168.106.29/svn/java-client-sdk/trunk</connection>
+        <developerConnection>scm:svn:https://192.168.106.29/svn/java-client-sdk/trunk</developerConnection>
+        <url>https://192.168.106.29/svn/java-client-sdk/trunk</url>
     </scm>
     <distributionManagement>
         <repository>
