@@ -180,11 +180,11 @@ public abstract class Function<T, R>
             @Override
             public Option<Boolean> apply( final String t )
             {
-                if ( t.equalsIgnoreCase( "true" ) )
+                if ( Strings.equalsIgnoreCase(t, "true" ) )
                 {
                     return Option.getFullOption( true );
                 }
-                else if ( t.equalsIgnoreCase( "false" ) )
+                else if ( Strings.equalsIgnoreCase(t, "false" ) )
                 {
                     return Option.getFullOption( false );
                 }
