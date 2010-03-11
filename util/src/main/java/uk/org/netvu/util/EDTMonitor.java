@@ -10,7 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class EDTMonitor {
-    public static void start() {
+    public static void start(int initialDelay, int delay) {
         new Timer("EDTMonitor", true).scheduleAtFixedRate(new TimerTask() {
             volatile int running = 0;
             @Override
@@ -24,7 +24,7 @@ public class EDTMonitor {
                     }
                 });
             }
-        }, 50000, 20000);
+        }, initialDelay, delay);
     }
 
     public static void threadDump() {
