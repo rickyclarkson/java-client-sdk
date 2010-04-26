@@ -1,7 +1,5 @@
 package uk.org.netvu.filter;
 
-import uk.org.netvu.util.CheckParameters;
-
 /**
  * Implementations of ImageFilter.
  */
@@ -21,45 +19,12 @@ public final class Filters
      * 
      * @param x
      *        the number to bound.
-     * @param lower
-     *        the lower bound.
-     * @param upper
-     *        the upper bound.
      * @return x if x is between lower and upper inclusive, lower if x is less
      *         than lower, upper if x is greater than upper.
      */
-    public static int bindToWithin( final int x, final int lower, final int upper )
+    public static int bindToWithin(int x)
     {
         return x < 0 ? 0 : x > 255 ? 255 : x;
-    }
-
-    /**
-     * A brightness filter that multiplies each pixel value by a constant
-     * factor.
-     * 
-     * @param brightness
-     *        the constant factor by which to multiply each pixel value.
-     * @return a brightness filter that multiplies each pixel value by the
-     *         specified brightness.
-     */
-    public static ImageFilter simpleBrightnessFilter( final double brightness )
-    {
-        return new ImageFilter()
-        {
-            public int[] filter( final int[] pixels )
-            {
-                for ( int a = 0; a < pixels.length; a++ )
-                {
-                    final int elem = pixels[a];
-                    final int red = Filters.bindToWithin( (int) ( ( elem >> 16 & 0xFF ) * brightness ), 0, 255 );
-                    final int green = Filters.bindToWithin( (int) ( ( elem >> 8 & 0xFF ) * brightness ), 0, 255 );
-                    final int blue = Filters.bindToWithin( (int) ( ( elem & 0xFF ) * brightness ), 0, 255 );
-                    pixels[a] = 0xFF << 24 | red << 16 | green << 8 | blue;                    
-                }
-                
-                return pixels;
-            }
-        };
     }
 
     /**
@@ -73,20 +38,21 @@ public final class Filters
      * @return a brightness filter that linearly scales all pixel values to the
      *         range between minValue and 255.
      */
-    public static ImageFilter betterBrightnessFilter( final int minValue )
+    public static ImageFilter brightness( final int minValue )
     {
-        CheckParameters.from( 0 ).to( 255 ).bounds( minValue );
+        assert minValue >= 0 && minValue <= 255;
 
         return new ImageFilter()
         {
-            public int[] filter( final int[] pixels )
+            @Override
+            public int[] filter( int[] pixels )
             {
                 for ( int a = 0; a < pixels.length; a++ )
                 {
                     final int elem = pixels[a];
-                    final int red = Filters.bindToWithin( ( elem >> 16 & 0xFF ) * ( 256 - minValue ) / 255 + minValue, 0, 255 );
-                    final int green = Filters.bindToWithin( ( elem >> 8 & 0xFF ) * ( 256 - minValue ) / 255 + minValue, 0, 255 );
-                    final int blue = Filters.bindToWithin( ( elem & 0xFF ) * ( 256 - minValue ) / 255 + minValue, 0, 255 );
+                    final int red = bindToWithin( ( elem >> 16 & 0xFF ) * ( 256 - minValue ) / 255 + minValue);
+                    final int green = bindToWithin( ( elem >> 8 & 0xFF ) * ( 256 - minValue ) / 255 + minValue);
+                    final int blue = bindToWithin( ( elem & 0xFF ) * ( 256 - minValue ) / 255 + minValue);
                     pixels[a] = 0xFF << 24 | red << 16 | green << 8 | blue;
                 }      
                 
@@ -109,12 +75,13 @@ public final class Filters
      *        the weighting to apply to the blue colour component.
      * @return a monochrome filter that uses the specified weightings.
      */
-    public static ImageFilter monochromeFilter( final double redWeight, final double greenWeight,
+    public static ImageFilter monochrome( final double redWeight, final double greenWeight,
             final double blueWeight )
     {
         return new ImageFilter()
         {            
-            public int[] filter( final int[] pixels )
+            @Override
+            public int[] filter( int[] pixels )
             {
                 for ( int a = 0; a < pixels.length; a++ )
                 {
@@ -123,8 +90,8 @@ public final class Filters
                     final int green = elem >> 8 & 0xFF;
                     final int blue = elem & 0xFF;
                     final int grey =
-                        Filters.bindToWithin( (int) Math.round( red * redWeight + green * greenWeight + blue
-                                * blueWeight ), 0, 255 );
+                        bindToWithin( (int) Math.round( red * redWeight + green * greenWeight + blue
+                                * blueWeight ));
                     pixels[a] = 0xFF << 24 | grey << 16 | grey << 8 | grey;                    
                 }
                 
@@ -138,7 +105,7 @@ public final class Filters
      * href="http://en.wikipedia.org/wiki/Luminance_(relative)">relative
      * luminance</a>.
      */
-    public static final ImageFilter standardLuminanceMonochromeFilter = monochromeFilter( 0.2126, 0.7152, 0.0722 );
+    public static final ImageFilter standardLuminanceMonochrome = monochrome( 0.2126, 0.7152, 0.0722 );
         
     /**
      * Gives a contrast filter that applies the specified contrast shift to
@@ -150,19 +117,18 @@ public final class Filters
      * @return a contrast filter that applies the specified contrast shift to
      *         images.
      */
-    public static ImageFilter contrastFilter( final double contrast )
+    public static ImageFilter contrast( final double contrast )
     {
         return new ImageFilter()
         {            
-            public int[] filter( final int[] pixels )
+            @Override
+            public int[] filter( int[] pixels )
             {
                 double totalRed = 0;
                 double totalGreen = 0;
                 double totalBlue = 0;
 
-                for ( int a = 0; a < pixels.length; a++ )
-                {
-                    final int elem = pixels[a];
+                for (final int elem : pixels) {
                     totalRed += elem >> 16 & 0xFF;
                     totalGreen += elem >> 8 & 0xFF;
                     totalBlue += elem & 0xFF;
@@ -194,6 +160,7 @@ public final class Filters
 
     public static ImageFilter andThen(final ImageFilter first, final ImageFilter second) {
         return new ImageFilter() {
+            @Override
             public int[] filter(int[] pixels) {
                 return second.filter(first.filter(pixels));
             }
