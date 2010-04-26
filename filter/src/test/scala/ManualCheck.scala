@@ -13,13 +13,12 @@ object ManualCheck { def main(args: Array[String]) = {
  import Utils.pixelsFor
  import Filters._
  val filters: List[(ImageFilter, String)] = List(new ImageFilter { def filter(pixels: Array[Int]) = pixels } -> "No filter",
-                                                 monochromeFilter(1.0/3, 1.0/3, 1.0/3) -> "Averaged monochrome filter",
-                                                 standardLuminanceMonochromeFilter -> "Standard luminance monochrome filter",
-                                                 contrastFilter(1.5) -> "Contrast",
-                                                 simpleBrightnessFilter(1.5) -> "Simple brightness filter",
-                                                 betterBrightnessFilter(30) -> "Better brightness filter",
-                                                 andThen(contrastFilter(1.5), betterBrightnessFilter(30)) -> "Contrast filter then brightness filter",
-                                                 andThen(monochromeFilter(0.5, 0.2, 0.3), betterBrightnessFilter(30)) -> "Monochrome filter then brightness filter")
+                                                 monochrome(1.0/3, 1.0/3, 1.0/3) -> "Averaged monochrome filter",
+                                                 standardLuminanceMonochrome -> "Standard luminance monochrome filter",
+                                                 contrast(1.5) -> "Contrast",
+                                                 brightness(30) -> "Brightness",
+                                                 andThen(contrast(1.5), brightness(30)) -> "Contrast filter then brightness filter",
+                                                 andThen(monochrome(0.5, 0.2, 0.3), brightness(30)) -> "Monochrome filter then brightness filter")
  import java.awt.image.BufferedImage
  def filterImage(image: Image, filter: ImageFilter) = { val result = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB)
                                                         for ((pixel, index) <- filter.filter(pixelsFor(image)) zipWithIndex) {
